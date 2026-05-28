@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "15mb",
     },
   },
+  async rewrites() {
+    return [
+      { source: "/magicshadow", destination: "/magicshadow/index.html" },
+    ];
+  },
 };
 
 export default nextConfig;

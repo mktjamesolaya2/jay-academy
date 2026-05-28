@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base href="/magicshadow/" />
+  <title>Magic Shadow 3 — by James Olaya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,400&family=Source+Sans+3:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20260522-proof-fix-v2" />
+  <style>
+    /* Mobile-only override pra forçar cor sólida nas faixas do closing — bypassa cache do styles.css */
+    @media (max-width: 900px) {
+      /* Mata o pseudo de vinheta da .diptico-heavy que vazava com display: contents */
+      .diptico-heavy::before,
+      .diptico-light::before {
+        display: none !important;
+        content: none !important;
+      }
+      .diptico-closing {
+        display: contents !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        filter: none !important;
+        box-shadow: none !important;
+      }
+      span.diptico-closing__half {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        mix-blend-mode: normal !important;
+      }
+      span.diptico-closing__half.diptico-closing__half--right {
+        background: #FAF7F1 !important;
+        background-color: #FAF7F1 !important;
+        background-image: none !important;
+        opacity: 1 !important;
+        color: #1A1A1A !important;
+      }
+      span.diptico-closing__half.diptico-closing__half--right .diptico-closing__light {
+        color: #000000 !important;
+      }
+      span.diptico-closing__half.diptico-closing__half--left {
+        background: #000000 !important;
+        background-color: #000000 !important;
+        background-image: none !important;
+        opacity: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HERO — ocupa a tela inteira (100vh) -->
+  <section class="hero">
+
+    <!-- Área das imagens cobre 100% do hero (fica atrás de tudo) -->
+    <div class="hero-images">
+      <div class="img-slot img-1" role="img" aria-label="Imagem 1"></div>
+      <div class="img-slot img-2" role="img" aria-label="Imagem 2"></div>
+    </div>
+
+    <!-- James centralizado por cima das imagens (PNG transparente do pixian.ai) -->
+    <img class="hero-james" src="assets/james.png" alt="James Olaya" />
+
+    <!-- Gradiente vertical preto no final do hero (espaço pro título) -->
+    <div class="hero-shadow" aria-hidden="true"></div>
+
+    <!-- "Sol" dourado — brilho que reflete no James de baixo pra cima -->
+    <div class="hero-glow" aria-hidden="true"></div>
+
+    <!-- Conteúdo de texto sobre o gradiente -->
+    <div class="hero-content">
+      <p class="hero-byline">by <span class="hero-byline-name">JAMES OLAYA</span></p>
+      <h1 class="hero-title">
+        <img class="hero-title-img" src="assets/1-DESKTOP MAGIC SHADOW.png" alt="MAGIC SHADOW" />
+      </h1>
+      <p class="hero-subtitle">
+        <span class="hero-subtitle-soft">FORMAÇÃO</span>
+        <span class="hero-subtitle-strong">AVANÇADA</span>
+        <span class="hero-subtitle-soft">EM MICROPIGMENTAÇÃO</span>
+      </p>
+    </div>
+
+    <!-- Barra do topo: logo JAYO ACADEMY centralizado em fundo preto -->
+    <header class="topbar">
+      <img class="topbar-logo" src="assets/logo-academy.png" alt="JAYO ACADEMY" />
+    </header>
+
+  </section>
+
+  <!-- SEÇÃO 2 — texto, vídeo full-bleed e CTA -->
+  <section class="section-pitch">
+
+    <!-- Texto centralizado em wrapper de largura confortável -->
+    <div class="section-pitch__inner">
+      <div class="section-pitch__text">
+        <p class="pitch-lead">
+          Enquanto o <span class="pitch-gold">mercado evolui</span> muitas profissionais ainda estão presas em técnicas pesadas.
+        </p>
+        <p class="pitch-sub">
+          Jay <span class="pitch-gold-soft">MAGIC SHADOW</span> é uma formação <span class="pitch-gold-soft">avançada</span> para você que <span class="pitch-gold-soft">não quer parar no tempo</span> em um mercado cada vez mais sofisticado.
+        </p>
+      </div>
+    </div>
+
+    <!-- Vídeo full-bleed — cobre a largura inteira da viewport -->
+    <div class="section-pitch__media">
+      <video
+        class="section-pitch__video"
+        src="assets/VÍDEO.mp4"
+        muted
+        autoplay
+        loop
+        playsinline
+        webkit-playsinline
+        preload="auto"
+        disablePictureInPicture
+        disableRemotePlayback
+        aria-label="Demonstração Magic Shadow"
+      ></video>
+    </div>
+
+    <!-- CTA centralizado -->
+    <div class="section-pitch__inner">
+      <a class="pitch-cta" href="#" role="button">QUERO EVOLUIR</a>
+    </div>
+
+  </section>
+
+  <!-- SEÇÃO 3 — O que as clientes ideais buscam -->
+  <section class="section-benefits">
+    <div class="section-benefits__inner">
+
+      <h2 class="benefits-title">
+        O que as clientes <span class="benefits-title-gold">ideais</span> buscam hoje?
+      </h2>
+
+      <div class="benefits-list">
+
+        <!-- Item 1 — imagem à esquerda -->
+        <article class="benefit-item">
+          <div class="benefit-item__image benefit-item__image--1" role="img" aria-label="Efeito soft makeup"></div>
+          <div class="benefit-item__text">
+            <h3 class="benefit-item__title">Efeito soft makeup</h3>
+            <p class="benefit-item__desc">Preenche falhas e falta de pelos com suavidade</p>
+          </div>
+        </article>
+
+        <!-- Item 2 — imagem à direita -->
+        <article class="benefit-item benefit-item--reverse">
+          <div class="benefit-item__image benefit-item__image--2" role="img" aria-label="Versatilidade"></div>
+          <div class="benefit-item__text">
+            <h3 class="benefit-item__title">Versatilidade</h3>
+            <p class="benefit-item__desc">Praticidade e uma estética leve para qualquer ocasião</p>
+          </div>
+        </article>
+
+        <!-- Item 3 — imagem à esquerda -->
+        <article class="benefit-item">
+          <div class="benefit-item__image benefit-item__image--3" role="img" aria-label="Naturalidade"></div>
+          <div class="benefit-item__text">
+            <h3 class="benefit-item__title">Naturalidade</h3>
+            <p class="benefit-item__desc">A grande tendência internacional é o famoso "menos é mais"</p>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="benefits-bridge">
+        <p class="benefits-bridge__lead">Agora você se pergunta...</p>
+        <p class="benefits-bridge__question">Como obter sucesso com a técnica shadow mantendo a naturalidade?</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HERO SECUNDÁRIO — imagem cinematográfica + comparação de técnicas -->
+  <section class="section-hero2" aria-label="Sobrancelha em destaque com partículas douradas">
+
+    <div class="hero2-banner">
+      <div class="hero2-james" aria-hidden="true">
+        <img class="hero2-james__img" src="assets/james2.jpg" alt="" />
+      </div>
+
+      <div class="hero2-vertical">
+        <h2 class="hero2-vertical__title">EVOLUÇÃO</h2>
+        <p class="hero2-vertical__subtitle">É SOBRE TÉCNICA. É SOBRE VISÃO.</p>
+      </div>
+
+      <h2 class="hero2-statement">
+        O problema não é a falta de experiência.<br>
+        <span class="hero2-statement__gold">É continuar usando uma estética que o</span><br>
+        <span class="hero2-statement__gold">mercado já começou a abandonar.</span>
+      </h2>
+
+      <ul class="hero2-old-list evolution-list evolution-list--old">
+        <li><span class="evolution-list__x" aria-hidden="true">×</span>Sombras muito marcadas.</li>
+        <li><span class="evolution-list__x" aria-hidden="true">×</span>Bordas rígidas.</li>
+        <li><span class="evolution-list__x" aria-hidden="true">×</span>Excesso de saturação.</li>
+        <li><span class="evolution-list__x" aria-hidden="true">×</span>Pixelização pesada.</li>
+        <li><span class="evolution-list__x" aria-hidden="true">×</span>Resultados sem leveza.</li>
+      </ul>
+
+      <div class="hero2-new-list">
+        <p class="evolution-lead">
+          O mercado internacional evoluiu.<br>
+          Hoje, <span class="evolution-lead__hl">as técnicas mais valorizadas</span><br>
+          trabalham:
+        </p>
+        <ul class="evolution-list evolution-list--new">
+          <li>transição suave</li>
+          <li>densidade inteligente</li>
+          <li>construção translúcida</li>
+          <li>estabilidade estética</li>
+          <li>refinamento visual</li>
+        </ul>
+      </div>
+
+      <a class="hero2-cta" href="#" role="button">QUERO SABER MAIS</a>
+    </div>
+
+  </section>
+
+  <!-- HERO 3 — A NOVA GERAÇÃO DO SHADOW: cinematográfica, continuação do hero2 -->
+  <section class="section-russia" aria-label="A nova geração do Shadow">
+
+    <!-- Mapas decorativos: Europa (canto sup esquerdo) e Rússia (atrás, grande) -->
+    <div class="russia-map russia-map--europe" aria-hidden="true"></div>
+    <div class="russia-map russia-map--russia" aria-hidden="true"></div>
+
+    <!-- Retrato editorial ancorado à direita, fade premium no dourado -->
+    <img class="russia-portrait" src="assets/menina_hero.png" alt="" aria-hidden="true" />
+
+    <div class="russia-stage">
+
+      <!-- HEADLINE — título centralizado em cima + subtítulo abaixo -->
+      <header class="russia-headline">
+        <div class="russia-headline__main">
+          <h2 class="russia-title">A nova geração do shadow</h2>
+          <p class="russia-subtitle">
+            <span class="russia-subtitle__mark">Rússia</span> e <span class="russia-subtitle__mark">Europa</span><br>
+            elevaram o nível técnico da<br>
+            <span class="russia-subtitle__hl">micropigmentação</span>.
+          </p>
+        </div>
+        <p class="russia-subtitle russia-subtitle--small">
+          As artistas mais sofisticadas do mercado<br>
+          não trabalham apenas “sombra”.
+        </p>
+      </header>
+
+      <!-- DOMAIN — lista numerada à direita, formato editorial vertical -->
+      <aside class="russia-domain">
+        <p class="russia-domain__heading">Elas dominam</p>
+        <ol class="russia-domain__list">
+          <li><span class="russia-domain__num">01</span><span class="russia-domain__name">profundidade</span></li>
+          <li><span class="russia-domain__num">02</span><span class="russia-domain__name">biomecânica</span></li>
+          <li><span class="russia-domain__num">03</span><span class="russia-domain__name">microtrauma</span></li>
+          <li><span class="russia-domain__num">04</span><span class="russia-domain__name">comportamento do pigmento</span></li>
+          <li><span class="russia-domain__num">05</span><span class="russia-domain__name">densidade por zonas</span></li>
+          <li><span class="russia-domain__num">06</span><span class="russia-domain__name">degradação planejada</span></li>
+        </ol>
+      </aside>
+
+      <!-- QUOTE — pull quote editorial flutuando no canto inferior esquerdo -->
+      <blockquote class="russia-quote">
+        <span class="russia-quote__mark" aria-hidden="true">“</span>
+        <p>
+          É isso que cria <span class="russia-quote__hl">sombras leves</span>,
+          sofisticadas e visualmente <span class="russia-quote__hl">premium</span>
+          mesmo após a cicatrização.
+        </p>
+      </blockquote>
+
+    </div>
+  </section>
+
+  <!-- DOBRA 6 — O DIFERENCIAL DO MAGIC SHADOW -->
+  <section class="section-diferencial" aria-label="O diferencial do Magic Shadow">
+
+    <!-- Filetes ornamentais editorial — enquadram a seção -->
+    <div class="diferencial-frame diferencial-frame--left" aria-hidden="true"></div>
+    <div class="diferencial-frame diferencial-frame--right" aria-hidden="true"></div>
+
+    <div class="section-diferencial__inner">
+
+      <header class="diferencial-header">
+        <p class="diferencial-kicker">— O DIFERENCIAL DO MAGIC SHADOW —</p>
+        <h2 class="diferencial-title">
+          <span class="diferencial-title__line diferencial-title__line--dark">Mais técnico que o mercado tradicional.</span>
+          <span class="diferencial-title__line diferencial-title__line--gold">Mais sofisticado que o shadow comum.</span>
+        </h2>
+      </header>
+
+      <div class="diferencial-grid">
+
+        <article class="diferencial-card">
+          <span class="diferencial-card__num">01</span>
+          <h3 class="diferencial-card__title">Engenharia do Pixel</h3>
+          <p class="diferencial-card__desc">Controle de densidade, expansão e leveza visual.</p>
+        </article>
+
+        <article class="diferencial-card">
+          <span class="diferencial-card__num">02</span>
+          <h3 class="diferencial-card__title">Arquitetura Translúcida</h3>
+          <p class="diferencial-card__desc">Bordas sofisticadas e transições invisíveis.</p>
+        </article>
+
+        <article class="diferencial-card">
+          <span class="diferencial-card__num">03</span>
+          <h3 class="diferencial-card__title">Controle de Microtrauma</h3>
+          <p class="diferencial-card__desc">Menos agressão dérmica. Mais estabilidade estética.</p>
+        </article>
+
+        <article class="diferencial-card">
+          <span class="diferencial-card__num">04</span>
+          <h3 class="diferencial-card__title">Pigmentologia Estratégica</h3>
+          <p class="diferencial-card__desc">Sombras planejadas para envelhecer com elegância.</p>
+        </article>
+
+      </div>
+
+      <div class="diferencial-cta-wrap">
+        <a class="diferencial-cta" href="#" role="button">QUERO SABER MAIS</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 7 — O RISCO DE NÃO EVOLUIR -->
+  <section class="section-risco" aria-label="O risco de não evoluir">
+
+    <!-- Cantos editoriais L-shape — variação ornamental diferente da dobra 6 -->
+    <div class="risco-corner risco-corner--tl" aria-hidden="true"></div>
+    <div class="risco-corner risco-corner--tr" aria-hidden="true"></div>
+    <div class="risco-corner risco-corner--bl" aria-hidden="true"></div>
+    <div class="risco-corner risco-corner--br" aria-hidden="true"></div>
+
+    <div class="section-risco__inner">
+
+      <header class="risco-header">
+        <p class="risco-kicker">— O RISCO DE NÃO EVOLUIR —</p>
+        <h2 class="risco-title">
+          As profissionais que <span class="risco-title__gold">não evoluem</span><br>
+          acabam competindo apenas por <span class="risco-title__gold">preço</span>.
+        </h2>
+      </header>
+
+      <div class="risco-body">
+
+        <!-- James em aula com alunos (james1.jpg) -->
+        <figure class="risco-image" aria-hidden="true">
+          <img src="assets/james1.jpg" alt="James Olaya em aula" />
+        </figure>
+
+        <!-- Conteúdo: lead + listas + statement -->
+        <div class="risco-content">
+
+          <p class="risco-lead">
+            A cliente premium não escolhe apenas <em>“quem faz shadow”</em>.<br>
+            Ela escolhe:
+          </p>
+
+          <ul class="risco-list">
+            <li>acabamento</li>
+            <li>sofisticação</li>
+            <li>leveza</li>
+            <li>segurança</li>
+            <li>percepção de autoridade</li>
+          </ul>
+
+          <p class="risco-statement">
+            Quando o resultado parece refinado…<br>
+            o <span class="risco-statement__gold">valor percebido</span> muda completamente.
+          </p>
+
+          <p class="risco-lead">E junto com ele:</p>
+
+          <ul class="risco-list">
+            <li>o ticket</li>
+            <li>o posicionamento</li>
+            <li>o tipo de cliente</li>
+            <li>o reconhecimento profissional</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 8 — DÍPTICO PESADO|LEVE: contraste visual literal -->
+  <section class="section-diptico" aria-label="O que a cliente premium procura hoje">
+
+    <!-- LADO ESQUERDO: PESADO (preto, tipografia outline densa) -->
+    <div class="diptico-heavy">
+      <div class="diptico-heavy__inner">
+        <p class="diptico-kicker diptico-kicker--dark">— o que era —</p>
+        <h2 class="diptico-heavy__title" aria-label="O peso visual">
+          <span>O</span>
+          <span>PESO</span>
+          <span>VISUAL</span>
+        </h2>
+        <p class="diptico-heavy__caption">marca · sobressai · pesa</p>
+      </div>
+      <a class="diptico-cta" href="#" role="button">QUERO SABER MAIS</a>
+    </div>
+
+    <!-- LADO DIREITO: LEVE (branco off, tipografia leve aérea) -->
+    <div class="diptico-light">
+      <div class="diptico-light__inner">
+        <p class="diptico-kicker diptico-kicker--light">— o que o mercado busca —</p>
+        <h2 class="diptico-light__title">
+          <span class="diptico-light__title-intro">O mercado premium busca sombras cada vez mais</span>
+          <span class="diptico-light__title-line">leves,</span>
+          <span class="diptico-light__title-line">elegantes</span>
+          <span class="diptico-light__title-line">e naturais.</span>
+        </h2>
+
+        <div class="diptico-light__body">
+          <p class="diptico-light__lead">
+            A nova estética da micropigmentação valoriza:
+          </p>
+          <ul class="diptico-light__values">
+            <li>início invisível</li>
+            <li>densidade estratégica</li>
+            <li>bordas translúcidas</li>
+            <li>efeito sofisticado</li>
+            <li>naturalidade refinada</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- BARRA INFERIOR: closing statement atravessa o díptico (split visual) -->
+    <p class="diptico-closing">
+      <span class="diptico-closing__half diptico-closing__half--left">
+        O <span class="diptico-closing__heavy">peso visual</span> está sendo
+      </span>
+      <span class="diptico-closing__half diptico-closing__half--right">
+        substituído por <span class="diptico-closing__light">construção inteligente</span>?
+      </span>
+    </p>
+
+  </section>
+
+  <!-- DOBRA 9 — PROVAS E EVOLUÇÃO (mosaico editorial assimétrico) -->
+  <section class="section-proofs" aria-label="Provas e Evolução">
+    <div class="section-proofs__inner">
+
+      <header class="proofs-header">
+        <p class="proofs-kicker">— provas & evolução —</p>
+        <h2 class="proofs-title">
+          Profissionais experientes que decidiram
+          <span class="proofs-title__gold">evoluir antes do mercado exigir delas</span>.
+        </h2>
+        <p class="proofs-body">
+          O <strong>Magic Shadow</strong> foi criado para artistas que entenderam que
+          <em>evolução não é opcional</em> em um mercado premium.
+        </p>
+      </header>
+
+      <div class="proofs-mosaic">
+
+        <figure class="proof-item proof-item--evolucao">
+          <img src="assets/antesedepois.JPG" alt="Evolução técnica" />
+          <figcaption>evolução técnica</figcaption>
+        </figure>
+
+        <figure class="proof-item proof-item--antesdepois">
+          <img src="assets/sobrancelha4.jpg" alt="Antes e depois refinados" />
+          <figcaption>antes e depois refinados</figcaption>
+        </figure>
+
+        <figure class="proof-item proof-item--cicatrizacao">
+          <img src="assets/sobrancelha.jpg" alt="Cicatrizações sofisticadas" />
+          <figcaption>cicatrizações sofisticadas</figcaption>
+        </figure>
+
+        <figure class="proof-item proof-item--alunas">
+          <img src="assets/academy.png" alt="Alunas experientes" />
+          <figcaption>alunas experientes</figcaption>
+        </figure>
+
+        <figure class="proof-item proof-item--translucida">
+          <img src="assets/sobrancelha2.jpeg" alt="Sombras translúcidas" />
+          <figcaption>sombras translúcidas</figcaption>
+        </figure>
+
+        <figure class="proof-item proof-item--premium">
+          <img src="assets/sobrancelha3.jpeg" alt="Acabamento premium" />
+          <figcaption>acabamento premium</figcaption>
+        </figure>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 10 — A TRANSFORMAÇÃO (HERO VIDEO 16:9 + frase canto superior esquerdo) -->
+  <section class="section-relevancia" aria-label="A transformação">
+    <video class="relevancia-hero relevancia-hero--desktop" muted autoplay loop playsinline webkit-playsinline preload="auto" disablePictureInPicture disableRemotePlayback aria-hidden="true">
+      <source src="assets/herovideo3.mp4" type="video/mp4" />
+    </video>
+    <video class="relevancia-hero relevancia-hero--mobile" muted autoplay loop playsinline webkit-playsinline preload="auto" disablePictureInPicture disableRemotePlayback aria-hidden="true">
+      <source src="assets/heromobile.mp4" type="video/mp4" />
+    </video>
+    <!-- Coluna esquerda — tagline + título + tópicos em fluxo vertical -->
+    <div class="relevancia-stack">
+      <p class="relevancia-tagline">O Magic Shadow não atualiza apenas sua técnica.</p>
+      <h2 class="relevancia-title">
+        <span class="relevancia-title__back">Atualiza sua</span>
+        <em>relevância</em>
+        <span class="relevancia-title__back">no mercado.</span>
+      </h2>
+      <div class="relevancia-topics">
+        <p class="relevancia-topics__lead">Você desenvolve:</p>
+        <ul class="relevancia-topics__list">
+          <li>sombras mais sofisticadas</li>
+          <li>densidade inteligente</li>
+          <li>acabamento premium</li>
+          <li>previsibilidade estética</li>
+          <li>domínio técnico real</li>
+          <li>padrão visual internacional</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Fechamento: canto inferior direito -->
+    <div class="relevancia-closer">
+      <p class="relevancia-closer__lead">Porque hoje, não basta apenas executar.</p>
+      <p class="relevancia-closer__main">É preciso <em>evoluir visualmente</em> junto com o mercado.</p>
+    </div>
+  </section>
+
+  <!-- DOBRA 11 — O QUE VOCÊ VAI DOMINAR (curriculum em grid 2×5) -->
+  <section class="section-dominar" aria-label="O que você vai dominar">
+
+    <!-- Background: palestra desaparecendo no preto via gradientes pesados -->
+    <div class="dominar-bg" aria-hidden="true">
+      <img src="assets/palestra.png" alt="" />
+    </div>
+    <!-- Feixe de luz suave sobre James + plateia próxima (efeito cortina) -->
+    <div class="dominar-light" aria-hidden="true"></div>
+
+    <div class="dominar__inner">
+
+      <header class="dominar-header">
+        <p class="dominar-kicker">O QUE VOCÊ VAI DOMINAR</p>
+        <h2 class="dominar-title">
+          Domine o <em>próximo nível</em><br>
+          do shadow premium.
+        </h2>
+        <p class="dominar-subtitle">
+          Formação avançada para artistas que buscam <em>excelência técnica</em>.
+        </p>
+      </header>
+
+      <div class="dominar-grid">
+
+        <div class="dominar-column">
+          <div class="dominar-column__line" aria-hidden="true"></div>
+          <ul class="dominar-column__list">
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Engenharia do Pixel</span>
+            </li>
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Arquitetura Translúcida</span>
+            </li>
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Controle de Microtrauma</span>
+            </li>
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Pigmentologia Avançada</span>
+            </li>
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Biomecânica da Máquina</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="dominar-column">
+          <div class="dominar-column__line" aria-hidden="true"></div>
+          <ul class="dominar-column__list">
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Shadow em Peles Difíceis</span>
+            </li>
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Densidade por Zonas</span>
+            </li>
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Estabilidade Estética</span>
+            </li>
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Casos Clínicos Reais</span>
+            </li>
+            <li class="dominar-item">
+              <span class="dominar-item__check" aria-hidden="true">✓</span>
+              <span class="dominar-item__text">Método Internacional Jay Magic Shadow</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DOBRA 12 — FAQ (cream background, accordion editorial) -->
+  <section class="section-faq" aria-label="Perguntas frequentes">
+    <div class="section-faq__inner">
+
+      <header class="faq-header">
+        <h2 class="faq-title">F.A.Q.</h2>
+        <p class="faq-sub">Dúvidas Frequentes</p>
+        <div class="faq-beam" aria-hidden="true"></div>
+      </header>
+
+      <ul class="faq-list">
+
+        <li class="faq-item">
+          <details>
+            <summary>
+              <span class="faq-num">01</span>
+              <span class="faq-question">O curso serve para profissionais experientes?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-answer-wrap"><p class="faq-answer">Sim. O Magic Shadow foi criado principalmente para profissionais que já atuam e desejam evoluir tecnicamente.</p></div>
+          </details>
+        </li>
+
+        <li class="faq-item">
+          <details>
+            <summary>
+              <span class="faq-num">02</span>
+              <span class="faq-question">O curso ensina shadow translúcido?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-answer-wrap"><p class="faq-answer">Sim. O foco do método é justamente construir sombras sofisticadas, leves e estrategicamente translúcidas.</p></div>
+          </details>
+        </li>
+
+        <li class="faq-item">
+          <details>
+            <summary>
+              <span class="faq-num">03</span>
+              <span class="faq-question">O curso aborda biomecânica e profundidade?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-answer-wrap"><p class="faq-answer">Sim. O método trabalha biomecânica da mão, controle de trauma, profundidade e comportamento dérmico.</p></div>
+          </details>
+        </li>
+
+        <li class="faq-item">
+          <details>
+            <summary>
+              <span class="faq-num">04</span>
+              <span class="faq-question">Funciona para pele oleosa?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-answer-wrap"><p class="faq-answer">Sim. O curso possui módulos específicos para peles difíceis e controle estratégico de densidade.</p></div>
+          </details>
+        </li>
+
+        <li class="faq-item">
+          <details>
+            <summary>
+              <span class="faq-num">05</span>
+              <span class="faq-question">O Magic Shadow segue padrões internacionais?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </summary>
+            <div class="faq-answer-wrap"><p class="faq-answer">Sim. A estrutura foi construída com base em referências russas, europeias e nos novos padrões premium do mercado global.</p></div>
+          </details>
+        </li>
+
+      </ul>
+
+    </div>
+  </section>
+
+  <!-- DOBRA 13 — CTA FINAL (preto cinematográfico, statement de fechamento) -->
+  <section class="section-final" aria-label="CTA final">
+
+    <!-- Halo dourado sutil atrás do conteúdo -->
+    <div class="final-halo" aria-hidden="true"></div>
+
+    <p class="final-kicker">A nova geração já está em ação</p>
+
+    <div class="section-final__inner">
+
+      <h2 class="final-headline">
+        O mercado<br>premium evoluiu.<br>
+        <em>Sua técnica precisa<br>evoluir junto.</em>
+      </h2>
+
+      <p class="final-signature">
+        <span class="final-signature__by">by</span>
+        <span class="final-signature__name">JAMES OLAYA</span>
+      </p>
+
+      <p class="final-subtitle">
+        O <strong>Jay Magic Shadow</strong> foi criado para quem decidiu<br>
+        <em>não ficar para trás</em>.
+      </p>
+
+      <div class="final-copy">
+        <p>
+          As artistas que dominarem <span class="final-copy__hl">leveza, sofisticação e previsibilidade estética</span> serão as profissionais mais valorizadas da nova geração da micropigmentação.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="final-cta-block">
+      <p class="final-cta-phrase">
+        Quero entrar para a <em>nova</em><br><em>geração</em> do shadow premium
+      </p>
+      <span class="final-cta-arrow" aria-hidden="true"></span>
+      <a class="final-cta" href="#" role="button">Ver mais</a>
+    </div>
+  </section>
+
+  <script>
+    // Força autoplay nos videos (iOS Safari bloqueia mesmo com tag autoplay)
+    (function forceAutoplayVideos() {
+      var videos = document.querySelectorAll('video[autoplay]');
+      function playAll() {
+        videos.forEach(function (v) {
+          if (v.paused) {
+            var p = v.play();
+            if (p && typeof p.catch === 'function') p.catch(function () {});
+          }
+        });
+      }
+      // Tenta tocar no load
+      window.addEventListener('load', playAll);
+      // Retry em qualquer interação do usuário (iOS libera autoplay após touch)
+      var unlock = function () {
+        playAll();
+        document.removeEventListener('touchstart', unlock, true);
+        document.removeEventListener('click', unlock, true);
+      };
+      document.addEventListener('touchstart', unlock, true);
+      document.addEventListener('click', unlock, true);
+    })();
+  </script>
+
+  <script>
+    // FAQ — força replay da animação a cada toggle do <details>
+    document.querySelectorAll('.section-faq details').forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        if (!d.open) return;
+        var answer = d.querySelector('.faq-answer');
+        if (!answer) return;
+        answer.style.animation = 'none';
+        // força reflow pra resetar o estado da animação
+        void answer.offsetWidth;
+        answer.style.animation = '';
+      });
+    });
+  </script>
+
+</body>
+</html>
