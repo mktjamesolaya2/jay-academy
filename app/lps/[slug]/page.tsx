@@ -8,7 +8,8 @@ import {
   Globe,
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
-import { getLp, statusLabel, statusColors } from "@/lib/landing-pages";
+import { statusLabel, statusColors } from "@/lib/landing-pages";
+import { getLpFromStore } from "@/lib/lp-store";
 import { clsx } from "clsx";
 import { LpActionsMenu } from "@/components/lp-actions-menu";
 
@@ -16,7 +17,7 @@ type Params = Promise<{ slug: string }>;
 
 export default async function LpDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const lp = getLp(slug);
+  const lp = await getLpFromStore(slug);
   if (!lp) notFound();
 
   const style = statusColors[lp.status];

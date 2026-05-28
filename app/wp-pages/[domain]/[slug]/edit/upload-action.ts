@@ -1,9 +1,6 @@
 "use server";
 
-import fs from "node:fs/promises";
-import path from "node:path";
-
-const UPLOAD_DIR = path.resolve(process.cwd(), "public/uploads/wp");
+import { blobUpload } from "@/lib/storage";
 
 function sanitizeName(name: string): string {
   return name
@@ -30,16 +27,12 @@ export async function uploadImageAction(
     return { ok: false, error: "Tipo de arquivo deve ser imagem" };
   }
 
-  await fs.mkdir(UPLOAD_DIR, { recursive: true });
+  const ext = file.name.includes(".") ? "." + file.name.split(".").pop() : "";
+  const base =
+    sanitizeName(file.name.replace(/\.[^.]+$/, "")) || "img";
+  const filename = `${base}${ext}`;
 
-  const ext = path.extname(file.name) || "";
-  const base = sanitizeName(path.basename(file.name, ext)) || "img";
-  const ts = Date.now();
-  const filename = `${base}-${ts}${ext}`;
-  const filepath = path.join(UPLOAD_DIR, filename);
-
-  const buf = Buffer.from(await file.arrayBuffer());
-  await fs.writeFile(filepath, buf);
-
-  return { ok: true, url: `/uploads/wp/${filename}` };
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const result = await blobUpload(filename, buffer, file.type);
+  return { ok: true, url: result.url };
 }

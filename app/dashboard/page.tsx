@@ -11,13 +11,13 @@ import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { QuickActions } from "@/components/quick-actions";
 import {
-  landingPages,
   statusLabel,
   statusColors,
   typeLabel,
   relativeTime,
   type LandingPage,
 } from "@/lib/landing-pages";
+import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import { fetchAllWpPages } from "@/lib/wp-api";
 import { loadDecisions } from "@/lib/wp-decisions";
@@ -25,7 +25,8 @@ import { loadDecisions } from "@/lib/wp-decisions";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [savedWp, allWp, decisions] = await Promise.all([
+  const [landingPages, savedWp, allWp, decisions] = await Promise.all([
+    loadLps(),
     listSaved(),
     fetchAllWpPages().catch(() => []),
     loadDecisions(),

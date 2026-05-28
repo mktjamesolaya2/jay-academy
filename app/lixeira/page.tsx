@@ -2,7 +2,8 @@ import { Trash2, RotateCcw, AlertTriangle } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { EmptyState } from "@/components/empty-state";
-import { landingPages, typeLabel } from "@/lib/landing-pages";
+import { typeLabel } from "@/lib/landing-pages";
+import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import {
   restoreFromTrashAction,
@@ -12,7 +13,7 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function LixeiraPage() {
-  const savedWp = await listSaved();
+  const [landingPages, savedWp] = await Promise.all([loadLps(), listSaved()]);
   const trashed = landingPages.filter((lp) => lp.trashed);
 
   return (

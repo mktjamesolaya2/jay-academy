@@ -3,14 +3,14 @@ import { Plus, Layout } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { EmptyState } from "@/components/empty-state";
-import { landingPages } from "@/lib/landing-pages";
+import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import { LpCard } from "@/components/lp-card";
 
 export const dynamic = "force-dynamic";
 
 export default async function LpsPage() {
-  const savedWp = await listSaved();
+  const [landingPages, savedWp] = await Promise.all([loadLps(), listSaved()]);
   const lps = landingPages.filter((lp) => lp.type === "lp" && !lp.trashed);
 
   return (

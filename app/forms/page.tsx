@@ -2,13 +2,13 @@ import { FileText } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { EmptyState } from "@/components/empty-state";
-import { landingPages } from "@/lib/landing-pages";
+import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 
 export const dynamic = "force-dynamic";
 
 export default async function FormsPage() {
-  const savedWp = await listSaved();
+  const [landingPages, savedWp] = await Promise.all([loadLps(), listSaved()]);
   const forms: Array<{ slug: string; name: string }> = [];
 
   return (

@@ -1,6 +1,5 @@
 import "server-only";
-import fs from "node:fs/promises";
-import path from "node:path";
+import { kvDel, kvGet, kvKeys, kvSet } from "./storage";
 import type { WpPageContent as BaseWpPageContent } from "./wp-fetch-page";
 import type { WpDomain } from "./wp-api";
 
@@ -11,51 +10,31 @@ export type WpPageContent = BaseWpPageContent & {
   placedAt?: string;
 };
 
-const DIR = path.resolve(process.cwd(), "data/wp-content");
-
-function fileFor(domain: WpDomain, slug: string): string {
-  return path.join(DIR, `${domain}_${slug}.json`);
+function keyFor(domain: WpDomain, slug: string): string {
+  return `wp:content:${domain}:${slug}`;
 }
 
 export async function saveContent(c: WpPageContent): Promise<void> {
-  await fs.mkdir(DIR, { recursive: true });
-  await fs.writeFile(fileFor(c.domain, c.slug), JSON.stringify(c, null, 2), "utf-8");
+  await kvSet(keyFor(c.domain, c.slug), c);
 }
 
 export async function loadContent(
   domain: WpDomain,
   slug: string
 ): Promise<WpPageContent | null> {
-  try {
-    const raw = await fs.readFile(fileFor(domain, slug), "utf-8");
-    return JSON.parse(raw) as WpPageContent;
-  } catch {
-    return null;
-  }
+  return await kvGet<WpPageContent>(keyFor(domain, slug));
 }
 
 export async function deleteContent(
   domain: WpDomain,
   slug: string
 ): Promise<void> {
-  try {
-    await fs.unlink(fileFor(domain, slug));
-  } catch {
-    // arquivo não existe, ok
-  }
+  await kvDel(keyFor(domain, slug));
 }
 
 export async function deleteAllContent(): Promise<void> {
-  try {
-    const files = await fs.readdir(DIR);
-    await Promise.all(
-      files
-        .filter((f) => f.endsWith(".json"))
-        .map((f) => fs.unlink(path.join(DIR, f)).catch(() => {}))
-    );
-  } catch {
-    // pasta não existe, ok
-  }
+  const keys = await kvKeys("wp:content:*");
+  await Promise.all(keys.map((k) => kvDel(k)));
 }
 
 export async function markPlaced(
@@ -85,26 +64,19 @@ export type SavedSummary = {
 };
 
 export async function listSaved(): Promise<SavedSummary[]> {
-  try {
-    const files = await fs.readdir(DIR);
-    const summaries = await Promise.all(
-      files
-        .filter((f) => f.endsWith(".json"))
-        .map(async (f) => {
-          const raw = await fs.readFile(path.join(DIR, f), "utf-8");
-          const c = JSON.parse(raw) as WpPageContent;
-          return {
-            domain: c.domain,
-            slug: c.slug,
-            title: c.title,
-            modified: c.modified,
-            fetchedAt: c.fetchedAt,
-            placed: c.placed,
-          } satisfies SavedSummary;
-        })
-    );
-    return summaries.sort((a, b) => b.fetchedAt.localeCompare(a.fetchedAt));
-  } catch {
-    return [];
-  }
+  const keys = await kvKeys("wp:content:*");
+  const contents = await Promise.all(
+    keys.map((k) => kvGet<WpPageContent>(k))
+  );
+  const valid = contents.filter((c): c is WpPageContent => c !== null);
+  return valid
+    .map((c) => ({
+      domain: c.domain,
+      slug: c.slug,
+      title: c.title,
+      modified: c.modified,
+      fetchedAt: c.fetchedAt,
+      placed: c.placed,
+    }))
+    .sort((a, b) => b.fetchedAt.localeCompare(a.fetchedAt));
 }

@@ -2,13 +2,13 @@ import Link from "next/link";
 import { Trash2, ChevronRight } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
-import { landingPages } from "@/lib/landing-pages";
+import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const savedWp = await listSaved();
+  const [landingPages, savedWp] = await Promise.all([loadLps(), listSaved()]);
   const trashedCount = landingPages.filter((lp) => lp.trashed).length;
 
   return (

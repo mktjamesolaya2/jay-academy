@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Plus, Info } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
-import { landingPages } from "@/lib/landing-pages";
+import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import { createLpAction } from "@/app/lps/actions";
 
@@ -27,7 +27,7 @@ export default async function NewLpPage({
   searchParams: Promise<{ type?: string }>;
 }) {
   const sp = await searchParams;
-  const savedWp = await listSaved();
+  const [landingPages, savedWp] = await Promise.all([loadLps(), listSaved()]);
   const defaultType = sp.type === "website" ? "website" : "lp";
 
   return (

@@ -1,8 +1,9 @@
 import { Sidebar } from "@/components/sidebar";
 import { TrendingUp, MousePointerClick, Eye } from "lucide-react";
-import { landingPages } from "@/lib/landing-pages";
+import { loadLps } from "@/lib/lp-store";
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+  const landingPages = await loadLps();
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
       <Sidebar />
