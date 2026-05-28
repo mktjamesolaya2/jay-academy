@@ -21,6 +21,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
   if (!lp) notFound();
 
   const style = statusColors[lp.status];
+  const isProduction = process.env.VERCEL_ENV === "production" || !!process.env.VERCEL;
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -165,7 +166,17 @@ export default async function LpDetailPage({ params }: { params: Params }) {
           <aside className="space-y-5">
             <Block title="Atalhos">
               <div className="space-y-2">
-                {lp.devUrl && (
+                {lp.productionUrl && (
+                  <ActionRow
+                    icon={Globe}
+                    label="Abrir em produção"
+                    sub={lp.productionUrl}
+                    href={lp.productionUrl}
+                    external
+                  />
+                )}
+                {/* Atalhos locais (dev) — escondidos em produção */}
+                {!isProduction && lp.devUrl && (
                   <ActionRow
                     icon={ExternalLink}
                     label="Abrir LP local"
@@ -174,16 +185,24 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     external
                   />
                 )}
-                <ActionRow icon={FolderOpen} label="Pasta" sub={lp.localPath} />
-                <ActionRow icon={Terminal} label="Stack" sub={lp.stack} />
-                {lp.productionUrl && (
+                {!isProduction && lp.localPath && (
                   <ActionRow
-                    icon={Globe}
-                    label="Produção"
-                    sub={lp.productionUrl}
-                    href={lp.productionUrl}
-                    external
+                    icon={FolderOpen}
+                    label="Pasta"
+                    sub={lp.localPath}
                   />
+                )}
+                {lp.stack && (
+                  <ActionRow icon={Terminal} label="Stack" sub={lp.stack} />
+                )}
+                {isProduction && !lp.productionUrl && (
+                  <div className="px-3 py-3 rounded-lg border border-dashed border-[#262626] text-xs text-neutral-500 leading-relaxed">
+                    Essa LP ainda não tem URL de produção. Quando deployar, ela
+                    vai aparecer em{" "}
+                    <span className="text-neutral-300 font-mono">
+                      jayacademy.com.br/{lp.slug}
+                    </span>
+                  </div>
                 )}
               </div>
             </Block>
