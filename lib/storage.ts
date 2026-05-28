@@ -94,12 +94,15 @@ function kvKeyToFile(key: string): string {
 
 export async function blobUpload(
   filename: string,
-  data: Buffer | ArrayBuffer | Uint8Array,
+  data: Buffer | Uint8Array,
   contentType?: string
 ): Promise<{ url: string }> {
+  // Normaliza pra Buffer (funciona em ambos os caminhos)
+  const buf: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data);
+
   if (HAS_BLOB) {
     const { put } = await import("@vercel/blob");
-    const result = await put(filename, data as Buffer, {
+    const result = await put(filename, buf, {
       access: "public",
       contentType,
       addRandomSuffix: true,
@@ -109,7 +112,7 @@ export async function blobUpload(
   // Fallback filesystem (dev local)
   await fs.mkdir(LOCAL_UPLOADS, { recursive: true });
   const filePath = path.join(LOCAL_UPLOADS, filename);
-  await fs.writeFile(filePath, Buffer.from(data));
+  await fs.writeFile(filePath, buf);
   return { url: `/uploads/wp/${filename}` };
 }
 
