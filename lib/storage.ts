@@ -24,9 +24,13 @@ const LOCAL_UPLOADS = path.resolve(process.cwd(), "public/uploads/wp");
 
 export async function kvGet<T>(key: string): Promise<T | null> {
   if (HAS_KV) {
-    const { kv } = await import("@vercel/kv");
-    const value = await kv.get<T>(key);
-    return value;
+    try {
+      const { kv } = await import("@vercel/kv");
+      const value = await kv.get<T>(key);
+      return value;
+    } catch {
+      return null;
+    }
   }
   // Fallback filesystem
   try {
@@ -40,20 +44,32 @@ export async function kvGet<T>(key: string): Promise<T | null> {
 
 export async function kvSet<T>(key: string, value: T): Promise<void> {
   if (HAS_KV) {
-    const { kv } = await import("@vercel/kv");
-    await kv.set(key, value);
+    try {
+      const { kv } = await import("@vercel/kv");
+      await kv.set(key, value);
+    } catch {
+      // ignora — não bloqueia user flow
+    }
     return;
   }
   // Fallback filesystem
-  const filePath = path.join(LOCAL_DATA, `${kvKeyToFile(key)}.json`);
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.writeFile(filePath, JSON.stringify(value, null, 2), "utf-8");
+  try {
+    const filePath = path.join(LOCAL_DATA, `${kvKeyToFile(key)}.json`);
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, JSON.stringify(value, null, 2), "utf-8");
+  } catch {
+    // Filesystem read-only (Vercel sem KV configurado) — falha silenciosa
+  }
 }
 
 export async function kvDel(key: string): Promise<void> {
   if (HAS_KV) {
-    const { kv } = await import("@vercel/kv");
-    await kv.del(key);
+    try {
+      const { kv } = await import("@vercel/kv");
+      await kv.del(key);
+    } catch {
+      // ignora
+    }
     return;
   }
   try {
@@ -66,14 +82,16 @@ export async function kvDel(key: string): Promise<void> {
 
 export async function kvKeys(pattern: string): Promise<string[]> {
   if (HAS_KV) {
-    const { kv } = await import("@vercel/kv");
-    return await kv.keys(pattern);
+    try {
+      const { kv } = await import("@vercel/kv");
+      return await kv.keys(pattern);
+    } catch {
+      return [];
+    }
   }
   // Fallback filesystem
   try {
     const files = await fs.readdir(LOCAL_DATA, { withFileTypes: true });
-    // Suporta padrão "prefix:*"
-    const prefix = pattern.replace(/\*$/, "").replace(/:/g, "_");
     return files
       .filter((f) => f.isFile() && f.name.endsWith(".json"))
       .map((f) => f.name.replace(/\.json$/, "").replace(/_/g, ":"))
