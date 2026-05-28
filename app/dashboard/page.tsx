@@ -6,6 +6,8 @@ import {
   MoreHorizontal,
   Activity,
   Globe,
+  Layout,
+  FileText,
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
@@ -18,7 +20,7 @@ import {
   type LandingPage,
 } from "@/lib/landing-pages";
 import { loadLps } from "@/lib/lp-store";
-import { listSaved } from "@/lib/wp-content-storage";
+import { listSaved, type SavedSummary } from "@/lib/wp-content-storage";
 import { fetchAllWpPages } from "@/lib/wp-api";
 import { loadDecisions } from "@/lib/wp-decisions";
 
@@ -33,6 +35,8 @@ export default async function DashboardPage() {
   ]);
 
   const activePages = landingPages.filter((lp) => !lp.trashed);
+  const uncategorizedWp = savedWp.filter((wp) => !wp.placed);
+  const categorizedWp = savedWp.filter((wp) => wp.placed);
   const totalPages = activePages.length + savedWp.length;
   const errorPages = activePages.filter((lp) => lp.status === "error").length;
 
@@ -117,6 +121,17 @@ export default async function DashboardPage() {
                   {activePages.slice(0, 5).map((lp) => (
                     <ProjectRow key={lp.slug} lp={lp} />
                   ))}
+                  {categorizedWp.slice(0, 5).map((wp) => (
+                    <WpProjectRow key={`${wp.domain}_${wp.slug}`} wp={wp} />
+                  ))}
+                  {activePages.length === 0 && categorizedWp.length === 0 && (
+                    <div className="px-5 py-8 text-center">
+                      <p className="text-xs text-neutral-500">
+                        Sem projetos ainda. Crie uma LP ou copie uma página do
+                        WordPress.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </section>
 
@@ -146,13 +161,17 @@ export default async function DashboardPage() {
                   <WpStat label="Já copiadas" value={wpStats.saved} />
                 </div>
 
-                {savedWp.length > 0 && (
+                {uncategorizedWp.length > 0 && (
                   <div className="border-t border-[#1f1f1f] pt-4">
                     <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold mb-3">
-                      Páginas copiadas ({savedWp.length})
+                      Páginas copiadas sem categoria ({uncategorizedWp.length})
+                    </p>
+                    <p className="text-[11px] text-neutral-500 mb-3 leading-relaxed">
+                      Escolha uma categoria pra elas aparecerem em Landing
+                      pages, Websites ou Formulários.
                     </p>
                     <div className="space-y-1">
-                      {savedWp.slice(0, 6).map((wp) => (
+                      {uncategorizedWp.slice(0, 6).map((wp) => (
                         <Link
                           key={`${wp.domain}_${wp.slug}`}
                           href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}`}
@@ -176,12 +195,12 @@ export default async function DashboardPage() {
                         </Link>
                       ))}
                     </div>
-                    {savedWp.length > 6 && (
+                    {uncategorizedWp.length > 6 && (
                       <Link
                         href="/wordpress"
                         className="block mt-3 text-center text-xs font-medium text-neutral-500 hover:text-white transition py-1"
                       >
-                        Ver as {savedWp.length - 6} restantes →
+                        Ver as {uncategorizedWp.length - 6} restantes →
                       </Link>
                     )}
                   </div>
@@ -326,6 +345,62 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
         {lp.lastEditedBy && (
           <p className="text-[11px] text-neutral-500">{lp.lastEditedBy}</p>
         )}
+      </div>
+      <span className="w-7 h-7 rounded-md text-neutral-500 group-hover:text-white group-hover:bg-[#161616] transition inline-flex items-center justify-center">
+        <MoreHorizontal size={14} strokeWidth={2} />
+      </span>
+    </Link>
+  );
+}
+
+function WpProjectRow({ wp }: { wp: SavedSummary }) {
+  const typeIcon =
+    wp.placed === "website" ? Globe : wp.placed === "form" ? FileText : Layout;
+  const typeLbl =
+    wp.placed === "website"
+      ? "Website"
+      : wp.placed === "form"
+      ? "Form"
+      : "LP";
+  const Icon = typeIcon;
+  return (
+    <Link
+      href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}`}
+      className="grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group"
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="w-10 h-12 rounded-md bg-gradient-to-br from-blue-500/40 to-violet-500/40 shrink-0 flex items-center justify-center">
+          <Icon size={13} strokeWidth={2.2} className="text-white/90" />
+        </span>
+        <div className="min-w-0">
+          <p
+            className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition"
+            dangerouslySetInnerHTML={{ __html: wp.title }}
+          />
+          <p className="text-[11px] text-neutral-500 truncate font-mono">
+            /{wp.slug}
+          </p>
+        </div>
+      </div>
+      <span className="text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded inline-block w-fit">
+        {typeLbl}
+      </span>
+      {wp.published ? (
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ring-1 w-fit bg-emerald-500/10 text-emerald-300 ring-emerald-500/25">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          Publicada
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ring-1 w-fit bg-neutral-500/10 text-neutral-300 ring-neutral-500/25">
+          <span className="w-1.5 h-1.5 rounded-full bg-neutral-500" />
+          Rascunho
+        </span>
+      )}
+      <div>
+        <p className="text-xs text-neutral-300">
+          {wp.fetchedAt ? relativeTime(wp.fetchedAt) : "—"}
+        </p>
+        <p className="text-[11px] text-neutral-500">do WP</p>
       </div>
       <span className="w-7 h-7 rounded-md text-neutral-500 group-hover:text-white group-hover:bg-[#161616] transition inline-flex items-center justify-center">
         <MoreHorizontal size={14} strokeWidth={2} />

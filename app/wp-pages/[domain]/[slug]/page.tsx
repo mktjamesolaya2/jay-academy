@@ -15,6 +15,7 @@ import { Sidebar } from "@/components/sidebar";
 import { loadContent } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
 import { deleteWpPageAction, placeWpPageAction } from "../../actions";
+import { PublishButton } from "@/components/publish-button";
 
 type Params = Promise<{ domain: string; slug: string }>;
 
@@ -195,6 +196,27 @@ export default async function WpPageDetailPage({
               </button>
             </form>
           )}
+        </section>
+
+        <section className="px-10 pb-8">
+          <div className="mb-3">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
+              Publicação
+            </p>
+            <p className="text-neutral-400 text-sm mt-1.5 max-w-2xl">
+              Quando publicada, qualquer pessoa com o link consegue ver — sem
+              precisar de login.
+            </p>
+          </div>
+          <PublishButton
+            content={{
+              domain: content.domain,
+              slug: content.slug,
+              published: content.published,
+              publicSlug: content.publicSlug,
+              publishedAt: content.publishedAt,
+            }}
+          />
         </section>
 
         <section className="px-10 pb-12">

@@ -2,13 +2,74 @@ import "server-only";
 import { kvDel, kvGet, kvKeys, kvSet } from "./storage";
 import type { WpPageContent as BaseWpPageContent } from "./wp-fetch-page";
 import type { WpDomain } from "./wp-api";
+export type { WpDomain };
 
 export type PlacementType = "website" | "lp" | "form";
 
 export type WpPageContent = BaseWpPageContent & {
   placed?: PlacementType;
   placedAt?: string;
+  published?: boolean;
+  publishedAt?: string;
+  publicSlug?: string;
 };
+
+// Index: slug público → { domain, originalSlug }
+// Permite buscar página WP pela URL pública /p/[slug]
+type PublishedIndex = { domain: WpDomain; slug: string };
+
+export async function getPublishedBySlug(
+  publicSlug: string
+): Promise<{ domain: WpDomain; slug: string } | null> {
+  return await kvGet<PublishedIndex>(`published-index:${publicSlug}`);
+}
+
+export async function setPublished(
+  content: WpPageContent,
+  publicSlug: string
+): Promise<void> {
+  // Verifica conflito de slug
+  const existing = await getPublishedBySlug(publicSlug);
+  if (
+    existing &&
+    !(existing.domain === content.domain && existing.slug === content.slug)
+  ) {
+    throw new Error(
+      `Já existe outra página publicada com slug "${publicSlug}"`
+    );
+  }
+
+  // Se a página tinha slug diferente antes, limpa o antigo
+  if (content.publicSlug && content.publicSlug !== publicSlug) {
+    await kvDel(`published-index:${content.publicSlug}`);
+  }
+
+  content.published = true;
+  content.publishedAt = new Date().toISOString();
+  content.publicSlug = publicSlug;
+  await saveContent(content);
+
+  await kvSet<PublishedIndex>(`published-index:${publicSlug}`, {
+    domain: content.domain,
+    slug: content.slug,
+  });
+}
+
+export async function unsetPublished(content: WpPageContent): Promise<void> {
+  if (content.publicSlug) {
+    await kvDel(`published-index:${content.publicSlug}`);
+  }
+  content.published = false;
+  delete content.publishedAt;
+  delete content.publicSlug;
+  await saveContent(content);
+}
+
+export async function listPublished(): Promise<WpPageContent[]> {
+  const keys = await kvKeys("wp:content:*");
+  const contents = await Promise.all(keys.map((k) => kvGet<WpPageContent>(k)));
+  return contents.filter((c): c is WpPageContent => c !== null && !!c.published);
+}
 
 function keyFor(domain: WpDomain, slug: string): string {
   return `wp:content:${domain}:${slug}`;
@@ -61,6 +122,8 @@ export type SavedSummary = {
   modified: string;
   fetchedAt: string;
   placed?: PlacementType;
+  published?: boolean;
+  publicSlug?: string;
 };
 
 export async function listSaved(): Promise<SavedSummary[]> {
@@ -77,6 +140,8 @@ export async function listSaved(): Promise<SavedSummary[]> {
       modified: c.modified,
       fetchedAt: c.fetchedAt,
       placed: c.placed,
+      published: c.published,
+      publicSlug: c.publicSlug,
     }))
     .sort((a, b) => b.fetchedAt.localeCompare(a.fetchedAt));
 }

@@ -5,7 +5,7 @@ const SECRET = new TextEncoder().encode(
   process.env.AUTH_SECRET || "jayacademy-dev-secret-change-in-production-please"
 );
 
-const PUBLIC_PATHS = ["/login", "/cadastro", "/api/auth"];
+const PUBLIC_PATHS = ["/login", "/cadastro", "/api/auth", "/p/"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
