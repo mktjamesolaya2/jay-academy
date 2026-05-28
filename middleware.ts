@@ -9,8 +9,10 @@ const PUBLIC_PATHS = [
   "/login",
   "/cadastro",
   "/api/auth",
+  "/api/chat-pmu",
   "/p/",
   "/magicshadow",
+  "/pmuclass",
 ];
 
 export async function middleware(req: NextRequest) {

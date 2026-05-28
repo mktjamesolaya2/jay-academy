@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       { source: "/magicshadow", destination: "/magicshadow/index.html" },
+      { source: "/pmuclass", destination: "/pmuclass/index.html" },
     ];
   },
 };
