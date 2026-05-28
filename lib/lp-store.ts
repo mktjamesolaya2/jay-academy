@@ -10,13 +10,30 @@ const LPS_KEY = "lps:all";
 /**
  * Lê as landing pages do storage.
  * Se vazio (primeira execução), faz seed com os dados iniciais do arquivo TS.
+ *
+ * Para LPs que existem no seed, sempre puxa os campos técnicos
+ * (productionUrl, devUrl, devPort, stack, localPath) do seed — assim
+ * mudanças no código refletem na UI sem precisar resetar o KV.
+ * Os campos editáveis pelo admin (name, tagline, description, status)
+ * ficam do que está no KV.
  */
 export async function loadLps(): Promise<LandingPage[]> {
   const stored = await kvGet<LandingPage[]>(LPS_KEY);
   if (stored && stored.length > 0) {
-    return stored;
+    return stored.map((lp) => {
+      const seed = SEED_LPS.find((s) => s.slug === lp.slug);
+      if (!seed) return lp;
+      return {
+        ...lp,
+        productionUrl: seed.productionUrl ?? lp.productionUrl,
+        devUrl: seed.devUrl ?? lp.devUrl,
+        devPort: seed.devPort ?? lp.devPort,
+        stack: seed.stack || lp.stack,
+        localPath: seed.localPath ?? lp.localPath,
+      };
+    });
   }
-  // Seed inicial com os 3 LPs hardcoded
+  // Seed inicial com os LPs hardcoded
   await kvSet(LPS_KEY, SEED_LPS);
   return SEED_LPS;
 }
