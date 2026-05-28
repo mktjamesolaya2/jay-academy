@@ -116,7 +116,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
               </p>
             </Block>
 
-            {lp.localPath && (
+            {lp.localPath && !lp.productionUrl && (
               <Block title="Como rodar localmente">
                 <ol className="text-sm text-neutral-400 space-y-3 leading-relaxed">
                 <li>
@@ -153,14 +153,6 @@ export default async function LpDetailPage({ params }: { params: Params }) {
             </Block>
             )}
 
-            <Block title="Path público quando deployar">
-              <p className="text-neutral-400 text-sm leading-relaxed">
-                URL final pública dessa LP:
-              </p>
-              <code className="block mt-3 bg-[#0a0a0a] border border-[#1f1f1f] rounded-md px-3 py-2.5 text-white text-sm font-mono">
-                https://jayacademy.com.br/{lp.slug}
-              </code>
-            </Block>
           </div>
 
           <aside className="space-y-5">
@@ -169,14 +161,14 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                 {lp.productionUrl && (
                   <ActionRow
                     icon={Globe}
-                    label="Abrir em produção"
+                    label="Abrir página"
                     sub={lp.productionUrl}
                     href={lp.productionUrl}
                     external
                   />
                 )}
-                {/* Atalhos locais (dev) — escondidos em produção */}
-                {!isProduction && lp.devUrl && (
+                {/* Atalhos de dev local — só aparecem se ainda não tem URL de produção */}
+                {!lp.productionUrl && !isProduction && lp.devUrl && (
                   <ActionRow
                     icon={ExternalLink}
                     label="Abrir LP local"
@@ -185,7 +177,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     external
                   />
                 )}
-                {!isProduction && lp.localPath && (
+                {!lp.productionUrl && !isProduction && lp.localPath && (
                   <ActionRow
                     icon={FolderOpen}
                     label="Pasta"
@@ -195,13 +187,10 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                 {lp.stack && (
                   <ActionRow icon={Terminal} label="Stack" sub={lp.stack} />
                 )}
-                {isProduction && !lp.productionUrl && (
+                {!lp.productionUrl && (
                   <div className="px-3 py-3 rounded-lg border border-dashed border-[#262626] text-xs text-neutral-500 leading-relaxed">
-                    Essa LP ainda não tem URL de produção. Quando deployar, ela
-                    vai aparecer em{" "}
-                    <span className="text-neutral-300 font-mono">
-                      jayacademy.com.br/{lp.slug}
-                    </span>
+                    Essa LP ainda não tem URL pública. Depois de embutir no
+                    portal, a URL vai aparecer aqui.
                   </div>
                 )}
               </div>
