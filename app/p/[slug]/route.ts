@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
+import { canEdit, getCurrentUser } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
 
@@ -58,12 +59,33 @@ ${cleaned}
     html = html.replace(/<\/body>/i, `${interceptor}\n</body>`);
   }
 
+  // Admin bar — só aparece pra admin/senior logado. Visitante público nem vê.
+  const me = await getCurrentUser();
+  if (canEdit(me)) {
+    const editHref = `/wp-pages/${content.domain}/${encodeURIComponent(
+      content.slug
+    )}/edit`;
+    const detailHref = `/wp-pages/${content.domain}/${encodeURIComponent(
+      content.slug
+    )}`;
+    const adminBar = buildAdminBar(editHref, detailHref);
+    html = html.replace(/<\/body>/i, `${adminBar}\n</body>`);
+  }
+
   return new NextResponse(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "public, max-age=60, s-maxage=60",
+      // Cache curto pra admin bar não congelar entre login/logout
+      "Cache-Control": canEdit(me) ? "private, no-store" : "public, max-age=60, s-maxage=60",
     },
   });
+}
+
+function buildAdminBar(editHref: string, detailHref: string): string {
+  return `<div data-portal-admin-bar="1" style="position:fixed;bottom:16px;right:16px;z-index:2147483647;display:flex;gap:6px;font-family:system-ui,-apple-system,sans-serif;">
+  <a href="${detailHref}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;background:#0d0d0d;color:#fff;border:1px solid #262626;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);transition:background 0.15s;" onmouseover="this.style.background='#1a1a1a'" onmouseout="this.style.background='#0d0d0d'">⚙ Painel</a>
+  <a href="${editHref}" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;background:#ffffff;color:#0a0a0a;border:1px solid #ffffff;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);transition:opacity 0.15s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">✎ Editar página</a>
+</div>`;
 }
 
 /**

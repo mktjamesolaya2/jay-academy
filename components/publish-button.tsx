@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import Link from "next/link";
 import {
   Globe,
   Lock,
@@ -10,6 +11,7 @@ import {
   AlertCircle,
   Loader2,
   ExternalLink,
+  Pencil,
 } from "lucide-react";
 import {
   publishPageAction,
@@ -97,12 +99,25 @@ export function PublishButton({
           </a>
         </div>
 
-        {content.publishedAt && (
-          <p className="text-[10px] text-neutral-500">
-            Publicada em{" "}
-            {new Date(content.publishedAt).toLocaleString("pt-BR")}
-          </p>
-        )}
+        <div className="flex items-center justify-between gap-3 pt-1">
+          {content.publishedAt ? (
+            <p className="text-[10px] text-neutral-500">
+              Publicada em{" "}
+              {new Date(content.publishedAt).toLocaleString("pt-BR")}
+            </p>
+          ) : (
+            <span />
+          )}
+          <Link
+            href={`/wp-pages/${content.domain}/${encodeURIComponent(
+              content.slug
+            )}/edit`}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold text-neutral-200 bg-[#161616] ring-1 ring-[#262626] hover:bg-[#222] hover:text-white transition"
+          >
+            <Pencil size={11} strokeWidth={2.4} />
+            Editar conteúdo
+          </Link>
+        </div>
       </div>
     );
   }

@@ -24,6 +24,7 @@ import { listSaved, type SavedSummary } from "@/lib/wp-content-storage";
 import { fetchAllWpPages } from "@/lib/wp-api";
 import { loadDecisions } from "@/lib/wp-decisions";
 import { SiteUrlLink } from "@/components/site-url-link";
+import { EditQuickLink } from "@/components/edit-quick-link";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import {
   describeActivity,
@@ -418,9 +419,9 @@ function WpProjectRow({ wp }: { wp: SavedSummary }) {
         </p>
         <p className="text-[11px] text-neutral-500">do WP</p>
       </div>
-      <span className="w-7 h-7 rounded-md text-neutral-500 group-hover:text-white group-hover:bg-[#161616] transition inline-flex items-center justify-center">
-        <MoreHorizontal size={14} strokeWidth={2} />
-      </span>
+      <EditQuickLink
+        href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}/edit`}
+      />
     </Link>
   );
 }
