@@ -12,6 +12,10 @@ export type WpPageContent = BaseWpPageContent & {
   published?: boolean;
   publishedAt?: string;
   publicSlug?: string;
+  /** Webhook URL pra onde mandar leads quando o form da página é enviado. */
+  formWebhookUrl?: string;
+  /** Pra onde redirecionar o usuário depois do submit. */
+  formRedirectUrl?: string;
 };
 
 // Index: slug público → { domain, originalSlug }

@@ -16,6 +16,7 @@ import { loadContent } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
 import { deleteWpPageAction, placeWpPageAction } from "../../actions";
 import { PublishButton } from "@/components/publish-button";
+import { WpFormBehavior } from "@/components/wp-form-behavior";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 
 type Params = Promise<{ domain: string; slug: string }>;
@@ -211,25 +212,46 @@ export default async function WpPageDetailPage({
         )}
 
         {userCanEdit && (
-          <section className="px-10 pb-8">
-            <div className="mb-3">
-              <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
-                Publicação
-              </p>
-              <p className="text-neutral-400 text-sm mt-1.5 max-w-2xl">
-                Quando publicada, qualquer pessoa com o link consegue ver — sem
-                precisar de login.
-              </p>
+          <section className="px-10 pb-8 grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div>
+              <div className="mb-3">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
+                  Publicação
+                </p>
+                <p className="text-neutral-400 text-sm mt-1.5">
+                  Quando publicada, qualquer pessoa com o link consegue ver —
+                  sem precisar de login.
+                </p>
+              </div>
+              <PublishButton
+                content={{
+                  domain: content.domain,
+                  slug: content.slug,
+                  published: content.published,
+                  publicSlug: content.publicSlug,
+                  publishedAt: content.publishedAt,
+                }}
+              />
             </div>
-            <PublishButton
-              content={{
-                domain: content.domain,
-                slug: content.slug,
-                published: content.published,
-                publicSlug: content.publicSlug,
-                publishedAt: content.publishedAt,
-              }}
-            />
+
+            <div>
+              <div className="mb-3">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
+                  Comportamento dos formulários
+                </p>
+                <p className="text-neutral-400 text-sm mt-1.5">
+                  Conecte o form da página a um webhook e defina pra onde
+                  redirecionar depois do envio.
+                </p>
+              </div>
+              <WpFormBehavior
+                domain={content.domain}
+                slug={content.slug}
+                initialWebhookUrl={content.formWebhookUrl}
+                initialRedirectUrl={content.formRedirectUrl}
+                isPublished={!!content.published}
+              />
+            </div>
           </section>
         )}
 
