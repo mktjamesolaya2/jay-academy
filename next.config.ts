@@ -10,9 +10,12 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
-      { source: "/magicshadow", destination: "/magicshadow/index.html" },
+      // Magic Shadow e Laser agora têm route handlers dinâmicos
+      // (app/magicshadow/route.ts e app/laser/route.ts) que podem servir
+      // versão editada do KV, com fallback pro filesystem. Por isso saíram
+      // dos rewrites estáticos. PMU CLASS continua servido como skeleton
+      // estático — o conteúdo editável é puxado em runtime via /api/lp-content.
       { source: "/pmuclass", destination: "/pmuclass/index.html" },
-      { source: "/laser", destination: "/laser/index.html" },
     ];
   },
 };

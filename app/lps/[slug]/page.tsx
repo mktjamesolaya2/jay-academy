@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   ExternalLink,
   FolderOpen,
-  Terminal,
   Globe,
   Pencil,
 } from "lucide-react";
@@ -176,6 +175,14 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     href="/lps/pmuclass/edit-content"
                   />
                 )}
+                {(lp.slug === "magic-shadow" || lp.slug === "laser") && (
+                  <ActionRow
+                    icon={Pencil}
+                    label="Editar visualmente"
+                    sub="Editor com arrastar, redimensionar, trocar imagem"
+                    href={`/lps/${lp.slug}/edit-visual`}
+                  />
+                )}
                 {/* Atalhos de dev local — só aparecem se ainda não tem URL de produção */}
                 {!lp.productionUrl && !isProduction && lp.devUrl && (
                   <ActionRow
@@ -192,9 +199,6 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     label="Pasta"
                     sub={lp.localPath}
                   />
-                )}
-                {lp.stack && (
-                  <ActionRow icon={Terminal} label="Stack" sub={lp.stack} />
                 )}
                 {!lp.productionUrl && (
                   <div className="px-3 py-3 rounded-lg border border-dashed border-[#262626] text-xs text-neutral-500 leading-relaxed">

@@ -100,12 +100,6 @@ export default async function ConnectLpPage({ params }: { params: Params }) {
             />
 
             <Field
-              label="Stack"
-              name="stack"
-              placeholder="Ex: Vite + React 19, HTML + CSS puro..."
-            />
-
-            <Field
               label="URL local de dev (opcional)"
               name="devUrl"
               placeholder="http://localhost:3000"

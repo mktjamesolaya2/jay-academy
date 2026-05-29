@@ -52,14 +52,6 @@ export function LpCard({ lp }: { lp: LandingPage }) {
           </p>
         )}
 
-        {lp.stack && (
-          <div className="mt-4 flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-medium px-2 py-1 rounded-md bg-[#161616] text-neutral-400">
-              {lp.stack}
-            </span>
-          </div>
-        )}
-
         <div className="mt-5 pt-4 border-t border-[#1a1a1a] flex items-center justify-between gap-3">
           <Link
             href={`/lps/${lp.slug}`}

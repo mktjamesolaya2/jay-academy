@@ -27,8 +27,7 @@ ${content.content}
 
   return (
     <EditorShell
-      domain={domain}
-      slug={decodedSlug}
+      source={{ kind: "wp", domain, slug: decodedSlug }}
       title={content.title}
       initialHtml={html}
     />

@@ -27,14 +27,18 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { saveEditedContentAction } from "@/app/wp-pages/[domain]/[slug]/edit/actions";
+import { saveEmbeddedHtmlAction } from "@/app/lps/[slug]/edit-visual/actions";
 import {
   ImageReplaceModal,
   type SelectedImage,
 } from "@/components/image-replace-modal";
 
+export type EditorSource =
+  | { kind: "wp"; domain: string; slug: string }
+  | { kind: "embed"; slug: string };
+
 export type EditorShellProps = {
-  domain: string;
-  slug: string;
+  source: EditorSource;
   title: string;
   initialHtml: string;
 };
@@ -831,11 +835,18 @@ function injectScript(html: string): string {
 }
 
 export function EditorShell({
-  domain,
-  slug,
+  source,
   title,
   initialHtml,
 }: EditorShellProps) {
+  // Atalhos pra não quebrar o resto do código que esperava domain/slug
+  const isWp = source.kind === "wp";
+  const domain = isWp ? source.domain : "embed";
+  const slug = source.slug;
+  const backHref =
+    source.kind === "wp"
+      ? `/wp-pages/${source.domain}/${source.slug}`
+      : `/lps/${source.slug}`;
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dirtyRef = useRef(false);
@@ -895,22 +906,27 @@ export function EditorShell({
       setError(null);
       const html = await exportHtml();
       const formData = new FormData();
-      formData.set("domain", domain);
-      formData.set("slug", slug);
+      formData.set("slug", source.slug);
       formData.set("html", html);
-      const result = await saveEditedContentAction(formData);
+      let result: { ok: boolean; error?: string };
+      if (source.kind === "wp") {
+        formData.set("domain", source.domain);
+        result = await saveEditedContentAction(formData);
+      } else {
+        result = await saveEmbeddedHtmlAction(formData);
+      }
       if (result.ok) {
         setSavedAt(new Date().toLocaleTimeString("pt-BR"));
         setDirty(false);
       } else {
-        setError(result.error);
+        setError(result.error ?? "Erro desconhecido");
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro ao salvar");
     } finally {
       setSaving(false);
     }
-  }, [domain, slug, exportHtml]);
+  }, [source, exportHtml]);
 
   // Auto-save com debounce de 3s (só se ativado)
   useEffect(() => {
@@ -1002,7 +1018,7 @@ export function EditorShell({
       <header className="shrink-0 border-b border-[#1f1f1f] px-6 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4 min-w-0">
           <Link
-            href={`/wp-pages/${domain}/${slug}`}
+            href={backHref}
             onClick={handleSidebarExit}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-white transition"
           >
