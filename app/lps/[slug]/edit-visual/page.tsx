@@ -34,11 +34,22 @@ export default async function EditVisualPage({
 
   if (!lp || !html) notFound();
 
+  // Sanitiza pro editor: tira todos os <script> da página original.
+  // Sem isso, apps React/TanStack rodam dentro do iframe do editor,
+  // tomam conta da URL e mostram 404; teclas como Ctrl+Z viram conflito
+  // com o roteador. Resultado: o editor passa a tratar a LP como HTML
+  // estático puro e o conteúdo salvo já entra no KV sem scripts.
+  const sanitized = stripScripts(html);
+
   return (
     <EditorShell
       source={{ kind: "embed", slug: embedSlug }}
       title={lp.name}
-      initialHtml={html}
+      initialHtml={sanitized}
     />
   );
+}
+
+function stripScripts(html: string): string {
+  return html.replace(/<script\b[\s\S]*?<\/script>/gi, "");
 }
