@@ -6,6 +6,7 @@ import {
   FolderOpen,
   Terminal,
   Globe,
+  Pencil,
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { statusLabel, statusColors } from "@/lib/landing-pages";
@@ -165,6 +166,14 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     sub={lp.productionUrl}
                     href={lp.productionUrl}
                     external
+                  />
+                )}
+                {lp.slug === "pmuclass" && (
+                  <ActionRow
+                    icon={Pencil}
+                    label="Editar conteúdo"
+                    sub="Textos, links Hotmart, WhatsApp"
+                    href="/lps/pmuclass/edit-content"
                   />
                 )}
                 {/* Atalhos de dev local — só aparecem se ainda não tem URL de produção */}
