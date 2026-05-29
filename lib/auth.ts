@@ -285,3 +285,38 @@ export async function signOut(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
 }
+
+/**
+ * Permite que o próprio usuário troque o nome de exibição.
+ * Atualiza o KV e re-emite o JWT cookie pra refletir na sessão atual.
+ */
+export async function updateMyName(
+  newName: string
+): Promise<{ ok: true; user: SessionUser } | { ok: false; error: string }> {
+  const trimmed = newName.trim();
+  if (!trimmed) return { ok: false, error: "Nome não pode ficar vazio" };
+  if (trimmed.length > 60) return { ok: false, error: "Nome muito longo (máx 60)" };
+
+  const me = await getCurrentUser();
+  if (!me) return { ok: false, error: "Você precisa estar logado" };
+
+  const users = await readUsers();
+  const idx = users.findIndex((u) => u.id === me.id);
+  if (idx === -1) return { ok: false, error: "Usuário não encontrado" };
+
+  users[idx] = { ...users[idx], name: trimmed };
+  await writeUsers(users);
+
+  const updated: SessionUser = { ...me, name: trimmed };
+  const token = await createToken(updated);
+  const cookieStore = await cookies();
+  cookieStore.set(COOKIE_NAME, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: COOKIE_MAX_AGE,
+    path: "/",
+  });
+
+  return { ok: true, user: updated };
+}

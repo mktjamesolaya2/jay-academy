@@ -25,6 +25,7 @@ import { fetchAllWpPages } from "@/lib/wp-api";
 import { loadDecisions } from "@/lib/wp-decisions";
 import { SiteUrlLink } from "@/components/site-url-link";
 import { EditQuickLink } from "@/components/edit-quick-link";
+import { EditableGreeting } from "@/components/editable-greeting";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import {
   describeActivity,
@@ -77,9 +78,10 @@ export default async function DashboardPage() {
             <div className="flex-1 min-w-0 px-8 py-8 space-y-8">
               {/* Greeting */}
               <section>
-                <h1 className="text-2xl font-semibold text-white tracking-[-0.02em]">
-                  {greeting}, James 👋
-                </h1>
+                <EditableGreeting
+                  greeting={greeting}
+                  initialName={me?.name ?? "você"}
+                />
                 <p className="text-sm text-neutral-500 mt-1">
                   Aqui está um resumo do que está acontecendo hoje.
                 </p>
