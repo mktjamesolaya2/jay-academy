@@ -13,6 +13,7 @@ const PUBLIC_PATHS = [
   "/p/",
   "/magicshadow",
   "/pmuclass",
+  "/laser",
 ];
 
 export async function middleware(req: NextRequest) {
