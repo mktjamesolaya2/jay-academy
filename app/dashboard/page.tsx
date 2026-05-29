@@ -23,6 +23,7 @@ import { loadLps } from "@/lib/lp-store";
 import { listSaved, type SavedSummary } from "@/lib/wp-content-storage";
 import { fetchAllWpPages } from "@/lib/wp-api";
 import { loadDecisions } from "@/lib/wp-decisions";
+import { SiteUrlLink } from "@/components/site-url-link";
 
 export const dynamic = "force-dynamic";
 
@@ -324,9 +325,7 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
           <p className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition">
             {lp.name}
           </p>
-          <p className="text-[11px] text-neutral-500 truncate">
-            {lp.domain || `/${lp.slug}`}
-          </p>
+          {lp.productionUrl && <SiteUrlLink url={lp.productionUrl} />}
         </div>
       </div>
       <span className="text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded inline-block w-fit">
