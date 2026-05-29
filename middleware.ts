@@ -10,6 +10,7 @@ const PUBLIC_PATHS = [
   "/cadastro",
   "/api/auth",
   "/api/chat-pmu",
+  "/api/wp-form-submit",
   "/p/",
   "/f/",
   "/magicshadow",
