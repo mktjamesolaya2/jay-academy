@@ -14,6 +14,10 @@ export type ActivityKind =
   | "lp.delete"
   | "lp.duplicate"
   | "lp.restore"
+  | "form.create"
+  | "form.update"
+  | "form.delete"
+  | "form.submission"
   | "user.promote"
   | "user.demote"
   | "user.delete";
@@ -60,6 +64,34 @@ export async function logActivity(
   }
 }
 
+/**
+ * Loga ação executada sem usuário autenticado (ex: submit de formulário público).
+ * O `actorName` vai como nome do "ator" no feed.
+ */
+export async function logAnonymousActivity(
+  kind: ActivityKind,
+  actorName: string,
+  target: string,
+  details?: string
+): Promise<void> {
+  try {
+    const entry: ActivityEntry = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      kind,
+      userId: "anonymous",
+      userName: actorName,
+      target,
+      details,
+      at: new Date().toISOString(),
+    };
+    const existing = (await kvGet<ActivityEntry[]>(KEY)) || [];
+    const next = [entry, ...existing].slice(0, MAX_ENTRIES);
+    await kvSet(KEY, next);
+  } catch {
+    // silencioso
+  }
+}
+
 export async function readActivityLog(
   limit = 30
 ): Promise<ActivityEntry[]> {
@@ -92,6 +124,14 @@ export function describeActivity(entry: ActivityEntry): string {
       return `duplicou a LP "${t}"`;
     case "lp.restore":
       return `restaurou a LP "${t}"`;
+    case "form.create":
+      return `criou o formulário "${t}"`;
+    case "form.update":
+      return `atualizou o formulário "${t}"`;
+    case "form.delete":
+      return `excluiu o formulário "${t}"`;
+    case "form.submission":
+      return `recebeu um lead no "${t}"${entry.details ? ` — ${entry.details}` : ""}`;
     case "user.promote":
       return `promoveu ${t} a admin`;
     case "user.demote":

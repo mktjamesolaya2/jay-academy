@@ -102,4 +102,22 @@
     border-color: #404040;
     background: var(--color-line-soft);
   }
+
+  .form-input {
+    width: 100%;
+    background: #0a0a0a;
+    border: 1px solid #1f1f1f;
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #fff;
+    transition: border-color 0.15s ease;
+  }
+  .form-input::placeholder {
+    color: #525252;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: #525252;
+  }
 }

@@ -11,6 +11,7 @@ const PUBLIC_PATHS = [
   "/api/auth",
   "/api/chat-pmu",
   "/p/",
+  "/f/",
   "/magicshadow",
   "/pmuclass",
   "/laser",
