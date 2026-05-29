@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
+import { logActivity } from "@/lib/activity-log";
 import {
   addLp,
   getLpFromStore,
@@ -60,6 +61,7 @@ export async function createLpAction(formData: FormData) {
     accent,
     createdAt: new Date().toISOString().split("T")[0],
   });
+  await logActivity("lp.create", name);
 
   revalidatePath("/dashboard");
   revalidatePath("/lps");
@@ -92,6 +94,7 @@ export async function duplicateLpAction(formData: FormData) {
     trashedAt: undefined,
     createdAt: new Date().toISOString().split("T")[0],
   });
+  await logActivity("lp.duplicate", original.name);
 
   revalidatePath("/dashboard");
   revalidatePath("/lps");
@@ -115,6 +118,7 @@ export async function editLpMetadataAction(formData: FormData) {
     : "rose") as LandingPage["accent"];
 
   await updateLp(slug, { name, tagline, description, type, accent });
+  await logActivity("lp.update", name || slug);
 
   revalidatePath("/dashboard");
   revalidatePath("/lps");
@@ -126,7 +130,9 @@ export async function moveToTrashAction(formData: FormData) {
   await requireAdmin();
   const slug = formData.get("slug")?.toString() ?? "";
   if (!slug) return;
+  const lp = await getLpFromStore(slug);
   await updateLp(slug, { trashed: true, trashedAt: new Date().toISOString() });
+  await logActivity("lp.delete", lp?.name || slug, "movida para a lixeira");
   revalidatePath("/dashboard");
   revalidatePath("/lps");
   revalidatePath("/websites");
@@ -138,7 +144,9 @@ export async function restoreFromTrashAction(formData: FormData) {
   await requireAdmin();
   const slug = formData.get("slug")?.toString() ?? "";
   if (!slug) return;
+  const lp = await getLpFromStore(slug);
   await updateLp(slug, { trashed: false, trashedAt: undefined });
+  await logActivity("lp.restore", lp?.name || slug);
   revalidatePath("/dashboard");
   revalidatePath("/lps");
   revalidatePath("/websites");
@@ -149,7 +157,9 @@ export async function permanentDeleteAction(formData: FormData) {
   await requireAdmin();
   const slug = formData.get("slug")?.toString() ?? "";
   if (!slug) return;
+  const lp = await getLpFromStore(slug);
   await removeLp(slug);
+  await logActivity("lp.delete", lp?.name || slug, "excluída permanentemente");
   revalidatePath("/dashboard");
   revalidatePath("/lps");
   revalidatePath("/websites");

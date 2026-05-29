@@ -7,16 +7,22 @@ import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import { LpCard } from "@/components/lp-card";
 import { WpPageCard } from "@/components/wp-page-card";
+import { canEdit, getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function WebsitesPage() {
-  const [landingPages, savedWp] = await Promise.all([loadLps(), listSaved()]);
+  const [landingPages, savedWp, me] = await Promise.all([
+    loadLps(),
+    listSaved(),
+    getCurrentUser(),
+  ]);
   const websites = landingPages.filter(
     (lp) => lp.type === "website" && !lp.trashed
   );
   const wpWebsites = savedWp.filter((wp) => wp.placed === "website");
   const totalCount = websites.length + wpWebsites.length;
+  const userCanEdit = canEdit(me);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -37,7 +43,7 @@ export default async function WebsitesPage() {
                   : `${totalCount} ${totalCount === 1 ? "website" : "websites"}`}
               </p>
             </div>
-            {totalCount > 0 && (
+            {totalCount > 0 && userCanEdit && (
               <Link
                 href="/lps/new"
                 className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
@@ -52,8 +58,12 @@ export default async function WebsitesPage() {
             <EmptyState
               icon={Globe}
               title="Sem websites ainda"
-              description="Websites são projetos multi-página com várias rotas (ex: PMU CLASS). Crie um pra começar."
-              action={{ label: "Criar website", href: "/lps/new" }}
+              description={
+                userCanEdit
+                  ? "Websites são projetos multi-página com várias rotas (ex: PMU CLASS). Crie um pra começar."
+                  : "Nenhum website ainda. Como visualizador você não pode criar — peça pro admin."
+              }
+              action={userCanEdit ? { label: "Criar website", href: "/lps/new" } : undefined}
             />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
+import { logActivity } from "@/lib/activity-log";
 import {
   loadContent,
   setPublished,
@@ -37,6 +38,7 @@ export async function publishPageAction(
     if (!publicSlug) return { error: "Slug inválido" };
 
     await setPublished(content, publicSlug);
+    await logActivity("wp.publish", content.title || slug, `/p/${publicSlug}`);
 
     revalidatePath(`/wp-pages/${domain}/${slug}`);
     revalidatePath(`/p/${publicSlug}`);
@@ -61,6 +63,7 @@ export async function unpublishPageAction(formData: FormData) {
 
   const oldPublicSlug = content.publicSlug;
   await unsetPublished(content);
+  await logActivity("wp.unpublish", content.title || slug);
 
   revalidatePath(`/wp-pages/${domain}/${slug}`);
   if (oldPublicSlug) revalidatePath(`/p/${oldPublicSlug}`);

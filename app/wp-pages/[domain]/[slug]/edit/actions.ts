@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth";
+import { logActivity } from "@/lib/activity-log";
 import { loadContent, saveContent } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
 
@@ -13,6 +15,7 @@ function cleanEditorArtifacts(html: string): string {
 }
 
 export async function saveEditedContentAction(formData: FormData) {
+  await requireAdmin();
   const domain = formData.get("domain")?.toString() as WpDomain;
   const slug = formData.get("slug")?.toString() ?? "";
   const html = formData.get("html")?.toString() ?? "";
@@ -28,6 +31,7 @@ export async function saveEditedContentAction(formData: FormData) {
   content.fullHtml = cleanEditorArtifacts(html);
   content.fetchedAt = new Date().toISOString();
   await saveContent(content);
+  await logActivity("wp.edit", content.title || slug);
 
   // NÃO revalida a rota /edit — isso causa re-render do iframe e perde estado
   revalidatePath(`/wp-pages/${domain}/${slug}`);

@@ -7,14 +7,20 @@ import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import { LpCard } from "@/components/lp-card";
 import { WpPageCard } from "@/components/wp-page-card";
+import { canEdit, getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function LpsPage() {
-  const [landingPages, savedWp] = await Promise.all([loadLps(), listSaved()]);
+  const [landingPages, savedWp, me] = await Promise.all([
+    loadLps(),
+    listSaved(),
+    getCurrentUser(),
+  ]);
   const lps = landingPages.filter((lp) => lp.type === "lp" && !lp.trashed);
   const wpLps = savedWp.filter((wp) => wp.placed === "lp");
   const totalCount = lps.length + wpLps.length;
+  const userCanEdit = canEdit(me);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -35,7 +41,7 @@ export default async function LpsPage() {
                   : `${totalCount} ${totalCount === 1 ? "página" : "páginas"}`}
               </p>
             </div>
-            {totalCount > 0 && (
+            {totalCount > 0 && userCanEdit && (
               <Link
                 href="/lps/new"
                 className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
@@ -50,8 +56,12 @@ export default async function LpsPage() {
             <EmptyState
               icon={Layout}
               title="Sem landing pages ainda"
-              description="LPs são páginas únicas de venda ou captação. Crie uma nova ou importe do WordPress."
-              action={{ label: "Criar LP", href: "/lps/new" }}
+              description={
+                userCanEdit
+                  ? "LPs são páginas únicas de venda ou captação. Crie uma nova ou importe do WordPress."
+                  : "Nenhuma LP foi criada ainda. Como visualizador você não pode criar — peça pro admin."
+              }
+              action={userCanEdit ? { label: "Criar LP", href: "/lps/new" } : undefined}
             />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">

@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth";
+import { logActivity } from "@/lib/activity-log";
 import {
   loadDecisions,
   replaceAllDecisions,
@@ -13,6 +15,7 @@ import { fetchPageContent } from "@/lib/wp-fetch-page";
 import { listSaved, saveContent } from "@/lib/wp-content-storage";
 
 export async function decideAction(formData: FormData) {
+  await requireAdmin();
   const key = formData.get("key")?.toString() ?? "";
   const decision = formData.get("decision")?.toString() as WpDecision;
   if (!key || !decision) return;
@@ -21,6 +24,7 @@ export async function decideAction(formData: FormData) {
 }
 
 export async function applyAllSuggestionsAction() {
+  await requireAdmin();
   const pages = await fetchAllWpPages();
   const batch: Record<string, WpDecision> = {};
   for (const page of pages) {
@@ -31,26 +35,34 @@ export async function applyAllSuggestionsAction() {
 }
 
 export async function clearAllDecisionsAction() {
+  await requireAdmin();
   await replaceAllDecisions({});
   revalidatePath("/wordpress");
 }
 
 async function runCopy(
   targets: { domain: WpDomain; id: number }[]
-): Promise<void> {
+): Promise<number> {
   const CONCURRENCY = 4;
+  let copied = 0;
   for (let i = 0; i < targets.length; i += CONCURRENCY) {
     const batch = targets.slice(i, i + CONCURRENCY);
     await Promise.all(
       batch.map(async ({ domain, id }) => {
         const content = await fetchPageContent(domain, id);
-        if (content) await saveContent(content);
+        if (content) {
+          await saveContent(content);
+          await logActivity("wp.copy", content.title || content.slug);
+          copied++;
+        }
       })
     );
   }
+  return copied;
 }
 
 export async function copyMarkedPagesAction() {
+  await requireAdmin();
   const decisions = await loadDecisions();
   const toCopy = Object.entries(decisions)
     .filter(([, d]) => d === "copy")
@@ -65,6 +77,7 @@ export async function copyMarkedPagesAction() {
 }
 
 export async function copyOnlyNewPagesAction() {
+  await requireAdmin();
   const [pages, decisions, saved] = await Promise.all([
     fetchAllWpPages(),
     loadDecisions(),

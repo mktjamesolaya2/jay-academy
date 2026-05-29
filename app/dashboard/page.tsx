@@ -24,22 +24,34 @@ import { listSaved, type SavedSummary } from "@/lib/wp-content-storage";
 import { fetchAllWpPages } from "@/lib/wp-api";
 import { loadDecisions } from "@/lib/wp-decisions";
 import { SiteUrlLink } from "@/components/site-url-link";
+import { canEdit, getCurrentUser } from "@/lib/auth";
+import {
+  describeActivity,
+  readActivityLog,
+  type ActivityEntry,
+} from "@/lib/activity-log";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [landingPages, savedWp, allWp, decisions] = await Promise.all([
-    loadLps(),
-    listSaved(),
-    fetchAllWpPages().catch(() => []),
-    loadDecisions(),
-  ]);
+  const [landingPages, savedWp, allWp, decisions, me, activity] =
+    await Promise.all([
+      loadLps(),
+      listSaved(),
+      fetchAllWpPages().catch(() => []),
+      loadDecisions(),
+      getCurrentUser(),
+      readActivityLog(15),
+    ]);
 
   const activePages = landingPages.filter((lp) => !lp.trashed);
   const uncategorizedWp = savedWp.filter((wp) => !wp.placed);
   const categorizedWp = savedWp.filter((wp) => wp.placed);
   const totalPages = activePages.length + savedWp.length;
   const errorPages = activePages.filter((lp) => lp.status === "error").length;
+  const userCanEdit = canEdit(me);
+  // Apenas admin e senior veem o feed de atividade e deploys
+  const showAdminFeeds = userCanEdit;
 
   const wpStats = {
     total: allWp.length,
@@ -95,7 +107,10 @@ export default async function DashboardPage() {
                 <h2 className="text-sm font-semibold text-white mb-3">
                   Ações rápidas
                 </h2>
-                <QuickActions landingPages={landingPages} />
+                <QuickActions
+                  landingPages={landingPages}
+                  canEdit={userCanEdit}
+                />
               </section>
 
               {/* Recent Projects */}
@@ -209,11 +224,13 @@ export default async function DashboardPage() {
               </section>
             </div>
 
-            {/* Right Sidebar */}
-            <aside className="w-80 shrink-0 border-l border-[#1f1f1f] p-5 space-y-5">
-              <ActivityFeed />
-              <DeploysFeed />
-            </aside>
+            {/* Right Sidebar — só admin/senior */}
+            {showAdminFeeds && (
+              <aside className="w-80 shrink-0 border-l border-[#1f1f1f] p-5 space-y-5">
+                <ActivityFeed entries={activity} />
+                <DeploysFeed />
+              </aside>
+            )}
           </div>
         </main>
       </div>
@@ -417,44 +434,37 @@ function WpStat({ label, value }: { label: string; value: number }) {
   );
 }
 
-function ActivityFeed() {
-  const items: { icon: typeof Activity; iconColor: string; line: string; time: string }[] = [];
-
+function ActivityFeed({ entries }: { entries: ActivityEntry[] }) {
   return (
     <div className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-white">Atividade recente</h3>
-        {items.length > 0 && (
-          <button className="text-[11px] font-medium text-neutral-500 hover:text-white transition">
-            Ver todos
-          </button>
-        )}
       </div>
-      {items.length === 0 ? (
+      {entries.length === 0 ? (
         <p className="text-[11px] text-neutral-500 leading-relaxed py-2">
           Sem atividade ainda. Ações vão aparecer aqui conforme você edita,
           publica e gerencia páginas.
         </p>
       ) : (
         <div className="space-y-3">
-          {items.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <div key={i} className="flex items-start gap-2.5">
-                <span className="w-7 h-7 rounded-md bg-[#161616] flex items-center justify-center shrink-0">
-                  <Icon size={12} strokeWidth={2} className={item.iconColor} />
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-neutral-200 leading-snug">
-                    {item.line}
-                  </p>
-                  <p className="text-[10px] text-neutral-500 mt-0.5">
-                    {item.time}
-                  </p>
-                </div>
+          {entries.map((entry) => (
+            <div key={entry.id} className="flex items-start gap-2.5">
+              <span className="w-7 h-7 rounded-md bg-[#161616] flex items-center justify-center shrink-0">
+                <Activity size={12} strokeWidth={2} className="text-neutral-400" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-neutral-200 leading-snug">
+                  <span className="font-semibold text-white">
+                    {entry.userName}
+                  </span>{" "}
+                  {describeActivity(entry)}
+                </p>
+                <p className="text-[10px] text-neutral-500 mt-0.5">
+                  {new Date(entry.at).toLocaleString("pt-BR")}
+                </p>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
     </div>

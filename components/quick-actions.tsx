@@ -14,8 +14,25 @@ import {
 import { type LandingPage } from "@/lib/landing-pages";
 import { duplicateLpAction } from "@/app/lps/actions";
 
-export function QuickActions({ landingPages }: { landingPages: LandingPage[] }) {
+export function QuickActions({
+  landingPages,
+  canEdit = true,
+}: {
+  landingPages: LandingPage[];
+  canEdit?: boolean;
+}) {
   const [duplicateOpen, setDuplicateOpen] = useState(false);
+
+  if (!canEdit) {
+    return (
+      <div className="bg-[#0d0d0d] border border-dashed border-[#262626] rounded-xl px-4 py-3">
+        <p className="text-[11px] text-neutral-500 leading-relaxed">
+          Modo visualização — seu perfil não tem permissão pra criar, importar
+          ou duplicar páginas. Peça pro admin liberar.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>

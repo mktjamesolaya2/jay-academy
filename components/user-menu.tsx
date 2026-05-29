@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, LogOut, Shield, Eye } from "lucide-react";
+import { ChevronDown, LogOut, Shield, Eye, Crown } from "lucide-react";
 import { logoutAction } from "@/app/login/actions";
-import { type SessionUser } from "@/lib/auth";
+import { type SessionUser, type UserRole } from "@/lib/auth";
 
-const roleLabel = {
+const roleLabel: Record<UserRole, string> = {
+  senior: "Senior",
   admin: "Administrador",
-  editor: "Editor",
   viewer: "Visualizador",
-} as const;
+};
 
 export function UserMenu({ user }: { user: SessionUser | null }) {
   const [open, setOpen] = useState(false);
@@ -28,7 +28,8 @@ export function UserMenu({ user }: { user: SessionUser | null }) {
   if (!user) return null;
 
   const initial = user.name.charAt(0).toUpperCase();
-  const RoleIcon = user.role === "admin" ? Shield : Eye;
+  const RoleIcon =
+    user.role === "senior" ? Crown : user.role === "admin" ? Shield : Eye;
 
   return (
     <div className="relative" ref={ref}>

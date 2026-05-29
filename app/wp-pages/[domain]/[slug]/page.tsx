@@ -16,6 +16,7 @@ import { loadContent } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
 import { deleteWpPageAction, placeWpPageAction } from "../../actions";
 import { PublishButton } from "@/components/publish-button";
+import { canEdit, getCurrentUser } from "@/lib/auth";
 
 type Params = Promise<{ domain: string; slug: string }>;
 
@@ -47,8 +48,12 @@ export default async function WpPageDetailPage({
 }) {
   const { domain, slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const content = await loadContent(domain as WpDomain, decodedSlug);
+  const [content, me] = await Promise.all([
+    loadContent(domain as WpDomain, decodedSlug),
+    getCurrentUser(),
+  ]);
   if (!content) notFound();
+  const userCanEdit = canEdit(me);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -80,15 +85,17 @@ export default async function WpPageDetailPage({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Link
-                href={`/wp-pages/${content.domain}/${encodeURIComponent(
-                  content.slug
-                )}/edit`}
-                className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
-              >
-                <Pencil size={13} strokeWidth={2.4} />
-                Editar
-              </Link>
+              {userCanEdit && (
+                <Link
+                  href={`/wp-pages/${content.domain}/${encodeURIComponent(
+                    content.slug
+                  )}/edit`}
+                  className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
+                >
+                  <Pencil size={13} strokeWidth={2.4} />
+                  Editar
+                </Link>
+              )}
               <a
                 href={content.link}
                 target="_blank"
@@ -98,21 +105,24 @@ export default async function WpPageDetailPage({
                 Ver no WP
                 <ExternalLink size={13} strokeWidth={2} />
               </a>
-              <form action={deleteWpPageAction}>
-                <input type="hidden" name="domain" value={content.domain} />
-                <input type="hidden" name="slug" value={content.slug} />
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-rose-300 bg-rose-500/10 ring-1 ring-rose-500/25 hover:bg-rose-500/20 transition"
-                >
-                  <Trash2 size={13} strokeWidth={2} />
-                  Excluir
-                </button>
-              </form>
+              {userCanEdit && (
+                <form action={deleteWpPageAction}>
+                  <input type="hidden" name="domain" value={content.domain} />
+                  <input type="hidden" name="slug" value={content.slug} />
+                  <button
+                    type="submit"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-rose-300 bg-rose-500/10 ring-1 ring-rose-500/25 hover:bg-rose-500/20 transition"
+                  >
+                    <Trash2 size={13} strokeWidth={2} />
+                    Excluir
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </header>
 
+        {userCanEdit && (
         <section className="px-10 py-8">
           <div className="mb-6">
             <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
@@ -198,26 +208,30 @@ export default async function WpPageDetailPage({
           )}
         </section>
 
-        <section className="px-10 pb-8">
-          <div className="mb-3">
-            <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
-              Publicação
-            </p>
-            <p className="text-neutral-400 text-sm mt-1.5 max-w-2xl">
-              Quando publicada, qualquer pessoa com o link consegue ver — sem
-              precisar de login.
-            </p>
-          </div>
-          <PublishButton
-            content={{
-              domain: content.domain,
-              slug: content.slug,
-              published: content.published,
-              publicSlug: content.publicSlug,
-              publishedAt: content.publishedAt,
-            }}
-          />
-        </section>
+        )}
+
+        {userCanEdit && (
+          <section className="px-10 pb-8">
+            <div className="mb-3">
+              <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
+                Publicação
+              </p>
+              <p className="text-neutral-400 text-sm mt-1.5 max-w-2xl">
+                Quando publicada, qualquer pessoa com o link consegue ver — sem
+                precisar de login.
+              </p>
+            </div>
+            <PublishButton
+              content={{
+                domain: content.domain,
+                slug: content.slug,
+                published: content.published,
+                publicSlug: content.publicSlug,
+                publishedAt: content.publishedAt,
+              }}
+            />
+          </section>
+        )}
 
         <section className="px-10 pb-12">
           <div className="mb-3 flex items-center justify-between">

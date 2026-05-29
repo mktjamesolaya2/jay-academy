@@ -1,15 +1,21 @@
 import Link from "next/link";
-import { Trash2, ChevronRight } from "lucide-react";
+import { Trash2, ChevronRight, Users } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const [landingPages, savedWp] = await Promise.all([loadLps(), listSaved()]);
+  const [landingPages, savedWp, me] = await Promise.all([
+    loadLps(),
+    listSaved(),
+    getCurrentUser(),
+  ]);
   const trashedCount = landingPages.filter((lp) => lp.trashed).length;
+  const isSenior = me?.role === "senior";
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -56,6 +62,36 @@ export default async function SettingsPage() {
               <Row label="Estratégia" value="Path-based + rewrites" />
               <Row label="Estado" value="Não deployado" muted />
             </Section>
+
+            {isSenior && (
+              <Link
+                href="/settings/users"
+                className="lg:col-span-2 bg-gradient-to-r from-amber-500/5 to-transparent border border-amber-500/30 hover:border-amber-500/50 rounded-2xl p-6 flex items-center justify-between gap-4 transition group"
+              >
+                <div className="flex items-center gap-4">
+                  <span className="w-11 h-11 rounded-lg bg-amber-500/15 ring-1 ring-amber-500/30 flex items-center justify-center">
+                    <Users size={16} strokeWidth={2} className="text-amber-300" />
+                  </span>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-amber-300 font-semibold">
+                      Senior
+                    </p>
+                    <h3 className="font-semibold text-base text-white tracking-tight mt-0.5">
+                      Gestão de usuários
+                    </h3>
+                    <p className="text-xs text-neutral-400 mt-0.5">
+                      Promover a admin, rebaixar pra visualizador, excluir
+                      perfis
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight
+                  size={16}
+                  strokeWidth={2}
+                  className="text-neutral-500 group-hover:text-white group-hover:translate-x-0.5 transition"
+                />
+              </Link>
+            )}
 
             <Link
               href="/lixeira"
