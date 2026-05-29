@@ -8,6 +8,7 @@ import {
   Layout,
   FileText,
   Settings,
+  Lightbulb,
 } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -16,6 +17,7 @@ const navItems = [
   { href: "/websites", label: "Websites", icon: Globe },
   { href: "/lps", label: "Landing Pages", icon: Layout },
   { href: "/forms", label: "Formulários", icon: FileText },
+  { href: "/sugestoes", label: "Sugestões", icon: Lightbulb },
   { href: "/settings", label: "Configurações", icon: Settings },
 ];
 
