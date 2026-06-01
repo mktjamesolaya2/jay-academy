@@ -9,6 +9,7 @@ import {
   restoreFromTrashAction,
   permanentDeleteAction,
 } from "@/app/lps/actions";
+import { formatDateTimeBR } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 
@@ -69,9 +70,7 @@ export default async function LixeiraPage() {
                     {typeLabel[lp.type]}
                   </span>
                   <p className="text-xs text-neutral-500">
-                    {lp.trashedAt
-                      ? new Date(lp.trashedAt).toLocaleString("pt-BR")
-                      : "—"}
+                    {lp.trashedAt ? formatDateTimeBR(lp.trashedAt) : "—"}
                   </p>
                   <div className="flex items-center justify-end gap-2">
                     <form action={restoreFromTrashAction}>

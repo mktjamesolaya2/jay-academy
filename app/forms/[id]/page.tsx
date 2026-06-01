@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { canEdit, getCurrentUser } from "@/lib/auth";
+import { formatDateTimeBR } from "@/lib/format-date";
 import { getForm, listSubmissions } from "@/lib/forms-store";
 import { deleteFormAction } from "../actions";
 import { EditFormView } from "./edit-form-view";
@@ -156,7 +157,7 @@ export default async function FormDetailPage({
 
             <Block title="Criado em">
               <p className="text-neutral-300 text-sm font-medium">
-                {new Date(form.createdAt).toLocaleString("pt-BR")}
+                {formatDateTimeBR(form.createdAt)}
               </p>
             </Block>
           </aside>
@@ -250,7 +251,7 @@ function SubmissionRow({
           </p>
         </div>
         <p className="text-[10px] text-neutral-500 shrink-0 whitespace-nowrap mt-0.5">
-          {new Date(submission.submittedAt).toLocaleString("pt-BR")}
+          {formatDateTimeBR(submission.submittedAt)}
         </p>
       </div>
       <div className="flex items-center gap-1 mt-2">

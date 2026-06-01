@@ -20,6 +20,7 @@ import {
   publicUrlFor,
   type LandingPage,
 } from "@/lib/landing-pages";
+import { formatDateTimeBR } from "@/lib/format-date";
 import { loadLps } from "@/lib/lp-store";
 import { listSaved, type SavedSummary } from "@/lib/wp-content-storage";
 import { fetchAllWpPages } from "@/lib/wp-api";
@@ -562,7 +563,7 @@ function ActivityFeed({ entries }: { entries: ActivityEntry[] }) {
                   {describeActivity(entry)}
                 </p>
                 <p className="text-[10px] text-neutral-500 mt-0.5">
-                  {new Date(entry.at).toLocaleString("pt-BR")}
+                  {formatDateTimeBR(entry.at)}
                 </p>
               </div>
             </div>

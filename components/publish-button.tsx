@@ -18,6 +18,7 @@ import {
   unpublishPageAction,
 } from "@/app/wp-pages/publish-actions";
 import type { WpPageContent } from "@/lib/wp-content-storage";
+import { formatDateTimeBR } from "@/lib/format-date";
 
 export function PublishButton({
   content,
@@ -102,8 +103,7 @@ export function PublishButton({
         <div className="flex items-center justify-between gap-3 pt-1">
           {content.publishedAt ? (
             <p className="text-[10px] text-neutral-500">
-              Publicada em{" "}
-              {new Date(content.publishedAt).toLocaleString("pt-BR")}
+              Publicada em {formatDateTimeBR(content.publishedAt)}
             </p>
           ) : (
             <span />

@@ -14,6 +14,7 @@ import {
 import { fetchAllWpPages, pageKey, type WpPage } from "@/lib/wp-api";
 import { loadDecisions, type WpDecision } from "@/lib/wp-decisions";
 import { listSaved } from "@/lib/wp-content-storage";
+import { formatDateTimeBR } from "@/lib/format-date";
 import { isCampaign } from "@/lib/wp-categorize";
 import {
   applyAllSuggestionsAction,
@@ -196,7 +197,7 @@ export default async function WordPressPage() {
                           : "lp.jayacademy.com.br"}
                       </td>
                       <td className="px-6 py-3.5 text-xs text-neutral-500 font-mono">
-                        {new Date(s.fetchedAt).toLocaleString("pt-BR")}
+                        {formatDateTimeBR(s.fetchedAt)}
                       </td>
                     </tr>
                   ))}
