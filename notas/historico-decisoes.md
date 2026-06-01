@@ -189,6 +189,24 @@
 
 ---
 
+## 2026-06-01 (noite) — Bug do .gitignore `build/`
+
+### Sintoma
+Push do commit `b477f15` foi pra GitHub mas o build de produção no Vercel falhou com `Cannot find module '@/app/lps/[slug]/build/actions'`. Preview da CLI tinha passado, mas era falso positivo (CLI vê filesystem local, GitHub deploy só vê o que está commitado).
+
+### Causa
+`.gitignore` linha 9 tinha `build/` (genérico, sem barra inicial). Esse pattern matchea QUALQUER pasta chamada `build` no repo, incluindo `app/lps/[slug]/build/` — o folder novo da rota do editor. Os arquivos `page.tsx` e `actions.ts` ficaram silently ignored pelo git. O commit subiu sem eles.
+
+### Fix
+Mudei `build/` → `/build/` (ancorado na raiz) em `.gitignore`. Next 16 com Turbopack usa `.next/` mesmo, então o pattern raiz é só por precaução.
+
+### Lição (importante)
+- Padrões `.gitignore` SEM barra inicial são RECURSIVOS — pegam qualquer subpasta com aquele nome em qualquer profundidade.
+- Sempre que possível, ancorar padrões na raiz com `/` no começo (`/build/`, `/dist/`, etc).
+- Antes de assumir que commit tá completo, conferir `git status --ignored` quando algo der errado.
+
+---
+
 ## 🔮 Decisões pendentes (a tomar)
 
 - [ ] Destino do WordPress atual quando portal subir em `jayacademy.com.br` — backup em `wp.jayacademy.com.br`? Redirects 301? Morre?
