@@ -34,7 +34,7 @@ import {
   type TextData,
   type ImageData,
 } from "@/lib/page-builder-types";
-import { BlockRenderer } from "@/components/page-builder/public-renderer";
+import { EditableBlockRenderer } from "@/components/page-builder/editable-renderer";
 import { ImageInput } from "@/components/page-builder/image-input";
 import { saveBuilderAction } from "@/app/lps/[slug]/build/actions";
 
@@ -372,21 +372,46 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
                 </div>
               </div>
             ) : (
-              page.blocks.map((block) => (
-                <div
-                  key={block.id}
-                  onClick={() => setSelectedId(block.id)}
-                  className={`relative group cursor-pointer ${
-                    selectedId === block.id ? "outline outline-2 outline-blue-500 outline-offset-[-2px]" : ""
-                  }`}
-                >
-                  <BlockRenderer
-                    block={block}
-                    gradient={gradient}
-                    dark={page.theme.darkMode}
-                  />
-                </div>
-              ))
+              page.blocks.map((block, idx) => {
+                const isSelected = selectedId === block.id;
+                return (
+                  <div
+                    key={block.id}
+                    onClick={(e) => {
+                      // Não roubar foco de inputs editáveis
+                      if ((e.target as HTMLElement).closest("[contenteditable]"))
+                        return;
+                      setSelectedId(block.id);
+                    }}
+                    className={`relative ${
+                      isSelected
+                        ? "outline outline-2 outline-blue-500 outline-offset-[-2px]"
+                        : "hover:outline hover:outline-1 hover:outline-blue-500/30 hover:outline-offset-[-1px]"
+                    }`}
+                  >
+                    {isSelected && (
+                      <FloatingBlockToolbar
+                        canMoveUp={idx > 0}
+                        canMoveDown={idx < page.blocks.length - 1}
+                        onMoveUp={() => moveBlock(block.id, -1)}
+                        onMoveDown={() => moveBlock(block.id, 1)}
+                        onDuplicate={() => duplicateBlock(block.id)}
+                        onDelete={() => deleteBlock(block.id)}
+                        onAddBelow={() => {
+                          setAddAtIndex(idx + 1);
+                          setShowAddModal(true);
+                        }}
+                      />
+                    )}
+                    <EditableBlockRenderer
+                      block={block}
+                      onChange={(data) => updateBlock(block.id, data)}
+                      gradient={gradient}
+                      dark={page.theme.darkMode}
+                    />
+                  </div>
+                );
+              })
             )}
           </div>
         </main>
@@ -416,6 +441,79 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
         />
       )}
     </div>
+  );
+}
+
+function FloatingBlockToolbar({
+  canMoveUp,
+  canMoveDown,
+  onMoveUp,
+  onMoveDown,
+  onDuplicate,
+  onDelete,
+  onAddBelow,
+}: {
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onDuplicate: () => void;
+  onDelete: () => void;
+  onAddBelow: () => void;
+}) {
+  return (
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="absolute -top-9 left-1/2 -translate-x-1/2 z-20 inline-flex items-center gap-0.5 bg-[#0d0d0d] border border-[#262626] rounded-lg p-1 shadow-2xl"
+    >
+      <ToolbarBtn
+        icon={ArrowUp}
+        title="Subir bloco"
+        onClick={onMoveUp}
+        disabled={!canMoveUp}
+      />
+      <ToolbarBtn
+        icon={ArrowDown}
+        title="Descer bloco"
+        onClick={onMoveDown}
+        disabled={!canMoveDown}
+      />
+      <span className="w-px h-5 bg-[#262626] mx-0.5" />
+      <ToolbarBtn icon={CopyIcon} title="Duplicar" onClick={onDuplicate} />
+      <ToolbarBtn icon={Plus} title="Adicionar bloco abaixo" onClick={onAddBelow} />
+      <span className="w-px h-5 bg-[#262626] mx-0.5" />
+      <ToolbarBtn icon={Trash2} title="Excluir" onClick={onDelete} danger />
+    </div>
+  );
+}
+
+function ToolbarBtn({
+  icon: Icon,
+  title,
+  onClick,
+  disabled,
+  danger,
+}: {
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
+  title: string;
+  onClick: () => void;
+  disabled?: boolean;
+  danger?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className={`w-7 h-7 rounded-md flex items-center justify-center transition disabled:opacity-30 disabled:cursor-not-allowed ${
+        danger
+          ? "text-rose-300 hover:bg-rose-500/15"
+          : "text-neutral-300 hover:text-white hover:bg-[#1a1a1a]"
+      }`}
+    >
+      <Icon size={13} strokeWidth={2.2} />
+    </button>
   );
 }
 
