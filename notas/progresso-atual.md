@@ -223,30 +223,36 @@ Implementada a 3ª das 3 ideias salvas em `suggestions-store.ts`: criar páginas
 
 - **Projeto Vercel**: `jay-academy.vercel.app` (account `mktjamesolaya2-5547s-projects`)
 - **Mesmo projeto serve**: portal admin na raiz + PMU CLASS em `/pmuclass`
-- **Portal linkado em**: `mktjamesolaya2-5547s-projects/jay-academy` (config em `.vercel/project.json`, gitignored)
-- **Vercel CLI**: instalado como devDep do portal (`./node_modules/.bin/vercel`)
-- **Como deployar**:
-  - Preview: `./node_modules/.bin/vercel --yes`
-  - Production: `./node_modules/.bin/vercel --prod`
+- **Git remote**: `github.com/mktjamesolaya2/jay-academy` (branch `main`)
+- **Fluxo de deploy**: integração Vercel ↔ GitHub. **`git push origin main` → Vercel buildaautomático** e promove pra produção. Sem CLI manual.
 
-### Último deploy preview (2026-06-01)
+### Como atualizar produção
 
-**URL preview**: https://jay-academy-4ge800672-mktjamesolaya2-5547s-projects.vercel.app
-**Deployment ID**: `dpl_6JWXUNmKHG8rVRMNHFWY64rP1iqD`
-**Status**: READY ✅
-**Inclui**: Page Builder completo (Opção 3)
+```
+cd portal
+git add <arquivos>
+git commit -m "..."
+git push origin main
+```
 
-### ⚠️ Limitações do deploy preview atual
+Em ~1-2 min sobe em `jay-academy.vercel.app`. Ver status em https://vercel.com/mktjamesolaya2-5547s-projects/jay-academy/deployments
 
-- **Dados resetam a cada build**: filesystem do servidor Vercel é efêmero. Pra persistir LPs/users/páginas builder em produção, precisa provisionar **Vercel KV** (Marketplace) + adicionar `KV_REST_API_URL` + `KV_REST_API_TOKEN` nas env vars.
+### ⚠️ Limitações persistentes do deploy
+
+- **Dados resetam a cada build**: filesystem do servidor Vercel é efêmero (`data/` local não vai pro Vercel). Pra persistir LPs/users/páginas builder em produção, precisa provisionar **Vercel KV** (Marketplace) + adicionar `KV_REST_API_URL` + `KV_REST_API_TOKEN` nas env vars.
 - **AUTH_SECRET dev hardcoded**: setar var real em produção (jose JWT signing).
-- **Nenhum dado seedado em produção**: ao abrir o preview, login e LPs estão vazios. Precisa cadastrar usuário no /cadastro (vira viewer) ou usar senior hardcoded (que sempre existe).
+- **Senior hardcoded sempre disponível**: `suporte@jamesolaya.com.br` / `@Suporte123` funciona mesmo sem KV.
 
 ### Pendências de produção
-  - [ ] Setar `AUTH_SECRET` real (hoje tem default dev) via `vercel env add AUTH_SECRET`
+  - [ ] Setar `AUTH_SECRET` real (hoje tem default dev) via dashboard Vercel
   - [ ] Provisionar Vercel KV via Marketplace + setar env vars
   - [ ] Conferir `vercel.json` (path rewrites pra `/pmuclass`, `/laser`, `/magicshadow`) — pode não existir ainda
-  - [ ] Promover preview pra produção quando aprovado: `./node_modules/.bin/vercel --prod`
+
+### Último push pra produção (2026-06-01)
+
+- **Commit**: `b477f15 Add page builder with 7 block types`
+- **Inclui**: Page Builder completo (Opção 3) + sistema de notas
+- **Build esperado**: ~1-2 min depois do push
 
 ## ⚠️ Bugs conhecidos / dívidas
 

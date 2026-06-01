@@ -176,19 +176,16 @@
 - **Lição**: Client Components NÃO podem importar de arquivos com `"server-only"`. Sempre separar tipos puros em arquivo distinto desde o início.
 - **Como aplicar de novo**: pra qualquer feature nova, criar `lib/X-types.ts` com tipos + `lib/X-store.ts` com server-only operations.
 
-### Vercel CLI como devDep do portal
-- **Decisão**: `npm i -D vercel` no portal em vez de instalar global
-- **Por quê**: cada projeto pode ter versão própria, melhor reprodutibilidade
-- **Comando**: `./node_modules/.bin/vercel` (Windows PowerShell)
+### Deploy via git push (não CLI)
+- **Decisão FINAL**: deploy é via `git push origin main` na repo `github.com/mktjamesolaya2/jay-academy`. Vercel pega via integração GitHub e deploya automático.
+- **Por quê**: setup já existia antes (James confirmou *"a gente criou junto"*). Cheguei a instalar `vercel` CLI + linkar manualmente + deployar preview por engano. Reverti: desinstalei CLI, mantive `.gitignore` com `.vercel`.
+- **Vantagem**: cada `git push` = produção sobe em ~1-2 min sem comandos extras. James pode fazer push de qualquer máquina.
+- **Lição**: SEMPRE conferir `git remote -v` no início. Se tem remote GitHub, presumir auto-deploy Vercel.
 
-### Linkagem ao projeto existente `jay-academy`
-- **Decisão**: `vercel link --yes --project jay-academy` em vez de criar projeto novo
-- **Por quê**: James já tinha o projeto `jay-academy.vercel.app` que serve portal raiz + `/pmuclass`. Mantém URL e config existentes.
-- **Account Vercel**: `mktjamesolaya2-5547s-projects`
-
-### Deploy preview antes de prod
-- **Decisão**: deployar preview primeiro (`vercel --yes`), só promover pra prod (`vercel --prod`) depois de James aprovar
-- **Por quê**: Page Builder é feature grande, novo código, novo storage. Validar em URL temporária antes de bater no domínio principal.
+### Account Vercel + projeto
+- **Account**: `mktjamesolaya2-5547s-projects`
+- **Projeto**: `jay-academy.vercel.app`
+- **Mesmo projeto**: serve portal admin na raiz + PMU CLASS em `/pmuclass` (path-based)
 
 ---
 
