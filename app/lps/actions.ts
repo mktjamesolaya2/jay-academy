@@ -43,8 +43,18 @@ export async function createLpAction(formData: FormData) {
   const useBuilder = formData.get("useBuilder")?.toString() === "1";
 
   if (!name) throw new Error("Nome obrigatório");
-  const slug = slugInput ? slugify(slugInput) : slugify(name);
-  if (!slug) throw new Error("Slug inválido");
+  const baseSlug = slugInput ? slugify(slugInput) : slugify(name);
+  if (!baseSlug) throw new Error("Slug inválido");
+
+  // Se o slug colide com LP existente, adiciona sufixo -2, -3, etc.
+  // Em vez de jogar 500 na cara do user.
+  const existing = await loadLps();
+  let slug = baseSlug;
+  let suffix = 2;
+  while (existing.find((lp) => lp.slug === slug)) {
+    slug = `${baseSlug}-${suffix}`;
+    suffix++;
+  }
 
   const type = (["website", "lp", "form"].includes(typeRaw) ? typeRaw : "lp") as LandingPage["type"];
   const accent = ((ALLOWED_ACCENTS as readonly string[]).includes(accentRaw)

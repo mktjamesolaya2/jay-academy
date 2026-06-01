@@ -85,18 +85,6 @@ export const landingPages: LandingPage[] = [
     accent: "rose",
     createdAt: "2026-05-27",
   },
-  {
-    slug: "teste",
-    name: "Teste",
-    tagline: "",
-    description: "",
-    stack: "",
-    status: "draft",
-    type: "lp",
-    localPath: "",
-    accent: "rose",
-    createdAt: "2026-05-28",
-  },
   // __INSERT_LP_HERE__
 ];
 
