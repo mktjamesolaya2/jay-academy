@@ -293,6 +293,9 @@ const EDITOR_SCRIPT = `
 
   function startMoveAt(el, mx, my) {
     snapshotNow(); // snapshot ANTES da mudança pra Ctrl+Z voltar
+    // Auto-promove o elemento pro topo do stack — sem isso, mover pra fora
+    // do bloco original faz o elemento ficar ATRÁS dos próximos blocos.
+    bringToTop(el);
     const cur = el.style.transform || '';
     const m = cur.match(/translate\\(\\s*(-?\\d+(?:\\.\\d+)?)px\\s*,\\s*(-?\\d+(?:\\.\\d+)?)px\\s*\\)/);
     drag = {
@@ -304,6 +307,43 @@ const EDITOR_SCRIPT = `
       startTy: m ? parseFloat(m[2]) : 0,
       transformOther: cur.replace(/translate\\([^)]*\\)/, '').trim()
     };
+  }
+
+  /**
+   * Garante que o elemento aparece visualmente acima dos vizinhos:
+   * 1. Move pro fim do parent (DOM order = stacking order quando z-index é igual)
+   * 2. Set position relative + z-index alto como reforço
+   * 3. Sobe stacking context dos ancestrais que confinariam o z-index
+   */
+  function bringToTop(el) {
+    if (!el || !el.parentNode || el === document.body) return;
+    el.parentNode.appendChild(el);
+    el.style.position = (el.style.position && el.style.position !== 'static') ? el.style.position : 'relative';
+    el.style.zIndex = '99999';
+    el.style.backdropFilter = 'none';
+    el.style.filter = 'none';
+    let p = el.parentElement;
+    while (p && p !== document.body) {
+      const cs = window.getComputedStyle(p);
+      const creates = cs.position !== 'static' || cs.transform !== 'none' ||
+                      cs.filter !== 'none' || cs.opacity !== '1' ||
+                      cs.isolation === 'isolate' || cs.willChange.indexOf('transform') >= 0;
+      if (creates) {
+        const cur = parseInt(p.style.zIndex || '0', 10) || 0;
+        if (cur < 999) p.style.zIndex = '999';
+        if (!p.style.position || p.style.position === 'static') p.style.position = 'relative';
+      }
+      p = p.parentElement;
+    }
+  }
+
+  function bringToBottom(el) {
+    if (!el || !el.parentNode || el === document.body) return;
+    el.parentNode.insertBefore(el, el.parentNode.firstChild);
+    el.style.position = (el.style.position && el.style.position !== 'static') ? el.style.position : 'relative';
+    el.style.zIndex = '0';
+    el.style.backdropFilter = 'none';
+    el.style.filter = 'none';
   }
 
   function startResize(e, corner) {
@@ -585,64 +625,79 @@ const EDITOR_SCRIPT = `
       }
     }
     if (data.type === 'editor:bring-front' && data.id) {
+      // +1: swap com o próximo irmão no DOM (uma posição pra frente no stack).
       const t = document.querySelector('[data-editor-id="' + data.id + '"]');
-      if (t) {
+      if (t && t.parentNode) {
         snapshotNow();
+        const next = t.nextElementSibling;
+        if (next) {
+          t.parentNode.insertBefore(next, t);
+        }
+        // Reforço com z-index
         const cur = parseInt(t.style.zIndex || '0', 10) || 0;
-        t.style.position = t.style.position || 'relative';
+        t.style.position = (t.style.position && t.style.position !== 'static') ? t.style.position : 'relative';
         t.style.zIndex = String(cur + 1);
-        // Remove backdrop-filter inherits que causam blur visual
         t.style.backdropFilter = 'none';
+        if (selected === t) positionOverlay(t);
         parent.postMessage({ type: 'editor:dirty' }, '*');
+        parent.postMessage({ type: 'editor:layers-stale' }, '*');
       }
     }
     if (data.type === 'editor:send-back' && data.id) {
+      // -1: swap com o irmão anterior no DOM (uma posição pra trás no stack).
       const t = document.querySelector('[data-editor-id="' + data.id + '"]');
-      if (t) {
+      if (t && t.parentNode) {
         snapshotNow();
+        const prev = t.previousElementSibling;
+        if (prev) {
+          t.parentNode.insertBefore(t, prev);
+        }
         const cur = parseInt(t.style.zIndex || '0', 10) || 0;
-        t.style.position = t.style.position || 'relative';
+        t.style.position = (t.style.position && t.style.position !== 'static') ? t.style.position : 'relative';
         t.style.zIndex = String(cur - 1);
         t.style.backdropFilter = 'none';
         t.style.filter = 'none';
+        if (selected === t) positionOverlay(t);
         parent.postMessage({ type: 'editor:dirty' }, '*');
+        parent.postMessage({ type: 'editor:layers-stale' }, '*');
       }
     }
     if (data.type === 'editor:bring-top' && data.id) {
+      // Topo: move pro fim do parent + libera ancestors. Garante visual sobre todos os irmãos.
       const t = document.querySelector('[data-editor-id="' + data.id + '"]');
       if (t) {
         snapshotNow();
-        t.style.position = t.style.position && t.style.position !== 'static' ? t.style.position : 'relative';
-        t.style.zIndex = '99999';
-        t.style.backdropFilter = 'none';
-        t.style.filter = 'none';
-        // Sobe z-index dos ancestrais que criam stacking context
-        // (pra escapar do "filho preso" em pai com position/transform)
-        let p = t.parentElement;
-        while (p && p !== document.body) {
-          const cs = window.getComputedStyle(p);
-          const creates = cs.position !== 'static' || cs.transform !== 'none' ||
-                          cs.filter !== 'none' || cs.opacity !== '1' ||
-                          cs.isolation === 'isolate' || cs.willChange.indexOf('transform') >= 0;
-          if (creates) {
-            const cur = parseInt(p.style.zIndex || '0', 10) || 0;
-            if (cur < 999) p.style.zIndex = '999';
-            if (!p.style.position || p.style.position === 'static') p.style.position = 'relative';
-          }
-          p = p.parentElement;
-        }
+        bringToTop(t);
+        if (selected === t) positionOverlay(t);
         parent.postMessage({ type: 'editor:dirty' }, '*');
+        parent.postMessage({ type: 'editor:layers-stale' }, '*');
       }
     }
     if (data.type === 'editor:send-bottom' && data.id) {
+      // Fundo: move pro início do parent.
       const t = document.querySelector('[data-editor-id="' + data.id + '"]');
       if (t) {
         snapshotNow();
-        t.style.position = t.style.position && t.style.position !== 'static' ? t.style.position : 'relative';
-        t.style.zIndex = '0';
-        t.style.backdropFilter = 'none';
-        t.style.filter = 'none';
+        bringToBottom(t);
+        if (selected === t) positionOverlay(t);
         parent.postMessage({ type: 'editor:dirty' }, '*');
+        parent.postMessage({ type: 'editor:layers-stale' }, '*');
+      }
+    }
+    if (data.type === 'editor:reorder' && data.id && data.targetId) {
+      // Drag-to-reorder do painel CAMADAS: move src pra antes/depois de tgt.
+      const src = document.querySelector('[data-editor-id="' + data.id + '"]');
+      const tgt = document.querySelector('[data-editor-id="' + data.targetId + '"]');
+      if (src && tgt && src !== tgt && tgt.parentNode) {
+        snapshotNow();
+        if (data.position === 'before') {
+          tgt.parentNode.insertBefore(src, tgt);
+        } else {
+          tgt.parentNode.insertBefore(src, tgt.nextSibling);
+        }
+        if (selected === src) positionOverlay(src);
+        parent.postMessage({ type: 'editor:dirty' }, '*');
+        parent.postMessage({ type: 'editor:layers-stale' }, '*');
       }
     }
     if (data.type === 'editor:reset-transform' && data.id) {
@@ -871,6 +926,12 @@ export function EditorShell({
   const [layers, setLayers] = useState<
     Array<{ id: string; tag: string; label: string; depth: number; isImage: boolean }>
   >([]);
+  // Ref espelhada pro showLayers — usada dentro do message handler sem
+  // re-registrar listener a cada toggle.
+  const showLayersRef = useRef(false);
+  useEffect(() => {
+    showLayersRef.current = showLayers;
+  }, [showLayers]);
 
   useEffect(() => {
     dirtyRef.current = dirty;
@@ -985,11 +1046,32 @@ export function EditorShell({
         setCanRedo(!!data.canRedo);
       } else if (data.type === "editor:layers") {
         setLayers(data.list || []);
+      } else if (data.type === "editor:layers-stale") {
+        // O iframe sinalizou que mudou ordem — re-busca lista.
+        if (showLayersRef.current) {
+          iframeRef.current?.contentWindow?.postMessage(
+            { type: "editor:list-layers" },
+            "*"
+          );
+        }
       }
     }
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
   }, []);
+
+  // Auto-refetch das camadas quando o editor fica pronto E o painel está aberto
+  // — cobre o caso onde o user abriu camadas antes do init terminar.
+  useEffect(() => {
+    if (!ready || !showLayers) return;
+    const t = setTimeout(() => {
+      iframeRef.current?.contentWindow?.postMessage(
+        { type: "editor:list-layers" },
+        "*"
+      );
+    }, 50);
+    return () => clearTimeout(t);
+  }, [ready, showLayers]);
 
   function openImageReplace() {
     if (!selected) return;
@@ -1118,6 +1200,14 @@ export function EditorShell({
               sendToIframe({ type: "editor:clear-highlight" })
             }
             onRefresh={() => sendToIframe({ type: "editor:list-layers" })}
+            onReorder={(id, targetId, position) =>
+              sendToIframe({
+                type: "editor:reorder",
+                id,
+                targetId,
+                position,
+              })
+            }
           />
         )}
 
@@ -1311,6 +1401,7 @@ function LayersPanel({
   onHoverLayer,
   onLeaveLayer,
   onRefresh,
+  onReorder,
 }: {
   layers: Array<{
     id: string;
@@ -1324,7 +1415,13 @@ function LayersPanel({
   onHoverLayer: (id: string) => void;
   onLeaveLayer: () => void;
   onRefresh: () => void;
+  onReorder: (id: string, targetId: string, position: "before" | "after") => void;
 }) {
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<
+    { id: string; pos: "before" | "after" } | null
+  >(null);
+
   return (
     <div className="w-64 shrink-0 border-r border-[#1f1f1f] bg-[#0a0a0a] flex flex-col">
       <div className="px-4 pt-4 pb-3 border-b border-[#1f1f1f] flex items-center justify-between">
@@ -1345,26 +1442,72 @@ function LayersPanel({
           <RefreshCw size={12} strokeWidth={2} />
         </button>
       </div>
+      <p className="px-4 pt-2 pb-1 text-[10px] text-neutral-600 leading-relaxed">
+        Arraste pra reordenar. Item no topo = atrás visualmente.
+      </p>
       <div
         className="flex-1 overflow-y-auto scrollbar-thin py-1"
         onMouseLeave={onLeaveLayer}
       >
         {layers.length === 0 ? (
-          <p className="px-4 py-6 text-xs text-neutral-500 text-center">
-            Carregando elementos...
-          </p>
+          <div className="px-4 py-6 text-center space-y-2">
+            <p className="text-xs text-neutral-500">Carregando elementos...</p>
+            <button
+              type="button"
+              onClick={onRefresh}
+              className="text-[11px] text-neutral-400 hover:text-white underline"
+            >
+              Atualizar agora
+            </button>
+          </div>
         ) : (
-          layers.map((l) => (
+          layers.map((l) => {
+            const isDragging = dragId === l.id;
+            const dropHere = dropTarget?.id === l.id;
+            return (
             <button
               key={l.id}
               type="button"
+              draggable
+              onDragStart={(e) => {
+                setDragId(l.id);
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (!dragId || dragId === l.id) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                const pos =
+                  e.clientY - rect.top < rect.height / 2 ? "before" : "after";
+                setDropTarget({ id: l.id, pos });
+              }}
+              onDragLeave={() => setDropTarget(null)}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (dragId && dragId !== l.id && dropTarget) {
+                  onReorder(dragId, l.id, dropTarget.pos);
+                }
+                setDragId(null);
+                setDropTarget(null);
+              }}
+              onDragEnd={() => {
+                setDragId(null);
+                setDropTarget(null);
+              }}
               onClick={() => onSelectLayer(l.id)}
               onMouseEnter={() => onHoverLayer(l.id)}
               className={clsx(
-                "w-full text-left flex items-center gap-2 px-2 py-1.5 text-xs transition truncate",
+                "w-full text-left flex items-center gap-2 px-2 py-1.5 text-xs transition truncate relative",
+                isDragging && "opacity-40",
                 selectedId === l.id
                   ? "bg-blue-500/20 text-white"
-                  : "text-neutral-400 hover:bg-[#121212] hover:text-white"
+                  : "text-neutral-400 hover:bg-[#121212] hover:text-white",
+                dropHere &&
+                  dropTarget?.pos === "before" &&
+                  "border-t-2 border-blue-500",
+                dropHere &&
+                  dropTarget?.pos === "after" &&
+                  "border-b-2 border-blue-500"
               )}
               style={{ paddingLeft: 8 + Math.min(l.depth, 6) * 10 }}
             >
@@ -1381,7 +1524,8 @@ function LayersPanel({
               </span>
               <span className="truncate">{l.label}</span>
             </button>
-          ))
+            );
+          })
         )}
       </div>
     </div>
