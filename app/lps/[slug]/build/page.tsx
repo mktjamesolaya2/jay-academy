@@ -24,17 +24,16 @@ function buildInitialHtml(body: string, title: string): string {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title.replace(/[<>&]/g, "")}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/builder-runtime.css" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; }
     details > summary::-webkit-details-marker { display: none; }
+    details > summary { list-style: none; }
   </style>
 </head>
 <body>
 ${body}
-<script async src="https://cdn.tailwindcss.com"></script>
 </body>
 </html>`;
 }
@@ -51,24 +50,22 @@ function stripScriptsExceptTailwind(html: string): string {
 }
 
 /**
- * Move o Tailwind CDN pra fim do body com async. Necessário porque
- * quando ele tá síncrono no <head>, o parser bloqueia a execução do script
- * do editor (que fica no fim do body), e o postMessage `editor:ready` nunca
- * dispara em tempo razoável.
+ * Garante que o HTML carregado do storage usa o stylesheet estático
+ * /builder-runtime.css (e não o Tailwind CDN antigo).
  */
-function normalizeTailwindPosition(html: string): string {
+function normalizeBuilderHtml(html: string): string {
   let out = html;
-  // Remove qualquer ocorrência do Tailwind CDN
+  // Remove qualquer script Tailwind CDN
   out = out.replace(
     /<script\b[^>]*cdn\.tailwindcss\.com[^>]*>[\s\S]*?<\/script>/gi,
     ""
   );
-  // Reinsere antes de </body> com async
-  const tag = `<script async src="https://cdn.tailwindcss.com"></script>`;
-  if (/<\/body>/i.test(out)) {
-    out = out.replace(/<\/body>/i, `${tag}\n</body>`);
-  } else {
-    out = out + tag;
+  // Garante o link do CSS local no head
+  if (!/href=["']\/builder-runtime\.css["']/i.test(out)) {
+    out = out.replace(
+      /<\/head>/i,
+      `  <link href="/builder-runtime.css" rel="stylesheet">\n</head>`
+    );
   }
   return out;
 }
@@ -99,9 +96,8 @@ export default async function BuildPage({ params }: { params: Params }) {
     await saveEmbeddedHtml(slug, html);
   }
 
-  // Garante que o Tailwind CDN está como async no fim do body. Remove
-  // outros scripts.
-  const sanitized = normalizeTailwindPosition(stripScriptsExceptTailwind(html));
+  // Limpa scripts e garante o stylesheet local.
+  const sanitized = normalizeBuilderHtml(stripScriptsExceptTailwind(html));
 
   return (
     <EditorShell

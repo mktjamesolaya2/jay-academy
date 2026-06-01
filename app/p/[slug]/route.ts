@@ -39,7 +39,20 @@ export async function GET(_req: Request, { params }: { params: Params }) {
     const title = lp?.name ?? "Página";
     let html: string;
     if (editedHtml) {
-      html = editedHtml;
+      // HTML editado já vem do storage com o link pro builder-runtime.css
+      // injetado por /lps/[slug]/build/page.tsx. Reaplica defensivamente
+      // pra cobrir HTMLs antigos salvos antes desse fix.
+      html = editedHtml
+        .replace(
+          /<script\b[^>]*cdn\.tailwindcss\.com[^>]*>[\s\S]*?<\/script>/gi,
+          ""
+        );
+      if (!/href=["']\/builder-runtime\.css["']/i.test(html)) {
+        html = html.replace(
+          /<\/head>/i,
+          `  <link href="/builder-runtime.css" rel="stylesheet">\n</head>`
+        );
+      }
     } else {
       const body = renderBuilderPageHtml(builder!);
       html = `<!DOCTYPE html>
@@ -48,13 +61,12 @@ export async function GET(_req: Request, { params }: { params: Params }) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${escapeHtml(title)}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="/builder-runtime.css" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; }
     details > summary::-webkit-details-marker { display: none; }
+    details > summary { list-style: none; }
   </style>
 </head>
 <body>
