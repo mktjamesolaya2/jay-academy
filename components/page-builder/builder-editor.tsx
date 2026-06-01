@@ -35,6 +35,7 @@ import {
   type ImageData,
 } from "@/lib/page-builder-types";
 import { BlockRenderer } from "@/components/page-builder/public-renderer";
+import { ImageInput } from "@/components/page-builder/image-input";
 import { saveBuilderAction } from "@/app/lps/[slug]/build/actions";
 
 type Props = {
@@ -680,15 +681,10 @@ function HeroEditor({
           className={textareaClass}
         />
       </Field>
-      <Field label="Imagem de fundo (URL)" hint="Deixe vazio pra usar bg sólido">
-        <input
-          type="url"
+      <Field label="Imagem de fundo" hint="Cole uma URL ou envie do computador. Deixe vazio pra usar bg sólido.">
+        <ImageInput
           value={data.backgroundImage ?? ""}
-          onChange={(e) =>
-            onChange({ ...data, backgroundImage: e.target.value })
-          }
-          className={inputClass}
-          placeholder="https://..."
+          onChange={(v) => onChange({ ...data, backgroundImage: v })}
         />
       </Field>
       <Field label="Texto do botão">
@@ -802,13 +798,16 @@ function TestimonialsEditor({
               placeholder="Profissão / cargo"
               className={inputClass}
             />
-            <input
-              type="url"
-              value={item.avatar ?? ""}
-              onChange={(e) => updateItem(idx, { avatar: e.target.value })}
-              placeholder="URL da foto (opcional)"
-              className={inputClass}
-            />
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold mb-1">
+                Foto (opcional)
+              </p>
+              <ImageInput
+                value={item.avatar ?? ""}
+                onChange={(v) => updateItem(idx, { avatar: v })}
+                placeholder="URL da foto"
+              />
+            </div>
             <textarea
               value={item.text}
               onChange={(e) => updateItem(idx, { text: e.target.value })}
@@ -1150,13 +1149,10 @@ function ImageEditor({
 }) {
   return (
     <>
-      <Field label="URL da imagem">
-        <input
-          type="url"
+      <Field label="Imagem" hint="Cole uma URL ou envie do computador">
+        <ImageInput
           value={data.src}
-          onChange={(e) => onChange({ ...data, src: e.target.value })}
-          className={inputClass}
-          placeholder="https://..."
+          onChange={(v) => onChange({ ...data, src: v })}
         />
       </Field>
       <Field label="Texto alternativo (alt)">
