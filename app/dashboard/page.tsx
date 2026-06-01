@@ -55,6 +55,46 @@ export default async function DashboardPage() {
   // Apenas admin e senior veem o feed de atividade e deploys
   const showAdminFeeds = userCanEdit;
 
+  // Recentes = editados nos últimos 3 dias (LP ou WP)
+  const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const isRecent = (iso?: string): boolean =>
+    !!iso && now - new Date(iso).getTime() <= THREE_DAYS_MS;
+  const recentLps = activePages
+    .filter((lp) => isRecent(lp.lastEditedAt))
+    .sort(
+      (a, b) =>
+        new Date(b.lastEditedAt ?? 0).getTime() -
+        new Date(a.lastEditedAt ?? 0).getTime()
+    );
+  const recentWp = categorizedWp
+    .filter((wp) => isRecent(wp.fetchedAt))
+    .sort(
+      (a, b) =>
+        new Date(b.fetchedAt ?? 0).getTime() -
+        new Date(a.fetchedAt ?? 0).getTime()
+    );
+  const totalRecent = recentLps.length + recentWp.length;
+
+  // Rascunhos = LPs com status draft (não trashed)
+  const draftLps = activePages.filter((lp) => lp.status === "draft");
+
+  // Todos = ordenados por última edição desc, com fallback createdAt
+  const sortByEdit = <
+    T extends { lastEditedAt?: string; createdAt?: string },
+  >(arr: T[]): T[] =>
+    [...arr].sort((a, b) => {
+      const da = new Date(a.lastEditedAt ?? a.createdAt ?? 0).getTime();
+      const db = new Date(b.lastEditedAt ?? b.createdAt ?? 0).getTime();
+      return db - da;
+    });
+  const allLps = sortByEdit(activePages);
+  const allWpSorted = [...categorizedWp].sort(
+    (a, b) =>
+      new Date(b.fetchedAt ?? 0).getTime() -
+      new Date(a.fetchedAt ?? 0).getTime()
+  );
+
   const wpStats = {
     total: allWp.length,
     copy: Object.values(decisions).filter((d) => d === "copy").length,
@@ -116,43 +156,37 @@ export default async function DashboardPage() {
                 />
               </section>
 
-              {/* Recent Projects */}
-              <section className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                <div className="px-5 py-4 flex items-center justify-between border-b border-[#1f1f1f]">
-                  <h2 className="text-sm font-semibold text-white">
-                    Projetos recentes
-                  </h2>
-                  <Link
-                    href="/lps"
-                    className="text-xs font-medium text-neutral-500 hover:text-white transition"
-                  >
-                    Ver todos
-                  </Link>
-                </div>
-                <div>
-                  <div className="grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold border-b border-[#1f1f1f]">
-                    <div>Nome</div>
-                    <div>Tipo</div>
-                    <div>Status</div>
-                    <div>Última edição</div>
-                    <div></div>
-                  </div>
-                  {activePages.slice(0, 5).map((lp) => (
-                    <ProjectRow key={lp.slug} lp={lp} />
-                  ))}
-                  {categorizedWp.slice(0, 5).map((wp) => (
-                    <WpProjectRow key={`${wp.domain}_${wp.slug}`} wp={wp} />
-                  ))}
-                  {activePages.length === 0 && categorizedWp.length === 0 && (
-                    <div className="px-5 py-8 text-center">
-                      <p className="text-xs text-neutral-500">
-                        Sem projetos ainda. Crie uma LP ou copie uma página do
-                        WordPress.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </section>
+              {/* Recentes */}
+              <ProjectsSection
+                title="Recentes"
+                emptyMessage="Nada editado recentemente."
+                lps={recentLps}
+                wps={recentWp}
+                viewAllHref={null}
+                showCount={totalRecent}
+              />
+
+              {/* Rascunhos */}
+              {draftLps.length > 0 && (
+                <ProjectsSection
+                  title="Rascunhos"
+                  emptyMessage="Sem rascunhos."
+                  lps={draftLps}
+                  wps={[]}
+                  viewAllHref={null}
+                  showCount={draftLps.length}
+                />
+              )}
+
+              {/* Todos os projetos */}
+              <ProjectsSection
+                title="Todos os projetos"
+                emptyMessage="Sem projetos ainda. Crie uma LP ou copie uma página do WordPress."
+                lps={allLps}
+                wps={allWpSorted}
+                viewAllHref="/lps"
+                showCount={allLps.length + allWpSorted.length}
+              />
 
               {/* WordPress block */}
               <section className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl p-5">
@@ -320,6 +354,67 @@ function QuickAction({
     <button type="button" className={cls}>
       {inner}
     </button>
+  );
+}
+
+function ProjectsSection({
+  title,
+  emptyMessage,
+  lps,
+  wps,
+  viewAllHref,
+  showCount,
+}: {
+  title: string;
+  emptyMessage: string;
+  lps: LandingPage[];
+  wps: SavedSummary[];
+  viewAllHref: string | null;
+  showCount: number;
+}) {
+  const isEmpty = lps.length === 0 && wps.length === 0;
+  return (
+    <section className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+      <div className="px-5 py-4 flex items-center justify-between border-b border-[#1f1f1f]">
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-sm font-semibold text-white">{title}</h2>
+          {!isEmpty && (
+            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-600">
+              {showCount}
+            </span>
+          )}
+        </div>
+        {viewAllHref && (
+          <Link
+            href={viewAllHref}
+            className="text-xs font-medium text-neutral-500 hover:text-white transition"
+          >
+            Ver todos
+          </Link>
+        )}
+      </div>
+      {isEmpty ? (
+        <div className="px-5 py-8 text-center">
+          <p className="text-xs text-neutral-500">{emptyMessage}</p>
+        </div>
+      ) : (
+        <div>
+          <div className="grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold border-b border-[#1f1f1f]">
+            <div>Nome</div>
+            <div>Tipo</div>
+            <div>Status</div>
+            <div>Última edição</div>
+            <div></div>
+          </div>
+          {lps.slice(0, 8).map((lp) => (
+            <ProjectRow key={lp.slug} lp={lp} />
+          ))}
+          {wps.slice(0, 8).map((wp) => (
+            <WpProjectRow key={`${wp.domain}_${wp.slug}`} wp={wp} />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 

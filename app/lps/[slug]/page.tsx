@@ -14,6 +14,7 @@ import { getLpFromStore } from "@/lib/lp-store";
 import { isBuilderPage } from "@/lib/page-builder-store";
 import { clsx } from "clsx";
 import { LpActionsMenu } from "@/components/lp-actions-menu";
+import { LpPublishCard } from "@/components/lp-publish-card";
 
 type Params = Promise<{ slug: string }>;
 
@@ -76,7 +77,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
 
         <section className="px-10 py-8 grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2 space-y-5">
-            {!lp.localPath && (
+            {!lp.localPath && !hasBuilder && (
               <div className="bg-amber-500/5 border border-amber-500/25 rounded-2xl p-5">
                 <p className="text-[11px] uppercase tracking-[0.16em] text-amber-300 font-semibold">
                   Página em rascunho
@@ -85,25 +86,17 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                   Conteúdo ainda não foi construído
                 </h3>
                 <p className="text-sm text-neutral-400 mt-2 leading-relaxed">
-                  Você criou o registro dessa página, mas o HTML/visual dela
-                  ainda não existe. Pra continuar:
+                  Essa página é só um registro por enquanto. Você pode:
                 </p>
                 <ul className="text-sm text-neutral-300 mt-3 space-y-1.5">
                   <li>
                     <span className="text-amber-300 font-semibold">•</span>{" "}
-                    Peça pro programador (Claude) estruturar essa página
+                    Clicar em <span className="text-white">Editar com blocos</span>{" "}
+                    pra construir com o editor visual
                   </li>
                   <li>
                     <span className="text-amber-300 font-semibold">•</span>{" "}
-                    Ou crie a pasta{" "}
-                    <code className="bg-[#161616] px-1.5 py-0.5 rounded text-xs font-mono">
-                      {lp.slug}/
-                    </code>{" "}
-                    com os arquivos da página
-                  </li>
-                  <li>
-                    <span className="text-amber-300 font-semibold">•</span>{" "}
-                    Ou importe uma página similar do WordPress e adapte
+                    Ou importar uma página similar do WordPress e adaptar
                   </li>
                 </ul>
               </div>
@@ -159,6 +152,13 @@ export default async function LpDetailPage({ params }: { params: Params }) {
           </div>
 
           <aside className="space-y-5">
+            {!lp.localPath && (
+              <LpPublishCard
+                slug={lp.slug}
+                status={lp.status}
+                hasBuilder={hasBuilder}
+              />
+            )}
             <Block title="Atalhos">
               <div className="space-y-2">
                 {lp.productionUrl && (

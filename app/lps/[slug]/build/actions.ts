@@ -9,7 +9,7 @@ import {
   saveBuilderPage,
   type BuilderPage,
 } from "@/lib/page-builder-store";
-import { getLpFromStore } from "@/lib/lp-store";
+import { getLpFromStore, updateLp } from "@/lib/lp-store";
 
 export async function saveBuilderAction(
   slug: string,
@@ -23,7 +23,11 @@ export async function saveBuilderAction(
     }
     await saveBuilderPage(parsed);
     const lp = await getLpFromStore(slug);
+    if (lp) {
+      await updateLp(slug, { lastEditedAt: new Date().toISOString() });
+    }
     await logActivity("lp.update", lp?.name || slug, "blocos atualizados");
+    revalidatePath("/dashboard");
     revalidatePath(`/lps/${slug}`);
     revalidatePath(`/lps/${slug}/build`);
     revalidatePath(`/p/${slug}`);

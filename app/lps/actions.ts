@@ -61,6 +61,7 @@ export async function createLpAction(formData: FormData) {
     ? accentRaw
     : "rose") as LandingPage["accent"];
 
+  const now = new Date();
   await addLp({
     slug,
     name,
@@ -71,7 +72,8 @@ export async function createLpAction(formData: FormData) {
     type,
     localPath: "",
     accent,
-    createdAt: new Date().toISOString().split("T")[0],
+    createdAt: now.toISOString().split("T")[0],
+    lastEditedAt: now.toISOString(),
   });
 
   if (useBuilder) {
@@ -138,7 +140,14 @@ export async function editLpMetadataAction(formData: FormData) {
     ? accentRaw
     : "rose") as LandingPage["accent"];
 
-  await updateLp(slug, { name, tagline, description, type, accent });
+  await updateLp(slug, {
+    name,
+    tagline,
+    description,
+    type,
+    accent,
+    lastEditedAt: new Date().toISOString(),
+  });
   await logActivity("lp.update", name || slug);
 
   revalidatePath("/dashboard");
@@ -193,8 +202,21 @@ export async function setLpStatusAction(formData: FormData) {
   const status = formData.get("status")?.toString() ?? "";
   const validStatuses = ["draft", "published", "archived", "deploying", "error"];
   if (!slug || !validStatuses.includes(status)) return;
-  await updateLp(slug, { status: status as LandingPage["status"] });
+  const lp = await getLpFromStore(slug);
+  await updateLp(slug, {
+    status: status as LandingPage["status"],
+    lastEditedAt: new Date().toISOString(),
+  });
+  if (lp) {
+    if (status === "published") {
+      await logActivity("lp.update", lp.name, "publicada");
+    } else if (status === "draft") {
+      await logActivity("lp.update", lp.name, "despublicada");
+    }
+  }
   revalidatePath("/dashboard");
   revalidatePath("/lps");
+  revalidatePath("/websites");
   revalidatePath(`/lps/${slug}`);
+  revalidatePath(`/p/${slug}`);
 }
