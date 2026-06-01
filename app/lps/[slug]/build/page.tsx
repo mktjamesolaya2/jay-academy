@@ -6,11 +6,49 @@ import {
   loadBuilderPage,
   saveBuilderPage,
 } from "@/lib/page-builder-store";
-import { BuilderEditor } from "@/components/page-builder/builder-editor";
+import {
+  loadEditedEmbeddedHtml,
+  saveEmbeddedHtml,
+} from "@/lib/embedded-html-store";
+import { renderBuilderPageHtml } from "@/lib/builder-html-render";
+import { EditorShell } from "@/components/editor-shell";
 
 type Params = Promise<{ slug: string }>;
 
 export const dynamic = "force-dynamic";
+
+function buildInitialHtml(body: string, title: string): string {
+  return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${title.replace(/[<>&]/g, "")}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    details > summary::-webkit-details-marker { display: none; }
+  </style>
+</head>
+<body>
+${body}
+</body>
+</html>`;
+}
+
+/**
+ * Preserva o Tailwind CDN (precisa estilizar dentro do iframe) e remove
+ * qualquer outro script. Builder pages não têm scripts além do CDN.
+ */
+function stripScriptsExceptTailwind(html: string): string {
+  return html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (match, attrs) => {
+    if (/cdn\.tailwindcss\.com/.test(attrs)) return match;
+    return "";
+  });
+}
 
 export default async function BuildPage({ params }: { params: Params }) {
   const { slug } = await params;
@@ -21,11 +59,32 @@ export default async function BuildPage({ params }: { params: Params }) {
   const lp = await getLpFromStore(slug);
   if (!lp) notFound();
 
-  let page = await loadBuilderPage(slug);
-  if (!page) {
-    page = emptyPage(slug);
-    await saveBuilderPage(page);
+  // Estado em ordem de prioridade:
+  // 1. HTML embedded já salvo (edição em andamento ou prévia) → continua dali
+  // 2. Builder page com blocos → renderiza HTML inicial dos blocos e salva embedded
+  // 3. Nada → cria builder page vazia + HTML vazio
+  let html = await loadEditedEmbeddedHtml(slug);
+
+  if (!html) {
+    let page = await loadBuilderPage(slug);
+    if (!page) {
+      page = emptyPage(slug);
+      await saveBuilderPage(page);
+    }
+    const body = renderBuilderPageHtml(page);
+    html = buildInitialHtml(body, lp.name);
+    await saveEmbeddedHtml(slug, html);
   }
 
-  return <BuilderEditor slug={slug} lpName={lp.name} initialPage={page} />;
+  // Mantém o Tailwind CDN pra estilizar dentro do iframe. Remove qualquer
+  // outro script (não deveria ter, mas defensive).
+  const sanitized = stripScriptsExceptTailwind(html);
+
+  return (
+    <EditorShell
+      source={{ kind: "builder", slug }}
+      title={lp.name}
+      initialHtml={sanitized}
+    />
+  );
 }

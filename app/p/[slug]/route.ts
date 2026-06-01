@@ -3,6 +3,7 @@ import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { loadBuilderPage } from "@/lib/page-builder-store";
 import { renderBuilderPageHtml } from "@/lib/builder-html-render";
+import { loadEditedEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
 
 function escapeHtml(s: string): string {
@@ -20,9 +21,14 @@ export async function GET(_req: Request, { params }: { params: Params }) {
   const { slug } = await params;
   const decoded = decodeURIComponent(slug);
 
-  // ─── Builder page (criada do zero via editor de blocos) ─────────
+  // ─── Página servida pelo builder ────────────────────────────────
+  // Prioridade:
+  //   1. HTML editado no editor visual (KV embedded-html)
+  //   2. HTML renderizado a partir dos blocos JSON
+  // Em ambos os casos, só serve se a LP está published (ou se o user é admin).
+  const editedHtml = await loadEditedEmbeddedHtml(decoded);
   const builder = await loadBuilderPage(decoded);
-  if (builder) {
+  if (editedHtml || builder) {
     const lp = await getLpFromStore(decoded);
     if (lp?.status !== "published") {
       const me = await getCurrentUser();
@@ -30,9 +36,13 @@ export async function GET(_req: Request, { params }: { params: Params }) {
         return new NextResponse("Página não publicada", { status: 404 });
       }
     }
-    const body = renderBuilderPageHtml(builder);
     const title = lp?.name ?? "Página";
-    const html = `<!DOCTYPE html>
+    let html: string;
+    if (editedHtml) {
+      html = editedHtml;
+    } else {
+      const body = renderBuilderPageHtml(builder!);
+      html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
@@ -51,6 +61,7 @@ export async function GET(_req: Request, { params }: { params: Params }) {
 ${body}
 </body>
 </html>`;
+    }
     return new NextResponse(html, {
       headers: {
         "Content-Type": "text/html; charset=utf-8",

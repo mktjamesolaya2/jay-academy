@@ -28,6 +28,7 @@ import {
 import { clsx } from "clsx";
 import { saveEditedContentAction } from "@/app/wp-pages/[domain]/[slug]/edit/actions";
 import { saveEmbeddedHtmlAction } from "@/app/lps/[slug]/edit-visual/actions";
+import { saveBuilderHtmlAction } from "@/app/lps/[slug]/build/actions";
 import {
   ImageReplaceModal,
   type SelectedImage,
@@ -35,7 +36,8 @@ import {
 
 export type EditorSource =
   | { kind: "wp"; domain: string; slug: string }
-  | { kind: "embed"; slug: string };
+  | { kind: "embed"; slug: string }
+  | { kind: "builder"; slug: string };
 
 export type EditorShellProps = {
   source: EditorSource;
@@ -912,6 +914,8 @@ export function EditorShell({
       if (source.kind === "wp") {
         formData.set("domain", source.domain);
         result = await saveEditedContentAction(formData);
+      } else if (source.kind === "builder") {
+        result = await saveBuilderHtmlAction(formData);
       } else {
         result = await saveEmbeddedHtmlAction(formData);
       }
