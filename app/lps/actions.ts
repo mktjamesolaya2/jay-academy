@@ -13,6 +13,7 @@ import {
   updateLp,
 } from "@/lib/lp-store";
 import type { LandingPage } from "@/lib/landing-pages";
+import { emptyPage, saveBuilderPage } from "@/lib/page-builder-store";
 
 function slugify(input: string): string {
   return input
@@ -39,6 +40,7 @@ export async function createLpAction(formData: FormData) {
   const description = formData.get("description")?.toString().trim() ?? "";
   const typeRaw = formData.get("type")?.toString().trim() ?? "lp";
   const accentRaw = formData.get("accent")?.toString().trim() ?? "rose";
+  const useBuilder = formData.get("useBuilder")?.toString() === "1";
 
   if (!name) throw new Error("Nome obrigatório");
   const slug = slugInput ? slugify(slugInput) : slugify(name);
@@ -54,18 +56,27 @@ export async function createLpAction(formData: FormData) {
     name,
     tagline,
     description,
-    stack: "",
+    stack: useBuilder ? "Blocos (page builder)" : "",
     status: "draft",
     type,
     localPath: "",
     accent,
     createdAt: new Date().toISOString().split("T")[0],
   });
+
+  if (useBuilder) {
+    await saveBuilderPage(emptyPage(slug));
+  }
+
   await logActivity("lp.create", name);
 
   revalidatePath("/dashboard");
   revalidatePath("/lps");
   revalidatePath("/websites");
+
+  if (useBuilder) {
+    redirect(`/lps/${slug}/build`);
+  }
   redirect(`/lps/${slug}?just-created=1`);
 }
 

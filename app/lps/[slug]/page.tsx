@@ -6,10 +6,12 @@ import {
   FolderOpen,
   Globe,
   Pencil,
+  Sparkles,
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { statusLabel, statusColors } from "@/lib/landing-pages";
 import { getLpFromStore } from "@/lib/lp-store";
+import { isBuilderPage } from "@/lib/page-builder-store";
 import { clsx } from "clsx";
 import { LpActionsMenu } from "@/components/lp-actions-menu";
 
@@ -22,6 +24,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
 
   const style = statusColors[lp.status];
   const isProduction = process.env.VERCEL_ENV === "production" || !!process.env.VERCEL;
+  const hasBuilder = await isBuilderPage(slug);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -181,6 +184,22 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     label="Editar visualmente"
                     sub="Editor com arrastar, redimensionar, trocar imagem"
                     href={`/lps/${lp.slug}/edit-visual`}
+                  />
+                )}
+                {hasBuilder && (
+                  <ActionRow
+                    icon={Sparkles}
+                    label="Editar com blocos"
+                    sub="Hero, depoimentos, FAQ, CTA, preços — sem programador"
+                    href={`/lps/${lp.slug}/build`}
+                  />
+                )}
+                {!hasBuilder && !lp.localPath && lp.slug !== "pmuclass" && (
+                  <ActionRow
+                    icon={Sparkles}
+                    label="Construir com blocos"
+                    sub="Cria essa página com Hero, FAQ, CTA, etc."
+                    href={`/lps/${lp.slug}/build`}
                   />
                 )}
                 {/* Atalhos de dev local — só aparecem se ainda não tem URL de produção */}

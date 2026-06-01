@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { canEdit, getCurrentUser } from "@/lib/auth";
+import { loadBuilderPage } from "@/lib/page-builder-store";
+import { renderBuilderPageHtml } from "@/lib/builder-html-render";
+import { getLpFromStore } from "@/lib/lp-store";
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 type Params = Promise<{ slug: string }>;
 
@@ -8,6 +20,51 @@ export async function GET(_req: Request, { params }: { params: Params }) {
   const { slug } = await params;
   const decoded = decodeURIComponent(slug);
 
+  // ─── Builder page (criada do zero via editor de blocos) ─────────
+  const builder = await loadBuilderPage(decoded);
+  if (builder) {
+    const lp = await getLpFromStore(decoded);
+    if (lp?.status !== "published") {
+      const me = await getCurrentUser();
+      if (!canEdit(me)) {
+        return new NextResponse("Página não publicada", { status: 404 });
+      }
+    }
+    const body = renderBuilderPageHtml(builder);
+    const title = lp?.name ?? "Página";
+    const me = await getCurrentUser();
+    const adminBar = canEdit(me)
+      ? buildAdminBar(`/lps/${decoded}/build`, `/lps/${decoded}`)
+      : "";
+    const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${escapeHtml(title)}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    details > summary::-webkit-details-marker { display: none; }
+  </style>
+</head>
+<body>
+${body}
+${adminBar}
+</body>
+</html>`;
+    return new NextResponse(html, {
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": canEdit(me) ? "private, no-store" : "public, max-age=60, s-maxage=60",
+      },
+    });
+  }
+
+  // ─── WordPress page (legacy / cópia importada) ──────────────────
   const index = await getPublishedBySlug(decoded);
   if (!index) {
     return new NextResponse("Página não encontrada", { status: 404 });

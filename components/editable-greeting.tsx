@@ -5,8 +5,15 @@ import { useFormStatus } from "react-dom";
 import { Pencil, Check, X, Loader2 } from "lucide-react";
 import { updateMyNameAction } from "@/app/dashboard/name-actions";
 
+function computeGreeting(d: Date): string {
+  const h = d.getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
 export function EditableGreeting({
-  greeting,
+  greeting: initialGreeting,
   initialName,
 }: {
   greeting: string;
@@ -16,6 +23,19 @@ export function EditableGreeting({
   const [name, setName] = useState(initialName);
   const [state, action] = useActionState(updateMyNameAction, undefined);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // Começa com o greeting calculado no server (cobre SSR sem flash de
+  // hydration) e depois recalcula no client conforme o fuso real do usuário.
+  // Re-verifica a cada minuto pra cobrir o caso de a aba ficar aberta
+  // atravessando a virada (manhã→tarde ou tarde→noite).
+  const [greeting, setGreeting] = useState(initialGreeting);
+  useEffect(() => {
+    setGreeting(computeGreeting(new Date()));
+    const id = setInterval(() => {
+      setGreeting(computeGreeting(new Date()));
+    }, 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (editing) inputRef.current?.focus();

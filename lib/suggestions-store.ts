@@ -52,7 +52,9 @@ const SEED: Suggestion[] = [
     title: "Páginas do zero estilo Webflow (blocos pré-feitos)",
     description:
       "Criar uma LP nova SEM depender de WordPress nem de código React. Blocos prontos (hero, depoimentos, FAQ, CTA, pricing) que arrasto e configuro só preenchendo texto e trocando imagem. A LP entra em /p/[slug] pronta pra usar.",
-    status: "open",
+    status: "done",
+    adminNote:
+      "Implementado em 2026-06-01. 7 blocos: hero, testimonials, faq, cta, pricing, text, image. Editor em /lps/[slug]/build. Demo em /p/teste. Detalhes em portal/notas/progresso-atual.md.",
     createdBy: "James Olaya",
     createdById: "admin-1",
     createdAt: "2026-05-29T00:00:00.000Z",

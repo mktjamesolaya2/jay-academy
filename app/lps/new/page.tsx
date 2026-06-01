@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Plus, Info } from "lucide-react";
+import { ArrowLeft, Plus, Info, Sparkles } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { loadLps } from "@/lib/lp-store";
@@ -54,21 +54,20 @@ export default async function NewLpPage({
               Cria um rascunho. O conteúdo é construído depois.
             </p>
 
-            <div className="mt-6 bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 flex items-start gap-3">
-              <Info
+            <div className="mt-6 bg-blue-500/5 border border-blue-500/25 rounded-xl p-4 flex items-start gap-3">
+              <Sparkles
                 size={14}
                 strokeWidth={2.2}
-                className="text-amber-300 mt-0.5 shrink-0"
+                className="text-blue-300 mt-0.5 shrink-0"
               />
               <div>
-                <p className="text-xs font-semibold text-amber-200">
-                  Sobre criar páginas
+                <p className="text-xs font-semibold text-blue-200">
+                  Nova opção: construir com blocos
                 </p>
                 <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">
-                  Esse formulário cria apenas o registro da página no portal
-                  (como rascunho). Pra construir o HTML/visual,{" "}
-                  <span className="text-white">peça pro programador</span> ou
-                  importe do WordPress.
+                  Marque a opção abaixo pra abrir o editor de blocos depois de
+                  criar — Hero, depoimentos, FAQ, CTA, preços e mais. Sem
+                  programador.
                 </p>
               </div>
             </div>
@@ -114,6 +113,26 @@ export default async function NewLpPage({
                 defaultValue="rose"
                 options={ACCENT_OPTIONS}
               />
+
+              <label className="flex items-start gap-3 px-4 py-3 bg-[#0f0f0f] border border-[#1f1f1f] rounded-lg cursor-pointer hover:border-blue-500/40 transition">
+                <input
+                  type="checkbox"
+                  name="useBuilder"
+                  value="1"
+                  defaultChecked
+                  className="mt-0.5 accent-blue-500"
+                />
+                <div>
+                  <p className="text-xs font-semibold text-white inline-flex items-center gap-1.5">
+                    <Sparkles size={11} strokeWidth={2.4} className="text-blue-300" />
+                    Construir com blocos (recomendado)
+                  </p>
+                  <p className="text-[11px] text-neutral-500 mt-1 leading-relaxed">
+                    Abre o editor visual de blocos depois de criar. Desmarque
+                    se for só registrar a página (importar do WP depois, etc).
+                  </p>
+                </div>
+              </label>
 
               <div className="pt-4 flex items-center gap-3">
                 <button
