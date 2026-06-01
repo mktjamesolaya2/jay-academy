@@ -24,7 +24,6 @@ function buildInitialHtml(body: string, title: string): string {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>${title.replace(/[<>&]/g, "")}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,6 +34,7 @@ function buildInitialHtml(body: string, title: string): string {
 </head>
 <body>
 ${body}
+<script async src="https://cdn.tailwindcss.com"></script>
 </body>
 </html>`;
 }
@@ -48,6 +48,29 @@ function stripScriptsExceptTailwind(html: string): string {
     if (/cdn\.tailwindcss\.com/.test(attrs)) return match;
     return "";
   });
+}
+
+/**
+ * Move o Tailwind CDN pra fim do body com async. Necessário porque
+ * quando ele tá síncrono no <head>, o parser bloqueia a execução do script
+ * do editor (que fica no fim do body), e o postMessage `editor:ready` nunca
+ * dispara em tempo razoável.
+ */
+function normalizeTailwindPosition(html: string): string {
+  let out = html;
+  // Remove qualquer ocorrência do Tailwind CDN
+  out = out.replace(
+    /<script\b[^>]*cdn\.tailwindcss\.com[^>]*>[\s\S]*?<\/script>/gi,
+    ""
+  );
+  // Reinsere antes de </body> com async
+  const tag = `<script async src="https://cdn.tailwindcss.com"></script>`;
+  if (/<\/body>/i.test(out)) {
+    out = out.replace(/<\/body>/i, `${tag}\n</body>`);
+  } else {
+    out = out + tag;
+  }
+  return out;
 }
 
 export default async function BuildPage({ params }: { params: Params }) {
@@ -76,9 +99,9 @@ export default async function BuildPage({ params }: { params: Params }) {
     await saveEmbeddedHtml(slug, html);
   }
 
-  // Mantém o Tailwind CDN pra estilizar dentro do iframe. Remove qualquer
-  // outro script (não deveria ter, mas defensive).
-  const sanitized = stripScriptsExceptTailwind(html);
+  // Garante que o Tailwind CDN está como async no fim do body. Remove
+  // outros scripts.
+  const sanitized = normalizeTailwindPosition(stripScriptsExceptTailwind(html));
 
   return (
     <EditorShell
