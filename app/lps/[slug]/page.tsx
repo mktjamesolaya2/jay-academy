@@ -9,12 +9,12 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
-import { statusLabel, statusColors } from "@/lib/landing-pages";
+import { statusLabel, statusColors, publicUrlFor } from "@/lib/landing-pages";
 import { getLpFromStore } from "@/lib/lp-store";
 import { isBuilderPage } from "@/lib/page-builder-store";
 import { clsx } from "clsx";
 import { LpActionsMenu } from "@/components/lp-actions-menu";
-import { LpPublishCard } from "@/components/lp-publish-card";
+import { SiteUrlLink } from "@/components/site-url-link";
 
 type Params = Promise<{ slug: string }>;
 
@@ -26,6 +26,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
   const style = statusColors[lp.status];
   const isProduction = process.env.VERCEL_ENV === "production" || !!process.env.VERCEL;
   const hasBuilder = await isBuilderPage(slug);
+  const publicUrl = publicUrlFor(lp);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -41,14 +42,21 @@ export default async function LpDetailPage({ params }: { params: Params }) {
             Voltar pro dashboard
           </Link>
           <div className="flex items-start justify-between gap-6 flex-wrap">
-            <div>
+            <div className="min-w-0">
               <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
                 /{lp.slug}
               </p>
               <h2 className="text-4xl font-extrabold tracking-tight text-white mt-1">
                 {lp.name}
               </h2>
-              <p className="text-neutral-400 mt-1.5 text-[15px]">{lp.tagline}</p>
+              {publicUrl && (
+                <div className="mt-2">
+                  <SiteUrlLink url={publicUrl} />
+                </div>
+              )}
+              {lp.tagline && (
+                <p className="text-neutral-400 mt-1.5 text-[15px]">{lp.tagline}</p>
+              )}
             </div>
             <div className="flex flex-col items-end gap-3">
               <div className="flex items-center gap-2">
@@ -152,21 +160,14 @@ export default async function LpDetailPage({ params }: { params: Params }) {
           </div>
 
           <aside className="space-y-5">
-            {!lp.localPath && (
-              <LpPublishCard
-                slug={lp.slug}
-                status={lp.status}
-                hasBuilder={hasBuilder}
-              />
-            )}
             <Block title="Atalhos">
               <div className="space-y-2">
-                {lp.productionUrl && (
+                {publicUrl && (
                   <ActionRow
                     icon={Globe}
                     label="Abrir página"
-                    sub={lp.productionUrl}
-                    href={lp.productionUrl}
+                    sub={publicUrl}
+                    href={publicUrl}
                     external
                   />
                 )}
@@ -190,7 +191,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                   <ActionRow
                     icon={Sparkles}
                     label="Editar com blocos"
-                    sub="Hero, depoimentos, FAQ, CTA, preços — sem programador"
+                    sub="Hero, depoimentos, FAQ, CTA, preços"
                     href={`/lps/${lp.slug}/build`}
                   />
                 )}
@@ -202,8 +203,8 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     href={`/lps/${lp.slug}/build`}
                   />
                 )}
-                {/* Atalhos de dev local — só aparecem se ainda não tem URL de produção */}
-                {!lp.productionUrl && !isProduction && lp.devUrl && (
+                {/* Atalhos de dev local — só aparecem se ainda não tem URL pública */}
+                {!publicUrl && !isProduction && lp.devUrl && (
                   <ActionRow
                     icon={ExternalLink}
                     label="Abrir LP local"
@@ -212,17 +213,18 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     external
                   />
                 )}
-                {!lp.productionUrl && !isProduction && lp.localPath && (
+                {!publicUrl && !isProduction && lp.localPath && (
                   <ActionRow
                     icon={FolderOpen}
                     label="Pasta"
                     sub={lp.localPath}
                   />
                 )}
-                {!lp.productionUrl && (
+                {!publicUrl && (
                   <div className="px-3 py-3 rounded-lg border border-dashed border-[#262626] text-xs text-neutral-500 leading-relaxed">
-                    Essa LP ainda não tem URL pública. Depois de embutir no
-                    portal, a URL vai aparecer aqui.
+                    Essa LP ainda não tem URL pública. Use o botão{" "}
+                    <span className="text-emerald-300 font-semibold">Publicar</span>{" "}
+                    no topo pra liberar.
                   </div>
                 )}
               </div>

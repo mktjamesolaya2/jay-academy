@@ -147,6 +147,18 @@ export const accentClasses: Record<LandingPage["accent"], string> = {
   rose: "from-pink-400 to-rose-400",
 };
 
+/**
+ * URL pública da LP. Prioridade:
+ * 1. productionUrl explícita (LPs hardcoded como pmuclass/laser/magicshadow)
+ * 2. /p/[slug] se publicada (LPs criadas via builder)
+ * 3. null se ainda não tem URL pública
+ */
+export function publicUrlFor(lp: LandingPage): string | null {
+  if (lp.productionUrl) return lp.productionUrl;
+  if (lp.status === "published") return `/p/${lp.slug}`;
+  return null;
+}
+
 export function relativeTime(iso: string): string {
   const date = new Date(iso);
   const diff = Date.now() - date.getTime();

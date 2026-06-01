@@ -1,18 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import {
-  MoreHorizontal,
   Pencil,
   Trash2,
   X,
   Loader2,
   Copy,
+  Globe,
+  Lock,
 } from "lucide-react";
 import {
   duplicateLpAction,
   editLpMetadataAction,
   moveToTrashAction,
+  setLpStatusAction,
 } from "@/app/lps/actions";
 import type { LandingPage } from "@/lib/landing-pages";
 
@@ -31,6 +33,11 @@ const TYPE_OPTIONS = [
 
 export function LpActionsMenu({ lp }: { lp: LandingPage }) {
   const [editOpen, setEditOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  // LPs com produção externa (pmuclass, magic-shadow, laser) não usam
+  // publish flow do portal — elas estão sempre no ar por outro deploy.
+  const isManaged = !lp.productionUrl;
+  const isPublished = lp.status === "published";
 
   async function handleDuplicate() {
     const formData = new FormData();
@@ -45,9 +52,56 @@ export function LpActionsMenu({ lp }: { lp: LandingPage }) {
     await moveToTrashAction(formData);
   }
 
+  function handlePublishToggle() {
+    if (isPublished) {
+      if (
+        !confirm(
+          `Despublicar "${lp.name}"? A URL pública /p/${lp.slug} vai parar de funcionar.`
+        )
+      )
+        return;
+    }
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set("slug", lp.slug);
+      fd.set("status", isPublished ? "draft" : "published");
+      await setLpStatusAction(fd);
+    });
+  }
+
   return (
     <>
       <div className="flex items-center gap-2">
+        {isManaged &&
+          (isPublished ? (
+            <button
+              type="button"
+              onClick={handlePublishToggle}
+              disabled={isPending}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold text-amber-300 bg-amber-500/10 ring-1 ring-amber-500/25 hover:bg-amber-500/20 transition disabled:opacity-60"
+            >
+              {isPending ? (
+                <Loader2 size={13} className="animate-spin" strokeWidth={2.4} />
+              ) : (
+                <Lock size={13} strokeWidth={2.4} />
+              )}
+              Despublicar
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handlePublishToggle}
+              disabled={isPending}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold text-emerald-300 bg-emerald-500/10 ring-1 ring-emerald-500/25 hover:bg-emerald-500/20 transition disabled:opacity-60"
+            >
+              {isPending ? (
+                <Loader2 size={13} className="animate-spin" strokeWidth={2.4} />
+              ) : (
+                <Globe size={13} strokeWidth={2.4} />
+              )}
+              Publicar
+            </button>
+          ))}
         <button
           type="button"
           onClick={() => setEditOpen(true)}

@@ -17,6 +17,7 @@ import {
   statusColors,
   typeLabel,
   relativeTime,
+  publicUrlFor,
   type LandingPage,
 } from "@/lib/landing-pages";
 import { loadLps } from "@/lib/lp-store";
@@ -440,7 +441,10 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
           <p className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition">
             {lp.name}
           </p>
-          {lp.productionUrl && <SiteUrlLink url={lp.productionUrl} />}
+          {(() => {
+            const url = publicUrlFor(lp);
+            return url ? <SiteUrlLink url={url} /> : null;
+          })()}
         </div>
       </div>
       <span className="text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded inline-block w-fit">
