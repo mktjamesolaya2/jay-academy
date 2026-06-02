@@ -1,89 +1,122 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 
 /**
- * Vinheta de abertura estilo Netflix "tudum".
- * Fundo preto, logo PMU CLASS aparece grande com pulse + gradient.
+ * Vinheta de abertura — exatamente a mesma do site /pmuclass.
  *
- * Roda quando o usuário entra na cena de intro e some sozinha
- * com fade quando rola pra próxima.
+ * - 2.6s de animação (halo + scale-in + brightness-in)
+ * - Logo é processado em <canvas> pra remover o fundo preto
+ *   (mesma técnica do App.tsx do PMU CLASS)
+ * - Auto-fade no final, depois chama onDone pra rolar pra cena 1
  */
+const LOGO_SRC = "/apresentacao-pmu/logo.png";
+
 export function IntroVignette({ onDone }: { onDone?: () => void }) {
+  const [logoSrc, setLogoSrc] = useState(LOGO_SRC);
+  const [logoReady, setLogoReady] = useState(false);
+  const [show, setShow] = useState(true);
+
+  // Mesma técnica do site PMU CLASS: tira pixels pretos do logo PNG
+  // pra ele "flutuar" sobre o fundo preto sem retângulo visível.
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = LOGO_SRC;
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        setLogoReady(true);
+        return;
+      }
+      ctx.drawImage(img, 0, 0);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const px = data.data;
+      const THRESHOLD = 45;
+      for (let i = 0; i < px.length; i += 4) {
+        const r = px[i];
+        const g = px[i + 1];
+        const b = px[i + 2];
+        const max = Math.max(r, g, b);
+        if (max < THRESHOLD) {
+          px[i + 3] = 0;
+        } else if (max < THRESHOLD + 40) {
+          px[i + 3] = Math.round(((max - THRESHOLD) / 40) * 255);
+        }
+      }
+      ctx.putImageData(data, 0, 0);
+      setLogoSrc(canvas.toDataURL("image/png"));
+      setLogoReady(true);
+    };
+  }, []);
+
+  // Auto-fade depois de 2.6s (mesma duração do site)
+  useEffect(() => {
+    if (!logoReady) return;
+    const t = setTimeout(() => setShow(false), 2600);
+    return () => clearTimeout(t);
+  }, [logoReady]);
+
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center px-6 overflow-hidden">
-      {/* Glow de fundo */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.6 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.4, ease: "easeOut" }}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+    <div className="relative w-full h-full bg-black flex items-center justify-center overflow-hidden">
+      <AnimatePresence
+        onExitComplete={() => {
+          // Após o fade-out terminar, vai pra próxima cena
+          onDone?.();
+        }}
       >
-        <div className="w-[800px] h-[800px] max-w-[120vw] max-h-[120vw] rounded-full bg-gradient-to-br from-pink-500/20 via-orange-500/10 to-transparent blur-3xl" />
-      </motion.div>
+        {show && logoReady && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          >
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="relative"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: [0, 0.9, 0.6], scale: [0.6, 1.4, 1.2] }}
+                transition={{ duration: 2.2, times: [0, 0.55, 1], ease: "easeOut" }}
+                className="absolute inset-0 -m-32 rounded-full blur-3xl"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(236,72,153,0.55) 0%, rgba(249,115,22,0.35) 40%, transparent 70%)",
+                }}
+              />
+              <motion.img
+                src={logoSrc}
+                alt="PMU CLASS"
+                initial={{ filter: "brightness(0.3)" }}
+                animate={{
+                  filter: ["brightness(0.3)", "brightness(1.2)", "brightness(1)"],
+                }}
+                transition={{ duration: 2, times: [0, 0.55, 1] }}
+                className="relative h-52 sm:h-72 lg:h-[22rem] w-auto object-contain drop-shadow-[0_0_60px_rgba(236,72,153,0.7)]"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Logo "tudum" — duas linhas */}
-      <div className="relative z-10 text-center">
-        <motion.p
-          initial={{ opacity: 0, y: 16, letterSpacing: "0.05em" }}
-          animate={{ opacity: 1, y: 0, letterSpacing: "0.5em" }}
-          transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
-          className="text-[11px] md:text-[13px] uppercase tracking-[0.5em] text-white/60 font-medium mb-6 md:mb-8"
-        >
-          Jay Academy apresenta
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7, filter: "blur(20px)" }}
-          animate={{
-            opacity: 1,
-            scale: [0.7, 1.08, 1],
-            filter: "blur(0px)",
-          }}
-          transition={{
-            duration: 1.8,
-            ease: [0.22, 1, 0.36, 1],
-            delay: 0.6,
-          }}
-          className="relative flex items-center justify-center"
-        >
-          <img
-            src="/apresentacao-pmu/logo.png"
-            alt="PMU CLASS"
-            className="h-40 md:h-56 lg:h-64 w-auto drop-shadow-[0_20px_60px_rgba(236,72,153,0.35)]"
-          />
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 2.2 }}
-          className="mt-6 md:mt-8 text-sm md:text-base text-neutral-400 tracking-[0.3em] uppercase"
-        >
-          O microsite educacional de vendas
-        </motion.p>
-
-        <motion.button
+      {/* Botão pra pular se já viu */}
+      {show && (
+        <button
           type="button"
-          onClick={onDone}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 3.2 }}
-          className="mt-10 md:mt-14 inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-white text-neutral-900 font-bold text-sm tracking-[0.18em] uppercase hover:bg-neutral-100 transition shadow-2xl shadow-pink-500/20"
+          onClick={() => setShow(false)}
+          className="absolute bottom-8 right-8 z-20 text-[10px] uppercase tracking-[0.3em] text-white/40 hover:text-white/80 transition"
         >
-          Começar apresentação
-        </motion.button>
-      </div>
-
-      {/* Hint pra rolar */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 3.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.3em] text-white/40"
-      >
-        ↓ Role ou use as setas
-      </motion.div>
+          Pular intro →
+        </button>
+      )}
     </div>
   );
 }
