@@ -402,6 +402,18 @@ const EDITOR_SCRIPT = `
       img.style.cursor = 'pointer';
     });
 
+    // Trava navegação por links no modo edição. Sem isso, clicar num <a>
+    // dentro do iframe (CTA, link de menu, etc) navega o iframe pra essa
+    // URL. Se for URL interna do portal, o iframe renderiza OUTRO editor
+    // dentro dele — visualmente "editor duplicado".
+    document.addEventListener('click', function(e) {
+      const a = e.target && e.target.closest && e.target.closest('a');
+      if (a) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+
     document.addEventListener('mousedown', function(e) {
       // Ignora clicks dentro do overlay (handles)
       if (e.target.id === OVERLAY_ID) return;
