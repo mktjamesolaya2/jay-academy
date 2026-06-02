@@ -19,6 +19,7 @@
 
 - **[progresso-atual.md](./progresso-atual.md)** ⭐ — Estado vivo do portal. **Atualizar ao fim de cada sessão.** Substitui handoffs.
 - **[backlog-proximos-passos.md](./backlog-proximos-passos.md)** — O que tá na fila, ordenado por prioridade
+- **[projeto-apresentacao-pmu.md](./projeto-apresentacao-pmu.md)** — Apresentação interativa do PMU CLASS em `/apresentacao-pmu`
 
 ### 📜 Histórico (não tocar)
 

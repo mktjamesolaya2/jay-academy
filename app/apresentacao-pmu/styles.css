@@ -1,0 +1,21 @@
+/* Estilos específicos da apresentação PMU CLASS */
+
+.font-serif {
+  font-family: "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+}
+
+/* Esconde scrollbar mas mantém scrollbar funcional */
+.apresentacao-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.apresentacao-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Fix: Tailwind gradient text com italic precisa de inline-block + pr
+   pra não cortar pontuação ao final */
+em.italic.inline-block {
+  padding-right: 0.5em;
+}
