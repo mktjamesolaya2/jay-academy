@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -15,6 +15,9 @@ import {
   Sparkles,
   CheckCircle2,
   AlertCircle,
+  Undo2,
+  Redo2,
+  GripVertical,
 } from "lucide-react";
 import {
   BLOCK_LABELS,
@@ -44,6 +47,8 @@ type Props = {
   initialPage: BuilderPage;
 };
 
+const MAX_HISTORY = 50;
+
 export function BuilderEditor({ slug, lpName, initialPage }: Props) {
   const [page, setPage] = useState<BuilderPage>(initialPage);
   const [selectedId, setSelectedId] = useState<string | null>(
@@ -58,13 +63,112 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [addAtIndex, setAddAtIndex] = useState<number>(-1);
 
+  // Undo/redo: history de snapshots de page state.
+  const historyRef = useRef<BuilderPage[]>([initialPage]);
+  const historyIndexRef = useRef(0);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+  // Debounce de snapshots pra agrupar edições de texto consecutivas
+  const snapshotTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Drag-to-reorder de blocos
+  const [dragBlockId, setDragBlockId] = useState<string | null>(null);
+  const [dropBlockTarget, setDropBlockTarget] = useState<
+    { id: string; pos: "before" | "after" } | null
+  >(null);
+
   const selected = page.blocks.find((b) => b.id === selectedId) ?? null;
   const gradient = ACCENT_GRADIENTS[page.theme.accent];
 
-  function updatePage(next: BuilderPage) {
+  function pushHistory(next: BuilderPage) {
+    if (snapshotTimerRef.current) clearTimeout(snapshotTimerRef.current);
+    snapshotTimerRef.current = setTimeout(() => {
+      const idx = historyIndexRef.current;
+      const cut = historyRef.current.slice(0, idx + 1);
+      cut.push(next);
+      if (cut.length > MAX_HISTORY) cut.shift();
+      historyRef.current = cut;
+      historyIndexRef.current = cut.length - 1;
+      setCanUndo(historyIndexRef.current > 0);
+      setCanRedo(false);
+    }, 400);
+  }
+
+  function pushHistoryNow(next: BuilderPage) {
+    if (snapshotTimerRef.current) {
+      clearTimeout(snapshotTimerRef.current);
+      snapshotTimerRef.current = null;
+    }
+    const idx = historyIndexRef.current;
+    const cut = historyRef.current.slice(0, idx + 1);
+    cut.push(next);
+    if (cut.length > MAX_HISTORY) cut.shift();
+    historyRef.current = cut;
+    historyIndexRef.current = cut.length - 1;
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(false);
+  }
+
+  const undo = useCallback(() => {
+    if (historyIndexRef.current <= 0) return;
+    historyIndexRef.current--;
+    const prev = historyRef.current[historyIndexRef.current];
+    setPage(prev);
+    setDirty(true);
+    setSaveStatus("idle");
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(historyIndexRef.current < historyRef.current.length - 1);
+  }, []);
+
+  const redo = useCallback(() => {
+    if (historyIndexRef.current >= historyRef.current.length - 1) return;
+    historyIndexRef.current++;
+    const next = historyRef.current[historyIndexRef.current];
     setPage(next);
     setDirty(true);
     setSaveStatus("idle");
+    setCanUndo(historyIndexRef.current > 0);
+    setCanRedo(historyIndexRef.current < historyRef.current.length - 1);
+  }, []);
+
+  // Atalho global Ctrl+Z / Ctrl+Shift+Z (ou Ctrl+Y).
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const ctrl = e.ctrlKey || e.metaKey;
+      if (!ctrl) return;
+      const key = e.key.toLowerCase();
+      if (key === "z" && !e.shiftKey) {
+        // Não interfere com undo nativo do contentEditable enquanto
+        // o usuário está digitando dentro de um campo.
+        const target = e.target as HTMLElement | null;
+        const editing =
+          target?.isContentEditable ||
+          target?.tagName === "INPUT" ||
+          target?.tagName === "TEXTAREA";
+        if (editing) return;
+        e.preventDefault();
+        undo();
+      } else if ((key === "z" && e.shiftKey) || key === "y") {
+        const target = e.target as HTMLElement | null;
+        const editing =
+          target?.isContentEditable ||
+          target?.tagName === "INPUT" ||
+          target?.tagName === "TEXTAREA";
+        if (editing) return;
+        e.preventDefault();
+        redo();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [undo, redo]);
+
+  function updatePage(next: BuilderPage, snapshotMode: "debounce" | "now" = "debounce") {
+    setPage(next);
+    setDirty(true);
+    setSaveStatus("idle");
+    if (snapshotMode === "now") pushHistoryNow(next);
+    else pushHistory(next);
   }
 
   function addBlock(type: BlockType, index: number) {
@@ -79,7 +183,7 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
       newBlock,
       ...page.blocks.slice(insertAt),
     ];
-    updatePage({ ...page, blocks });
+    updatePage({ ...page, blocks }, "now");
     setSelectedId(newBlock.id);
     setShowAddModal(false);
   }
@@ -99,7 +203,21 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
     const blocks = [...page.blocks];
     const [removed] = blocks.splice(idx, 1);
     blocks.splice(newIdx, 0, removed);
-    updatePage({ ...page, blocks });
+    updatePage({ ...page, blocks }, "now");
+  }
+
+  function reorderBlocks(sourceId: string, targetId: string, position: "before" | "after") {
+    if (sourceId === targetId) return;
+    const srcIdx = page.blocks.findIndex((b) => b.id === sourceId);
+    const tgtIdx = page.blocks.findIndex((b) => b.id === targetId);
+    if (srcIdx === -1 || tgtIdx === -1) return;
+    const blocks = [...page.blocks];
+    const [src] = blocks.splice(srcIdx, 1);
+    // Recalcula índice do target depois do splice
+    const newTgtIdx = blocks.findIndex((b) => b.id === targetId);
+    const insertAt = position === "before" ? newTgtIdx : newTgtIdx + 1;
+    blocks.splice(insertAt, 0, src);
+    updatePage({ ...page, blocks }, "now");
   }
 
   function duplicateBlock(id: string) {
@@ -116,19 +234,19 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
       clone,
       ...page.blocks.slice(idx + 1),
     ];
-    updatePage({ ...page, blocks });
+    updatePage({ ...page, blocks }, "now");
     setSelectedId(clone.id);
   }
 
   function deleteBlock(id: string) {
     if (!confirm("Excluir esse bloco?")) return;
     const blocks = page.blocks.filter((b) => b.id !== id);
-    updatePage({ ...page, blocks });
+    updatePage({ ...page, blocks }, "now");
     if (selectedId === id) setSelectedId(blocks[0]?.id ?? null);
   }
 
   function updateTheme(theme: Partial<BuilderTheme>) {
-    updatePage({ ...page, theme: { ...page.theme, ...theme } });
+    updatePage({ ...page, theme: { ...page.theme, ...theme } }, "now");
   }
 
   function handleSave() {
@@ -172,6 +290,27 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
               {lpName}
             </p>
           </div>
+          <div className="h-5 w-px bg-[#1f1f1f]" />
+          <button
+            type="button"
+            onClick={undo}
+            disabled={!canUndo}
+            title="Desfazer (Ctrl+Z)"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-neutral-400 hover:text-white hover:bg-[#161616] transition disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Undo2 size={13} strokeWidth={2.2} />
+            Desfazer
+          </button>
+          <button
+            type="button"
+            onClick={redo}
+            disabled={!canRedo}
+            title="Refazer (Ctrl+Y)"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-neutral-400 hover:text-white hover:bg-[#161616] transition disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Redo2 size={13} strokeWidth={2.2} />
+            Refazer
+          </button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -256,6 +395,11 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
             </button>
           </div>
 
+          {page.blocks.length > 1 && (
+            <p className="px-4 pb-2 text-[10px] text-neutral-600 leading-relaxed">
+              Arraste pra reordenar.
+            </p>
+          )}
           <div className="flex-1 px-2 pb-3 space-y-1">
             {page.blocks.length === 0 ? (
               <div className="px-2 py-6 text-center">
@@ -272,10 +416,57 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
               page.blocks.map((block, i) => {
                 const info = BLOCK_LABELS[block.type];
                 const isSelected = block.id === selectedId;
+                const isDragging = dragBlockId === block.id;
+                const dropHere = dropBlockTarget?.id === block.id;
                 return (
-                  <div key={block.id} className="group">
+                  <div
+                    key={block.id}
+                    className={`group ${isDragging ? "opacity-40" : ""} ${
+                      dropHere && dropBlockTarget?.pos === "before"
+                        ? "border-t-2 border-blue-500"
+                        : ""
+                    } ${
+                      dropHere && dropBlockTarget?.pos === "after"
+                        ? "border-b-2 border-blue-500"
+                        : ""
+                    }`}
+                    onDragOver={(e) => {
+                      if (!dragBlockId || dragBlockId === block.id) return;
+                      e.preventDefault();
+                      const rect = (
+                        e.currentTarget as HTMLElement
+                      ).getBoundingClientRect();
+                      const pos =
+                        e.clientY - rect.top < rect.height / 2
+                          ? "before"
+                          : "after";
+                      setDropBlockTarget({ id: block.id, pos });
+                    }}
+                    onDragLeave={() => setDropBlockTarget(null)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (dragBlockId && dropBlockTarget) {
+                        reorderBlocks(
+                          dragBlockId,
+                          block.id,
+                          dropBlockTarget.pos
+                        );
+                      }
+                      setDragBlockId(null);
+                      setDropBlockTarget(null);
+                    }}
+                  >
                     <button
                       type="button"
+                      draggable
+                      onDragStart={(e) => {
+                        setDragBlockId(block.id);
+                        e.dataTransfer.effectAllowed = "move";
+                      }}
+                      onDragEnd={() => {
+                        setDragBlockId(null);
+                        setDropBlockTarget(null);
+                      }}
                       onClick={() => setSelectedId(block.id)}
                       className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-md text-left transition ${
                         isSelected
@@ -283,6 +474,11 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
                           : "text-neutral-400 hover:bg-[#121212] hover:text-white"
                       }`}
                     >
+                      <GripVertical
+                        size={11}
+                        strokeWidth={2}
+                        className="shrink-0 text-neutral-600 cursor-grab"
+                      />
                       <span className="text-base shrink-0">{info.emoji}</span>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold truncate">

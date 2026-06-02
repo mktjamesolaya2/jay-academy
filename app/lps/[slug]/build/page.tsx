@@ -6,69 +6,11 @@ import {
   loadBuilderPage,
   saveBuilderPage,
 } from "@/lib/page-builder-store";
-import {
-  loadEditedEmbeddedHtml,
-  saveEmbeddedHtml,
-} from "@/lib/embedded-html-store";
-import { renderBuilderPageHtml } from "@/lib/builder-html-render";
-import { EditorShell } from "@/components/editor-shell";
+import { BuilderEditor } from "@/components/page-builder/builder-editor";
 
 type Params = Promise<{ slug: string }>;
 
 export const dynamic = "force-dynamic";
-
-function buildInitialHtml(body: string, title: string): string {
-  return `<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${title.replace(/[<>&]/g, "")}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="/builder-runtime.css" rel="stylesheet">
-  <style>
-    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; }
-    details > summary::-webkit-details-marker { display: none; }
-    details > summary { list-style: none; }
-  </style>
-</head>
-<body>
-${body}
-</body>
-</html>`;
-}
-
-/**
- * Preserva o Tailwind CDN (precisa estilizar dentro do iframe) e remove
- * qualquer outro script. Builder pages não têm scripts além do CDN.
- */
-function stripScriptsExceptTailwind(html: string): string {
-  return html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (match, attrs) => {
-    if (/cdn\.tailwindcss\.com/.test(attrs)) return match;
-    return "";
-  });
-}
-
-/**
- * Garante que o HTML carregado do storage usa o stylesheet estático
- * /builder-runtime.css (e não o Tailwind CDN antigo).
- */
-function normalizeBuilderHtml(html: string): string {
-  let out = html;
-  // Remove qualquer script Tailwind CDN
-  out = out.replace(
-    /<script\b[^>]*cdn\.tailwindcss\.com[^>]*>[\s\S]*?<\/script>/gi,
-    ""
-  );
-  // Garante o link do CSS local no head
-  if (!/href=["']\/builder-runtime\.css["']/i.test(out)) {
-    out = out.replace(
-      /<\/head>/i,
-      `  <link href="/builder-runtime.css" rel="stylesheet">\n</head>`
-    );
-  }
-  return out;
-}
 
 export default async function BuildPage({ params }: { params: Params }) {
   const { slug } = await params;
@@ -79,31 +21,11 @@ export default async function BuildPage({ params }: { params: Params }) {
   const lp = await getLpFromStore(slug);
   if (!lp) notFound();
 
-  // Estado em ordem de prioridade:
-  // 1. HTML embedded já salvo (edição em andamento ou prévia) → continua dali
-  // 2. Builder page com blocos → renderiza HTML inicial dos blocos e salva embedded
-  // 3. Nada → cria builder page vazia + HTML vazio
-  let html = await loadEditedEmbeddedHtml(slug);
-
-  if (!html) {
-    let page = await loadBuilderPage(slug);
-    if (!page) {
-      page = emptyPage(slug);
-      await saveBuilderPage(page);
-    }
-    const body = renderBuilderPageHtml(page);
-    html = buildInitialHtml(body, lp.name);
-    await saveEmbeddedHtml(slug, html);
+  let page = await loadBuilderPage(slug);
+  if (!page) {
+    page = emptyPage(slug);
+    await saveBuilderPage(page);
   }
 
-  // Limpa scripts e garante o stylesheet local.
-  const sanitized = normalizeBuilderHtml(stripScriptsExceptTailwind(html));
-
-  return (
-    <EditorShell
-      source={{ kind: "builder", slug }}
-      title={lp.name}
-      initialHtml={sanitized}
-    />
-  );
+  return <BuilderEditor slug={slug} lpName={lp.name} initialPage={page} />;
 }

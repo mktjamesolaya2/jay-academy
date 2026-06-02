@@ -22,13 +22,11 @@ export async function GET(_req: Request, { params }: { params: Params }) {
   const decoded = decodeURIComponent(slug);
 
   // ─── Página servida pelo builder ────────────────────────────────
-  // Prioridade:
-  //   1. HTML editado no editor visual (KV embedded-html)
-  //   2. HTML renderizado a partir dos blocos JSON
-  // Em ambos os casos, só serve se a LP está published (ou se o user é admin).
-  const editedHtml = await loadEditedEmbeddedHtml(decoded);
+  // Renderiza do JSON do builder. Se só tinha HTML embedded (de versões
+  // antigas do editor visual no builder), serve esse HTML como fallback.
   const builder = await loadBuilderPage(decoded);
-  if (editedHtml || builder) {
+  const editedHtml = builder ? null : await loadEditedEmbeddedHtml(decoded);
+  if (builder || editedHtml) {
     const lp = await getLpFromStore(decoded);
     if (lp?.status !== "published") {
       const me = await getCurrentUser();
@@ -38,23 +36,8 @@ export async function GET(_req: Request, { params }: { params: Params }) {
     }
     const title = lp?.name ?? "Página";
     let html: string;
-    if (editedHtml) {
-      // HTML editado já vem do storage com o link pro builder-runtime.css
-      // injetado por /lps/[slug]/build/page.tsx. Reaplica defensivamente
-      // pra cobrir HTMLs antigos salvos antes desse fix.
-      html = editedHtml
-        .replace(
-          /<script\b[^>]*cdn\.tailwindcss\.com[^>]*>[\s\S]*?<\/script>/gi,
-          ""
-        );
-      if (!/href=["']\/builder-runtime\.css["']/i.test(html)) {
-        html = html.replace(
-          /<\/head>/i,
-          `  <link href="/builder-runtime.css" rel="stylesheet">\n</head>`
-        );
-      }
-    } else {
-      const body = renderBuilderPageHtml(builder!);
+    if (builder) {
+      const body = renderBuilderPageHtml(builder);
       html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -73,6 +56,19 @@ export async function GET(_req: Request, { params }: { params: Params }) {
 ${body}
 </body>
 </html>`;
+    } else {
+      // Fallback pra HTML editado antigo (sem builder JSON).
+      html = editedHtml!
+        .replace(
+          /<script\b[^>]*cdn\.tailwindcss\.com[^>]*>[\s\S]*?<\/script>/gi,
+          ""
+        );
+      if (!/href=["']\/builder-runtime\.css["']/i.test(html)) {
+        html = html.replace(
+          /<\/head>/i,
+          `  <link href="/builder-runtime.css" rel="stylesheet">\n</head>`
+        );
+      }
     }
     return new NextResponse(html, {
       headers: {
