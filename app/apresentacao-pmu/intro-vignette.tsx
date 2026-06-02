@@ -33,7 +33,7 @@ export function IntroVignette({ onDone }: { onDone?: () => void }) {
           Jay Academy apresenta
         </motion.p>
 
-        <motion.h1
+        <motion.div
           initial={{ opacity: 0, scale: 0.7, filter: "blur(20px)" }}
           animate={{
             opacity: 1,
@@ -45,12 +45,14 @@ export function IntroVignette({ onDone }: { onDone?: () => void }) {
             ease: [0.22, 1, 0.36, 1],
             delay: 0.6,
           }}
-          className="font-serif font-light italic text-6xl md:text-8xl lg:text-9xl leading-[0.95] tracking-tight"
+          className="relative flex items-center justify-center"
         >
-          <span className="bg-gradient-to-r from-pink-400 via-pink-500 to-orange-500 bg-clip-text text-transparent inline-block pr-3 lg:pr-4">
-            PMU CLASS
-          </span>
-        </motion.h1>
+          <img
+            src="/apresentacao-pmu/logo.png"
+            alt="PMU CLASS"
+            className="h-40 md:h-56 lg:h-64 w-auto drop-shadow-[0_20px_60px_rgba(236,72,153,0.35)]"
+          />
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
