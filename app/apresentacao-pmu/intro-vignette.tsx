@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from "motion/react";
  *   (mesma técnica do App.tsx do PMU CLASS)
  * - Auto-fade no final, depois chama onDone pra rolar pra cena 1
  */
-const LOGO_SRC = "/apresentacao-pmu/logo.png";
+const LOGO_SRC = "/apresentacao-pmu/logo.jpg";
 
 export function IntroVignette({ onDone }: { onDone?: () => void }) {
   const [logoSrc, setLogoSrc] = useState(LOGO_SRC);
