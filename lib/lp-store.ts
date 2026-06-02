@@ -20,7 +20,7 @@ const LPS_KEY = "lps:all";
 export async function loadLps(): Promise<LandingPage[]> {
   const stored = await kvGet<LandingPage[]>(LPS_KEY);
   if (stored && stored.length > 0) {
-    return stored.map((lp) => {
+    const merged = stored.map((lp) => {
       const seed = SEED_LPS.find((s) => s.slug === lp.slug);
       if (!seed) return lp;
       return {
@@ -32,6 +32,18 @@ export async function loadLps(): Promise<LandingPage[]> {
         localPath: seed.localPath ?? lp.localPath,
       };
     });
+    // Adiciona itens do seed que ainda não estão no storage — garante que
+    // novos projetos hardcoded em landing-pages.ts aparecem mesmo se o KV
+    // já tinha dados antigos.
+    const missing = SEED_LPS.filter(
+      (s) => !merged.find((lp) => lp.slug === s.slug)
+    );
+    if (missing.length > 0) {
+      const next = [...merged, ...missing];
+      await kvSet(LPS_KEY, next);
+      return next;
+    }
+    return merged;
   }
   // Seed inicial com os LPs hardcoded
   await kvSet(LPS_KEY, SEED_LPS);

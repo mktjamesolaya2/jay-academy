@@ -85,6 +85,20 @@ export const landingPages: LandingPage[] = [
     accent: "rose",
     createdAt: "2026-05-27",
   },
+  {
+    slug: "apresentacao-pmu",
+    name: "Apresentação PMU CLASS",
+    tagline: "Microsite-keynote pra apresentar o projeto",
+    description:
+      "Apresentação interativa estilo Netflix com cenas, vinheta e sugestões do ChatGPT pra debate ao vivo com o time.",
+    stack: "Next.js (rota interna do portal)",
+    status: "published",
+    type: "lp",
+    localPath: "portal/app/apresentacao-pmu",
+    productionUrl: "/apresentacao-pmu",
+    accent: "pink-orange",
+    createdAt: "2026-06-02",
+  },
   // __INSERT_LP_HERE__
 ];
 
