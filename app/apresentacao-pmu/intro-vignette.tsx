@@ -15,35 +15,22 @@ const LOGO_SRC = "/apresentacao-pmu/logo.jpg";
 
 export function IntroVignette({ onDone }: { onDone?: () => void }) {
   const [logoSrc, setLogoSrc] = useState(LOGO_SRC);
-  const [logoReady, setLogoReady] = useState(false);
   const [show, setShow] = useState(true);
 
-  // Mesma técnica do site PMU CLASS: tira pixels pretos do logo PNG
-  // pra ele "flutuar" sobre o fundo preto sem retângulo visível.
-  // Se algo falhar (CORS, ctx, etc), usa o logo original direto — não
-  // bloqueia a apresentação.
+  // Tenta remover o fundo preto via canvas em background.
+  // Se falhar (CORS, ctx, etc), fica com a JPG original — fundo preto
+  // dela mistura com a tela preta da vinheta, então é ok.
   useEffect(() => {
-    // Timeout defensivo: se nada acontecer em 1.5s, libera mesmo assim
-    const fallback = setTimeout(() => setLogoReady(true), 1500);
-
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.src = LOGO_SRC;
-    img.onerror = () => {
-      clearTimeout(fallback);
-      setLogoReady(true);
-    };
     img.onload = () => {
-      clearTimeout(fallback);
       try {
         const canvas = document.createElement("canvas");
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
         const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          setLogoReady(true);
-          return;
-        }
+        if (!ctx) return;
         ctx.drawImage(img, 0, 0);
         const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const px = data.data;
@@ -62,21 +49,16 @@ export function IntroVignette({ onDone }: { onDone?: () => void }) {
         ctx.putImageData(data, 0, 0);
         setLogoSrc(canvas.toDataURL("image/png"));
       } catch {
-        // getImageData/toDataURL pode tainted-canvas se CORS falhar.
-        // Não tem problema: logo já tem fundo preto, mistura natural com a tela.
+        // Tainted canvas — fica com a original mesmo
       }
-      setLogoReady(true);
     };
-
-    return () => clearTimeout(fallback);
   }, []);
 
   // Auto-fade depois de 2.6s (mesma duração do site)
   useEffect(() => {
-    if (!logoReady) return;
     const t = setTimeout(() => setShow(false), 2600);
     return () => clearTimeout(t);
-  }, [logoReady]);
+  }, []);
 
   return (
     <div className="relative w-full h-full bg-black flex items-center justify-center overflow-hidden">
@@ -86,7 +68,7 @@ export function IntroVignette({ onDone }: { onDone?: () => void }) {
           onDone?.();
         }}
       >
-        {show && logoReady && (
+        {show && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
