@@ -73,6 +73,7 @@ const EDITOR_SCRIPT = `
   const MAX_HISTORY = 50;
   let selected = null;
   let drag = null;
+  let isInitialized = false;
   let pendingDrag = null;
   let history = [];
   let historyIndex = -1;
@@ -533,11 +534,20 @@ const EDITOR_SCRIPT = `
     // Snapshot inicial
     snapshotNow();
 
+    isInitialized = true;
     parent.postMessage({ type: 'editor:ready' }, '*');
   }
 
   window.addEventListener('message', function(e) {
     const data = e.data || {};
+    if (data.type === 'editor:ping') {
+      // O pai pode ter perdido nosso editor:ready (race entre iframe load
+      // e o registro do listener no React). Responde se já inicializado.
+      if (isInitialized) {
+        parent.postMessage({ type: 'editor:ready' }, '*');
+      }
+      return;
+    }
     if (data.type === 'editor:export') {
       // Remove TODOS os overlays do DOM
       document.querySelectorAll('#' + OVERLAY_ID).forEach(function(o) {
@@ -1072,6 +1082,25 @@ export function EditorShell({
     }, 50);
     return () => clearTimeout(t);
   }, [ready, showLayers]);
+
+  // Ping pro iframe até o editor ficar pronto. Cobre o race onde o
+  // iframe inicializa e posta editor:ready antes do nosso listener
+  // estar registrado.
+  useEffect(() => {
+    if (ready) return;
+    const id = setInterval(() => {
+      iframeRef.current?.contentWindow?.postMessage(
+        { type: "editor:ping" },
+        "*"
+      );
+    }, 150);
+    // Para depois de 8s pra não pingar pra sempre se o iframe nunca subir
+    const stopAt = setTimeout(() => clearInterval(id), 8000);
+    return () => {
+      clearInterval(id);
+      clearTimeout(stopAt);
+    };
+  }, [ready]);
 
   function openImageReplace() {
     if (!selected) return;
