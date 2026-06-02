@@ -20,38 +20,55 @@ export function IntroVignette({ onDone }: { onDone?: () => void }) {
 
   // Mesma técnica do site PMU CLASS: tira pixels pretos do logo PNG
   // pra ele "flutuar" sobre o fundo preto sem retângulo visível.
+  // Se algo falhar (CORS, ctx, etc), usa o logo original direto — não
+  // bloqueia a apresentação.
   useEffect(() => {
+    // Timeout defensivo: se nada acontecer em 1.5s, libera mesmo assim
+    const fallback = setTimeout(() => setLogoReady(true), 1500);
+
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.src = LOGO_SRC;
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        setLogoReady(true);
-        return;
-      }
-      ctx.drawImage(img, 0, 0);
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const px = data.data;
-      const THRESHOLD = 45;
-      for (let i = 0; i < px.length; i += 4) {
-        const r = px[i];
-        const g = px[i + 1];
-        const b = px[i + 2];
-        const max = Math.max(r, g, b);
-        if (max < THRESHOLD) {
-          px[i + 3] = 0;
-        } else if (max < THRESHOLD + 40) {
-          px[i + 3] = Math.round(((max - THRESHOLD) / 40) * 255);
-        }
-      }
-      ctx.putImageData(data, 0, 0);
-      setLogoSrc(canvas.toDataURL("image/png"));
+    img.onerror = () => {
+      clearTimeout(fallback);
       setLogoReady(true);
     };
+    img.onload = () => {
+      clearTimeout(fallback);
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          setLogoReady(true);
+          return;
+        }
+        ctx.drawImage(img, 0, 0);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const px = data.data;
+        const THRESHOLD = 45;
+        for (let i = 0; i < px.length; i += 4) {
+          const r = px[i];
+          const g = px[i + 1];
+          const b = px[i + 2];
+          const max = Math.max(r, g, b);
+          if (max < THRESHOLD) {
+            px[i + 3] = 0;
+          } else if (max < THRESHOLD + 40) {
+            px[i + 3] = Math.round(((max - THRESHOLD) / 40) * 255);
+          }
+        }
+        ctx.putImageData(data, 0, 0);
+        setLogoSrc(canvas.toDataURL("image/png"));
+      } catch {
+        // getImageData/toDataURL pode tainted-canvas se CORS falhar.
+        // Não tem problema: logo já tem fundo preto, mistura natural com a tela.
+      }
+      setLogoReady(true);
+    };
+
+    return () => clearTimeout(fallback);
   }, []);
 
   // Auto-fade depois de 2.6s (mesma duração do site)
