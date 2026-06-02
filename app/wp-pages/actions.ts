@@ -7,6 +7,8 @@ import {
   deleteContent,
   loadContent,
   markPlaced,
+  restoreContent,
+  trashContent,
   type PlacementType,
 } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
@@ -51,6 +53,7 @@ export async function placeAndReturnAction(formData: FormData) {
   redirect("/dashboard");
 }
 
+/** Soft delete — move pra lixeira. */
 export async function deleteWpPageAction(formData: FormData) {
   await requireAdmin();
   const domain = formData.get("domain")?.toString() as WpDomain;
@@ -58,11 +61,39 @@ export async function deleteWpPageAction(formData: FormData) {
   if (!domain || !slug) return;
   const content = await loadContent(domain, slug);
   const target = content?.title || slug;
-  await deleteContent(domain, slug);
-  await logActivity("wp.delete", target);
+  await trashContent(domain, slug);
+  await logActivity("wp.delete", target, "movida pra lixeira");
   revalidatePath("/dashboard");
   revalidatePath("/wordpress");
+  revalidatePath("/lixeira");
+  revalidatePath(`/p/${content?.publicSlug || slug}`);
   redirect("/dashboard");
+}
+
+export async function restoreWpPageAction(formData: FormData) {
+  await requireAdmin();
+  const domain = formData.get("domain")?.toString() as WpDomain;
+  const slug = formData.get("slug")?.toString() ?? "";
+  if (!domain || !slug) return;
+  const content = await loadContent(domain, slug);
+  await restoreContent(domain, slug);
+  await logActivity("wp.delete", content?.title || slug, "restaurada da lixeira");
+  revalidatePath("/dashboard");
+  revalidatePath("/wordpress");
+  revalidatePath("/lixeira");
+}
+
+export async function permanentDeleteWpPageAction(formData: FormData) {
+  await requireAdmin();
+  const domain = formData.get("domain")?.toString() as WpDomain;
+  const slug = formData.get("slug")?.toString() ?? "";
+  if (!domain || !slug) return;
+  const content = await loadContent(domain, slug);
+  await deleteContent(domain, slug);
+  await logActivity("wp.delete", content?.title || slug, "excluída permanentemente");
+  revalidatePath("/dashboard");
+  revalidatePath("/wordpress");
+  revalidatePath("/lixeira");
 }
 
 export async function deleteAllWpPagesAction() {

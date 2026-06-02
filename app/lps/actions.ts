@@ -13,7 +13,8 @@ import {
   updateLp,
 } from "@/lib/lp-store";
 import type { LandingPage } from "@/lib/landing-pages";
-import { emptyPage, saveBuilderPage } from "@/lib/page-builder-store";
+import { deleteBuilderPage, emptyPage, saveBuilderPage } from "@/lib/page-builder-store";
+import { resetEmbeddedHtml } from "@/lib/embedded-html-store";
 
 function slugify(input: string): string {
   return input
@@ -188,12 +189,18 @@ export async function permanentDeleteAction(formData: FormData) {
   const slug = formData.get("slug")?.toString() ?? "";
   if (!slug) return;
   const lp = await getLpFromStore(slug);
-  await removeLp(slug);
+  // Limpa todos os blobs relacionados pra não deixar lixo no KV
+  await Promise.all([
+    removeLp(slug),
+    deleteBuilderPage(slug).catch(() => {}),
+    resetEmbeddedHtml(slug).catch(() => {}),
+  ]);
   await logActivity("lp.delete", lp?.name || slug, "excluída permanentemente");
   revalidatePath("/dashboard");
   revalidatePath("/lps");
   revalidatePath("/websites");
   revalidatePath("/lixeira");
+  revalidatePath(`/p/${slug}`);
 }
 
 export async function setLpStatusAction(formData: FormData) {

@@ -11,6 +11,8 @@ export type FormConfig = {
   redirectUrl?: string;
   createdAt: string;
   createdBy: string;
+  trashed?: boolean;
+  trashedAt?: string;
 };
 
 export type FormSubmission = {
@@ -26,19 +28,54 @@ export type FormSubmission = {
 
 const FORMS_KEY = "forms:all";
 
+async function readAllForms(): Promise<FormConfig[]> {
+  return (await kvGet<FormConfig[]>(FORMS_KEY)) || [];
+}
+
 export async function listForms(): Promise<FormConfig[]> {
-  const forms = (await kvGet<FormConfig[]>(FORMS_KEY)) || [];
-  return forms;
+  const all = await readAllForms();
+  return all.filter((f) => !f.trashed);
+}
+
+export async function listTrashedForms(): Promise<FormConfig[]> {
+  const all = await readAllForms();
+  return all
+    .filter((f) => f.trashed)
+    .sort((a, b) => (b.trashedAt ?? "").localeCompare(a.trashedAt ?? ""));
 }
 
 export async function getForm(id: string): Promise<FormConfig | null> {
-  const forms = await listForms();
-  return forms.find((f) => f.id === id) || null;
+  const all = await readAllForms();
+  return all.find((f) => f.id === id) || null;
 }
 
 export async function getFormBySlug(slug: string): Promise<FormConfig | null> {
-  const forms = await listForms();
-  return forms.find((f) => f.slug === slug) || null;
+  // Pra resolver public URL /f/[slug] não retorna trashed
+  const all = await readAllForms();
+  return all.find((f) => f.slug === slug && !f.trashed) || null;
+}
+
+export async function trashForm(id: string): Promise<void> {
+  const all = await readAllForms();
+  const idx = all.findIndex((f) => f.id === id);
+  if (idx === -1) return;
+  all[idx] = {
+    ...all[idx],
+    trashed: true,
+    trashedAt: new Date().toISOString(),
+  };
+  await kvSet(FORMS_KEY, all);
+}
+
+export async function restoreForm(id: string): Promise<void> {
+  const all = await readAllForms();
+  const idx = all.findIndex((f) => f.id === id);
+  if (idx === -1) return;
+  const next = { ...all[idx] };
+  delete next.trashed;
+  delete next.trashedAt;
+  all[idx] = next;
+  await kvSet(FORMS_KEY, all);
 }
 
 export async function saveForm(form: FormConfig): Promise<void> {

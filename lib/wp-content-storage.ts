@@ -16,6 +16,9 @@ export type WpPageContent = BaseWpPageContent & {
   formWebhookUrl?: string;
   /** Pra onde redirecionar o usuário depois do submit. */
   formRedirectUrl?: string;
+  /** Soft delete — fica na lixeira. */
+  trashed?: boolean;
+  trashedAt?: string;
 };
 
 // Index: slug público → { domain, originalSlug }
@@ -128,7 +131,24 @@ export type SavedSummary = {
   placed?: PlacementType;
   published?: boolean;
   publicSlug?: string;
+  trashed?: boolean;
+  trashedAt?: string;
 };
+
+function summarize(c: WpPageContent): SavedSummary {
+  return {
+    domain: c.domain,
+    slug: c.slug,
+    title: c.title,
+    modified: c.modified,
+    fetchedAt: c.fetchedAt,
+    placed: c.placed,
+    published: c.published,
+    publicSlug: c.publicSlug,
+    trashed: c.trashed,
+    trashedAt: c.trashedAt,
+  };
+}
 
 export async function listSaved(): Promise<SavedSummary[]> {
   const keys = await kvKeys("wp:content:*");
@@ -137,15 +157,51 @@ export async function listSaved(): Promise<SavedSummary[]> {
   );
   const valid = contents.filter((c): c is WpPageContent => c !== null);
   return valid
-    .map((c) => ({
-      domain: c.domain,
-      slug: c.slug,
-      title: c.title,
-      modified: c.modified,
-      fetchedAt: c.fetchedAt,
-      placed: c.placed,
-      published: c.published,
-      publicSlug: c.publicSlug,
-    }))
+    .filter((c) => !c.trashed)
+    .map(summarize)
     .sort((a, b) => b.fetchedAt.localeCompare(a.fetchedAt));
+}
+
+export async function listTrashed(): Promise<SavedSummary[]> {
+  const keys = await kvKeys("wp:content:*");
+  const contents = await Promise.all(
+    keys.map((k) => kvGet<WpPageContent>(k))
+  );
+  const valid = contents.filter((c): c is WpPageContent => c !== null);
+  return valid
+    .filter((c) => c.trashed)
+    .map(summarize)
+    .sort((a, b) =>
+      (b.trashedAt ?? "").localeCompare(a.trashedAt ?? "")
+    );
+}
+
+/** Soft delete — marca como trashed em vez de remover. */
+export async function trashContent(
+  domain: WpDomain,
+  slug: string
+): Promise<void> {
+  const content = await loadContent(domain, slug);
+  if (!content) return;
+  // Despublica se estava no ar
+  if (content.published && content.publicSlug) {
+    await kvDel(`published-index:${content.publicSlug}`);
+  }
+  content.trashed = true;
+  content.trashedAt = new Date().toISOString();
+  content.published = false;
+  delete content.publishedAt;
+  delete content.publicSlug;
+  await saveContent(content);
+}
+
+export async function restoreContent(
+  domain: WpDomain,
+  slug: string
+): Promise<void> {
+  const content = await loadContent(domain, slug);
+  if (!content) return;
+  content.trashed = false;
+  delete content.trashedAt;
+  await saveContent(content);
 }

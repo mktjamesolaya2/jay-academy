@@ -9,8 +9,10 @@ import {
   getForm,
   getFormBySlug,
   newFormId,
+  restoreForm,
   saveForm,
   slugify,
+  trashForm,
   type FormConfig,
 } from "@/lib/forms-store";
 
@@ -124,13 +126,42 @@ export async function updateFormAction(
   }
 }
 
+/** Soft delete — move pra lixeira. */
 export async function deleteFormAction(formData: FormData) {
   await requireAdmin();
   const id = formData.get("id")?.toString() ?? "";
   if (!id) return;
   const existing = await getForm(id);
-  await deleteFormStore(id);
-  if (existing) await logActivity("form.delete", existing.name);
+  await trashForm(id);
+  if (existing) {
+    await logActivity("form.delete", existing.name, "movido pra lixeira");
+    revalidatePath(`/f/${existing.slug}`);
+  }
   revalidatePath("/forms");
+  revalidatePath("/lixeira");
   redirect("/forms");
+}
+
+export async function restoreFormAction(formData: FormData) {
+  await requireAdmin();
+  const id = formData.get("id")?.toString() ?? "";
+  if (!id) return;
+  const existing = await getForm(id);
+  await restoreForm(id);
+  if (existing)
+    await logActivity("form.delete", existing.name, "restaurado da lixeira");
+  revalidatePath("/forms");
+  revalidatePath("/lixeira");
+}
+
+export async function permanentDeleteFormAction(formData: FormData) {
+  await requireAdmin();
+  const id = formData.get("id")?.toString() ?? "";
+  if (!id) return;
+  const existing = await getForm(id);
+  await deleteFormStore(id);
+  if (existing)
+    await logActivity("form.delete", existing.name, "excluído permanentemente");
+  revalidatePath("/forms");
+  revalidatePath("/lixeira");
 }
