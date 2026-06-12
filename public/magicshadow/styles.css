@@ -2247,6 +2247,11 @@ body {
     text-wrap: balance;
   }
 
+  /* No mobile a frase já quebra natural — quebra forçada só no desktop */
+  .br-desktop {
+    display: none;
+  }
+
   .pitch-cta {
     font-size: 0.8rem;
     letter-spacing: 0.14em;
