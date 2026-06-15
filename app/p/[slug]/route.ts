@@ -156,11 +156,13 @@ ${cleaned}
  * algum form precise do comportamento original.
  */
 function buildFormInterceptor(publicSlug: string): string {
-  const endpoint = "/api/wp-form-submit";
   return `<script data-portal-script="1">
 (function () {
   var SLUG = ${JSON.stringify(publicSlug)};
-  var ENDPOINT = ${JSON.stringify(endpoint)};
+  // URL ABSOLUTA do portal. A página tem <base href> apontando pro WordPress,
+  // então um caminho relativo ("/api/...") resolveria pro domínio do WP e
+  // quebraria ("Failed to fetch"). window.location.origin = domínio do portal.
+  var ENDPOINT = window.location.origin + "/api/wp-form-submit";
 
   function collectFields(form) {
     var data = {};
