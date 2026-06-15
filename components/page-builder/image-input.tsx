@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Upload, Loader2, X, AlertCircle } from "lucide-react";
 import { uploadImageAction } from "@/app/wp-pages/[domain]/[slug]/edit/upload-action";
+import { MediaPicker } from "@/components/media-picker";
 
 /**
  * Campo de imagem que aceita URL OU upload do computador.
@@ -59,6 +60,7 @@ export function ImageInput({
           placeholder={placeholder}
           className="flex-1 bg-[#0f0f0f] border border-[#1f1f1f] rounded-md px-2.5 py-1.5 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-neutral-600 transition"
         />
+        <MediaPicker onPick={onChange} compact />
         <button
           type="button"
           onClick={openPicker}

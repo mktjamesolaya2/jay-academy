@@ -11,6 +11,8 @@ const PUBLIC_PATHS = [
   "/api/auth",
   "/api/chat-pmu",
   "/api/wp-form-submit",
+  "/api/track",
+  "/api/cron",
   "/api/lp-content",
   "/p/",
   "/f/",

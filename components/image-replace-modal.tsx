@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Upload, Link as LinkIcon, Loader2, Check } from "lucide-react";
 import { uploadImageAction } from "@/app/wp-pages/[domain]/[slug]/edit/upload-action";
+import { MediaPicker } from "@/components/media-picker";
 
 export type SelectedImage = {
   currentSrc: string;
@@ -124,6 +125,7 @@ export function ImageReplaceModal({
                 >
                   Carregar
                 </button>
+                <MediaPicker onPick={(u) => setPreviewSrc(u)} compact />
               </div>
             </div>
           ) : (

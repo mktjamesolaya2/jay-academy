@@ -1,0 +1,123 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth";
+import { blobUpload } from "@/lib/storage";
+import { logActivity } from "@/lib/activity-log";
+import { addMedia, deleteMedia, updateMedia, listMedia } from "@/lib/media-store";
+import type { MediaItem } from "@/lib/media-types";
+import {
+  mediaTypeFromContentType,
+  mediaTypeFromUrl,
+} from "@/lib/media-types";
+
+const MAX = 10 * 1024 * 1024; // 10MB
+
+function sanitizeName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9.-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function newId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+/** Upload de arquivo (imagem/vídeo/doc) pra Vercel Blob + registro na biblioteca. */
+export async function uploadMediaAction(
+  formData: FormData
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    await requireAdmin();
+    const file = formData.get("file");
+    const category = (formData.get("category")?.toString() || "Outros").trim();
+    if (!(file instanceof File)) return { ok: false, error: "Arquivo inválido" };
+    if (file.size === 0) return { ok: false, error: "Arquivo vazio" };
+    if (file.size > MAX)
+      return {
+        ok: false,
+        error:
+          "Máx 10MB por upload. Pra vídeos/arquivos grandes, use 'Adicionar por URL'.",
+      };
+
+    const ext = file.name.includes(".") ? "." + file.name.split(".").pop() : "";
+    const base = sanitizeName(file.name.replace(/\.[^.]+$/, "")) || "arquivo";
+    const filename = `media/${base}${ext}`;
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const { url } = await blobUpload(filename, buffer, file.type);
+
+    await addMedia({
+      id: newId(),
+      name: file.name,
+      url,
+      category,
+      type: mediaTypeFromContentType(file.type),
+      contentType: file.type,
+      size: file.size,
+      uploadedAt: new Date().toISOString(),
+    });
+    await logActivity("wp.edit", file.name, "mídia enviada");
+
+    revalidatePath("/midia");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro no upload" };
+  }
+}
+
+/** Adiciona um arquivo por URL externa (ex: vídeo hospedado fora). */
+export async function addMediaByUrlAction(
+  formData: FormData
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    await requireAdmin();
+    const url = (formData.get("url")?.toString() || "").trim();
+    const category = (formData.get("category")?.toString() || "Outros").trim();
+    const name =
+      (formData.get("name")?.toString() || "").trim() ||
+      url.split("/").pop()?.split("?")[0] ||
+      "arquivo";
+    if (!url) return { ok: false, error: "URL vazia" };
+    if (!/^https?:\/\//i.test(url))
+      return { ok: false, error: "URL precisa começar com http(s)://" };
+
+    await addMedia({
+      id: newId(),
+      name,
+      url,
+      category,
+      type: mediaTypeFromUrl(url),
+      uploadedAt: new Date().toISOString(),
+    });
+
+    revalidatePath("/midia");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro" };
+  }
+}
+
+/** Lista só as imagens — usado pelo seletor "Escolher da biblioteca". */
+export async function listMediaImagesAction(): Promise<MediaItem[]> {
+  await requireAdmin();
+  const items = await listMedia();
+  return items.filter((i) => i.type === "image");
+}
+
+export async function deleteMediaAction(formData: FormData) {
+  await requireAdmin();
+  const id = formData.get("id")?.toString() ?? "";
+  if (id) await deleteMedia(id);
+  revalidatePath("/midia");
+}
+
+export async function setMediaCategoryAction(formData: FormData) {
+  await requireAdmin();
+  const id = formData.get("id")?.toString() ?? "";
+  const category = formData.get("category")?.toString() ?? "Outros";
+  if (id) await updateMedia(id, { category });
+  revalidatePath("/midia");
+}

@@ -22,6 +22,15 @@ export type WpPageContent = BaseWpPageContent & {
   /** Resumo inteligente (IA) do conteúdo da página. */
   summary?: string;
   summaryAt?: string;
+  /** SEO por página. */
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: string;
+  seoCanonical?: string;
+  seoNoIndex?: boolean;
+  /** Agendamento (ISO). O cron publica/despublica quando a hora chega. */
+  scheduledPublishAt?: string;
+  scheduledUnpublishAt?: string;
 };
 
 // Index: slug público → { domain, originalSlug }

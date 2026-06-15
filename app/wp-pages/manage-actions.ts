@@ -62,6 +62,89 @@ export async function quickUnpublishAction(formData: FormData) {
   if (oldPublicSlug) revalidatePath(`/p/${oldPublicSlug}`);
 }
 
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+/** Salva o SEO da página (título, descrição, imagem, canonical, noindex, slug). */
+export async function saveSeoAction(
+  _prev: { error?: string; ok?: boolean } | undefined,
+  formData: FormData
+): Promise<{ error?: string; ok?: boolean }> {
+  try {
+    await requireAdmin();
+    const domain = formData.get("domain")?.toString() as WpDomain;
+    const slug = formData.get("slug")?.toString() ?? "";
+    if (!domain || !slug) return { error: "Faltam dados" };
+
+    const content = await loadContent(domain, slug);
+    if (!content) return { error: "Página não encontrada" };
+
+    const str = (k: string) => formData.get(k)?.toString().trim() || undefined;
+    content.seoTitle = str("seoTitle");
+    content.seoDescription = str("seoDescription");
+    content.seoImage = str("seoImage");
+    content.seoCanonical = str("seoCanonical");
+    content.seoNoIndex = formData.get("seoNoIndex") === "1";
+
+    // Slug / permalink — pode mudar a URL pública
+    const rawSlug = formData.get("publicSlug")?.toString().trim() ?? "";
+    const newSlug = rawSlug ? slugify(rawSlug) : "";
+    const currentSlug = content.publicSlug || content.slug;
+    if (newSlug && newSlug !== currentSlug) {
+      if (content.published) {
+        // setPublished cuida do índice + conflito (lança se já existir)
+        await setPublished(content, newSlug);
+      } else {
+        content.publicSlug = newSlug;
+      }
+    }
+
+    await saveContent(content);
+    await logActivity("wp.edit", content.title || slug, "SEO atualizado");
+
+    const finalSlug = content.publicSlug || content.slug;
+    revalidatePath(`/wp-pages/${domain}/${slug}`);
+    revalidatePath(`/p/${finalSlug}`);
+    revalidatePath("/wp-pages");
+    return { ok: true };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Erro ao salvar SEO" };
+  }
+}
+
+/** Agenda (ou cancela) a publicação/despublicação automática. */
+export async function scheduleAction(formData: FormData) {
+  await requireAdmin();
+  const domain = formData.get("domain")?.toString() as WpDomain;
+  const slug = formData.get("slug")?.toString() ?? "";
+  const mode = formData.get("mode")?.toString(); // "publish" | "unpublish"
+  const clear = formData.get("clear") === "1";
+  const when = formData.get("when")?.toString() ?? "";
+  if (!domain || !slug) return;
+
+  const content = await loadContent(domain, slug);
+  if (!content) return;
+
+  const iso = clear || !when ? undefined : new Date(when).toISOString();
+  if (mode === "publish") content.scheduledPublishAt = iso;
+  else if (mode === "unpublish") content.scheduledUnpublishAt = iso;
+
+  await saveContent(content);
+  await logActivity(
+    "wp.edit",
+    content.title || slug,
+    clear ? "agendamento cancelado" : `agendado (${mode})`
+  );
+  revalidatePath(`/wp-pages/${domain}/${slug}`);
+  revalidatePath("/wp-pages");
+}
+
 /** Renomeia o NOME (título) da página. Não mexe no slug nem na URL pública. */
 export async function renameWpPageAction(formData: FormData) {
   await requireAdmin();

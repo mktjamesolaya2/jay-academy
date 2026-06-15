@@ -1,6 +1,7 @@
 "use client";
 
-import { Search, Bell, HelpCircle } from "lucide-react";
+import { Search, Bell, HelpCircle, Lightbulb } from "lucide-react";
+import Link from "next/link";
 import { SearchModal } from "./search-modal";
 import { useEffect, useState } from "react";
 import { type LandingPage } from "@/lib/landing-pages";
@@ -42,6 +43,15 @@ export function DashboardTopbar({
         </button>
 
         <div className="flex-1" />
+
+        <Link
+          href="/sugestoes"
+          className="w-9 h-9 rounded-md flex items-center justify-center text-neutral-400 hover:text-amber-300 hover:bg-[#161616] transition"
+          aria-label="Sugestões"
+          title="Sugestões"
+        >
+          <Lightbulb size={15} strokeWidth={2} />
+        </Link>
 
         <button
           type="button"

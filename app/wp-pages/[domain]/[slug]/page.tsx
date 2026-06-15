@@ -19,6 +19,8 @@ import { PublishButton } from "@/components/publish-button";
 import { WpFormBehavior } from "@/components/wp-form-behavior";
 import { WpPageActions } from "@/components/wp-page-actions";
 import { SmartSummary } from "@/components/smart-summary";
+import { SeoShortcut } from "@/components/seo-shortcut";
+import { ScheduleControl } from "@/components/schedule-control";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { formatDateTimeBR } from "@/lib/format-date";
 
@@ -162,6 +164,7 @@ export default async function WpPageDetailPage({
                   />
                 </Block>
               )}
+
             </div>
 
             <aside className="space-y-5">
@@ -182,8 +185,34 @@ export default async function WpPageDetailPage({
                       href={editHref}
                     />
                   )}
+                  {userCanEdit && (
+                    <SeoShortcut
+                      domain={content.domain}
+                      slug={content.slug}
+                      initialSlug={content.publicSlug || content.slug}
+                      pageTitle={content.title.replace(/<[^>]*>/g, "")}
+                      initial={{
+                        seoTitle: content.seoTitle,
+                        seoDescription: content.seoDescription,
+                        seoImage: content.seoImage,
+                        seoCanonical: content.seoCanonical,
+                        seoNoIndex: content.seoNoIndex,
+                      }}
+                    />
+                  )}
                 </div>
               </Block>
+
+              {userCanEdit && (
+                <Block title="Agendamento">
+                  <ScheduleControl
+                    domain={content.domain}
+                    slug={content.slug}
+                    mode="unpublish"
+                    current={content.scheduledUnpublishAt}
+                  />
+                </Block>
+              )}
 
               {content.publishedAt && (
                 <Block title="Publicada em">
@@ -319,6 +348,14 @@ export default async function WpPageDetailPage({
                       publishedAt: content.publishedAt,
                     }}
                   />
+                  <div className="mt-3 bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl p-4">
+                    <ScheduleControl
+                      domain={content.domain}
+                      slug={content.slug}
+                      mode="publish"
+                      current={content.scheduledPublishAt}
+                    />
+                  </div>
                 </div>
 
                 {isForm && (
@@ -341,6 +378,26 @@ export default async function WpPageDetailPage({
                     />
                   </div>
                 )}
+              </section>
+            )}
+
+            {userCanEdit && (
+              <section className="px-10 pb-8">
+                <div className="max-w-md">
+                  <SeoShortcut
+                    domain={content.domain}
+                    slug={content.slug}
+                    initialSlug={content.publicSlug || content.slug}
+                    pageTitle={content.title.replace(/<[^>]*>/g, "")}
+                    initial={{
+                      seoTitle: content.seoTitle,
+                      seoDescription: content.seoDescription,
+                      seoImage: content.seoImage,
+                      seoCanonical: content.seoCanonical,
+                      seoNoIndex: content.seoNoIndex,
+                    }}
+                  />
+                </div>
               </section>
             )}
 

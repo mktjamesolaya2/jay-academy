@@ -423,11 +423,15 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
     "gold-black": "from-amber-400 to-yellow-600",
     rose: "from-pink-400 to-rose-400",
   };
+  const publicUrl = publicUrlFor(lp);
   return (
-    <Link
-      href={`/lps/${lp.slug}`}
-      className="grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group"
-    >
+    <div className="relative grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group">
+      {/* Link que cobre a linha toda (stretched link) — clique no card */}
+      <Link
+        href={`/lps/${lp.slug}`}
+        aria-label={lp.name}
+        className="absolute inset-0 z-[1]"
+      />
       <div className="flex items-center gap-3 min-w-0">
         <span
           className={`w-10 h-12 rounded-md bg-gradient-to-br ${accentMap[lp.accent]} shrink-0`}
@@ -436,10 +440,11 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
           <p className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition">
             {lp.name}
           </p>
-          {(() => {
-            const url = publicUrlFor(lp);
-            return url ? <SiteUrlLink url={url} /> : null;
-          })()}
+          {publicUrl && (
+            <span className="relative z-[2] inline-block w-fit">
+              <SiteUrlLink url={publicUrl} />
+            </span>
+          )}
         </div>
       </div>
       <span className="text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded inline-block w-fit">
@@ -462,7 +467,7 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
       <span className="w-7 h-7 rounded-md text-neutral-500 group-hover:text-white group-hover:bg-[#161616] transition inline-flex items-center justify-center">
         <MoreHorizontal size={14} strokeWidth={2} />
       </span>
-    </Link>
+    </div>
   );
 }
 
@@ -477,10 +482,12 @@ function WpProjectRow({ wp }: { wp: SavedSummary }) {
       : "LP";
   const Icon = typeIcon;
   return (
-    <Link
-      href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}`}
-      className="grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group"
-    >
+    <div className="relative grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group">
+      <Link
+        href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}`}
+        aria-label={wp.slug}
+        className="absolute inset-0 z-[1]"
+      />
       <div className="flex items-center gap-3 min-w-0">
         <span className="w-10 h-12 rounded-md bg-gradient-to-br from-blue-500/40 to-violet-500/40 shrink-0 flex items-center justify-center">
           <Icon size={13} strokeWidth={2.2} className="text-white/90" />
@@ -515,10 +522,12 @@ function WpProjectRow({ wp }: { wp: SavedSummary }) {
         </p>
         <p className="text-[11px] text-neutral-500">do WP</p>
       </div>
-      <EditQuickLink
-        href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}/edit`}
-      />
-    </Link>
+      <span className="relative z-[2] inline-flex">
+        <EditQuickLink
+          href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}/edit`}
+        />
+      </span>
+    </div>
   );
 }
 

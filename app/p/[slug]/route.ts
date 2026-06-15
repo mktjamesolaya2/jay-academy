@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
+import {
+  getPublishedBySlug,
+  loadContent,
+  type WpPageContent,
+} from "@/lib/wp-content-storage";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { loadBuilderPage } from "@/lib/page-builder-store";
 import { renderBuilderPageHtml } from "@/lib/builder-html-render";
@@ -70,13 +74,7 @@ ${body}
         );
       }
     }
-    return new NextResponse(html, {
-      headers: {
-        "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control":
-          "public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
-      },
-    });
+    return htmlResponse(html, decoded);
   }
 
   // ─── WordPress page (legacy / cópia importada) ──────────────────
@@ -130,6 +128,9 @@ ${cleaned}
 </html>`;
   }
 
+  // Aplica o SEO configurado (título, description, OG, canonical, robots).
+  html = applySeo(html, content);
+
   // Injeta o interceptador de forms antes de </body> sempre que a página
   // tem webhook ou redirect configurado. O script captura submits e os
   // redireciona pro /api/wp-form-submit do portal.
@@ -155,6 +156,91 @@ ${cleaned}
  * Não toca em forms que tenham data-portal-skip="1" — escape hatch caso
  * algum form precise do comportamento original.
  */
+/**
+ * Sobrescreve/insere as meta tags de SEO no <head> conforme a config da página.
+ * Só age se houver algum campo SEO setado — senão deixa a página intacta.
+ */
+function applySeo(html: string, c: WpPageContent): string {
+  const hasSeo =
+    c.seoTitle ||
+    c.seoDescription ||
+    c.seoImage ||
+    c.seoCanonical ||
+    c.seoNoIndex;
+  if (!hasSeo) return html;
+
+  const e = escapeHtml;
+  const ogTitle = (c.seoTitle || c.title || "").replace(/<[^>]*>/g, "");
+  const tags: string[] = [];
+  if (c.seoDescription)
+    tags.push(`<meta name="description" content="${e(c.seoDescription)}" />`);
+  if (c.seoNoIndex)
+    tags.push(`<meta name="robots" content="noindex, nofollow" />`);
+  if (c.seoCanonical)
+    tags.push(`<link rel="canonical" href="${e(c.seoCanonical)}" />`);
+  if (ogTitle) tags.push(`<meta property="og:title" content="${e(ogTitle)}" />`);
+  if (c.seoDescription)
+    tags.push(`<meta property="og:description" content="${e(c.seoDescription)}" />`);
+  if (c.seoImage) {
+    tags.push(`<meta property="og:image" content="${e(c.seoImage)}" />`);
+    tags.push(`<meta name="twitter:card" content="summary_large_image" />`);
+    tags.push(`<meta name="twitter:image" content="${e(c.seoImage)}" />`);
+  }
+  tags.push(`<meta property="og:type" content="website" />`);
+
+  let out = html;
+  // Remove tags existentes pra não duplicar
+  out = out.replace(/<meta[^>]+name=["']description["'][^>]*>/gi, "");
+  out = out.replace(/<meta[^>]+name=["']robots["'][^>]*>/gi, "");
+  out = out.replace(/<link[^>]+rel=["']canonical["'][^>]*>/gi, "");
+  // Título
+  if (c.seoTitle) {
+    if (/<title>[\s\S]*?<\/title>/i.test(out)) {
+      out = out.replace(/<title>[\s\S]*?<\/title>/i, `<title>${e(c.seoTitle)}</title>`);
+    } else {
+      out = out.replace(/<head([^>]*)>/i, `<head$1>\n<title>${e(c.seoTitle)}</title>`);
+    }
+  }
+  // Injeta o resto antes de </head>
+  if (/<\/head>/i.test(out)) {
+    out = out.replace(/<\/head>/i, `${tags.join("\n")}\n</head>`);
+  }
+  return out;
+}
+
+/** Resposta HTML com o beacon de visita injetado + headers de cache. */
+function htmlResponse(html: string, slug: string): NextResponse {
+  const withTracker = html.replace(
+    /<\/body>/i,
+    `${buildTracker(slug)}\n</body>`
+  );
+  return new NextResponse(withTracker, {
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control":
+        "public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
+    },
+  });
+}
+
+/** Script leve que registra a visita (1x por carregamento) no /api/track.
+   Usa origin absoluto pra furar o <base href> do WP. */
+function buildTracker(slug: string): string {
+  return `<script data-portal-track="1">
+(function(){
+  try {
+    var u = new URLSearchParams(window.location.search).get('utm_source') || '';
+    fetch(window.location.origin + '/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: ${JSON.stringify(slug)}, referrer: document.referrer || '', utm: u }),
+      keepalive: true
+    }).catch(function(){});
+  } catch (e) {}
+})();
+</script>`;
+}
+
 function buildFormInterceptor(publicSlug: string): string {
   return `<script data-portal-script="1">
 (function () {
