@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-15 (sessão — polimento visual Magic Shadow)
+> **Última atualização**: 2026-06-15 (sessão — gestão WP estilo WordPress + resumo IA + performance + mobile)
 
 ---
 
@@ -206,6 +206,32 @@ Iteração visual-first com James (editar `portal/public/magicshadow/` → push 
   - Seção estendida (min-height até 1080px); frase de fechamento + botão **em fluxo** (grid-rows `1fr auto`); botão centralizado sobre a divisória; blocos preto/cream estendidos pra baixo.
   - **Cor dos blocos = cor real da imagem** (amostrei pixels via System.Drawing): escuro `#140D08`, claro `#EFE6D9`; os fades das colunas dissolvem no MESMO tom (sem emenda). ⚠️ há override inline no `<head>` do index.html (mobile <900px) que precisa acompanhar qualquer mudança dessas cores.
 - ⚠️ **Mobile do díptico ainda não foi verificado a fundo** nesta sessão (James revisou desktop). Pendente checar empilhado.
+
+---
+
+## 🆕 Sessão 2026-06-15 (tarde) — Gestão WP estilo WordPress + IA + performance + mobile
+
+**Área de gestão de páginas WP nova** (`/wp-pages`):
+- Lista estilo WP: busca, filtros (status/categoria/domínio), seleção múltipla + ações em lote (publicar/despublicar/categorizar/lixeira). Componente [`wp-manage-list.tsx`](../components/wp-manage-list.tsx).
+- "Gerenciar" no dashboard abre essa lista em **aba nova**; removido o "Ver as X restantes".
+- Server actions: [`manage-actions.ts`](../app/wp-pages/manage-actions.ts) — quickPublish/Unpublish, publishAll/unpublishAll, bulk*, rename, duplicate, generateSummary.
+
+**Detail da página WP** ([`page.tsx`](../app/wp-pages/[domain]/[slug]/page.tsx)) — segue o padrão da detail de LP:
+- **Publicada** → gestão limpa: Editar(renomear)/Duplicar/Mover-lixeira + "Sobre essa página" + Atalhos (Abrir página, Editar visualmente). Webhook **só pra forms**.
+- **Não publicada** → mantém categorizar + publicar.
+- Componente [`wp-page-actions.tsx`](../components/wp-page-actions.tsx) (rename modal/duplicar/lixeira/despublicar).
+
+**Resumo IA automático** — ao publicar, gera resumo (máx 3 linhas) via OpenRouter ([`ai-summary.ts`](../lib/ai-summary.ts) + [`page-summary.ts`](../lib/page-summary.ts)). Sem botão; fallback gera em background. ⚠️ Precisa `OPENROUTER_API_KEY` (só na Vercel; local não tem). Campo `summary` no `WpPageContent`.
+
+**Performance**: fontes via `next/font` (sem render-block); `/p/[slug]` com `stale-while-revalidate` (nunca trava); code-split já ok por rota; force-dynamic mantido (auth).
+
+**Mobile**: editores visuais (edit-visual, build, wp-edit) **bloqueados no mobile** com aviso ([`desktop-only-editor.tsx`](../components/desktop-only-editor.tsx)). Forms/texto livres (funcionam no touch).
+
+**Fidelidade mobile WP**: confirmado que copiar→servir→editar preserva `<head>`/CSS/viewport (editor salva doc inteiro). Adicionada garantia de `<meta viewport>` no `/p`.
+
+**Animações**: feedback tátil global nos botões (press scale + hover) no [`globals.css`](../app/globals.css).
+
+**Pendente (precisa de você):** deploys + páginas-com-erro reais → precisa do **token Vercel** (deploys) + health-check (erro). Botões de animação e resumo IA: validar no ar.
 
 ---
 

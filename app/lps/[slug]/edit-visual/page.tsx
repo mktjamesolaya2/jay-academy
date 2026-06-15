@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { EditorShell } from "@/components/editor-shell";
+import { DesktopOnlyEditor } from "@/components/desktop-only-editor";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { resolveEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
@@ -42,11 +43,13 @@ export default async function EditVisualPage({
   const sanitized = stripScripts(html);
 
   return (
-    <EditorShell
-      source={{ kind: "embed", slug: embedSlug }}
-      title={lp.name}
-      initialHtml={sanitized}
-    />
+    <DesktopOnlyEditor backHref={`/lps/${slug}`}>
+      <EditorShell
+        source={{ kind: "embed", slug: embedSlug }}
+        title={lp.name}
+        initialHtml={sanitized}
+      />
+    </DesktopOnlyEditor>
   );
 }
 

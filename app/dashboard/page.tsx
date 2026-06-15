@@ -202,7 +202,9 @@ export default async function DashboardPage() {
                     </h2>
                   </div>
                   <Link
-                    href="/wordpress"
+                    href="/wp-pages"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-[#161616] border border-[#1f1f1f] hover:border-neutral-700 hover:text-white text-neutral-300 transition"
                   >
                     Gerenciar
@@ -250,14 +252,6 @@ export default async function DashboardPage() {
                         </Link>
                       ))}
                     </div>
-                    {uncategorizedWp.length > 6 && (
-                      <Link
-                        href="/wordpress"
-                        className="block mt-3 text-center text-xs font-medium text-neutral-500 hover:text-white transition py-1"
-                      >
-                        Ver as {uncategorizedWp.length - 6} restantes →
-                      </Link>
-                    )}
                   </div>
                 )}
               </section>

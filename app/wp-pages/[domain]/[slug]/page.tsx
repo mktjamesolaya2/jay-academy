@@ -8,16 +8,19 @@ import {
   FileText,
   X,
   Eye,
-  Trash2,
   Pencil,
 } from "lucide-react";
+import { clsx } from "clsx";
 import { Sidebar } from "@/components/sidebar";
 import { loadContent } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
-import { deleteWpPageAction, placeWpPageAction } from "../../actions";
+import { placeWpPageAction } from "../../actions";
 import { PublishButton } from "@/components/publish-button";
 import { WpFormBehavior } from "@/components/wp-form-behavior";
+import { WpPageActions } from "@/components/wp-page-actions";
+import { SmartSummary } from "@/components/smart-summary";
 import { canEdit, getCurrentUser } from "@/lib/auth";
+import { formatDateTimeBR } from "@/lib/format-date";
 
 type Params = Promise<{ domain: string; slug: string }>;
 
@@ -56,6 +59,15 @@ export default async function WpPageDetailPage({
   if (!content) notFound();
   const userCanEdit = canEdit(me);
 
+  const isPublished = !!content.published;
+  const isForm = content.placed === "form";
+  const publicSlug = content.publicSlug || content.slug;
+  const domainLabel =
+    content.domain === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br";
+  const encSlug = encodeURIComponent(content.slug);
+  const editHref = `/wp-pages/${content.domain}/${encSlug}/edit`;
+  const previewHref = `/wp-pages/${content.domain}/${encSlug}/preview`;
+
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
       <Sidebar />
@@ -79,218 +91,363 @@ export default async function WpPageDetailPage({
                 dangerouslySetInnerHTML={{ __html: content.title }}
               />
               <p className="text-neutral-500 mt-1.5 font-mono text-xs">
-                {content.domain === "main"
-                  ? "jayacademy.com.br"
-                  : "lp.jayacademy.com.br"}
-                /{content.slug}
+                {domainLabel}/{content.slug}
               </p>
-            </div>
-            <div className="flex items-center gap-2">
-              {userCanEdit && (
-                <Link
-                  href={`/wp-pages/${content.domain}/${encodeURIComponent(
-                    content.slug
-                  )}/edit`}
-                  className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
+              {isPublished && (
+                <a
+                  href={`/p/${publicSlug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 mt-2 text-xs font-mono text-emerald-300/90 hover:text-emerald-200 transition"
                 >
-                  <Pencil size={13} strokeWidth={2.4} />
-                  Editar
-                </Link>
+                  /p/{publicSlug}
+                  <ExternalLink size={11} strokeWidth={2} />
+                </a>
               )}
-              <a
-                href={content.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-ghost inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
+            </div>
+            <div className="flex flex-col items-end gap-3">
+              <span
+                className={clsx(
+                  "inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full ring-1",
+                  isPublished
+                    ? "bg-emerald-500/10 text-emerald-300 ring-emerald-500/25"
+                    : "bg-[#161616] text-neutral-400 ring-[#262626]"
+                )}
               >
-                Ver no WP
-                <ExternalLink size={13} strokeWidth={2} />
-              </a>
+                <span
+                  className={clsx(
+                    "w-1.5 h-1.5 rounded-full",
+                    isPublished ? "bg-emerald-400" : "bg-neutral-500"
+                  )}
+                />
+                {isPublished ? "Publicada" : "Não publicada"}
+              </span>
               {userCanEdit && (
-                <form action={deleteWpPageAction}>
-                  <input type="hidden" name="domain" value={content.domain} />
-                  <input type="hidden" name="slug" value={content.slug} />
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-rose-300 bg-rose-500/10 ring-1 ring-rose-500/25 hover:bg-rose-500/20 transition"
-                  >
-                    <Trash2 size={13} strokeWidth={2} />
-                    Excluir
-                  </button>
-                </form>
+                <WpPageActions
+                  domain={content.domain}
+                  slug={content.slug}
+                  name={content.title}
+                  published={isPublished}
+                />
               )}
             </div>
           </div>
         </header>
 
-        {userCanEdit && (
-        <section className="px-10 py-8">
-          <div className="mb-6">
-            <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
-              Onde colocar essa página?
-            </p>
-            <p className="text-neutral-400 text-sm mt-1.5 max-w-2xl">
-              Escolha uma categoria pra ela aparecer no dashboard. Pode mudar
-              depois.{" "}
-              {content.placed && (
-                <span className="text-emerald-300 font-semibold">
-                  Atualmente em:{" "}
-                  {content.placed === "website"
-                    ? "Website"
-                    : content.placed === "lp"
-                    ? "Landing pages"
-                    : "Formulários"}
-                </span>
+        {isPublished ? (
+          /* ===== PUBLICADA — tela de gestão limpa (padrão LP) ===== */
+          <section className="px-10 py-8 grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="lg:col-span-2 space-y-5">
+              <Block title="Sobre essa página">
+                <SmartSummary
+                  domain={content.domain}
+                  slug={content.slug}
+                  summary={content.summary}
+                  canEdit={userCanEdit}
+                />
+              </Block>
+
+              {isForm && userCanEdit && (
+                <Block title="Comportamento dos formulários">
+                  <p className="text-neutral-400 text-sm mb-4 leading-relaxed">
+                    Conecte o form da página a um webhook e defina pra onde
+                    redirecionar depois do envio.
+                  </p>
+                  <WpFormBehavior
+                    domain={content.domain}
+                    slug={content.slug}
+                    initialWebhookUrl={content.formWebhookUrl}
+                    initialRedirectUrl={content.formRedirectUrl}
+                    isPublished={isPublished}
+                  />
+                </Block>
               )}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {PLACEMENT_OPTIONS.map(({ value, label, icon: Icon, description }) => {
-              const isActive = content.placed === value;
-              return (
-                <form key={value} action={placeWpPageAction}>
-                  <input type="hidden" name="domain" value={content.domain} />
-                  <input type="hidden" name="slug" value={content.slug} />
-                  <input type="hidden" name="type" value={value} />
-                  <button
-                    type="submit"
-                    className={
-                      isActive
-                        ? "w-full text-left bg-emerald-500/15 border border-emerald-500/40 rounded-2xl p-5 transition"
-                        : "w-full text-left bg-[#0f0f0f] border border-[#1f1f1f] hover:border-neutral-700 rounded-2xl p-5 transition"
-                    }
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <span
-                        className={
-                          isActive
-                            ? "w-10 h-10 rounded-lg bg-emerald-500/20 ring-1 ring-emerald-500/30 flex items-center justify-center"
-                            : "w-10 h-10 rounded-lg bg-[#161616] flex items-center justify-center"
-                        }
-                      >
-                        <Icon
-                          size={16}
-                          strokeWidth={2}
-                          className={isActive ? "text-emerald-300" : "text-neutral-300"}
-                        />
-                      </span>
-                      <h3 className="font-semibold text-lg text-white tracking-tight">
-                        {label}
-                      </h3>
-                    </div>
-                    <p className="text-sm text-neutral-400 leading-relaxed">
-                      {description}
-                    </p>
-                    {isActive && (
-                      <p className="mt-3 text-[11px] uppercase tracking-[0.14em] text-emerald-300 font-semibold">
-                        Selecionado
-                      </p>
-                    )}
-                  </button>
-                </form>
-              );
-            })}
-          </div>
-
-          {content.placed && (
-            <form action={placeWpPageAction} className="mt-4">
-              <input type="hidden" name="domain" value={content.domain} />
-              <input type="hidden" name="slug" value={content.slug} />
-              <input type="hidden" name="type" value="" />
-              <button
-                type="submit"
-                className="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-white transition font-medium"
-              >
-                <X size={12} strokeWidth={2} />
-                Tirar da categoria (voltar pra sem categoria)
-              </button>
-            </form>
-          )}
-        </section>
-
-        )}
-
-        {userCanEdit && (
-          <section className="px-10 pb-8 grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div>
-              <div className="mb-3">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
-                  Publicação
-                </p>
-                <p className="text-neutral-400 text-sm mt-1.5">
-                  Quando publicada, qualquer pessoa com o link consegue ver —
-                  sem precisar de login.
-                </p>
-              </div>
-              <PublishButton
-                content={{
-                  domain: content.domain,
-                  slug: content.slug,
-                  published: content.published,
-                  publicSlug: content.publicSlug,
-                  publishedAt: content.publishedAt,
-                }}
-              />
             </div>
 
-            <div>
-              <div className="mb-3">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
-                  Comportamento dos formulários
-                </p>
-                <p className="text-neutral-400 text-sm mt-1.5">
-                  Conecte o form da página a um webhook e defina pra onde
-                  redirecionar depois do envio.
-                </p>
-              </div>
-              <WpFormBehavior
-                domain={content.domain}
-                slug={content.slug}
-                initialWebhookUrl={content.formWebhookUrl}
-                initialRedirectUrl={content.formRedirectUrl}
-                isPublished={!!content.published}
-              />
-            </div>
+            <aside className="space-y-5">
+              <Block title="Atalhos">
+                <div className="space-y-2">
+                  <ActionRow
+                    icon={Globe}
+                    label="Abrir página"
+                    sub={`/p/${publicSlug}`}
+                    href={`/p/${publicSlug}`}
+                    external
+                  />
+                  {userCanEdit && (
+                    <ActionRow
+                      icon={Pencil}
+                      label="Editar visualmente"
+                      sub="Editar o conteúdo da página"
+                      href={editHref}
+                    />
+                  )}
+                </div>
+              </Block>
+
+              {content.publishedAt && (
+                <Block title="Publicada em">
+                  <p className="text-neutral-300 text-sm font-medium">
+                    {formatDateTimeBR(content.publishedAt)}
+                  </p>
+                </Block>
+              )}
+            </aside>
           </section>
-        )}
+        ) : (
+          /* ===== NÃO PUBLICADA — categorizar + publicar ===== */
+          <>
+            {userCanEdit && (
+              <section className="px-10 py-8">
+                <div className="mb-6">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
+                    Onde colocar essa página?
+                  </p>
+                  <p className="text-neutral-400 text-sm mt-1.5 max-w-2xl">
+                    Escolha uma categoria pra ela aparecer no dashboard. Pode
+                    mudar depois.{" "}
+                    {content.placed && (
+                      <span className="text-emerald-300 font-semibold">
+                        Atualmente em:{" "}
+                        {content.placed === "website"
+                          ? "Website"
+                          : content.placed === "lp"
+                          ? "Landing pages"
+                          : "Formulários"}
+                      </span>
+                    )}
+                  </p>
+                </div>
 
-        <section className="px-10 pb-12">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white tracking-[-0.02em]">
-              Preview do conteúdo
-            </h3>
-            <p className="text-[11px] text-neutral-500 font-medium">
-              Editor visual vem no próximo passo
-            </p>
-          </div>
-          <a
-            href={`/wp-pages/${content.domain}/${encodeURIComponent(
-              content.slug
-            )}/preview`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between gap-4 bg-gradient-to-r from-[#0f0f0f] to-[#0c0c0c] border border-[#1f1f1f] hover:border-neutral-700 rounded-2xl px-6 py-5 transition group"
-          >
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
-                Conteúdo copiado
-              </p>
-              <p className="text-white font-semibold mt-1 text-[15px]">
-                Abrir preview em nova aba
-              </p>
-              <p className="text-xs text-neutral-500 mt-0.5 font-medium">
-                Renderiza o HTML em tela cheia, sem cortes
-              </p>
-            </div>
-            <span className="flex items-center gap-2 text-sm font-semibold text-white group-hover:translate-x-0.5 transition">
-              <Eye size={15} strokeWidth={2.2} />
-              Abrir preview
-              <ExternalLink size={13} strokeWidth={2.2} />
-            </span>
-          </a>
-        </section>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {PLACEMENT_OPTIONS.map(
+                    ({ value, label, icon: Icon, description }) => {
+                      const isActive = content.placed === value;
+                      return (
+                        <form key={value} action={placeWpPageAction}>
+                          <input
+                            type="hidden"
+                            name="domain"
+                            value={content.domain}
+                          />
+                          <input
+                            type="hidden"
+                            name="slug"
+                            value={content.slug}
+                          />
+                          <input type="hidden" name="type" value={value} />
+                          <button
+                            type="submit"
+                            className={
+                              isActive
+                                ? "w-full text-left bg-emerald-500/15 border border-emerald-500/40 rounded-2xl p-5 transition"
+                                : "w-full text-left bg-[#0f0f0f] border border-[#1f1f1f] hover:border-neutral-700 rounded-2xl p-5 transition"
+                            }
+                          >
+                            <div className="flex items-center gap-3 mb-3">
+                              <span
+                                className={
+                                  isActive
+                                    ? "w-10 h-10 rounded-lg bg-emerald-500/20 ring-1 ring-emerald-500/30 flex items-center justify-center"
+                                    : "w-10 h-10 rounded-lg bg-[#161616] flex items-center justify-center"
+                                }
+                              >
+                                <Icon
+                                  size={16}
+                                  strokeWidth={2}
+                                  className={
+                                    isActive
+                                      ? "text-emerald-300"
+                                      : "text-neutral-300"
+                                  }
+                                />
+                              </span>
+                              <h3 className="font-semibold text-lg text-white tracking-tight">
+                                {label}
+                              </h3>
+                            </div>
+                            <p className="text-sm text-neutral-400 leading-relaxed">
+                              {description}
+                            </p>
+                            {isActive && (
+                              <p className="mt-3 text-[11px] uppercase tracking-[0.14em] text-emerald-300 font-semibold">
+                                Selecionado
+                              </p>
+                            )}
+                          </button>
+                        </form>
+                      );
+                    }
+                  )}
+                </div>
+
+                {content.placed && (
+                  <form action={placeWpPageAction} className="mt-4">
+                    <input type="hidden" name="domain" value={content.domain} />
+                    <input type="hidden" name="slug" value={content.slug} />
+                    <input type="hidden" name="type" value="" />
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-white transition font-medium"
+                    >
+                      <X size={12} strokeWidth={2} />
+                      Tirar da categoria (voltar pra sem categoria)
+                    </button>
+                  </form>
+                )}
+              </section>
+            )}
+
+            {userCanEdit && (
+              <section className="px-10 pb-8 grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div>
+                  <div className="mb-3">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
+                      Publicação
+                    </p>
+                    <p className="text-neutral-400 text-sm mt-1.5">
+                      Quando publicada, qualquer pessoa com o link consegue ver
+                      — sem precisar de login.
+                    </p>
+                  </div>
+                  <PublishButton
+                    content={{
+                      domain: content.domain,
+                      slug: content.slug,
+                      published: content.published,
+                      publicSlug: content.publicSlug,
+                      publishedAt: content.publishedAt,
+                    }}
+                  />
+                </div>
+
+                {isForm && (
+                  <div>
+                    <div className="mb-3">
+                      <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
+                        Comportamento dos formulários
+                      </p>
+                      <p className="text-neutral-400 text-sm mt-1.5">
+                        Conecte o form da página a um webhook e defina pra onde
+                        redirecionar depois do envio.
+                      </p>
+                    </div>
+                    <WpFormBehavior
+                      domain={content.domain}
+                      slug={content.slug}
+                      initialWebhookUrl={content.formWebhookUrl}
+                      initialRedirectUrl={content.formRedirectUrl}
+                      isPublished={!!content.published}
+                    />
+                  </div>
+                )}
+              </section>
+            )}
+
+            <section className="px-10 pb-12">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white tracking-[-0.02em]">
+                  Conteúdo
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {userCanEdit && (
+                  <Link
+                    href={editHref}
+                    className="flex items-center justify-between gap-4 bg-[#0f0f0f] border border-[#1f1f1f] hover:border-neutral-700 rounded-2xl px-6 py-5 transition group"
+                  >
+                    <div>
+                      <p className="text-white font-semibold text-[15px]">
+                        Editar visualmente
+                      </p>
+                      <p className="text-xs text-neutral-500 mt-0.5 font-medium">
+                        Editar o conteúdo da página
+                      </p>
+                    </div>
+                    <Pencil
+                      size={15}
+                      strokeWidth={2.2}
+                      className="text-neutral-400 group-hover:text-white transition"
+                    />
+                  </Link>
+                )}
+                <a
+                  href={previewHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between gap-4 bg-[#0f0f0f] border border-[#1f1f1f] hover:border-neutral-700 rounded-2xl px-6 py-5 transition group"
+                >
+                  <div>
+                    <p className="text-white font-semibold text-[15px]">
+                      Abrir preview
+                    </p>
+                    <p className="text-xs text-neutral-500 mt-0.5 font-medium">
+                      Renderiza o HTML em tela cheia
+                    </p>
+                  </div>
+                  <span className="flex items-center gap-2 text-sm font-semibold text-white group-hover:translate-x-0.5 transition">
+                    <Eye size={15} strokeWidth={2.2} />
+                    <ExternalLink size={13} strokeWidth={2.2} />
+                  </span>
+                </a>
+              </div>
+            </section>
+          </>
+        )}
       </main>
     </div>
+  );
+}
+
+function Block({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl p-6">
+      <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold mb-4">
+        {title}
+      </p>
+      {children}
+    </div>
+  );
+}
+
+function ActionRow({
+  icon: Icon,
+  label,
+  sub,
+  href,
+  external,
+}: {
+  icon: React.ComponentType<{
+    size?: number;
+    strokeWidth?: number;
+    className?: string;
+  }>;
+  label: string;
+  sub: string;
+  href: string;
+  external?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+    >
+      <div className="flex items-start gap-3 p-3 rounded-lg border border-[#1a1a1a] hover:border-[#2a2a2a] hover:bg-[#121212] transition">
+        <Icon size={14} strokeWidth={2} className="text-neutral-500 mt-0.5" />
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-semibold text-white">{label}</p>
+          <p className="text-[11px] text-neutral-500 truncate font-medium">
+            {sub}
+          </p>
+        </div>
+      </div>
+    </a>
   );
 }

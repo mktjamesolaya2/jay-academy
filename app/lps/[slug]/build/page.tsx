@@ -7,6 +7,7 @@ import {
   saveBuilderPage,
 } from "@/lib/page-builder-store";
 import { BuilderEditor } from "@/components/page-builder/builder-editor";
+import { DesktopOnlyEditor } from "@/components/desktop-only-editor";
 
 type Params = Promise<{ slug: string }>;
 
@@ -27,5 +28,9 @@ export default async function BuildPage({ params }: { params: Params }) {
     await saveBuilderPage(page);
   }
 
-  return <BuilderEditor slug={slug} lpName={lp.name} initialPage={page} />;
+  return (
+    <DesktopOnlyEditor backHref={`/lps/${slug}`}>
+      <BuilderEditor slug={slug} lpName={lp.name} initialPage={page} />
+    </DesktopOnlyEditor>
+  );
 }

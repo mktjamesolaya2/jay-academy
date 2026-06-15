@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { loadContent } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
 import { EditorShell } from "@/components/editor-shell";
+import { DesktopOnlyEditor } from "@/components/desktop-only-editor";
 
 type Params = Promise<{ domain: string; slug: string }>;
 
@@ -26,10 +27,12 @@ ${content.content}
 </html>`;
 
   return (
-    <EditorShell
-      source={{ kind: "wp", domain, slug: decodedSlug }}
-      title={content.title}
-      initialHtml={html}
-    />
+    <DesktopOnlyEditor backHref={`/wp-pages/${domain}/${encodeURIComponent(decodedSlug)}`}>
+      <EditorShell
+        source={{ kind: "wp", domain, slug: decodedSlug }}
+        title={content.title}
+        initialHtml={html}
+      />
+    </DesktopOnlyEditor>
   );
 }

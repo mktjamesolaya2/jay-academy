@@ -19,6 +19,9 @@ export type WpPageContent = BaseWpPageContent & {
   /** Soft delete — fica na lixeira. */
   trashed?: boolean;
   trashedAt?: string;
+  /** Resumo inteligente (IA) do conteúdo da página. */
+  summary?: string;
+  summaryAt?: string;
 };
 
 // Index: slug público → { domain, originalSlug }
@@ -130,6 +133,7 @@ export type SavedSummary = {
   fetchedAt: string;
   placed?: PlacementType;
   published?: boolean;
+  publishedAt?: string;
   publicSlug?: string;
   trashed?: boolean;
   trashedAt?: string;
@@ -144,6 +148,7 @@ function summarize(c: WpPageContent): SavedSummary {
     fetchedAt: c.fetchedAt,
     placed: c.placed,
     published: c.published,
+    publishedAt: c.publishedAt,
     publicSlug: c.publicSlug,
     trashed: c.trashed,
     trashedAt: c.trashedAt,

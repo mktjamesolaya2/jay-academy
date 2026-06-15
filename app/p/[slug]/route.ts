@@ -73,7 +73,8 @@ ${body}
     return new NextResponse(html, {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "public, max-age=60, s-maxage=60",
+        "Cache-Control":
+          "public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
       },
     });
   }
@@ -106,6 +107,14 @@ ${body}
           /<head([^>]*)>/i,
           `<head$1>\n  <base href="${content.link}" />`
         );
+    // Blindagem mobile: garante o <meta viewport>. Sem ele, o navegador
+    // renderiza a versão desktop "encolhida" no celular (sem responsivo).
+    if (!/<meta[^>]+name=["']viewport["']/i.test(html)) {
+      html = html.replace(
+        /<head([^>]*)>/i,
+        `<head$1>\n  <meta name="viewport" content="width=device-width, initial-scale=1" />`
+      );
+    }
   } else {
     html = `<!DOCTYPE html>
 <html lang="pt-BR">

@@ -8,6 +8,7 @@ import {
   setPublished,
   unsetPublished,
 } from "@/lib/wp-content-storage";
+import { ensurePageSummary } from "@/lib/page-summary";
 import type { WpDomain } from "@/lib/wp-api";
 
 function slugify(input: string): string {
@@ -39,6 +40,9 @@ export async function publishPageAction(
 
     await setPublished(content, publicSlug);
     await logActivity("wp.publish", content.title || slug, `/p/${publicSlug}`);
+
+    // Resumo inteligente gerado automaticamente na publicação.
+    await ensurePageSummary(domain, slug);
 
     revalidatePath(`/wp-pages/${domain}/${slug}`);
     revalidatePath(`/p/${publicSlug}`);
