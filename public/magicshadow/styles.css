@@ -505,9 +505,13 @@ body {
 
 /* Cada item: flex row com imagem e texto */
 .benefit-item {
+  --gold: #D6B36A;
+  --gold-bright: #F2DCA0;
+  --bridge-gap: clamp(24px, 4vw, 48px);
+  position: relative;
   display: flex;
   align-items: center;
-  gap: clamp(24px, 4vw, 48px);
+  gap: var(--bridge-gap);
 }
 
 /* Variante: inverte a ordem visual (imagem fica à direita) */
@@ -525,6 +529,11 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  /* Contorno dourado brilhante — costura a imagem com o texto */
+  box-shadow:
+    0 0 0 1.5px rgba(214, 179, 106, 0.9),
+    0 0 22px 1px rgba(214, 179, 106, 0.35),
+    inset 0 0 0 1px rgba(242, 220, 160, 0.25);
 }
 
 /* Slots individuais — basta trocar o url pra reordenar */
@@ -539,9 +548,60 @@ body {
 }
 
 .benefit-item__text {
+  position: relative;
   flex: 0 1 auto;
   max-width: 240px;               /* força quebra em 2-3 palavras por linha, como o mockup */
+  padding-top: 14px;              /* espaço pra linha dourada correr acima do título */
   font-family: "Poppins", sans-serif;
+}
+
+/* Linha dourada que sai da imagem, cruza o gap e corre por cima do texto.
+   Mais brilhante no ponto de junção (lado da imagem) → parece sair dela. */
+.benefit-item__text::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--bridge-gap) - 2px);   /* encosta na borda da imagem */
+  right: 8px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--gold-bright) 0%,
+    var(--gold) 28%,
+    rgba(214, 179, 106, 0.12) 100%
+  );
+  box-shadow: 0 0 9px rgba(214, 179, 106, 0.55);
+}
+
+/* Ponto de luz onde a linha encosta na imagem — reforça a junção */
+.benefit-item__text::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--bridge-gap) - 4px);
+  width: 5px;
+  height: 5px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 8px 1px rgba(242, 220, 160, 0.9);
+}
+
+/* Itens invertidos (imagem à direita): espelha a linha e o ponto de luz */
+.benefit-item--reverse .benefit-item__text::before {
+  left: 8px;
+  right: calc(-1 * var(--bridge-gap) - 2px);
+  background: linear-gradient(
+    90deg,
+    rgba(214, 179, 106, 0.12) 0%,
+    var(--gold) 72%,
+    var(--gold-bright) 100%
+  );
+}
+.benefit-item--reverse .benefit-item__text::after {
+  left: auto;
+  right: calc(-1 * var(--bridge-gap) - 4px);
 }
 
 .benefit-item__title {
@@ -934,15 +994,11 @@ body {
   overflow: hidden;
   isolation: isolate;
   background:
-    /* núcleo dourado quente — luz central */
-    radial-gradient(ellipse 80% 70% at 50% 45%, rgba(214, 179, 106, 0.28) 0%, transparent 70%),
-    /* halo dourado forte no canto inferior */
-    radial-gradient(ellipse 70% 55% at 50% 110%, rgba(143, 107, 46, 0.45) 0%, transparent 65%),
-    /* halo dourado no topo direito */
-    radial-gradient(ellipse 55% 45% at 90% 10%, rgba(214, 179, 106, 0.3) 0%, transparent 60%),
-    /* base dourada cinematográfica */
-    linear-gradient(135deg, #8F6B2E 0%, #6B4E1F 50%, #5A3F18 100%);
-  background-color: #6B4E1F;
+    /* brilho central quase imperceptível — só pra não ficar 100% chapado */
+    radial-gradient(ellipse 75% 65% at 50% 45%, rgba(255, 255, 255, 0.03) 0%, transparent 70%),
+    /* preto puro da paleta do site */
+    #0a0a0a;
+  background-color: #0a0a0a;
 }
 
 /* Mapas decorativos (Rússia + Europa) — silhuetas douradas no fundo,
@@ -952,7 +1008,7 @@ body {
   pointer-events: none;
   user-select: none;
   z-index: 0;
-  background: linear-gradient(135deg, #E8C97A 0%, #D6B36A 50%, #8F6B2E 100%);
+  background: linear-gradient(135deg, #EDEDED 0%, #CACACA 50%, #8C8C8C 100%);
   -webkit-mask-repeat: no-repeat, no-repeat;
   -webkit-mask-position: center, center;
   -webkit-mask-size: contain, cover;
@@ -974,7 +1030,7 @@ body {
           mask-image:
     url("assets/maps/russia.svg"),
     radial-gradient(ellipse 70% 75% at 55% 50%, black 15%, rgba(0,0,0,0.55) 55%, transparent 95%);
-  opacity: 0.16;
+  opacity: 0.1;
   will-change: transform;
   animation: russia-map-drift 18s ease-in-out infinite;
 }
@@ -989,7 +1045,7 @@ body {
           mask-image:
     url("assets/maps/europe.svg"),
     radial-gradient(ellipse 65% 70% at 50% 55%, black 10%, rgba(0,0,0,0.5) 55%, transparent 95%);
-  opacity: 0.22;
+  opacity: 0.13;
   will-change: transform;
   animation: europe-map-drift 14s ease-in-out infinite;
 }
@@ -1029,35 +1085,41 @@ body {
   user-select: none;
   z-index: 0;
   opacity: 0.4;
-  mix-blend-mode: luminosity;
-  /* foco no rosto (lado direito do retângulo visível), dissolve nas bordas,
-     com o topo (cabelo) caindo bem mais cedo pra ficar quase invisível */
+  mix-blend-mode: screen;
+  /* fantasma esfumaçado: núcleo sólido bem pequeno no rosto, desvanece muito
+     cedo em todas as direções pra nunca mostrar borda reta = sem cara de recorte */
   -webkit-mask-image:
     radial-gradient(
-      ellipse 75% 65% at 80% 60%,
-      rgba(0, 0, 0, 1) 5%,
-      rgba(0, 0, 0, 0.55) 50%,
-      rgba(0, 0, 0, 0) 100%
+      ellipse 70% 72% at 76% 52%,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.45) 35%,
+      rgba(0, 0, 0, 0.15) 62%,
+      rgba(0, 0, 0, 0) 85%
     ),
     linear-gradient(
       to bottom,
       rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0.25) 12%,
-      rgba(0, 0, 0, 1) 35%
+      rgba(0, 0, 0, 0.45) 16%,
+      rgba(0, 0, 0, 1) 42%,
+      rgba(0, 0, 0, 1) 78%,
+      rgba(0, 0, 0, 0.4) 100%
     );
   -webkit-mask-composite: source-in;
           mask-image:
     radial-gradient(
-      ellipse 75% 65% at 80% 60%,
-      rgba(0, 0, 0, 1) 5%,
-      rgba(0, 0, 0, 0.55) 50%,
-      rgba(0, 0, 0, 0) 100%
+      ellipse 70% 72% at 76% 52%,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.45) 35%,
+      rgba(0, 0, 0, 0.15) 62%,
+      rgba(0, 0, 0, 0) 85%
     ),
     linear-gradient(
       to bottom,
       rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0.25) 12%,
-      rgba(0, 0, 0, 1) 35%
+      rgba(0, 0, 0, 0.45) 16%,
+      rgba(0, 0, 0, 1) 42%,
+      rgba(0, 0, 0, 1) 78%,
+      rgba(0, 0, 0, 0.4) 100%
     );
           mask-composite: intersect;
 }
@@ -1074,14 +1136,14 @@ body {
   font-weight: 400;
   font-size: clamp(0.95rem, 1.1vw, 1.1rem);
   letter-spacing: 0.3em;
-  color: rgba(214, 179, 106, 0.9);
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
   line-height: 1;
   z-index: 10;
 }
 .russia-monogram::before {
   content: "— ";
-  color: rgba(214, 179, 106, 0.55);
+  color: rgba(255, 255, 255, 0.35);
   margin-right: 0.5rem;
 }
 
@@ -1163,14 +1225,14 @@ body {
   right: 0;
   bottom: -0.08em;
   height: 1px;
-  background: rgba(214, 179, 106, 0.85);
+  background: rgba(255, 255, 255, 0.4);
 }
-/* "micropigmentação" — itálico em cor dourada sólida */
+/* "micropigmentação" — itálico em branco esfumaçado */
 .russia-subtitle__hl {
   font-family: "Poppins", sans-serif;
   font-style: italic;
   font-weight: 400;
-  color: #E8C97A;
+  color: rgba(255, 255, 255, 0.82);
   background: none;
   -webkit-background-clip: initial;
           background-clip: initial;
@@ -1199,7 +1261,7 @@ body {
   left: 0;
   width: clamp(2.5rem, 4vw, 3.5rem);
   height: 1px;
-  background: rgba(214, 179, 106, 0.6);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ===== DOMAIN — lista numerada vertical, lado direito ===== */
@@ -1230,7 +1292,7 @@ body {
   font-size: clamp(1rem, 1.25vw, 1.25rem);
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: #D6B36A;
+  color: rgba(255, 255, 255, 0.62);
 }
 .russia-domain__heading::before,
 .russia-domain__heading::after {
@@ -1238,7 +1300,7 @@ body {
   display: inline-block;
   width: clamp(2rem, 4vw, 3.75rem);
   height: 1px;
-  background: rgba(214, 179, 106, 0.6);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .russia-domain__list {
@@ -1272,12 +1334,12 @@ body {
   display: inline-block;
   width: 2px;
   height: 1em;
-  background: #E8C97A;
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 1px;
   flex: 0 0 auto;
 }
 .russia-domain__list li:hover .russia-domain__name {
-  color: #F0E8D4;
+  color: #FFFFFF;
 }
 
 /* Números removidos do layout — escondidos */
@@ -1291,7 +1353,7 @@ body {
   font-size: clamp(1.15rem, 1.55vw, 1.5rem);
   line-height: 1.3;
   letter-spacing: 0.01em;
-  color: rgba(240, 215, 165, 0.78);
+  color: rgba(255, 255, 255, 0.72);
   transition: color 0.3s ease;
   white-space: nowrap;
 }
@@ -1311,7 +1373,7 @@ body {
   font-size: clamp(0.85rem, 1vw, 1rem);
   line-height: 1.55;
   color: rgba(240, 232, 212, 0.88);
-  border-left: 2px solid rgba(214, 179, 106, 0.55);
+  border-left: 2px solid rgba(255, 255, 255, 0.22);
   max-width: 54ch;
 }
 .russia-quote__mark {
@@ -1327,13 +1389,13 @@ body {
   font-weight: 500;
   font-size: clamp(2.75rem, 4vw, 3.75rem);
   line-height: 0.65;
-  color: #D6B36A;
+  color: rgba(255, 255, 255, 0.55);
 }
 .russia-quote p {
   margin: 0;
 }
 .russia-quote__hl {
-  color: #E8C97A;
+  color: rgba(255, 255, 255, 0.92);
   font-weight: 500;
   font-style: italic;
 }
@@ -1497,6 +1559,29 @@ body {
   .benefit-item__image {
     width: 60%;
   }
+  /* Empilhado: a linha vira um traço dourado centralizado acima do texto,
+     com brilho simétrico, costurando a imagem (logo acima) ao texto. */
+  .benefit-item__text {
+    padding-top: 18px;
+  }
+  .benefit-item__text::before,
+  .benefit-item--reverse .benefit-item__text::before {
+    left: 12%;
+    right: 12%;
+    background: linear-gradient(
+      90deg,
+      rgba(214, 179, 106, 0.05) 0%,
+      var(--gold-bright) 50%,
+      rgba(214, 179, 106, 0.05) 100%
+    );
+  }
+  /* Ponto de luz centralizado na junção */
+  .benefit-item__text::after,
+  .benefit-item--reverse .benefit-item__text::after {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
 }
 
 /* ===========================================================
@@ -1658,7 +1743,7 @@ body {
   font-family: "Poppins", sans-serif;
   font-style: italic;
   font-weight: 200;
-  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  font-size: clamp(1.85rem, 2.7vw, 2.5rem);
   letter-spacing: 0.02em;
   line-height: 1;
   background: linear-gradient(180deg, #D6B36A 0%, #A98A4A 100%);
@@ -2172,7 +2257,7 @@ body {
   }
   /* Cards com numeração proporcional */
   .diferencial-card__num {
-    font-size: clamp(1.6rem, 6.5vw, 2.2rem);
+    font-size: clamp(1.9rem, 7vw, 2.5rem);
   }
 }
 
@@ -2312,7 +2397,9 @@ body {
   overflow: hidden;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: clamp(620px, 90vh, 920px);
+  grid-template-rows: 1fr auto;        /* colunas / frase (com botão sobreposto) */
+  min-height: clamp(760px, 100vh, 1080px);
+  background: #0a0a0a;
   font-family: "Poppins", sans-serif;
 }
 
@@ -2320,20 +2407,21 @@ body {
 .diptico-heavy {
   position: relative;
   background:
-    /* fade vertical pra dissolver imagem no preto antes do closing bar */
+    /* fade vertical: dissolve imagem no MESMO tom quente do bloco (sem emenda) */
     linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0) 55%,
-      rgba(0, 0, 0, 0.85) 88%,
-      rgba(0, 0, 0, 1) 100%
+      rgba(20, 13, 8, 0) 0%,
+      rgba(20, 13, 8, 0) 55%,
+      rgba(20, 13, 8, 0.85) 88%,
+      rgba(20, 13, 8, 1) 100%
     ),
-    /* overlay forte pra texto legível, fade pro lado esquerdo */
+    /* overlay forte pra texto legível, fade pro lado esquerdo.
+       Lado direito mais aberto → sombra pesada fica mais intensa/visível. */
     linear-gradient(
       to right,
-      rgba(0, 0, 0, 0.85) 0%,
-      rgba(0, 0, 0, 0.65) 45%,
-      rgba(0, 0, 0, 0.35) 100%
+      rgba(0, 0, 0, 0.82) 0%,
+      rgba(0, 0, 0, 0.55) 45%,
+      rgba(0, 0, 0, 0.18) 100%
     ),
     url("assets/sobrancelha-pesada.png") right center / cover no-repeat;
   background-color: #050505;
@@ -2342,7 +2430,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding: clamp(3rem, 7vw, 6rem) clamp(2rem, 5vw, 5rem)
-           clamp(7rem, 11vw, 9rem) clamp(2rem, 5vw, 5rem);
+           clamp(3rem, 6vw, 5rem) clamp(2rem, 5vw, 5rem);
   overflow: hidden;
   isolation: isolate;
 }
@@ -2361,8 +2449,9 @@ body {
 }
 .diptico-cta {
   position: absolute;
-  left: clamp(2rem, 5vw, 5rem);
-  bottom: clamp(7.5rem, 12vw, 10rem);
+  left: 50%;
+  bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+  transform: translateX(-50%);        /* centralizado sobre a divisória preto|cream */
   z-index: 5;
   display: inline-block;
   padding: 1em 2.6em;
@@ -2381,13 +2470,12 @@ body {
   cursor: pointer;
 }
 .diptico-cta:hover {
-  transform: translateY(-1px);
+  transform: translate(-50%, -1px);
   box-shadow: 0 0 32px rgba(214, 179, 106, 0.3);
 }
 
 .diptico-heavy__inner {
-  position: relative;
-  z-index: 1;
+  z-index: 1;                       /* z-index funciona como flex item, sem position */
   display: flex;
   flex-direction: column;
   gap: clamp(1.5rem, 3vw, 2.5rem);
@@ -2400,21 +2488,25 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0;
-  font-weight: 900;
-  font-size: clamp(3.5rem, 9vw, 8rem);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
   text-transform: uppercase;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(245, 240, 224, 0.92);
+  color: #F5F0E0;
+  -webkit-text-stroke: 0;
 }
 .diptico-heavy__title span {
   display: block;
 }
 .diptico-heavy__title span:nth-child(2) {
-  /* "PESO" sólido no meio pra romper o ritmo outline */
-  color: #F5F0E0;
-  -webkit-text-stroke: 0;
+  /* "PESO" em dourado pra criar foco elegante e amarrar com o lado claro */
+  font-weight: 700;
+  background: linear-gradient(180deg, #E8C97A 0%, #B5934F 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
 }
 
 .diptico-heavy__caption {
@@ -2431,29 +2523,30 @@ body {
 .diptico-light {
   position: relative;
   background:
-    /* fade vertical pra dissolver imagem no cream antes do closing bar */
+    /* fade vertical: dissolve imagem no MESMO cream quente do bloco (sem emenda) */
     linear-gradient(
       to bottom,
-      rgba(250, 247, 241, 0) 0%,
-      rgba(250, 247, 241, 0) 55%,
-      rgba(250, 247, 241, 0.85) 88%,
-      rgba(250, 247, 241, 1) 100%
+      rgba(239, 230, 217, 0) 0%,
+      rgba(239, 230, 217, 0) 55%,
+      rgba(239, 230, 217, 0.85) 88%,
+      rgba(239, 230, 217, 1) 100%
     ),
-    /* overlay suave pra texto legível, fade pro lado direito */
+    /* overlay suave pra texto legível, fade pro lado direito.
+       Mais cream por cima → sombra leve fica ainda mais clara/aérea. */
     linear-gradient(
       to left,
-      rgba(250, 247, 241, 0.4) 0%,
-      rgba(250, 247, 241, 0.75) 55%,
-      rgba(250, 247, 241, 0.92) 100%
+      rgba(250, 247, 241, 0.52) 0%,
+      rgba(250, 247, 241, 0.82) 55%,
+      rgba(250, 247, 241, 0.95) 100%
     ),
     url("assets/sobrancelha-leve.png") right center / cover no-repeat;
   background-color: #FAF7F1;
   color: #1A1A1A;
   display: flex;
-  align-items: center;
+  align-items: flex-start;            /* ancora pelo topo → intro fica travada */
   justify-content: flex-start;
   padding: clamp(3rem, 7vw, 6rem) clamp(2rem, 5vw, 5rem)
-           clamp(7rem, 11vw, 9rem) clamp(3rem, 6vw, 6rem);
+           clamp(3rem, 6vw, 5rem) clamp(3rem, 6vw, 6rem);
   overflow: hidden;
 }
 /* Halo dourado suave no fundo claro */
@@ -2470,12 +2563,12 @@ body {
   pointer-events: none;
 }
 .diptico-light__inner {
-  position: relative;
-  z-index: 1;
+  z-index: 1;                       /* z-index funciona como flex item, sem position */
   display: flex;
   flex-direction: column;
   gap: clamp(2rem, 3vw, 2.75rem);
   max-width: 36rem;
+  margin-top: clamp(2rem, 5vw, 4rem);     /* posição da intro (topo-ancorado) */
 }
 
 /* ----- Título LEVE — italic ultralight, dourado, com tracking aberto ----- */
@@ -2486,7 +2579,7 @@ body {
   gap: 0.05em;
   font-weight: 200;
   font-style: normal;
-  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-size: clamp(2rem, 4.5vw, 4rem);
   line-height: 1.05;
   letter-spacing: 0.03em;
   text-transform: lowercase;
@@ -2494,7 +2587,7 @@ body {
 /* Intro pequena acima do grande título — introduz o headline completo */
 .diptico-light__title-intro {
   display: block;
-  font-size: clamp(0.9rem, 1.15vw, 1.15rem);
+  font-size: clamp(0.78rem, 0.95vw, 0.95rem);
   font-weight: 400;
   font-style: normal;
   letter-spacing: 0.02em;
@@ -2512,11 +2605,16 @@ body {
   color: transparent;
 }
 /* Indentação progressiva pra criar ritmo */
+/* Escada descendo pra direita — cada linha mais indentada que a de cima */
 .diptico-light__title-line:nth-child(2) {
-  padding-left: clamp(1rem, 2.5vw, 2.5rem);
+  padding-left: clamp(0.5rem, 1.5vw, 1.5rem);
+  margin-top: clamp(2.5rem, 6vw, 4.5rem);   /* desce leves+elegantes+naturais e a lista; intro fica */
 }
 .diptico-light__title-line:nth-child(3) {
-  padding-left: clamp(2rem, 5vw, 5rem);
+  padding-left: clamp(2.75rem, 6.5vw, 5.5rem);
+}
+.diptico-light__title-line:nth-child(4) {
+  padding-left: clamp(5rem, 11.5vw, 9.5rem);
 }
 
 /* ----- Corpo: lead + lista de valores ----- */
@@ -2554,17 +2652,28 @@ body {
   color: #2A2A2A;
 }
 
-/* ===== KICKERS dos dois lados ===== */
+/* ===== KICKERS dos dois lados — são o "título" comparativo da seção.
+   Ancorados no topo de cada lado, na MESMA altura, pra ler como par. ===== */
 .diptico-kicker {
+  position: absolute;
+  top: clamp(2.5rem, 6vw, 4.25rem);
+  z-index: 3;
   margin: 0;
   font-style: italic;
-  font-weight: 400;
-  font-size: clamp(0.7rem, 0.85vw, 0.85rem);
-  letter-spacing: 0.35em;
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.05vw, 1.1rem);
+  letter-spacing: 0.3em;
   text-transform: uppercase;
 }
-.diptico-kicker--dark  { color: rgba(245, 240, 224, 0.5); }
-.diptico-kicker--light { color: #A98A4A; }
+.diptico-kicker--dark  {
+  left: clamp(2rem, 5vw, 5rem);
+  color: rgba(245, 240, 224, 0.7);
+}
+.diptico-kicker--light {
+  right: clamp(2rem, 5vw, 5rem);
+  text-align: right;
+  color: #A98A4A;
+}
 
 /* ===== PONTE — foto antes/depois flutuando entre os dois lados ===== */
 .diptico-bridge {
@@ -2603,10 +2712,7 @@ body {
 
 /* ===== BARRA INFERIOR: closing atravessa o díptico ===== */
 .diptico-closing {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  grid-column: 1 / -1;     /* ocupa a largura toda, abaixo das duas colunas */
   margin: 0;
   padding: 0;
   display: flex;
@@ -2622,13 +2728,14 @@ body {
 
 .diptico-closing__half {
   flex: 1;
-  padding: clamp(1.5rem, 2.5vw, 2rem) clamp(2rem, 5vw, 5rem);
+  /* bottom grande: estende o bloco pra baixo, abrindo espaço pro botão centralizado */
+  padding: clamp(1.75rem, 3vw, 2.5rem) clamp(2rem, 5vw, 5rem) clamp(6rem, 10vw, 8rem);
 }
 
 /* Metade esquerda — fundo preto sólido + texto creme claro
    padding-right pequeno pra colar perto da divisória central */
 .diptico-closing__half--left {
-  background: rgba(0, 0, 0, 0.95);
+  background: #140D08;        /* mesmo tom que a base da imagem escura — continua a foto */
   color: rgba(245, 240, 224, 0.88);
   text-align: right;
   padding-right: clamp(0.6rem, 1vw, 1rem);
@@ -2637,7 +2744,7 @@ body {
 /* Metade direita — fundo cream sólido + texto preto/escuro
    padding-left pequeno pra colar perto da divisória central */
 .diptico-closing__half--right {
-  background: rgba(250, 247, 241, 0.95);
+  background: #EFE6D9;        /* mesmo cream quente que a base da imagem clara — continua a foto */
   color: #2A2A2A;
   text-align: left;
   padding-left: clamp(0.6rem, 1vw, 1rem);
@@ -2662,6 +2769,7 @@ body {
 @media (max-width: 720px) {
   .section-diptico {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     min-height: auto;
     background-color: #FAF7F1;
   }
@@ -2680,8 +2788,8 @@ body {
         to bottom,
         transparent 0%,
         transparent 55%,
-        rgba(0, 0, 0, 0.85) 88%,
-        rgba(0, 0, 0, 1) 100%
+        rgba(20, 13, 8, 0.85) 88%,
+        rgba(20, 13, 8, 1) 100%
       ),
       linear-gradient(
         to right,
@@ -2702,9 +2810,23 @@ body {
     padding: clamp(3rem, 8vw, 4rem) clamp(1.5rem, 4vw, 2rem) 6rem;
     min-height: 60vh;
   }
+  .diptico-light__inner {
+    margin-top: 0;
+  }
+  /* No empilhado os kickers voltam pro fluxo (topo de cada bloco),
+     senão o absolute escaparia pra fora por causa do display:contents. */
+  .diptico-kicker {
+    position: static;
+    top: auto;
+    left: auto;
+    right: auto;
+    text-align: left;
+    margin-bottom: clamp(0.75rem, 2.5vw, 1.1rem);
+  }
   /* Escadinha progressiva no título "leves, elegantes e naturais" */
   .diptico-light__title-line:nth-child(2) {
     padding-left: 0;
+    margin-top: 0;
   }
   .diptico-light__title-line:nth-child(3) {
     padding-left: clamp(1.25rem, 4vw, 2.5rem);
@@ -2742,8 +2864,8 @@ body {
   }
   span.diptico-closing__half.diptico-closing__half--left {
     order: 2;
-    background: #000000 !important;
-    background-color: #000000 !important;
+    background: #140D08 !important;
+    background-color: #140D08 !important;
     background-image: none !important;
     opacity: 1 !important;
     filter: none !important;
@@ -2753,8 +2875,8 @@ body {
   }
   span.diptico-closing__half.diptico-closing__half--right {
     order: 3;
-    background: #FFFFFF !important;
-    background-color: #FFFFFF !important;
+    background: #EFE6D9 !important;
+    background-color: #EFE6D9 !important;
     background-image: none !important;
     opacity: 1 !important;
     filter: none !important;

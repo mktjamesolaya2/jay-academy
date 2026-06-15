@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-01 (sessão tarde — implementou Page Builder, Opção 3)
+> **Última atualização**: 2026-06-15 (sessão — polimento visual Magic Shadow)
 
 ---
 
@@ -189,6 +189,23 @@ Implementada a 3ª das 3 ideias salvas em `suggestions-store.ts`: criar páginas
 **Tailwind via CDN no /p/[slug]**: pra MVP. Trocar por CSS extraído quando deployar em produção.
 
 **Testado**: HTTP 200 em `/p/teste` (3902 bytes), contém "Teste do Page Builder", "tailwindcss" e "Funciona mesmo". TypeScript passa limpo.
+
+---
+
+## 🆕 Sessão 2026-06-15 — Polimento visual Magic Shadow (`public/magicshadow/`)
+
+Iteração visual-first com James (editar `portal/public/magicshadow/` → push repo `jay-academy`). Tudo em `styles.css` + `index.html`:
+
+- **Seção benefícios** ("O que as clientes ideais buscam"): linha dourada brilhante costurando imagem→texto (anel glow na imagem + linha que sai dela e corre por cima do título, com ponto de luz na junção).
+- **Seção diferencial**: números 01–04 um pouco maiores.
+- **Díptico PESO VISUAL | leves/elegantes/naturais**:
+  - Kickers "— o que era —" / "— o que o mercado busca —" ancorados nos **cantos opostos do topo** (soltos do `__inner`; `__inner` perdeu `position:relative`, z-index segue via flex item).
+  - "O PESO VISUAL" trocou outline vazado por **Poppins sólida** (PESO em dourado).
+  - "leves, elegantes e naturais" menor + **escada descendo pra direita** (nth-child 2/3/4 indent progressivo).
+  - Lado claro **ancorado pelo topo** (`align-items: flex-start`) pra intro travar; bloco título+lista desce via margin-top no nth-child(2).
+  - Seção estendida (min-height até 1080px); frase de fechamento + botão **em fluxo** (grid-rows `1fr auto`); botão centralizado sobre a divisória; blocos preto/cream estendidos pra baixo.
+  - **Cor dos blocos = cor real da imagem** (amostrei pixels via System.Drawing): escuro `#140D08`, claro `#EFE6D9`; os fades das colunas dissolvem no MESMO tom (sem emenda). ⚠️ há override inline no `<head>` do index.html (mobile <900px) que precisa acompanhar qualquer mudança dessas cores.
+- ⚠️ **Mobile do díptico ainda não foi verificado a fundo** nesta sessão (James revisou desktop). Pendente checar empilhado.
 
 ---
 
