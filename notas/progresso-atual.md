@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-15 (sessão — gestão WP estilo WordPress + resumo IA + performance + mobile)
+> **Última atualização**: 2026-06-15 (noite — roadmap: SEO + mídia + analytics + backup + agendamento + sidebar nova)
 
 ---
 
@@ -232,6 +232,24 @@ Iteração visual-first com James (editar `portal/public/magicshadow/` → push 
 **Animações**: feedback tátil global nos botões (press scale + hover) no [`globals.css`](../app/globals.css).
 
 **Pendente (precisa de você):** deploys + páginas-com-erro reais → precisa do **token Vercel** (deploys) + health-check (erro). Botões de animação e resumo IA: validar no ar.
+
+---
+
+## 🆕 Sessão 2026-06-15 (noite) — Roadmap de features (SEO/mídia/analytics/backup/agendamento)
+
+Deploy `b63ba0a` no ar. **KV (Upstash) + Blob já provisionados e com nomes de env certos** (`KV_REST_API_URL/TOKEN`, `BLOB_READ_WRITE_TOKEN`) → **persiste em produção** (a história de "dados resetam" era desatualizada).
+
+- **Sidebar nova** ([sidebar-shell.tsx](../components/sidebar-shell.tsx)): Home · grupo **URLs** retrátil (Websites/LPs/Forms) · Biblioteca de mídia · Analytics · Config · **colapsável**. Sugestões virou **lampadazinha no topbar**. (sidebar-nav.tsx removido)
+- **SEO por página**: atalho "SEO da página" em Atalhos → modal ([seo-shortcut.tsx](../components/seo-shortcut.tsx) + [seo-editor.tsx](../components/seo-editor.tsx)) com preview Google/share. Injeta meta tags no `/p` (`applySeo`). Campos no `WpPageContent`.
+- **Biblioteca de mídia** (`/midia`): [media-store.ts](../lib/media-store.ts)/[media-types.ts](../lib/media-types.ts) + [media-library.tsx](../components/media-library.tsx). Upload (Blob) + por URL, categorias, busca. **Integrada nos editores** via [media-picker.tsx](../components/media-picker.tsx) (page builder, trocar imagem, SEO).
+- **Analytics** (`/analytics`): [analytics-store.ts](../lib/analytics-store.ts) + beacon em `/p` → `/api/track` (classifica origem). Leads **só em forms**. ⚠️ `/api/track` e `/api/cron` liberados no middleware.
+- **Backup** (Config, só senior): [backup-store.ts](../lib/backup-store.ts) — snapshot de tudo, restaurar, baixar JSON.
+- **Agendamento**: campos `scheduledPublishAt/UnpublishAt` + [schedule-control.tsx](../components/schedule-control.tsx) + worker `/api/cron/publish` + `vercel.json`. ⚠️ **Hobby = cron 1x/dia** (`0 9 * * *`); Pro → trocar pra `*/15`.
+- Fix: hidratação dos cards do dashboard (stretched link).
+
+**⚠️ Aprendizado:** `vercel.json` com cron `*/15` **rejeitava o deploy inteiro no Hobby** (sem aparecer na lista). Cron > 1x/dia exige Pro.
+
+**Pulado do roadmap (decisão James):** #3 health-check, #5 templates, #6 domínios, #9 forms independentes, #10 integrações nativas.
 
 ---
 
