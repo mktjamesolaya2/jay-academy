@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-16 (importar por link + fim do /p/ no slug raiz + mobile responsivo)
+> **Última atualização**: 2026-06-16 (novo vídeo de entrada do PMU CLASS no ar)
 
 ---
 
@@ -261,6 +261,17 @@ Deploy `b63ba0a` no ar. **KV (Upstash) + Blob já provisionados e com nomes de e
 - **Mobile** ⭐ (desktop intacto, tudo via `lg:`): sidebar virou **gaveta** (☰ canto sup-esq, off-canvas + backdrop) — [sidebar-shell.tsx](../components/sidebar-shell.tsx); dashboard/headers/conteúdo com padding mobile + clearance do hamburguer (`pt-16`); ProjectRow/WpProjectRow só nome+status no mobile; tabelas com `overflow-x-auto`; **Atividade recente + Deploys movidos pra Configurações no mobile** ([admin-feeds.tsx](../components/admin-feeds.tsx)).
 - Animação de entrada de página (fade) via [app/template.tsx](../app/template.tsx).
 - ⚠️ Mobile é **primeira passada** — editores visuais/builder/modais/forms podem precisar de refino.
+
+---
+
+## 🆕 Sessão 2026-06-16 (tarde) — Novo vídeo de entrada do PMU CLASS
+
+O site que o James vê em `jay-academy.vercel.app/pmuclass` é servido por `portal/public/pmuclass/` (cópia do build do app Vite) — **mesmo padrão do Magic Shadow**. O app fonte fica em `PMUCLASS/PMU-CLASS/` (repo `lafferreira91/PMU-CLASS`, mas o que está no ar vem do dist copiado pro portal, não desse repo).
+
+- App PMU CLASS rebuildado (`npm run build`, base `/pmuclass/`) com o **novo intro cinematográfico** `cinema.mp4` (7.8MB) + áudio sincronizado `stvideo_audio.mp3` (substitui o `stvideo.mp4` antigo). Lógica do intro no [HeroCarousel](../../PMUCLASS/PMU-CLASS/src/App.tsx) (`fullVideo`/`canPlayIntro`, toca 1x por sessão via `sessionStorage`).
+- Sincronizado `PMUCLASS/PMU-CLASS/dist/` → `portal/public/pmuclass/` (limpa + copia assets/videos/index.html).
+- Commit `7c959a0` + push `main` → deploy automático Vercel.
+- ⚠️ **Fluxo pra atualizar o PMU CLASS no ar**: rodar `npm run build` em `PMUCLASS/PMU-CLASS/`, copiar `dist/{assets,videos,index.html}` pra `portal/public/pmuclass/`, commitar e pushar o repo `jay-academy`. Os backups pesados em `src/assets/` (`stvideo_*_backup`, `_original`, `video james.MOV` etc., ~320MB) **não** são usados — só `cinema.mp4` + `stvideo_audio.mp3` entram no build.
 
 ---
 
