@@ -27,16 +27,20 @@ import { EditableGreeting } from "@/components/editable-greeting";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { readActivityLog } from "@/lib/activity-log";
 import { ActivityFeed, DeploysFeed } from "@/components/admin-feeds";
+import { getNotifications, unreadCount } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [landingPages, savedWp, me, activity] = await Promise.all([
-    loadLps(),
-    listSaved(),
-    getCurrentUser(),
-    readActivityLog(15),
-  ]);
+  const [landingPages, savedWp, me, activity, notifications] =
+    await Promise.all([
+      loadLps(),
+      listSaved(),
+      getCurrentUser(),
+      readActivityLog(15),
+      getNotifications(),
+    ]);
+  const unread = unreadCount(notifications);
 
   const activePages = landingPages.filter((lp) => !lp.trashed);
   // "Projetos" = páginas WP categorizadas OU publicadas (as importadas/publicadas
@@ -98,7 +102,12 @@ export default async function DashboardPage() {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <DashboardTopbar landingPages={landingPages} savedWp={savedWp} />
+        <DashboardTopbar
+          landingPages={landingPages}
+          savedWp={savedWp}
+          notifications={notifications}
+          unread={unread}
+        />
 
         <main className="flex-1 overflow-y-auto">
           <div className="flex">

@@ -1,18 +1,24 @@
 "use client";
 
-import { Search, Bell, HelpCircle, Lightbulb } from "lucide-react";
+import { Search, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import { SearchModal } from "./search-modal";
+import { NotificationsBell } from "./notifications-bell";
 import { useEffect, useState } from "react";
 import { type LandingPage } from "@/lib/landing-pages";
 import { type SavedSummary } from "@/lib/wp-content-storage";
+import type { Notification } from "@/lib/notifications";
 
 export function DashboardTopbar({
   landingPages,
   savedWp,
+  notifications = [],
+  unread = 0,
 }: {
   landingPages: LandingPage[];
   savedWp: SavedSummary[];
+  notifications?: Notification[];
+  unread?: number;
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -53,22 +59,7 @@ export function DashboardTopbar({
           <Lightbulb size={15} strokeWidth={2} />
         </Link>
 
-        <button
-          type="button"
-          className="relative w-9 h-9 rounded-md flex items-center justify-center text-neutral-400 hover:text-white hover:bg-[#161616] transition"
-          aria-label="Notificações"
-        >
-          <Bell size={15} strokeWidth={2} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-500 ring-2 ring-[#0a0a0a]" />
-        </button>
-
-        <button
-          type="button"
-          className="w-9 h-9 rounded-md flex items-center justify-center text-neutral-400 hover:text-white hover:bg-[#161616] transition"
-          aria-label="Ajuda"
-        >
-          <HelpCircle size={15} strokeWidth={2} />
-        </button>
+        <NotificationsBell notifications={notifications} unread={unread} />
       </header>
 
       <SearchModal

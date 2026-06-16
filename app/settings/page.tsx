@@ -7,16 +7,20 @@ import { listSaved } from "@/lib/wp-content-storage";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { readActivityLog } from "@/lib/activity-log";
 import { ActivityFeed, DeploysFeed } from "@/components/admin-feeds";
+import { getNotifications, unreadCount } from "@/lib/notifications";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const [landingPages, savedWp, me, activity] = await Promise.all([
-    loadLps(),
-    listSaved(),
-    getCurrentUser(),
-    readActivityLog(15),
-  ]);
+  const [landingPages, savedWp, me, activity, notifications] =
+    await Promise.all([
+      loadLps(),
+      listSaved(),
+      getCurrentUser(),
+      readActivityLog(15),
+      getNotifications(),
+    ]);
+  const unread = unreadCount(notifications);
   const trashedCount = landingPages.filter((lp) => lp.trashed).length;
   const isSenior = me?.role === "senior";
   const userCanEdit = canEdit(me);
@@ -26,7 +30,12 @@ export default async function SettingsPage() {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <DashboardTopbar landingPages={landingPages} savedWp={savedWp} />
+        <DashboardTopbar
+          landingPages={landingPages}
+          savedWp={savedWp}
+          notifications={notifications}
+          unread={unread}
+        />
 
         <main className="flex-1 overflow-y-auto px-4 lg:px-8 py-6 lg:py-8">
           <div className="mb-6">
