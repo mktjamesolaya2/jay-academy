@@ -315,7 +315,7 @@ export function BuilderEditor({ slug, lpName, initialPage }: Props) {
 
         <div className="flex items-center gap-3">
           <Link
-            href={`/p/${slug}`}
+            href={`/${slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium text-neutral-400 hover:text-white hover:bg-[#161616] transition"

@@ -5,32 +5,40 @@ const SECRET = new TextEncoder().encode(
   process.env.AUTH_SECRET || "jayacademy-dev-secret-change-in-production-please"
 );
 
-const PUBLIC_PATHS = [
-  "/login",
-  "/cadastro",
-  "/api/auth",
-  "/api/chat-pmu",
-  "/api/wp-form-submit",
-  "/api/track",
-  "/api/cron",
-  "/api/lp-content",
-  "/p/",
-  "/f/",
-  "/magicshadow",
-  "/pmuclass",
-  "/laser",
-  "/apresentacao-pmu",
+// Áreas internas do portal — SÓ essas exigem login.
+// Todo o resto é público: /, /login, /cadastro, /p/, /f/, /api/*, sub-projetos
+// e — importante — qualquer slug raiz (páginas publicadas: /metodo-fio-a-fio).
+// Isso permite servir as páginas no domínio próprio SEM o /p/, batendo
+// exatamente as URLs que já existem nos anúncios.
+const ADMIN_PREFIXES = [
+  "/dashboard",
+  "/analytics",
+  "/forms",
+  "/lixeira",
+  "/lps",
+  "/midia",
+  "/settings",
+  "/sugestoes",
+  "/websites",
+  "/wordpress",
+  "/wp-pages",
 ];
+
+function needsAuth(pathname: string): boolean {
+  return ADMIN_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
+}
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Permite recursos estáticos e públicos
+  // Estáticos/infra + tudo que não é área admin = liberado (público)
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/uploads") ||
-    pathname.includes(".") || // arquivos com extensão
-    PUBLIC_PATHS.some((p) => pathname.startsWith(p))
+    pathname.includes(".") ||
+    !needsAuth(pathname)
   ) {
     return NextResponse.next();
   }

@@ -42,7 +42,7 @@ export function SeoEditor({
   const shownDesc =
     desc || "A descrição aparece aqui — escreva 1-2 frases atraentes.";
   const host = origin ? origin.replace(/^https?:\/\//, "") : "seu-site.com";
-  const previewUrl = `${host}/p/${publicSlug || slug}`;
+  const previewUrl = `${host}/${publicSlug || slug}`;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -99,11 +99,11 @@ export function SeoEditor({
 
         <Field
           label="Slug / Permalink"
-          hint={`URL final: ${host}/p/${publicSlug || slug}`}
+          hint={`URL final: ${host}/${publicSlug || slug}`}
         >
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-neutral-600 font-mono shrink-0">
-              /p/
+              /
             </span>
             <input
               name="publicSlug"

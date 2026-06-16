@@ -46,7 +46,7 @@ export function WpPageCard({ page }: { page: WpCardData }) {
             {page.published ? (
               <>
                 <Globe size={10} strokeWidth={2.4} />
-                /p/{publicSlug}
+                /{publicSlug}
               </>
             ) : (
               <>

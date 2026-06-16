@@ -56,7 +56,7 @@ export function LpActionsMenu({ lp }: { lp: LandingPage }) {
     if (isPublished) {
       if (
         !confirm(
-          `Despublicar "${lp.name}"? A URL pública /p/${lp.slug} vai parar de funcionar.`
+          `Despublicar "${lp.name}"? A URL pública /${lp.slug} vai parar de funcionar.`
         )
       )
         return;

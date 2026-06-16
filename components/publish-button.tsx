@@ -35,7 +35,7 @@ export function PublishButton({
   const publicSlug = content.publicSlug || content.slug;
   const baseUrl =
     typeof window !== "undefined" ? window.location.origin : "";
-  const publicUrl = `${baseUrl}/p/${publicSlug}`;
+  const publicUrl = `${baseUrl}/${publicSlug}`;
 
   async function copyUrl() {
     if (typeof navigator === "undefined") return;
@@ -153,7 +153,7 @@ export function PublishButton({
               className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-md px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-neutral-600"
             />
             <p className="text-[10px] text-neutral-600 mt-1">
-              URL final: {baseUrl}/p/<span className="text-neutral-400">[slug]</span>
+              URL final: {baseUrl}/<span className="text-neutral-400">[slug]</span>
             </p>
           </div>
         ) : (
@@ -162,7 +162,7 @@ export function PublishButton({
             onClick={() => setEditingSlug(true)}
             className="text-[11px] font-medium text-neutral-500 hover:text-white transition"
           >
-            URL será: {baseUrl}/p/{publicSlug}{" "}
+            URL será: {baseUrl}/{publicSlug}{" "}
             <span className="text-neutral-600">— customizar?</span>
           </button>
         )}

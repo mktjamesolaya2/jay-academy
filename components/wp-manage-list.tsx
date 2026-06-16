@@ -316,12 +316,12 @@ export function WpManageList({
                             Publicada
                           </span>
                           <Link
-                            href={`/p/${publicSlug}`}
+                            href={`/${publicSlug}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1 text-[11px] text-neutral-400 hover:text-white font-mono transition"
                           >
-                            /p/{publicSlug}
+                            /{publicSlug}
                             <ExternalLink size={10} strokeWidth={2} />
                           </Link>
                         </div>

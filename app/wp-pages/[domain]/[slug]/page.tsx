@@ -97,12 +97,12 @@ export default async function WpPageDetailPage({
               </p>
               {isPublished && (
                 <a
-                  href={`/p/${publicSlug}`}
+                  href={`/${publicSlug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 mt-2 text-xs font-mono text-emerald-300/90 hover:text-emerald-200 transition"
                 >
-                  /p/{publicSlug}
+                  /{publicSlug}
                   <ExternalLink size={11} strokeWidth={2} />
                 </a>
               )}
@@ -173,8 +173,8 @@ export default async function WpPageDetailPage({
                   <ActionRow
                     icon={Globe}
                     label="Abrir página"
-                    sub={`/p/${publicSlug}`}
-                    href={`/p/${publicSlug}`}
+                    sub={`/${publicSlug}`}
+                    href={`/${publicSlug}`}
                     external
                   />
                   {userCanEdit && (

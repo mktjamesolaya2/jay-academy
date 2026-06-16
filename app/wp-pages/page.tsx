@@ -42,7 +42,7 @@ export default async function WpManagePage() {
               </h2>
               <p className="text-neutral-400 mt-1.5 max-w-2xl text-[15px]">
                 Busque, filtre e gerencie em lote. Publicar libera a URL pública{" "}
-                <span className="text-neutral-300 font-mono">/p/[slug]</span>.
+                <span className="text-neutral-300 font-mono">/[slug]</span>.
               </p>
             </div>
 

@@ -45,7 +45,7 @@ export default async function AnalyticsPage() {
         const isForm = s.placed === "form";
         return {
           name: s.title.replace(/<[^>]*>/g, ""),
-          href: `/p/${ps}`,
+          href: `/${ps}`,
           kind: "Página" as const,
           isForm,
           visits: st?.visits ?? 0,
@@ -116,7 +116,7 @@ export default async function AnalyticsPage() {
           {totalVisits === 0 && (
             <div className="bg-amber-500/5 border border-amber-500/25 rounded-xl px-4 py-3 text-[13px] text-amber-200/90 leading-relaxed">
               Ainda não há visitas registradas. Os números começam a aparecer
-              assim que as páginas publicadas (<span className="font-mono">/p/...</span>{" "}
+              assim que as páginas publicadas (<span className="font-mono">/...</span>{" "}
               e formulários) forem acessadas.
             </div>
           )}

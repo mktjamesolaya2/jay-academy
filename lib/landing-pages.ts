@@ -169,7 +169,7 @@ export const accentClasses: Record<LandingPage["accent"], string> = {
  */
 export function publicUrlFor(lp: LandingPage): string | null {
   if (lp.productionUrl) return lp.productionUrl;
-  if (lp.status === "published") return `/p/${lp.slug}`;
+  if (lp.status === "published") return `/${lp.slug}`;
   return null;
 }
 
