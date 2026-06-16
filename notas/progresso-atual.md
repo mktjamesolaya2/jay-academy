@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-15 (noite — roadmap: SEO + mídia + analytics + backup + agendamento + sidebar nova)
+> **Última atualização**: 2026-06-16 (importar por link + fim do /p/ no slug raiz + mobile responsivo)
 
 ---
 
@@ -250,6 +250,17 @@ Deploy `b63ba0a` no ar. **KV (Upstash) + Blob já provisionados e com nomes de e
 **⚠️ Aprendizado:** `vercel.json` com cron `*/15` **rejeitava o deploy inteiro no Hobby** (sem aparecer na lista). Cron > 1x/dia exige Pro.
 
 **Pulado do roadmap (decisão James):** #3 health-check, #5 templates, #6 domínios, #9 forms independentes, #10 integrações nativas.
+
+---
+
+## 🆕 Sessão 2026-06-16 — Importar por link + fim do /p/ + mobile
+
+- **Importar por link** ([import-by-link.tsx](../components/import-by-link.tsx) + [import-actions.ts](../app/wp-pages/import-actions.ts)): cola URLs do WP → copia (REST por slug + fullHtml). Tem "publicar automaticamente". Botão no topo de Gerenciar páginas.
+- **Páginas WP** virou item da sidebar (grupo URLs); bloco WP duplicado do dashboard removido; "Todos os projetos" mostra páginas WP **publicadas** (placed || published).
+- **Fim do /p/** ⭐: páginas publicadas servem **no slug raiz** (`/metodo-fio-a-fio`) via [app/[slug]/route.ts](../app/[slug]/route.ts) (re-exporta o GET de /p). Middleware **invertido**: protege só os ADMIN_PREFIXES; resto público (slug raiz = público). `/p/` antigo ainda funciona (backward compat). URLs exibidas atualizadas pra sem /p/. ⚠️ Pra valer no domínio próprio: apontar jayacademy.com.br → portal (DNS) DEPOIS de importar tudo (senão WP some e dá 404 em páginas não importadas).
+- **Mobile** ⭐ (desktop intacto, tudo via `lg:`): sidebar virou **gaveta** (☰ canto sup-esq, off-canvas + backdrop) — [sidebar-shell.tsx](../components/sidebar-shell.tsx); dashboard/headers/conteúdo com padding mobile + clearance do hamburguer (`pt-16`); ProjectRow/WpProjectRow só nome+status no mobile; tabelas com `overflow-x-auto`; **Atividade recente + Deploys movidos pra Configurações no mobile** ([admin-feeds.tsx](../components/admin-feeds.tsx)).
+- Animação de entrada de página (fade) via [app/template.tsx](../app/template.tsx).
+- ⚠️ Mobile é **primeira passada** — editores visuais/builder/modais/forms podem precisar de refino.
 
 ---
 
