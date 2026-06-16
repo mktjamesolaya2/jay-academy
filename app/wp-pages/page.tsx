@@ -5,6 +5,7 @@ import { listSaved } from "@/lib/wp-content-storage";
 import { getCurrentUser, canEdit } from "@/lib/auth";
 import { ConfirmSubmit } from "@/components/wp-manage-buttons";
 import { WpManageList } from "@/components/wp-manage-list";
+import { ImportByLink } from "@/components/import-by-link";
 import { publishAllAction, unpublishAllAction } from "./manage-actions";
 
 export const dynamic = "force-dynamic";
@@ -45,8 +46,9 @@ export default async function WpManagePage() {
               </p>
             </div>
 
-            {userCanEdit && saved.length > 0 && (
+            {userCanEdit && (
               <div className="flex items-center gap-2 flex-wrap">
+                <ImportByLink />
                 <Link
                   href="/wordpress"
                   className="btn-ghost inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold"
