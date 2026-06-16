@@ -94,7 +94,7 @@ export async function createLpAction(formData: FormData) {
 }
 
 export async function duplicateLpAction(formData: FormData) {
-  await requireAdmin();
+  const me = await requireAdmin();
   const slug = formData.get("slug")?.toString() ?? "";
   if (!slug) throw new Error("Slug obrigatório");
 
@@ -109,6 +109,7 @@ export async function duplicateLpAction(formData: FormData) {
     newSlug = `${slug}-copy-${suffix}`;
   }
 
+  const nowIso = new Date().toISOString();
   await addLp({
     ...original,
     slug: newSlug,
@@ -116,7 +117,10 @@ export async function duplicateLpAction(formData: FormData) {
     status: "draft",
     trashed: false,
     trashedAt: undefined,
-    createdAt: new Date().toISOString().split("T")[0],
+    createdAt: nowIso.split("T")[0],
+    // marca como editada agora → aparece em "Recentes"
+    lastEditedAt: nowIso,
+    lastEditedBy: me.name,
   });
   await logActivity("lp.duplicate", original.name);
 
