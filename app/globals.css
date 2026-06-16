@@ -20,6 +20,18 @@
   --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
 }
 
+/* Entrada de página — fade suave a cada navegação (via app/template.tsx).
+   Só opacidade de propósito: transform quebraria sidebar sticky + modais fixed. */
+@keyframes page-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .page-enter {
+    animation: page-enter 0.24s ease-out both;
+  }
+}
+
 @keyframes orbit-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
