@@ -249,8 +249,8 @@ export function WpManageList({
           Nenhuma página com esses filtros.
         </div>
       ) : (
-        <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-[0.14em] text-neutral-500 font-semibold bg-[#0d0d0d] border-b border-[#1f1f1f]">
                 {canEdit && (

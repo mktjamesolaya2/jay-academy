@@ -4,7 +4,6 @@ import {
   AlertTriangle,
   ChevronRight,
   MoreHorizontal,
-  Activity,
   Globe,
   Layout,
   FileText,
@@ -20,18 +19,14 @@ import {
   publicUrlFor,
   type LandingPage,
 } from "@/lib/landing-pages";
-import { formatDateTimeBR } from "@/lib/format-date";
 import { loadLps } from "@/lib/lp-store";
 import { listSaved, type SavedSummary } from "@/lib/wp-content-storage";
 import { SiteUrlLink } from "@/components/site-url-link";
 import { EditQuickLink } from "@/components/edit-quick-link";
 import { EditableGreeting } from "@/components/editable-greeting";
 import { canEdit, getCurrentUser } from "@/lib/auth";
-import {
-  describeActivity,
-  readActivityLog,
-  type ActivityEntry,
-} from "@/lib/activity-log";
+import { readActivityLog } from "@/lib/activity-log";
+import { ActivityFeed, DeploysFeed } from "@/components/admin-feeds";
 
 export const dynamic = "force-dynamic";
 
@@ -107,7 +102,7 @@ export default async function DashboardPage() {
 
         <main className="flex-1 overflow-y-auto">
           <div className="flex">
-            <div className="flex-1 min-w-0 px-8 py-8 space-y-8">
+            <div className="flex-1 min-w-0 px-4 lg:px-8 py-6 lg:py-8 space-y-6 lg:space-y-8">
               {/* Greeting */}
               <section>
                 <EditableGreeting
@@ -184,7 +179,7 @@ export default async function DashboardPage() {
 
             {/* Right Sidebar — só admin/senior */}
             {showAdminFeeds && (
-              <aside className="w-80 shrink-0 border-l border-[#1f1f1f] p-5 space-y-5">
+              <aside className="hidden lg:block w-80 shrink-0 border-l border-[#1f1f1f] p-5 space-y-5">
                 <ActivityFeed entries={activity} />
                 <DeploysFeed />
               </aside>
@@ -320,12 +315,12 @@ function ProjectsSection({
         </div>
       ) : (
         <div>
-          <div className="grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold border-b border-[#1f1f1f]">
+          <div className="grid grid-cols-[1fr_auto] lg:grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 px-4 lg:px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold border-b border-[#1f1f1f]">
             <div>Nome</div>
-            <div>Tipo</div>
-            <div>Status</div>
-            <div>Última edição</div>
-            <div></div>
+            <div className="hidden lg:block">Tipo</div>
+            <div className="justify-self-end lg:justify-self-auto">Status</div>
+            <div className="hidden lg:block">Última edição</div>
+            <div className="hidden lg:block"></div>
           </div>
           {lps.slice(0, 8).map((lp) => (
             <ProjectRow key={lp.slug} lp={lp} />
@@ -350,7 +345,7 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
   };
   const publicUrl = publicUrlFor(lp);
   return (
-    <div className="relative grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group">
+    <div className="relative grid grid-cols-[1fr_auto] lg:grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-4 lg:px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group">
       {/* Link que cobre a linha toda (stretched link) — clique no card */}
       <Link
         href={`/lps/${lp.slug}`}
@@ -372,16 +367,16 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
           )}
         </div>
       </div>
-      <span className="text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded inline-block w-fit">
+      <span className="hidden lg:inline-block text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded w-fit">
         {typeLabel[lp.type]}
       </span>
       <span
-        className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ring-1 w-fit ${status.bg} ${status.text}`}
+        className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ring-1 w-fit justify-self-end lg:justify-self-auto ${status.bg} ${status.text}`}
       >
         <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
         {statusLabel[lp.status]}
       </span>
-      <div>
+      <div className="hidden lg:block">
         <p className="text-xs text-neutral-300">
           {lp.lastEditedAt ? relativeTime(lp.lastEditedAt) : "—"}
         </p>
@@ -389,7 +384,7 @@ function ProjectRow({ lp }: { lp: LandingPage }) {
           <p className="text-[11px] text-neutral-500">{lp.lastEditedBy}</p>
         )}
       </div>
-      <span className="w-7 h-7 rounded-md text-neutral-500 group-hover:text-white group-hover:bg-[#161616] transition inline-flex items-center justify-center">
+      <span className="hidden lg:inline-flex w-7 h-7 rounded-md text-neutral-500 group-hover:text-white group-hover:bg-[#161616] transition items-center justify-center">
         <MoreHorizontal size={14} strokeWidth={2} />
       </span>
     </div>
@@ -407,7 +402,7 @@ function WpProjectRow({ wp }: { wp: SavedSummary }) {
       : "LP";
   const Icon = typeIcon;
   return (
-    <div className="relative grid grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group">
+    <div className="relative grid grid-cols-[1fr_auto] lg:grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 items-center px-4 lg:px-5 py-3 border-b border-[#161616] last:border-0 hover:bg-[#101010] transition group">
       <Link
         href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}`}
         aria-label={wp.slug}
@@ -427,120 +422,31 @@ function WpProjectRow({ wp }: { wp: SavedSummary }) {
           </p>
         </div>
       </div>
-      <span className="text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded inline-block w-fit">
+      <span className="hidden lg:inline-block text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded w-fit">
         {typeLbl}
       </span>
       {wp.published ? (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ring-1 w-fit bg-emerald-500/10 text-emerald-300 ring-emerald-500/25">
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ring-1 w-fit justify-self-end lg:justify-self-auto bg-emerald-500/10 text-emerald-300 ring-emerald-500/25">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
           Publicada
         </span>
       ) : (
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ring-1 w-fit bg-neutral-500/10 text-neutral-300 ring-neutral-500/25">
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-1 rounded-full ring-1 w-fit justify-self-end lg:justify-self-auto bg-neutral-500/10 text-neutral-300 ring-neutral-500/25">
           <span className="w-1.5 h-1.5 rounded-full bg-neutral-500" />
           Rascunho
         </span>
       )}
-      <div>
+      <div className="hidden lg:block">
         <p className="text-xs text-neutral-300">
           {wp.fetchedAt ? relativeTime(wp.fetchedAt) : "—"}
         </p>
         <p className="text-[11px] text-neutral-500">do WP</p>
       </div>
-      <span className="relative z-[2] inline-flex">
+      <span className="relative z-[2] hidden lg:inline-flex">
         <EditQuickLink
           href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}/edit`}
         />
       </span>
-    </div>
-  );
-}
-
-function ActivityFeed({ entries }: { entries: ActivityEntry[] }) {
-  return (
-    <div className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-white">Atividade recente</h3>
-      </div>
-      {entries.length === 0 ? (
-        <p className="text-[11px] text-neutral-500 leading-relaxed py-2">
-          Sem atividade ainda. Ações vão aparecer aqui conforme você edita,
-          publica e gerencia páginas.
-        </p>
-      ) : (
-        <div className="space-y-3">
-          {entries.map((entry) => (
-            <div key={entry.id} className="flex items-start gap-2.5">
-              <span className="w-7 h-7 rounded-md bg-[#161616] flex items-center justify-center shrink-0">
-                <Activity size={12} strokeWidth={2} className="text-neutral-400" />
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-neutral-200 leading-snug">
-                  <span className="font-semibold text-white">
-                    {entry.userName}
-                  </span>{" "}
-                  {describeActivity(entry)}
-                </p>
-                <p className="text-[10px] text-neutral-500 mt-0.5">
-                  {formatDateTimeBR(entry.at)}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function DeploysFeed() {
-  const items: { name: string; status: string; color: string; time: string }[] = [];
-
-  return (
-    <div className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-white">Deploys recentes</h3>
-        {items.length > 0 && (
-          <button className="text-[11px] font-medium text-neutral-500 hover:text-white transition">
-            Ver todos
-          </button>
-        )}
-      </div>
-      {items.length === 0 ? (
-        <p className="text-[11px] text-neutral-500 leading-relaxed py-2">
-          Sem deploys ainda. Quando você conectar o Vercel, vão aparecer aqui.
-        </p>
-      ) : (
-        <div className="space-y-2">
-          {items.map((item, i) => {
-            const colorClasses =
-              item.color === "emerald"
-                ? "text-emerald-300 bg-emerald-500/10 ring-emerald-500/25"
-                : item.color === "rose"
-                ? "text-rose-300 bg-rose-500/10 ring-rose-500/25"
-                : "text-sky-300 bg-sky-500/10 ring-sky-500/25";
-            return (
-              <div
-                key={i}
-                className="flex items-center gap-2.5 px-2 py-2 rounded-md hover:bg-[#121212] transition"
-              >
-                <span className="w-6 h-6 rounded-md bg-gradient-to-br from-pink-500/30 to-orange-500/30 ring-1 ring-white/10 shrink-0" />
-                <p className="flex-1 text-xs font-medium text-white truncate">
-                  {item.name}
-                </p>
-                <span
-                  className={`text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ring-1 ${colorClasses}`}
-                >
-                  {item.status}
-                </span>
-                <span className="text-[10px] text-neutral-500 whitespace-nowrap">
-                  {item.time}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }

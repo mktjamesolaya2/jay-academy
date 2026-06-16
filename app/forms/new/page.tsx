@@ -36,7 +36,7 @@ export default async function NewFormPage() {
       <Sidebar />
 
       <main className="flex-1 overflow-x-hidden">
-        <header className="border-b border-[#1f1f1f] px-10 pt-8 pb-7">
+        <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-6 lg:px-10 lg:pt-8 lg:pb-7">
           <Link
             href="/forms"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-white mb-5 transition"
@@ -57,7 +57,7 @@ export default async function NewFormPage() {
           </p>
         </header>
 
-        <section className="px-10 py-8 max-w-3xl">
+        <section className="px-5 py-6 lg:px-10 lg:py-8 max-w-3xl">
           <NewFormView />
         </section>
       </main>

@@ -29,7 +29,7 @@ export function DashboardTopbar({
 
   return (
     <>
-      <header className="h-16 border-b border-[#1f1f1f] bg-[#0a0a0a] px-6 flex items-center gap-4 shrink-0">
+      <header className="h-16 border-b border-[#1f1f1f] bg-[#0a0a0a] pl-16 lg:pl-6 pr-4 lg:pr-6 flex items-center gap-3 lg:gap-4 shrink-0">
         <button
           type="button"
           onClick={() => setSearchOpen(true)}

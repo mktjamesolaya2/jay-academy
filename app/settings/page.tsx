@@ -4,18 +4,22 @@ import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
-import { getCurrentUser } from "@/lib/auth";
+import { canEdit, getCurrentUser } from "@/lib/auth";
+import { readActivityLog } from "@/lib/activity-log";
+import { ActivityFeed, DeploysFeed } from "@/components/admin-feeds";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const [landingPages, savedWp, me] = await Promise.all([
+  const [landingPages, savedWp, me, activity] = await Promise.all([
     loadLps(),
     listSaved(),
     getCurrentUser(),
+    readActivityLog(15),
   ]);
   const trashedCount = landingPages.filter((lp) => lp.trashed).length;
   const isSenior = me?.role === "senior";
+  const userCanEdit = canEdit(me);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -24,7 +28,7 @@ export default async function SettingsPage() {
       <div className="flex-1 flex flex-col min-w-0">
         <DashboardTopbar landingPages={landingPages} savedWp={savedWp} />
 
-        <main className="flex-1 overflow-y-auto px-8 py-8">
+        <main className="flex-1 overflow-y-auto px-4 lg:px-8 py-6 lg:py-8">
           <div className="mb-6">
             <h1 className="text-2xl font-semibold text-white tracking-[-0.02em]">
               Configurações
@@ -33,6 +37,14 @@ export default async function SettingsPage() {
               Domínio, autenticação, integrações e lixeira
             </p>
           </div>
+
+          {/* Atividade recente + Deploys — só no mobile (no desktop ficam no dashboard) */}
+          {userCanEdit && (
+            <div className="lg:hidden space-y-5 mb-6">
+              <ActivityFeed entries={activity} />
+              <DeploysFeed />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-5xl">
             <Section title="Domínio" description="O portal vai viver em jayacademy.com.br">

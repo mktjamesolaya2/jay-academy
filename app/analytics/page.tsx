@@ -88,7 +88,7 @@ export default async function AnalyticsPage() {
     <div className="flex min-h-screen bg-[#0a0a0a]">
       <Sidebar />
       <main className="flex-1 overflow-x-hidden">
-        <header className="border-b border-[#1f1f1f] px-10 pt-8 pb-7">
+        <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-6 lg:px-10 lg:pt-8 lg:pb-7">
           <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
             Analytics
           </p>
@@ -101,7 +101,7 @@ export default async function AnalyticsPage() {
           </p>
         </header>
 
-        <div className="px-10 py-8 space-y-8">
+        <div className="px-5 py-6 lg:px-10 lg:py-8 space-y-8">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
             <BigStat icon={Eye} label="Visitas totais" value={totalVisits} tint="text-sky-300" />
             <BigStat icon={Users} label="Leads (envios)" value={totalLeads} tint="text-emerald-300" />
@@ -131,8 +131,8 @@ export default async function AnalyticsPage() {
                   Nenhuma página publicada ainda.
                 </div>
               ) : (
-                <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                  <table className="w-full text-sm">
+                <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-x-auto">
+                  <table className="w-full text-sm min-w-[420px]">
                     <thead>
                       <tr className="text-left text-[10px] uppercase tracking-[0.14em] text-neutral-500 font-semibold bg-[#0d0d0d] border-b border-[#1f1f1f]">
                         <th className="px-5 py-3">Página</th>

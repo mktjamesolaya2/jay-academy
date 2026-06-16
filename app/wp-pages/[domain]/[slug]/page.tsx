@@ -75,7 +75,7 @@ export default async function WpPageDetailPage({
       <Sidebar />
 
       <main className="flex-1 overflow-x-hidden">
-        <header className="border-b border-[#1f1f1f] px-10 pt-8 pb-7">
+        <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-6 lg:px-10 lg:pt-8 lg:pb-7">
           <Link
             href="/dashboard"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-white mb-5 transition"
@@ -138,7 +138,7 @@ export default async function WpPageDetailPage({
 
         {isPublished ? (
           /* ===== PUBLICADA — tela de gestão limpa (padrão LP) ===== */
-          <section className="px-10 py-8 grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <section className="px-5 py-6 lg:px-10 lg:py-8 grid grid-cols-1 lg:grid-cols-3 gap-5">
             <div className="lg:col-span-2 space-y-5">
               <Block title="Sobre essa página">
                 <SmartSummary
@@ -227,7 +227,7 @@ export default async function WpPageDetailPage({
           /* ===== NÃO PUBLICADA — categorizar + publicar ===== */
           <>
             {userCanEdit && (
-              <section className="px-10 py-8">
+              <section className="px-5 py-6 lg:px-10 lg:py-8">
                 <div className="mb-6">
                   <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
                     Onde colocar essa página?

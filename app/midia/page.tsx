@@ -15,7 +15,7 @@ export default async function MediaLibraryPage() {
     <div className="flex min-h-screen bg-[#0a0a0a]">
       <Sidebar />
       <main className="flex-1 overflow-x-hidden">
-        <header className="border-b border-[#1f1f1f] px-10 pt-8 pb-7">
+        <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-6 lg:px-10 lg:pt-8 lg:pb-7">
           <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
             Biblioteca de mídia
           </p>
@@ -29,7 +29,7 @@ export default async function MediaLibraryPage() {
           </p>
         </header>
 
-        <div className="px-10 py-8">
+        <div className="px-5 py-6 lg:px-10 lg:py-8">
           <MediaLibrary items={items} canEdit={userCanEdit} />
         </div>
       </main>

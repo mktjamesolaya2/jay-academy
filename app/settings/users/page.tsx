@@ -42,7 +42,7 @@ export default async function UsersPage() {
       <Sidebar />
 
       <main className="flex-1 overflow-x-hidden">
-        <header className="border-b border-[#1f1f1f] px-10 pt-8 pb-7">
+        <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-6 lg:px-10 lg:pt-8 lg:pb-7">
           <Link
             href="/settings"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-white mb-5 transition"
@@ -66,7 +66,7 @@ export default async function UsersPage() {
           </div>
         </header>
 
-        <section className="px-10 py-8">
+        <section className="px-5 py-6 lg:px-10 lg:py-8">
           <div className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden">
             <div className="grid grid-cols-[1.5fr_1fr_120px_220px] gap-3 px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold border-b border-[#1f1f1f]">
               <div>Usuário</div>

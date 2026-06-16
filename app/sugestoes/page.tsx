@@ -27,7 +27,7 @@ export default async function SugestoesPage() {
       <Sidebar />
 
       <main className="flex-1 overflow-x-hidden">
-        <header className="border-b border-[#1f1f1f] px-10 pt-8 pb-7">
+        <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-6 lg:px-10 lg:pt-8 lg:pb-7">
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div className="max-w-2xl">
               <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold inline-flex items-center gap-1.5">
@@ -46,7 +46,7 @@ export default async function SugestoesPage() {
           </div>
         </header>
 
-        <section className="px-10 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl">
+        <section className="px-5 py-6 lg:px-10 lg:py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl">
           <div className="lg:col-span-2 space-y-3">
             <SuggestionsBoard
               suggestions={sorted}
