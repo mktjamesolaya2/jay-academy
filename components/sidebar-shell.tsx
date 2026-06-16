@@ -10,6 +10,7 @@ import {
   Globe,
   Layout,
   FileText,
+  FileStack,
   Image as ImageIcon,
   BarChart3,
   Settings,
@@ -25,6 +26,7 @@ const URL_CHILDREN = [
   { href: "/websites", label: "Websites", icon: Globe },
   { href: "/lps", label: "Landing Pages", icon: Layout },
   { href: "/forms", label: "Formulários", icon: FileText },
+  { href: "/wp-pages", label: "Páginas WP", icon: FileStack },
 ];
 
 export function SidebarShell({ user }: { user: SessionUser | null }) {

@@ -6,9 +6,11 @@ import { fetchPageContent } from "@/lib/wp-fetch-page";
 import {
   saveContent,
   loadContent,
+  setPublished,
   type WpPageContent,
 } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
+import { ensurePageSummary } from "@/lib/page-summary";
 import { logActivity } from "@/lib/activity-log";
 
 type Result = { url: string; ok: boolean; message: string };
@@ -25,6 +27,7 @@ export async function importByLinksAction(
 ): Promise<{ results: Result[] }> {
   await requireAdmin();
   const raw = formData.get("links")?.toString() ?? "";
+  const autoPublish = formData.get("publish") === "1";
   const urls = [
     ...new Set(
       raw
@@ -95,11 +98,25 @@ export async function importByLinksAction(
         : content;
       await saveContent(merged);
 
+      let published = false;
+      if (autoPublish && !merged.published) {
+        try {
+          await setPublished(merged, merged.publicSlug || merged.slug);
+          await ensurePageSummary(domain, merged.slug);
+          published = true;
+          revalidatePath(`/p/${merged.publicSlug || merged.slug}`);
+        } catch {
+          // se falhar ao publicar, segue só copiada
+        }
+      }
+
       results.push({
         url,
         ok: true,
         message: existing
           ? `Atualizada: ${content.title}`
+          : published
+          ? `Copiada e PUBLICADA: ${content.title}`
           : `Copiada: ${content.title}`,
       });
     } catch (e) {

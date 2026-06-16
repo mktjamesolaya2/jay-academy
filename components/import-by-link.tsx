@@ -62,8 +62,20 @@ export function ImportByLink() {
                 />
                 <span className="block text-[11px] text-neutral-600 mt-1.5">
                   Páginas do jayacademy.com.br ou lp.jayacademy.com.br. Cada
-                  link vira uma página copiada (não publicada) pra você editar e
-                  publicar.
+                  link vira uma página no portal.
+                </span>
+              </label>
+
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  name="publish"
+                  value="1"
+                  defaultChecked
+                  className="accent-white w-4 h-4 cursor-pointer"
+                />
+                <span className="text-sm text-neutral-200 font-medium">
+                  Publicar automaticamente (já fica no ar com URL pública)
                 </span>
               </label>
 
