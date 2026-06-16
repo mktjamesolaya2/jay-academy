@@ -23,8 +23,6 @@ import {
 import { formatDateTimeBR } from "@/lib/format-date";
 import { loadLps } from "@/lib/lp-store";
 import { listSaved, type SavedSummary } from "@/lib/wp-content-storage";
-import { fetchAllWpPages } from "@/lib/wp-api";
-import { loadDecisions } from "@/lib/wp-decisions";
 import { SiteUrlLink } from "@/components/site-url-link";
 import { EditQuickLink } from "@/components/edit-quick-link";
 import { EditableGreeting } from "@/components/editable-greeting";
@@ -38,19 +36,18 @@ import {
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [landingPages, savedWp, allWp, decisions, me, activity] =
-    await Promise.all([
-      loadLps(),
-      listSaved(),
-      fetchAllWpPages().catch(() => []),
-      loadDecisions(),
-      getCurrentUser(),
-      readActivityLog(15),
-    ]);
+  const [landingPages, savedWp, me, activity] = await Promise.all([
+    loadLps(),
+    listSaved(),
+    getCurrentUser(),
+    readActivityLog(15),
+  ]);
 
   const activePages = landingPages.filter((lp) => !lp.trashed);
-  const uncategorizedWp = savedWp.filter((wp) => !wp.placed);
-  const categorizedWp = savedWp.filter((wp) => wp.placed);
+  // "Projetos" = páginas WP categorizadas OU publicadas (as importadas/publicadas
+  // aparecem aqui mesmo sem categoria). As de triagem (sem categoria e não
+  // publicadas) ficam só em Páginas WP.
+  const categorizedWp = savedWp.filter((wp) => wp.placed || wp.published);
   const totalPages = activePages.length + savedWp.length;
   const errorPages = activePages.filter((lp) => lp.status === "error").length;
   const userCanEdit = canEdit(me);
@@ -96,13 +93,6 @@ export default async function DashboardPage() {
       new Date(b.fetchedAt ?? 0).getTime() -
       new Date(a.fetchedAt ?? 0).getTime()
   );
-
-  const wpStats = {
-    total: allWp.length,
-    copy: Object.values(decisions).filter((d) => d === "copy").length,
-    ignore: Object.values(decisions).filter((d) => d === "ignore").length,
-    saved: savedWp.length,
-  };
 
   const hour = new Date().getHours();
   const greeting =
@@ -190,71 +180,6 @@ export default async function DashboardPage() {
                 showCount={allLps.length + allWpSorted.length}
               />
 
-              {/* WordPress block */}
-              <section className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-7 h-7 rounded-md bg-[#161616] flex items-center justify-center">
-                      <Globe size={13} strokeWidth={2} className="text-neutral-300" />
-                    </span>
-                    <h2 className="text-sm font-semibold text-white">
-                      Páginas do WordPress
-                    </h2>
-                  </div>
-                  <Link
-                    href="/wp-pages"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold bg-[#161616] border border-[#1f1f1f] hover:border-neutral-700 hover:text-white text-neutral-300 transition"
-                  >
-                    Gerenciar
-                    <ChevronRight size={11} strokeWidth={2.4} />
-                  </Link>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-                  <WpStat label="Total de páginas" value={wpStats.total} />
-                  <WpStat label="Para copiar" value={wpStats.copy} />
-                  <WpStat label="Ignoradas" value={wpStats.ignore} />
-                  <WpStat label="Já copiadas" value={wpStats.saved} />
-                </div>
-
-                {uncategorizedWp.length > 0 && (
-                  <div className="border-t border-[#1f1f1f] pt-4">
-                    <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold mb-3">
-                      Páginas copiadas sem categoria ({uncategorizedWp.length})
-                    </p>
-                    <p className="text-[11px] text-neutral-500 mb-3 leading-relaxed">
-                      Escolha uma categoria pra elas aparecerem em Landing
-                      pages, Websites ou Formulários.
-                    </p>
-                    <div className="space-y-1">
-                      {uncategorizedWp.slice(0, 6).map((wp) => (
-                        <Link
-                          key={`${wp.domain}_${wp.slug}`}
-                          href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}`}
-                          className="flex items-center gap-3 px-2.5 py-2 rounded-md hover:bg-[#121212] transition group"
-                        >
-                          <span className="w-8 h-8 rounded-md bg-gradient-to-br from-blue-500/30 to-violet-500/30 ring-1 ring-white/10 shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <p
-                              className="text-xs font-semibold text-white truncate group-hover:text-blue-400 transition"
-                              dangerouslySetInnerHTML={{ __html: wp.title }}
-                            />
-                            <p className="text-[10px] text-neutral-500 font-mono truncate">
-                              {wp.domain === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br"}/{wp.slug}
-                            </p>
-                          </div>
-                          <ChevronRight
-                            size={13}
-                            strokeWidth={2}
-                            className="text-neutral-600 group-hover:text-white transition"
-                          />
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </section>
             </div>
 
             {/* Right Sidebar — só admin/senior */}
@@ -527,15 +452,6 @@ function WpProjectRow({ wp }: { wp: SavedSummary }) {
           href={`/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}/edit`}
         />
       </span>
-    </div>
-  );
-}
-
-function WpStat({ label, value }: { label: string; value: number }) {
-  return (
-    <div>
-      <p className="text-2xl font-bold text-white tracking-tight">{value}</p>
-      <p className="text-[11px] text-neutral-500 mt-0.5">{label}</p>
     </div>
   );
 }
