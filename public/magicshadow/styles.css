@@ -2381,10 +2381,10 @@ body {
     /* fade vertical: dissolve imagem no MESMO tom quente do bloco (sem emenda) */
     linear-gradient(
       to bottom,
-      rgba(20, 13, 8, 0) 0%,
-      rgba(20, 13, 8, 0) 55%,
-      rgba(20, 13, 8, 0.85) 88%,
-      rgba(20, 13, 8, 1) 100%
+      rgba(27, 23, 20, 0) 0%,
+      rgba(27, 23, 20, 0) 55%,
+      rgba(27, 23, 20, 0.85) 88%,
+      rgba(27, 23, 20, 1) 100%
     ),
     /* overlay forte pra texto legível, fade pro lado esquerdo.
        Lado direito mais aberto → sombra pesada fica mais intensa/visível. */
@@ -2706,7 +2706,7 @@ body {
 /* Metade esquerda — fundo preto sólido + texto creme claro
    padding-right pequeno pra colar perto da divisória central */
 .diptico-closing__half--left {
-  background: #140D08;        /* mesmo tom que a base da imagem escura — continua a foto */
+  background: #1B1714;        /* mesmo tom que a base da imagem escura — continua a foto */
   color: rgba(245, 240, 224, 0.88);
   text-align: right;
   padding-right: clamp(0.6rem, 1vw, 1rem);
@@ -2759,8 +2759,8 @@ body {
         to bottom,
         transparent 0%,
         transparent 55%,
-        rgba(20, 13, 8, 0.85) 88%,
-        rgba(20, 13, 8, 1) 100%
+        rgba(27, 23, 20, 0.85) 88%,
+        rgba(27, 23, 20, 1) 100%
       ),
       linear-gradient(
         to right,
@@ -2835,8 +2835,8 @@ body {
   }
   span.diptico-closing__half.diptico-closing__half--left {
     order: 2;
-    background: #140D08 !important;
-    background-color: #140D08 !important;
+    background: #1B1714 !important;
+    background-color: #1B1714 !important;
     background-image: none !important;
     opacity: 1 !important;
     filter: none !important;
