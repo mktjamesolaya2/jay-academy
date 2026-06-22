@@ -2394,7 +2394,7 @@ body {
       rgba(0, 0, 0, 0.55) 45%,
       rgba(0, 0, 0, 0.18) 100%
     ),
-    url("assets/sobrancelha-pesada.png") right center / cover no-repeat;
+    url("assets/case_sonia.jpeg") right center / cover no-repeat;
   background-color: #050505;
   color: #F5F0E0;
   display: flex;
@@ -2768,7 +2768,7 @@ body {
         rgba(0, 0, 0, 0.65) 45%,
         rgba(0, 0, 0, 0.35) 100%
       ),
-      url("assets/sobrancelha-pesada.png") right center / cover no-repeat;
+      url("assets/case_sonia.jpeg") right center / cover no-repeat;
     background-color: #050505;
     color: #F5F0E0;
     display: flex;
