@@ -5,6 +5,7 @@ import {
   addManyMedia,
   assignMediaToPage,
   assignMediaPagesBulk,
+  listMedia,
 } from "./media-store";
 import { ensureWpPage } from "./media-pages-store";
 import { mediaTypeFromContentType, type MediaItem } from "./media-types";
@@ -337,14 +338,28 @@ export async function organizeImportedMediaByPage(): Promise<{
   assigned: number;
 }> {
   const saved = await listSaved();
+  const media = await listMedia();
+  // A mídia já localizada tem url do Blob; o HTML da página (também reescrito)
+  // contém essas mesmas urls do Blob. Então casamos a mídia pela URL presente no
+  // HTML da página — não pela url do WP (que já não existe mais no HTML).
+  const urlToId = new Map<string, string>();
+  for (const m of media) urlToId.set(m.url, m.id);
+
+  const urlRe = /https?:\/\/[^\s"'()<>\\]+/gi;
   const idToPage: Record<string, string> = {};
   let pages = 0;
   for (const s of saved) {
     const content = await loadContent(s.domain, s.slug);
     if (!content) continue;
-    const source = `${content.fullHtml || ""}\n${content.content || ""}`;
-    const ids = imageIdsForUrls(extractWpAssetUrls(source, content.link));
-    if (ids.length === 0) continue;
+    const html = `${content.fullHtml || ""}\n${content.content || ""}`;
+    const found = html.match(urlRe);
+    if (!found) continue;
+    const matchedIds: string[] = [];
+    for (const u of found) {
+      const id = urlToId.get(u);
+      if (id) matchedIds.push(id);
+    }
+    if (matchedIds.length === 0) continue;
     const pageId = await ensureWpPage(
       content.domain,
       content.slug,
@@ -352,7 +367,7 @@ export async function organizeImportedMediaByPage(): Promise<{
       content.fetchedAt
     );
     pages++;
-    for (const id of ids) idToPage[id] = pageId;
+    for (const id of matchedIds) idToPage[id] = pageId;
   }
   const assigned = await assignMediaPagesBulk(idToPage);
   return { pages, assigned };
