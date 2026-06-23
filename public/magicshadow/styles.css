@@ -2503,14 +2503,14 @@ body {
       rgba(239, 230, 217, 1) 100%
     ),
     /* overlay suave pra texto legível, fade pro lado direito.
-       Mais cream por cima → sombra leve fica ainda mais clara/aérea. */
+       Cream mais forte por cima → foto fica BEM opaca/aérea (quase fantasma). */
     linear-gradient(
       to left,
-      rgba(250, 247, 241, 0.52) 0%,
-      rgba(250, 247, 241, 0.82) 55%,
-      rgba(250, 247, 241, 0.95) 100%
+      rgba(250, 247, 241, 0.68) 0%,
+      rgba(250, 247, 241, 0.88) 55%,
+      rgba(250, 247, 241, 0.97) 100%
     ),
-    url("assets/sobrancelha-leve.png") right center / cover no-repeat;
+    url("assets/shadow_leve.jpg") right center / cover no-repeat;
   background-color: #FAF7F1;
   color: #1A1A1A;
   display: flex;
