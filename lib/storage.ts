@@ -15,6 +15,22 @@ const HAS_KV =
   !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
 const HAS_BLOB = !!process.env.BLOB_READ_WRITE_TOKEN;
 
+// Cloudflare R2 (S3-compatível) — 10GB grátis + banda grátis. Quando configurado,
+// é o destino preferencial dos uploads (à frente do Vercel Blob).
+const R2 = {
+  accountId: process.env.R2_ACCOUNT_ID || "",
+  accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
+  secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
+  bucket: process.env.R2_BUCKET || "",
+  publicUrl: (process.env.R2_PUBLIC_URL || "").replace(/\/$/, ""),
+};
+const HAS_R2 =
+  !!R2.accountId &&
+  !!R2.accessKeyId &&
+  !!R2.secretAccessKey &&
+  !!R2.bucket &&
+  !!R2.publicUrl;
+
 const LOCAL_DATA = path.resolve(process.cwd(), "data");
 const LOCAL_UPLOADS = path.resolve(process.cwd(), "public/uploads/wp");
 
@@ -117,6 +133,37 @@ export async function blobUpload(
 ): Promise<{ url: string }> {
   // Normaliza pra Buffer (funciona em ambos os caminhos)
   const buf: Buffer = Buffer.isBuffer(data) ? data : Buffer.from(data);
+
+  // Cloudflare R2 (preferencial quando configurado)
+  if (HAS_R2) {
+    const { AwsClient } = await import("aws4fetch");
+    const { randomBytes } = await import("node:crypto");
+    const client = new AwsClient({
+      accessKeyId: R2.accessKeyId,
+      secretAccessKey: R2.secretAccessKey,
+      service: "s3",
+      region: "auto",
+    });
+    // Sufixo aleatório (igual ao addRandomSuffix do Blob) pra evitar colisão.
+    const suffix = randomBytes(5).toString("hex");
+    const dot = filename.lastIndexOf(".");
+    const key =
+      dot > -1
+        ? `${filename.slice(0, dot)}-${suffix}${filename.slice(dot)}`
+        : `${filename}-${suffix}`;
+    const endpoint = `https://${R2.accountId}.r2.cloudflarestorage.com/${R2.bucket}/${encodeURI(
+      key
+    )}`;
+    const res = await client.fetch(endpoint, {
+      method: "PUT",
+      body: new Uint8Array(buf),
+      headers: { "Content-Type": contentType || "application/octet-stream" },
+    });
+    if (!res.ok) {
+      throw new Error(`R2 upload falhou: ${res.status} ${await res.text()}`);
+    }
+    return { url: `${R2.publicUrl}/${key}` };
+  }
 
   if (HAS_BLOB) {
     const { put } = await import("@vercel/blob");
