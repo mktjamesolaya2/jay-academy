@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, EyeOff } from "lucide-react";
+import { Search, EyeOff, CheckCircle2 } from "lucide-react";
 import { WpPageRow } from "./wp-page-row";
 import type { WpPage } from "@/lib/wp-api";
 import type { WpDecision } from "@/lib/wp-decisions";
@@ -12,7 +12,14 @@ export type TriageRow = {
   key: string;
 };
 
-function matches(row: TriageRow, q: string): boolean {
+export type SavedRow = {
+  title: string;
+  slug: string;
+  domain: "main" | "lp";
+  copiedAt: string; // já formatado no servidor
+};
+
+function matchPage(row: TriageRow, q: string): boolean {
   const t = q.trim().toLowerCase();
   if (!t) return true;
   return (
@@ -21,7 +28,15 @@ function matches(row: TriageRow, q: string): boolean {
   );
 }
 
-function Table({ rows }: { rows: TriageRow[] }) {
+function matchSaved(row: SavedRow, q: string): boolean {
+  const t = q.trim().toLowerCase();
+  if (!t) return true;
+  return (
+    row.title.toLowerCase().includes(t) || row.slug.toLowerCase().includes(t)
+  );
+}
+
+function DecisionTable({ rows }: { rows: TriageRow[] }) {
   return (
     <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
       <table className="w-full text-sm">
@@ -48,25 +63,35 @@ function Table({ rows }: { rows: TriageRow[] }) {
 }
 
 export function WpTriageTables({
+  saved,
   main,
   campaigns,
   ignored,
 }: {
+  saved: SavedRow[];
   main: TriageRow[];
   campaigns: TriageRow[];
   ignored: TriageRow[];
 }) {
   const [q, setQ] = useState("");
+  const [savedOpen, setSavedOpen] = useState(false);
+  const [ignoredOpen, setIgnoredOpen] = useState(false);
+  const searching = !!q.trim();
 
-  const fMain = main.filter((r) => matches(r, q));
-  const fCamp = campaigns.filter((r) => matches(r, q));
-  const fIgnored = ignored.filter((r) => matches(r, q));
+  const fSaved = saved.filter((r) => matchSaved(r, q));
+  const fMain = main.filter((r) => matchPage(r, q));
+  const fCamp = campaigns.filter((r) => matchPage(r, q));
+  const fIgnored = ignored.filter((r) => matchPage(r, q));
+
   const nothing =
-    fMain.length === 0 && fCamp.length === 0 && fIgnored.length === 0;
+    fSaved.length === 0 &&
+    fMain.length === 0 &&
+    fCamp.length === 0 &&
+    fIgnored.length === 0;
 
   return (
-    <div className="space-y-10">
-      {/* Busca por nome */}
+    <div className="space-y-8">
+      {/* Busca — filtra TODAS as seções (copiadas, pendentes, campanhas, ignoradas) */}
       <div className="relative max-w-md">
         <Search
           size={15}
@@ -82,12 +107,62 @@ export function WpTriageTables({
         />
       </div>
 
-      {nothing && (
+      {nothing && searching && (
         <p className="text-sm text-neutral-500 py-8 text-center">
-          {q.trim()
-            ? `Nenhuma página encontrada pra “${q}”.`
-            : "Nada por decidir — tudo já foi copiado ou ignorado. 🎉"}
+          Nenhuma página encontrada pra “{q}”.
         </p>
+      )}
+
+      {/* Já copiadas pro portal — recolhível, abre ao buscar */}
+      {saved.length > 0 && (
+        <details
+          open={searching || savedOpen}
+          onToggle={(e) => setSavedOpen(e.currentTarget.open)}
+          className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden"
+        >
+          <summary className="flex items-center gap-2 cursor-pointer px-5 py-4 text-sm select-none list-none hover:bg-[#101010] transition">
+            <CheckCircle2 size={14} strokeWidth={2.2} className="text-emerald-400" />
+            <span className="font-semibold text-white">Já copiadas pro portal</span>
+            <span className="text-neutral-500">({fSaved.length})</span>
+            <span className="text-[11px] text-neutral-600 ml-1">
+              — clique pra ver a lista
+            </span>
+          </summary>
+          <table className="w-full text-sm border-t border-[#1f1f1f]">
+            <thead>
+              <tr className="text-left text-[10px] uppercase tracking-[0.14em] text-neutral-500 font-semibold bg-[#0d0d0d] border-b border-[#1f1f1f]">
+                <th className="px-6 py-3">Página</th>
+                <th className="px-6 py-3">Origem</th>
+                <th className="px-6 py-3">Copiada em</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fSaved.map((s) => (
+                <tr
+                  key={`${s.domain}_${s.slug}`}
+                  className="border-b border-[#161616] last:border-0 hover:bg-[#101010] transition"
+                >
+                  <td className="px-6 py-3.5">
+                    <p className="text-sm text-white font-semibold leading-tight line-clamp-1">
+                      {s.title}
+                    </p>
+                    <p className="text-[11px] text-neutral-500 font-mono mt-1">
+                      /{s.slug}
+                    </p>
+                  </td>
+                  <td className="px-6 py-3.5 text-xs text-neutral-400 font-medium">
+                    {s.domain === "main"
+                      ? "jayacademy.com.br"
+                      : "lp.jayacademy.com.br"}
+                  </td>
+                  <td className="px-6 py-3.5 text-xs text-neutral-500 font-mono">
+                    {s.copiedAt}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </details>
       )}
 
       {fMain.length > 0 && (
@@ -96,7 +171,7 @@ export function WpTriageTables({
             Páginas{" "}
             <span className="text-neutral-500 font-medium">({fMain.length})</span>
           </h3>
-          <Table rows={fMain} />
+          <DecisionTable rows={fMain} />
         </section>
       )}
 
@@ -110,13 +185,16 @@ export function WpTriageTables({
             Páginas de campanha, anúncio ou teste A/B. Geralmente não precisa
             copiar.
           </p>
-          <Table rows={fCamp} />
+          <DecisionTable rows={fCamp} />
         </section>
       )}
 
       {/* Ignoradas — recolhidas, fora do caminho mas recuperáveis */}
       {ignored.length > 0 && (
-        <details className="group">
+        <details
+          open={searching || ignoredOpen}
+          onToggle={(e) => setIgnoredOpen(e.currentTarget.open)}
+        >
           <summary className="flex items-center gap-2 cursor-pointer text-sm text-neutral-400 hover:text-neutral-200 transition select-none list-none">
             <EyeOff size={13} strokeWidth={2} />
             <span className="font-semibold">Ignoradas</span>
@@ -127,7 +205,7 @@ export function WpTriageTables({
           </summary>
           <div className="mt-3">
             {fIgnored.length > 0 ? (
-              <Table rows={fIgnored} />
+              <DecisionTable rows={fIgnored} />
             ) : (
               <p className="text-xs text-neutral-600 py-3">
                 Nenhuma ignorada bate com a busca.

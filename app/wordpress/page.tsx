@@ -1,16 +1,13 @@
 import Link from "next/link";
 import { Sidebar } from "@/components/sidebar";
-import { WpTriageTables, type TriageRow } from "@/components/wp-triage-tables";
+import {
+  WpTriageTables,
+  type TriageRow,
+  type SavedRow,
+} from "@/components/wp-triage-tables";
 import { PendingButton } from "@/components/pending-button";
 import { CopyNowButton } from "@/components/copy-now-button";
-import { CollapsibleSection } from "@/components/collapsible-section";
-import {
-  Sparkles,
-  Eraser,
-  Shield,
-  CheckCircle2,
-  ArrowLeft,
-} from "lucide-react";
+import { Sparkles, Eraser, Shield, ArrowLeft } from "lucide-react";
 import { fetchAllWpPages, pageKey, type WpPage } from "@/lib/wp-api";
 import { loadDecisions, type WpDecision } from "@/lib/wp-decisions";
 import { listSaved } from "@/lib/wp-content-storage";
@@ -59,6 +56,13 @@ export default async function WordPressPage() {
   const mainRows = pendingPages.filter((p) => !isCampaign(p)).map(toRow);
   const campaignRows = pendingPages.filter(isCampaign).map(toRow);
   const ignoredRows = ignoredPages.map(toRow);
+
+  const savedRows: SavedRow[] = saved.map((s) => ({
+    title: s.title,
+    slug: s.slug,
+    domain: s.domain,
+    copiedAt: formatDateTimeBR(s.fetchedAt),
+  }));
 
   const counts = {
     total: pages.length,
@@ -169,60 +173,9 @@ export default async function WordPressPage() {
           />
         </section>
 
-        <div className="px-5 py-6 lg:px-10 lg:py-8 space-y-10">
-          {saved.length > 0 && (
-            <CollapsibleSection
-              title="Já copiadas pro portal"
-              count={saved.length}
-              hint={
-                <span className="inline-flex items-center gap-1">
-                  <CheckCircle2
-                    size={11}
-                    strokeWidth={2.2}
-                    className="text-emerald-400"
-                  />
-                  Salvas em data/wp-content/. Clique pra ver a lista.
-                </span>
-              }
-            >
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-[10px] uppercase tracking-[0.14em] text-neutral-500 font-semibold bg-[#0d0d0d] border-b border-[#1f1f1f]">
-                    <th className="px-6 py-3">Página</th>
-                    <th className="px-6 py-3">Origem</th>
-                    <th className="px-6 py-3">Copiada em</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {saved.map((s) => (
-                    <tr
-                      key={`${s.domain}_${s.slug}`}
-                      className="border-b border-[#161616] last:border-0 hover:bg-[#101010] transition"
-                    >
-                      <td className="px-6 py-3.5">
-                        <p className="text-sm text-white font-semibold leading-tight line-clamp-1">
-                          {s.title}
-                        </p>
-                        <p className="text-[11px] text-neutral-500 font-mono mt-1">
-                          /{s.slug}
-                        </p>
-                      </td>
-                      <td className="px-6 py-3.5 text-xs text-neutral-400 font-medium">
-                        {s.domain === "main"
-                          ? "jayacademy.com.br"
-                          : "lp.jayacademy.com.br"}
-                      </td>
-                      <td className="px-6 py-3.5 text-xs text-neutral-500 font-mono">
-                        {formatDateTimeBR(s.fetchedAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </CollapsibleSection>
-          )}
-
+        <div className="px-5 py-6 lg:px-10 lg:py-8">
           <WpTriageTables
+            saved={savedRows}
             main={mainRows}
             campaigns={campaignRows}
             ignored={ignoredRows}
