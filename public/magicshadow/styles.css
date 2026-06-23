@@ -3511,8 +3511,10 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 50%;
-  filter: brightness(0.38) contrast(1.18);
+  object-position: 49% 56%;            /* foca no James subindo a escada (centro-baixo da foto) */
+  transform: scale(1.95);              /* zoom forte nele */
+  transform-origin: 49% 56%;
+  filter: brightness(0.5) contrast(1.18);
 }
 /* Gradiente: top heavy black, área da headline escura, vinheta lateral assimétrica */
 .section-dominar::after {
@@ -3722,10 +3724,11 @@ body {
   }
 }
 @media (max-width: 720px) {
-  /* Mobile: shifta a foto da palestra pra esquerda (revela o James) + clareia um pouco */
+  /* Mobile: foca no James subindo a escada (centro) + clareia um pouco */
   .dominar-bg img {
-    object-position: 5% center;
-    filter: brightness(0.55) contrast(1.15);
+    object-position: 49% 56%;
+    transform-origin: 49% 56%;
+    filter: brightness(0.6) contrast(1.15);
   }
   .dominar-grid {
     grid-template-columns: 1fr;
