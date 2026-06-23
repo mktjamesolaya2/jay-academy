@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Sidebar } from "@/components/sidebar";
-import { WpPageRow } from "@/components/wp-page-row";
+import { WpTriageTables, type TriageRow } from "@/components/wp-triage-tables";
 import { PendingButton } from "@/components/pending-button";
 import { CopyNowButton } from "@/components/copy-now-button";
 import { CollapsibleSection } from "@/components/collapsible-section";
@@ -34,8 +34,6 @@ export default async function WordPressPage() {
     decisions[pageKey(page)] ?? "pending";
 
   const copyMarkedPages = pages.filter((p) => decisionOf(p) === "copy");
-  const campaignPages = pages.filter(isCampaign);
-  const mainPages = pages.filter((p) => !isCampaign(p));
 
   const savedKeys = new Set(saved.map((s) => `${s.domain}:${s.slug}`));
   const isSavedFor = (p: WpPage) => savedKeys.has(`${p.domain}:${p.slug}`);
@@ -43,6 +41,24 @@ export default async function WordPressPage() {
   const alreadyCopiedCount = copyMarkedPages.filter((p) =>
     isSavedFor(p)
   ).length;
+
+  // Listas da triagem: páginas JÁ COPIADAS saem da lista de decisão (ficam só na
+  // seção "Já copiadas pro portal"); IGNORADAS vão pra uma seção recolhível.
+  // Sobram na lista principal só as que ainda precisam de decisão.
+  const toRow = (p: WpPage): TriageRow => ({
+    page: p,
+    decision: decisionOf(p),
+    key: pageKey(p),
+  });
+  const pendingPages = pages.filter(
+    (p) => !isSavedFor(p) && decisionOf(p) !== "ignore"
+  );
+  const ignoredPages = pages.filter(
+    (p) => !isSavedFor(p) && decisionOf(p) === "ignore"
+  );
+  const mainRows = pendingPages.filter((p) => !isCampaign(p)).map(toRow);
+  const campaignRows = pendingPages.filter(isCampaign).map(toRow);
+  const ignoredRows = ignoredPages.map(toRow);
 
   const counts = {
     total: pages.length,
@@ -206,82 +222,14 @@ export default async function WordPressPage() {
             </CollapsibleSection>
           )}
 
-          <section>
-            <div className="mb-3">
-              <h3 className="text-lg font-semibold text-white tracking-[-0.02em]">
-                Páginas{" "}
-                <span className="text-neutral-500 font-medium">
-                  ({mainPages.length})
-                </span>
-              </h3>
-            </div>
-            <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-              <PagesTable
-                pages={mainPages}
-                decisionOf={decisionOf}
-                isSavedFor={isSavedFor}
-              />
-            </div>
-          </section>
-
-          {campaignPages.length > 0 && (
-            <section>
-              <div className="mb-3">
-                <h3 className="text-lg font-semibold text-white tracking-[-0.02em]">
-                  Campanhas e ações{" "}
-                  <span className="text-neutral-500 font-medium">
-                    ({campaignPages.length})
-                  </span>
-                </h3>
-                <p className="text-[12px] text-neutral-500 font-medium mt-1">
-                  Páginas de campanha, anúncio ou teste A/B. Geralmente não
-                  precisa copiar.
-                </p>
-              </div>
-              <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                <PagesTable
-                  pages={campaignPages}
-                  decisionOf={decisionOf}
-                  isSavedFor={isSavedFor}
-                />
-              </div>
-            </section>
-          )}
+          <WpTriageTables
+            main={mainRows}
+            campaigns={campaignRows}
+            ignored={ignoredRows}
+          />
         </div>
       </main>
     </div>
-  );
-}
-
-function PagesTable({
-  pages,
-  decisionOf,
-  isSavedFor,
-}: {
-  pages: WpPage[];
-  decisionOf: (p: WpPage) => WpDecision;
-  isSavedFor: (p: WpPage) => boolean;
-}) {
-  return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="text-left text-[10px] uppercase tracking-[0.14em] text-neutral-500 font-semibold bg-[#0d0d0d] border-b border-[#1f1f1f]">
-          <th className="px-6 py-3">Página</th>
-          <th className="px-6 py-3">Link</th>
-          <th className="px-6 py-3">Decisão</th>
-        </tr>
-      </thead>
-      <tbody>
-        {pages.map((page) => (
-          <WpPageRow
-            key={pageKey(page)}
-            page={page}
-            decision={decisionOf(page)}
-            isSaved={isSavedFor(page)}
-          />
-        ))}
-      </tbody>
-    </table>
   );
 }
 

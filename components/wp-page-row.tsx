@@ -1,8 +1,8 @@
 import { ExternalLink, CheckCircle2 } from "lucide-react";
 import { clsx } from "clsx";
 import { decideAction } from "@/app/wordpress/actions";
-import { type WpDecision } from "@/lib/wp-decisions";
-import { pageKey, type WpPage } from "@/lib/wp-api";
+import type { WpDecision } from "@/lib/wp-decisions";
+import type { WpPage } from "@/lib/wp-api";
 
 const buttonStyle: Record<WpDecision, string> = {
   copy: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/25 hover:bg-emerald-500/25",
@@ -25,13 +25,17 @@ const labelFor: Record<WpDecision, string> = {
 export function WpPageRow({
   page,
   decision,
+  pageKeyValue,
   isSaved = false,
 }: {
   page: WpPage;
   decision: WpDecision;
+  /** Chave estável da página (pageKey) — passada pronta pra este componente
+   * funcionar tanto em Server quanto em Client (wp-api é server-only). */
+  pageKeyValue: string;
   isSaved?: boolean;
 }) {
-  const key = pageKey(page);
+  const key = pageKeyValue;
 
   return (
     <tr className="border-b border-[#161616] last:border-0 hover:bg-[#101010] transition">
