@@ -4248,10 +4248,10 @@ body {
   /* Imagem à direita, ancorada no topo (desktop), altura 82%.
      Degradê branco radial bem leve por cima → bordas dissolvem no fundo (sem linha reta dura). */
   background:
-    radial-gradient(ellipse 46% 62% at 75% 41%,
-      rgba(255, 255, 255, 0) 58%,
-      rgba(255, 255, 255, 0.55) 82%,
-      rgba(255, 255, 255, 0.92) 100%) no-repeat,
+    radial-gradient(ellipse 42% 55% at 74% 40%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0.78) 68%,
+      rgba(255, 255, 255, 1) 86%) no-repeat,
     url("assets/final.jpg") right top / auto 82% no-repeat;
   background-color: #FFFFFF;
   color: #1A1A1A;
