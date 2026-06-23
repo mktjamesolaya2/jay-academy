@@ -79,6 +79,47 @@ export async function GET(req: Request) {
     }
   }
 
+  // ── Scan Hotmart: páginas com link pay.hotmart.com + preços que aparecem ──
+  if (url.searchParams.get("hotmartscan") === "1") {
+    const saved = (await listSaved()).filter((s) => !s.trashed);
+    const out: Array<{
+      slug: string;
+      domain: string;
+      title: string;
+      published: boolean;
+      hotmart: string[];
+      prices: string[];
+    }> = [];
+    for (const s of saved) {
+      const c = await loadContent(s.domain, s.slug);
+      if (!c) continue;
+      const html = `${c.fullHtml || ""}\n${c.content || ""}`.replace(
+        /&#0?38;|&amp;/g,
+        "&"
+      );
+      const hotmart = [
+        ...new Set(
+          (html.match(/pay\.hotmart\.com\/[A-Za-z0-9]+(?:\?[^"'\s<)]*)?/g) || []).map(
+            (l) => l.replace(/\\$/, "")
+          )
+        ),
+      ];
+      if (hotmart.length === 0) continue;
+      const prices = [
+        ...new Set(html.match(/R\$\s?[0-9][0-9.]*,[0-9]{2}/g) || []),
+      ].slice(0, 8);
+      out.push({
+        slug: c.slug,
+        domain: c.domain,
+        title: (c.title || "").replace(/<[^>]*>/g, ""),
+        published: !!c.published,
+        hotmart,
+        prices,
+      });
+    }
+    return NextResponse.json({ count: out.length, pages: out });
+  }
+
   // ── Diagnóstico da biblioteca de mídia ──
   if (url.searchParams.get("mediastats") === "1") {
     const [media, pages] = [await listMedia(), await listPages()];
