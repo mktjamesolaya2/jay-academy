@@ -13,6 +13,7 @@ import {
 } from "@/lib/wp-localize";
 import { listMedia } from "@/lib/media-store";
 import { listPages } from "@/lib/media-pages-store";
+import { blobUpload } from "@/lib/storage";
 
 // Backfill de localização: baixa os assets do WP das páginas já copiadas.
 // Abra ESTE link no navegador (logado como admin):
@@ -58,6 +59,24 @@ export async function GET(req: Request) {
   }
 
   const url = new URL(req.url);
+
+  // ── Teste de upload no storage (confirma config do Supabase/S3) ──
+  if (url.searchParams.get("testupload") === "1") {
+    try {
+      const stamp = url.searchParams.get("t") || "x";
+      const { url: uploaded } = await blobUpload(
+        `test/ping-${stamp}.txt`,
+        Buffer.from("supabase ok"),
+        "text/plain"
+      );
+      return NextResponse.json({ ok: true, url: uploaded });
+    } catch (e) {
+      return NextResponse.json({
+        ok: false,
+        error: e instanceof Error ? e.message : "erro",
+      });
+    }
+  }
 
   // ── Diagnóstico da biblioteca de mídia ──
   if (url.searchParams.get("mediastats") === "1") {
