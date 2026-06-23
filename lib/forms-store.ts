@@ -79,7 +79,9 @@ export async function restoreForm(id: string): Promise<void> {
 }
 
 export async function saveForm(form: FormConfig): Promise<void> {
-  const forms = await listForms();
+  // readAllForms (não listForms) — senão regravar a lista filtrada apagaria
+  // permanentemente todos os formulários que estavam na lixeira.
+  const forms = await readAllForms();
   const idx = forms.findIndex((f) => f.id === form.id);
   if (idx === -1) forms.push(form);
   else forms[idx] = form;
@@ -87,8 +89,11 @@ export async function saveForm(form: FormConfig): Promise<void> {
 }
 
 export async function deleteForm(id: string): Promise<void> {
-  const forms = await listForms();
-  await kvSet(FORMS_KEY, forms.filter((f) => f.id !== id));
+  const forms = await readAllForms();
+  await kvSet(
+    FORMS_KEY,
+    forms.filter((f) => f.id !== id)
+  );
   // Limpa submissões também
   await kvDel(submissionsKey(id));
 }

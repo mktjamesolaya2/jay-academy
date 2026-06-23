@@ -1,8 +1,8 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { kvGet, kvSet, blobUpload } from "./storage";
-import { addMedia } from "./media-store";
-import { mediaTypeFromContentType } from "./media-types";
+import { addManyMedia } from "./media-store";
+import { mediaTypeFromContentType, type MediaItem } from "./media-types";
 import {
   loadContent,
   saveContent,
@@ -108,7 +108,8 @@ function guessContentType(url: string, headerCt?: string | null): string {
  */
 async function fetchAndStore(
   url: string,
-  runCache: Map<string, Promise<string | null>>
+  runCache: Map<string, Promise<string | null>>,
+  mediaSink: Map<string, MediaItem>
 ): Promise<string | null> {
   const cached = runCache.get(url);
   if (cached) return cached;
@@ -136,7 +137,7 @@ async function fetchAndStore(
         const subUrls = extractWpAssetUrls(cssText, url);
         const subMap: Record<string, string> = {};
         for (const sub of subUrls) {
-          const local = await fetchAndStore(sub, runCache);
+          const local = await fetchAndStore(sub, runCache, mediaSink);
           if (local) subMap[sub] = local;
         }
         buf = Buffer.from(rewriteCssUrls(cssText, url, subMap), "utf8");
@@ -149,11 +150,16 @@ async function fetchAndStore(
       const { url: localUrl } = await blobUpload(filename, buf, contentType);
 
       // Imagens entram também na biblioteca de mídia (categoria separada pra não
-      // poluir as imagens curadas do James).
-      if (kind === "image") {
-        await addMedia({
-          id: createHash("sha1").update(url).digest("hex").slice(0, 16),
-          name: basenameFromUrl(url),
+      // poluir as imagens curadas do James). Pulamos as variantes de tamanho do
+      // WP (foo-300x300.jpg, foo-768x768.jpg…) pra não floodar a biblioteca com
+      // 4 cópias da mesma imagem — elas continuam no Blob (pro srcset), só não na
+      // biblioteca. A gravação é em lote no fim (mediaSink), não 1x por imagem.
+      const name = basenameFromUrl(url);
+      if (kind === "image" && !/-\d+x\d+\.\w+$/.test(name)) {
+        const id = createHash("sha1").update(url).digest("hex").slice(0, 16);
+        mediaSink.set(id, {
+          id,
+          name,
           url: localUrl,
           category: "Importadas do WP",
           type: mediaTypeFromContentType(contentType),
@@ -220,7 +226,10 @@ export async function localizePage(
   }
 
   const runCache = new Map<string, Promise<string | null>>();
-  const localUrls = await pool(urls, CONCURRENCY, (u) => fetchAndStore(u, runCache));
+  const mediaSink = new Map<string, MediaItem>();
+  const localUrls = await pool(urls, CONCURRENCY, (u) =>
+    fetchAndStore(u, runCache, mediaSink)
+  );
 
   const map: Record<string, string> = {};
   const stats: LocalizeStats = {
@@ -243,14 +252,23 @@ export async function localizePage(
     }
   });
 
+  // Grava as imagens novas na biblioteca de uma vez só (1 leitura + 1 escrita).
+  await addManyMedia([...mediaSink.values()]);
+
+  // O de-lazy + reescrita roda sempre (ajuda mesmo em localização parcial).
   if (content.fullHtml) content.fullHtml = localizeHtml(content.fullHtml, map);
   if (content.content) content.content = localizeHtml(content.content, map);
-  content.localizedAt = new Date().toISOString();
+
+  const at = new Date().toISOString();
+  // Só marca como localizada se DE FATO baixou algo. Se nada baixou (Blob não
+  // configurado / falha transitória), NÃO marca — assim o backfill reprocessa e
+  // o <base> do WP continua (a página não "desconecta" às cegas com imagem quebrada).
+  if (stats.localized > 0) content.localizedAt = at;
   content.localizeStats = {
     total: stats.total,
     localized: stats.localized,
     failed: stats.failed,
-    at: content.localizedAt,
+    at,
   };
   await saveContent(content);
 

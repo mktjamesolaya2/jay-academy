@@ -9,7 +9,13 @@ export async function loginAction(
 ) {
   const email = formData.get("email")?.toString() ?? "";
   const password = formData.get("password")?.toString() ?? "";
-  const redirectTo = formData.get("redirect")?.toString() || "/dashboard";
+  const rawRedirect = formData.get("redirect")?.toString() || "/dashboard";
+  // Só aceita caminho interno (começa com "/" e não com "//") pra evitar
+  // open redirect (ex: /login?redirect=https://site-malicioso.com).
+  const redirectTo =
+    rawRedirect.startsWith("/") && !rawRedirect.startsWith("//")
+      ? rawRedirect
+      : "/dashboard";
 
   const result = await signIn(email, password);
   if (!result.ok) {

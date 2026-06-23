@@ -309,6 +309,7 @@ export async function bulkTrashAction(items: Item[]) {
   revalidatePath("/wp-pages");
   revalidatePath("/dashboard");
   revalidatePath("/lixeira");
+  revalidatePath("/wordpress"); // some da triagem "já copiada" ao excluir
 }
 
 export async function bulkCategorizeAction(
@@ -330,6 +331,7 @@ export async function bulkCategorizeAction(
   await logActivity("wp.categorize", `${items.length} página(s)`, label);
   revalidatePath("/wp-pages");
   revalidatePath("/dashboard");
+  revalidatePath("/wordpress");
 }
 
 /** Despublica de uma vez TODAS as páginas que estão publicadas. */
