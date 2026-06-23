@@ -18,22 +18,28 @@ const HAS_BLOB = !!process.env.BLOB_READ_WRITE_TOKEN;
 // Storage S3-compatível (Supabase Storage, Cloudflare R2, Backblaze B2, AWS S3…).
 // Genérico: basta setar as envs S3_*. Quando configurado, é o destino preferencial
 // dos uploads (à frente do Vercel Blob). Aceita também os nomes R2_* (compat).
+// Lê env var e LIMPA espaços/quebras de linha (evita header inválido na assinatura
+// quando o valor é colado com um \n no fim).
+const env = (...names: string[]): string => {
+  for (const n of names) {
+    const v = process.env[n];
+    if (v && v.trim()) return v.trim();
+  }
+  return "";
+};
+
 const S3 = {
   endpoint: (
-    process.env.S3_ENDPOINT ||
-    (process.env.R2_ACCOUNT_ID
-      ? `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`
+    env("S3_ENDPOINT") ||
+    (env("R2_ACCOUNT_ID")
+      ? `https://${env("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com`
       : "")
   ).replace(/\/$/, ""),
-  region: process.env.S3_REGION || "auto",
-  accessKeyId: process.env.S3_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID || "",
-  secretAccessKey:
-    process.env.S3_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY || "",
-  bucket: process.env.S3_BUCKET || process.env.R2_BUCKET || "",
-  publicUrl: (process.env.S3_PUBLIC_URL || process.env.R2_PUBLIC_URL || "").replace(
-    /\/$/,
-    ""
-  ),
+  region: env("S3_REGION", "R2_REGION") || "auto",
+  accessKeyId: env("S3_ACCESS_KEY_ID", "R2_ACCESS_KEY_ID"),
+  secretAccessKey: env("S3_SECRET_ACCESS_KEY", "R2_SECRET_ACCESS_KEY"),
+  bucket: env("S3_BUCKET", "R2_BUCKET"),
+  publicUrl: env("S3_PUBLIC_URL", "R2_PUBLIC_URL").replace(/\/$/, ""),
 };
 const HAS_S3 =
   !!S3.endpoint &&
