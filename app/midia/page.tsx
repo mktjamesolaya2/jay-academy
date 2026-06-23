@@ -10,7 +10,7 @@ import { MediaPagesWorkspace } from "@/components/media-pages-workspace";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const MIGRATION_FLAG = "media:pages-migrated:v1";
+const MIGRATION_FLAG = "media:pages-migrated:v2";
 
 export default async function MediaLibraryPage() {
   const me = await getCurrentUser();
