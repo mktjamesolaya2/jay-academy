@@ -1,7 +1,12 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { kvGet, kvSet, blobUpload } from "./storage";
-import { addManyMedia } from "./media-store";
+import {
+  addManyMedia,
+  assignMediaToPage,
+  assignMediaPagesBulk,
+} from "./media-store";
+import { ensureWpPage } from "./media-pages-store";
 import { mediaTypeFromContentType, type MediaItem } from "./media-types";
 import {
   loadContent,
@@ -200,6 +205,15 @@ async function pool<T, R>(
   return results;
 }
 
+/** Ids (na biblioteca) das imagens "principais" de uma página — exclui as
+ * variantes de tamanho do WP, batendo com o que entra na biblioteca. */
+function imageIdsForUrls(urls: string[]): string[] {
+  return urls
+    .filter((u) => classifyAsset(u) === "image")
+    .filter((u) => !/-\d+x\d+\.\w+$/.test(basenameFromUrl(u)))
+    .map((u) => createHash("sha1").update(u).digest("hex").slice(0, 16));
+}
+
 /** Mapa slug-do-WP → slug-público-no-portal de todas as páginas copiadas. */
 export async function buildSlugToPublic(): Promise<Record<string, string>> {
   const saved = await listSaved();
@@ -270,6 +284,19 @@ export async function localizePage(
     });
     // Grava as imagens novas na biblioteca de uma vez (1 leitura + 1 escrita).
     await addManyMedia([...mediaSink.values()]);
+
+    // Agrupa as imagens dessa página numa "página de mídia" da origem (auto).
+    // Cobre tanto as recém-baixadas quanto as que já estavam na biblioteca.
+    const imageIds = imageIdsForUrls(urls);
+    if (imageIds.length > 0) {
+      const pageId = await ensureWpPage(
+        content.domain,
+        content.slug,
+        content.title,
+        content.fetchedAt
+      );
+      await assignMediaToPage(imageIds, pageId);
+    }
   }
 
   // Sempre aplica: de-lazy + reescrita de assets + reescrita de links de página.
@@ -298,4 +325,35 @@ export async function localizePage(
 /** True se a página já foi localizada (não tem mais nada pra baixar). */
 export function isLocalized(c: Pick<WpPageContent, "localizedAt">): boolean {
   return !!c.localizedAt;
+}
+
+/**
+ * Migração one-shot: organiza as imagens JÁ importadas do WP em páginas de mídia
+ * pela origem. Não baixa nada — só lê o HTML guardado de cada página, garante a
+ * página de mídia e atribui o pageId às imagens correspondentes (1 escrita final).
+ */
+export async function organizeImportedMediaByPage(): Promise<{
+  pages: number;
+  assigned: number;
+}> {
+  const saved = await listSaved();
+  const idToPage: Record<string, string> = {};
+  let pages = 0;
+  for (const s of saved) {
+    const content = await loadContent(s.domain, s.slug);
+    if (!content) continue;
+    const source = `${content.fullHtml || ""}\n${content.content || ""}`;
+    const ids = imageIdsForUrls(extractWpAssetUrls(source, content.link));
+    if (ids.length === 0) continue;
+    const pageId = await ensureWpPage(
+      content.domain,
+      content.slug,
+      content.title,
+      content.fetchedAt
+    );
+    pages++;
+    for (const id of ids) idToPage[id] = pageId;
+  }
+  const assigned = await assignMediaPagesBulk(idToPage);
+  return { pages, assigned };
 }

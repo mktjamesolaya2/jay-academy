@@ -49,3 +49,55 @@ export async function updateMedia(
     items.map((i) => (i.id === id ? { ...i, ...patch } : i))
   );
 }
+
+/** Move um conjunto de mídias pra uma página (ou pra "sem página" se pageId null). */
+export async function assignMediaToPage(
+  ids: string[],
+  pageId: string | null
+): Promise<void> {
+  if (ids.length === 0) return;
+  const set = new Set(ids);
+  const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
+  let changed = false;
+  const next = items.map((i) => {
+    if (!set.has(i.id)) return i;
+    const target = pageId ?? undefined;
+    if (i.pageId === target) return i;
+    changed = true;
+    return { ...i, pageId: target };
+  });
+  if (changed) await kvSet(KEY, next);
+}
+
+/** Atribui páginas a várias mídias de uma vez (id → pageId) numa única escrita.
+ * Usado pela migração das imagens já importadas do WP. */
+export async function assignMediaPagesBulk(
+  map: Record<string, string>
+): Promise<number> {
+  const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
+  let n = 0;
+  const next = items.map((i) => {
+    const pid = map[i.id];
+    if (pid && i.pageId !== pid) {
+      n++;
+      return { ...i, pageId: pid };
+    }
+    return i;
+  });
+  if (n) await kvSet(KEY, next);
+  return n;
+}
+
+/** Remove o vínculo de página de todas as mídias de uma página (ao excluir a página). */
+export async function clearPageFromMedia(pageId: string): Promise<void> {
+  const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
+  let changed = false;
+  const next = items.map((i) => {
+    if (i.pageId !== pageId) return i;
+    changed = true;
+    const { pageId: _drop, ...rest } = i;
+    void _drop;
+    return rest;
+  });
+  if (changed) await kvSet(KEY, next);
+}

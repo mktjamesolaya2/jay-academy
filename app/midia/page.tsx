@@ -2,14 +2,19 @@ import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/sidebar";
 import { getCurrentUser, canEdit } from "@/lib/auth";
 import { listMedia } from "@/lib/media-store";
-import { MediaLibrary } from "@/components/media-library";
+import { listPages } from "@/lib/media-pages-store";
+import { MediaPagesWorkspace } from "@/components/media-pages-workspace";
 
 export const dynamic = "force-dynamic";
 
 export default async function MediaLibraryPage() {
   const me = await getCurrentUser();
   if (!me) redirect("/login?redirect=/midia");
-  const [items, userCanEdit] = [await listMedia(), canEdit(me)];
+  const [items, pages, userCanEdit] = [
+    await listMedia(),
+    await listPages(),
+    canEdit(me),
+  ];
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -20,17 +25,22 @@ export default async function MediaLibraryPage() {
             Biblioteca de mídia
           </p>
           <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white mt-1">
+            {pages.length} página{pages.length === 1 ? "" : "s"} ·{" "}
             {items.length} arquivo{items.length === 1 ? "" : "s"}
           </h2>
           <p className="text-neutral-400 mt-1.5 max-w-2xl text-[15px]">
-            Logos, fotos de cursos e alunas, depoimentos, banners, vídeos e
-            downloads — tudo num lugar só. Copie o link e reuse em qualquer
-            página.
+            Mídias organizadas por página. As importadas do WordPress já entram
+            agrupadas pela página de origem. Crie páginas, mova arquivos e busque
+            a página pelo nome.
           </p>
         </header>
 
         <div className="px-5 py-6 lg:px-10 lg:py-8">
-          <MediaLibrary items={items} canEdit={userCanEdit} />
+          <MediaPagesWorkspace
+            items={items}
+            pages={pages}
+            canEdit={userCanEdit}
+          />
         </div>
       </main>
     </div>

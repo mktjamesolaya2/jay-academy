@@ -12,6 +12,18 @@ export type MediaItem = {
   contentType?: string;
   size?: number;
   uploadedAt: string;
+  /** Página/coleção a que essa mídia pertence (id de MediaPage). Sem isso, fica
+   * em "Sem página". As importadas do WP recebem a página da origem. */
+  pageId?: string;
+};
+
+/** Página/coleção da biblioteca de mídia — agrupa mídias. */
+export type MediaPage = {
+  id: string;
+  name: string;
+  /** "wp" = criada automaticamente da página de origem; "manual" = criada pelo usuário. */
+  source: "wp" | "manual";
+  createdAt: string;
 };
 
 /** Categorias/pastas da biblioteca. */

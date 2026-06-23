@@ -17,6 +17,7 @@ import {
   uploadMediaAction,
   addMediaByUrlAction,
   deleteMediaAction,
+  moveMediaToPageAction,
 } from "@/app/midia/actions";
 import { MEDIA_CATEGORIES, type MediaItem } from "@/lib/media-types";
 
@@ -220,9 +221,24 @@ export function MediaLibrary({
   );
 }
 
-function MediaCard({ item, canEdit }: { item: MediaItem; canEdit: boolean }) {
+export function MediaCard({
+  item,
+  canEdit,
+  movePages,
+}: {
+  item: MediaItem;
+  canEdit: boolean;
+  /** Se fornecido, mostra um seletor pra mover a mídia entre páginas. */
+  movePages?: { id: string; name: string }[];
+}) {
   const [copied, setCopied] = useState(false);
   const [, startTransition] = useTransition();
+
+  function move(value: string) {
+    startTransition(async () => {
+      await moveMediaToPageAction([item.id], value === "__none__" ? null : value);
+    });
+  }
 
   function fullUrl() {
     if (item.url.startsWith("http")) return item.url;
@@ -252,6 +268,7 @@ function MediaCard({ item, canEdit }: { item: MediaItem; canEdit: boolean }) {
           <img
             src={item.url}
             alt={item.name}
+            loading="lazy"
             className="w-full h-full object-cover"
           />
         ) : item.type === "video" ? (
@@ -293,6 +310,21 @@ function MediaCard({ item, canEdit }: { item: MediaItem; canEdit: boolean }) {
           {item.name}
         </p>
         <p className="text-[10px] text-neutral-500 mt-0.5">{item.category}</p>
+        {movePages && canEdit && (
+          <select
+            value={item.pageId ?? "__none__"}
+            onChange={(e) => move(e.target.value)}
+            title="Mover pra página"
+            className="mt-1.5 w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-md px-1.5 py-1 text-[10px] text-neutral-400 focus:outline-none cursor-pointer"
+          >
+            <option value="__none__">Sem página</option>
+            {movePages.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
     </div>
   );

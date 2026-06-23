@@ -6,7 +6,11 @@ import {
   getPublishedBySlug,
   type WpDomain,
 } from "@/lib/wp-content-storage";
-import { localizePage, buildSlugToPublic } from "@/lib/wp-localize";
+import {
+  localizePage,
+  buildSlugToPublic,
+  organizeImportedMediaByPage,
+} from "@/lib/wp-localize";
 
 // Backfill de localização: baixa os assets do WP das páginas já copiadas.
 // Abra ESTE link no navegador (logado como admin):
@@ -52,6 +56,13 @@ export async function GET(req: Request) {
   }
 
   const url = new URL(req.url);
+
+  // ── Migração one-shot: organiza imagens já importadas em páginas (por origem) ──
+  if (url.searchParams.get("organize") === "1") {
+    const res = await organizeImportedMediaByPage();
+    return NextResponse.json({ ok: true, ...res });
+  }
+
   const oneSlug = url.searchParams.get("slug");
   const oneDomain = url.searchParams.get("domain") as WpDomain | null;
 

@@ -356,7 +356,7 @@ function ProjectsSection({
   if (collapsible) {
     return (
       <section className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-        <details open className="group">
+        <details className="group">
           <summary className="px-5 py-4 flex items-center justify-between border-b border-[#1f1f1f] cursor-pointer select-none list-none hover:bg-[#101010] transition">
             {headerInner}
           </summary>

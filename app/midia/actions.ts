@@ -4,7 +4,19 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { blobUpload } from "@/lib/storage";
 import { logActivity } from "@/lib/activity-log";
-import { addMedia, deleteMedia, updateMedia, listMedia } from "@/lib/media-store";
+import {
+  addMedia,
+  deleteMedia,
+  updateMedia,
+  listMedia,
+  assignMediaToPage,
+  clearPageFromMedia,
+} from "@/lib/media-store";
+import {
+  createPage,
+  renamePage,
+  deletePage,
+} from "@/lib/media-pages-store";
 import type { MediaItem } from "@/lib/media-types";
 import {
   mediaTypeFromContentType,
@@ -49,6 +61,7 @@ export async function uploadMediaAction(
     const buffer = Buffer.from(await file.arrayBuffer());
     const { url } = await blobUpload(filename, buffer, file.type);
 
+    const pageId = formData.get("pageId")?.toString() || undefined;
     await addMedia({
       id: newId(),
       name: file.name,
@@ -58,6 +71,7 @@ export async function uploadMediaAction(
       contentType: file.type,
       size: file.size,
       uploadedAt: new Date().toISOString(),
+      ...(pageId ? { pageId } : {}),
     });
     await logActivity("wp.edit", file.name, "mídia enviada");
 
@@ -84,6 +98,7 @@ export async function addMediaByUrlAction(
     if (!/^https?:\/\//i.test(url))
       return { ok: false, error: "URL precisa começar com http(s)://" };
 
+    const pageId = formData.get("pageId")?.toString() || undefined;
     await addMedia({
       id: newId(),
       name,
@@ -91,6 +106,7 @@ export async function addMediaByUrlAction(
       category,
       type: mediaTypeFromUrl(url),
       uploadedAt: new Date().toISOString(),
+      ...(pageId ? { pageId } : {}),
     });
 
     revalidatePath("/midia");
@@ -120,4 +136,51 @@ export async function setMediaCategoryAction(formData: FormData) {
   const category = formData.get("category")?.toString() ?? "Outros";
   if (id) await updateMedia(id, { category });
   revalidatePath("/midia");
+}
+
+// ─── Páginas de mídia (coleções) ──────────────────────────────────────────
+
+export async function createMediaPageAction(
+  formData: FormData
+): Promise<{ ok: boolean; id?: string; error?: string }> {
+  try {
+    await requireAdmin();
+    const name = (formData.get("name")?.toString() || "").trim();
+    if (!name) return { ok: false, error: "Dê um nome pra página" };
+    const page = await createPage(name, newId);
+    revalidatePath("/midia");
+    return { ok: true, id: page.id };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro" };
+  }
+}
+
+export async function renameMediaPageAction(formData: FormData) {
+  await requireAdmin();
+  const id = formData.get("id")?.toString() ?? "";
+  const name = formData.get("name")?.toString() ?? "";
+  if (id && name.trim()) await renamePage(id, name);
+  revalidatePath("/midia");
+}
+
+export async function deleteMediaPageAction(formData: FormData) {
+  await requireAdmin();
+  const id = formData.get("id")?.toString() ?? "";
+  if (id) {
+    // Não apaga as mídias — só desfaz o vínculo (voltam pra "Sem página").
+    await clearPageFromMedia(id);
+    await deletePage(id);
+  }
+  revalidatePath("/midia");
+}
+
+/** Move uma ou mais mídias pra uma página (ou pra "sem página" se vazio). */
+export async function moveMediaToPageAction(
+  ids: string[],
+  pageId: string | null
+): Promise<{ ok: boolean }> {
+  await requireAdmin();
+  await assignMediaToPage(ids, pageId);
+  revalidatePath("/midia");
+  return { ok: true };
 }
