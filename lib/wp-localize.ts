@@ -205,12 +205,12 @@ async function pool<T, R>(
   return results;
 }
 
-/** Ids (na biblioteca) das imagens "principais" de uma página — exclui as
- * variantes de tamanho do WP, batendo com o que entra na biblioteca. */
+/** Ids (na biblioteca) de TODAS as imagens de uma página, pela URL. Inclui as
+ * variantes de tamanho do WP (pra nada ficar órfão em "Sem página"). Ids de
+ * imagens que não estão na biblioteca simplesmente não casam (no-op). */
 function imageIdsForUrls(urls: string[]): string[] {
   return urls
     .filter((u) => classifyAsset(u) === "image")
-    .filter((u) => !/-\d+x\d+\.\w+$/.test(basenameFromUrl(u)))
     .map((u) => createHash("sha1").update(u).digest("hex").slice(0, 16));
 }
 

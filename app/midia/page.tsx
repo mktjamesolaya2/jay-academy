@@ -3,18 +3,39 @@ import { Sidebar } from "@/components/sidebar";
 import { getCurrentUser, canEdit } from "@/lib/auth";
 import { listMedia } from "@/lib/media-store";
 import { listPages } from "@/lib/media-pages-store";
+import { organizeImportedMediaByPage } from "@/lib/wp-localize";
+import { kvGet, kvSet } from "@/lib/storage";
 import { MediaPagesWorkspace } from "@/components/media-pages-workspace";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+
+const MIGRATION_FLAG = "media:pages-migrated:v1";
 
 export default async function MediaLibraryPage() {
   const me = await getCurrentUser();
   if (!me) redirect("/login?redirect=/midia");
-  const [items, pages, userCanEdit] = [
-    await listMedia(),
-    await listPages(),
-    canEdit(me),
-  ];
+
+  let items = await listMedia();
+  let pages = await listPages();
+
+  // Migração one-shot (auto): agrupa as imagens que já estavam na biblioteca
+  // (importadas do WP antes do sistema de páginas) pela página de origem. Roda
+  // uma vez só — depois um flag impede repetir.
+  if (canEdit(me)) {
+    const migrated = await kvGet<boolean>(MIGRATION_FLAG);
+    const hasUnassignedWp = items.some(
+      (i) => !i.pageId && i.category === "Importadas do WP"
+    );
+    if (!migrated && hasUnassignedWp) {
+      await organizeImportedMediaByPage();
+      await kvSet(MIGRATION_FLAG, true);
+      items = await listMedia();
+      pages = await listPages();
+    }
+  }
+
+  const userCanEdit = canEdit(me);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
