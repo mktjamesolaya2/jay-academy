@@ -11,6 +11,8 @@ import {
   buildSlugToPublic,
   organizeImportedMediaByPage,
 } from "@/lib/wp-localize";
+import { listMedia } from "@/lib/media-store";
+import { listPages } from "@/lib/media-pages-store";
 
 // Backfill de localização: baixa os assets do WP das páginas já copiadas.
 // Abra ESTE link no navegador (logado como admin):
@@ -56,6 +58,40 @@ export async function GET(req: Request) {
   }
 
   const url = new URL(req.url);
+
+  // ── Diagnóstico da biblioteca de mídia ──
+  if (url.searchParams.get("mediastats") === "1") {
+    const [media, pages] = [await listMedia(), await listPages()];
+    const byHost: Record<string, number> = {};
+    let withPage = 0;
+    const sampleUrls: string[] = [];
+    for (const m of media) {
+      let host: string;
+      if (m.url.startsWith("/")) host = "(relativo /uploads)";
+      else {
+        try {
+          host = new URL(m.url).host;
+        } catch {
+          host = "(inválido)";
+        }
+      }
+      byHost[host] = (byHost[host] || 0) + 1;
+      if (m.pageId) withPage++;
+      if (sampleUrls.length < 6) sampleUrls.push(m.url);
+    }
+    const counts: Record<string, number> = {};
+    for (const m of media) if (m.pageId) counts[m.pageId] = (counts[m.pageId] || 0) + 1;
+    const emptyPages = pages.filter((p) => !counts[p.id]).length;
+    return NextResponse.json({
+      totalMedia: media.length,
+      withPage,
+      withoutPage: media.length - withPage,
+      byHost,
+      totalPages: pages.length,
+      emptyPages,
+      sampleUrls,
+    });
+  }
 
   // ── Migração one-shot: organiza imagens já importadas em páginas (por origem) ──
   if (url.searchParams.get("organize") === "1") {

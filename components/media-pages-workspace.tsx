@@ -94,7 +94,13 @@ export function MediaPagesWorkspace({
   // ─────────────────────────── OVERVIEW ───────────────────────────
   if (open === null) {
     const ql = q.trim().toLowerCase();
-    const visiblePages = pages.filter((p) => !ql || p.name.toLowerCase().includes(ql));
+    const visiblePages = pages.filter((p) => {
+      if (ql && !p.name.toLowerCase().includes(ql)) return false;
+      // Esconde páginas WP vazias (auto-criadas que ficaram sem mídia).
+      // Páginas manuais ficam mesmo vazias (o usuário criou de propósito).
+      if (p.source === "wp" && (countByPage[p.id] || 0) === 0) return false;
+      return true;
+    });
     const noPageCount = countByPage[NO_PAGE] || 0;
     const showNoPage =
       noPageCount > 0 && (!ql || "sem página".includes(ql) || "sem pagina".includes(ql));
