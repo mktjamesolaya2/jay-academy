@@ -2,7 +2,40 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-23 (localizador de assets do WP — desconectar páginas copiadas do WordPress)
+> **Última atualização**: 2026-06-23 (noite) — STORAGE migrado Blob→Supabase + Hotmart 5 LPs publicadas
+
+---
+
+## 🆕 Sessão 2026-06-23 (noite) — Storage Blob→Supabase + Hotmart + mídia por páginas
+
+**⚠️ MUDANÇA CRÍTICA DE INFRA — STORAGE:**
+- O **Vercel Blob bateu o limite do plano grátis e foi BLOQUEADO** ("Limits reached") → TODAS as imagens localizadas pararam de carregar (403 "store is blocked"). Causa agravante: o localizador subia cada imagem **+ 4 variantes de tamanho** (4x desperdício).
+- Migrado pra **Cloudflare R2 → NÃO (exige cartão, James não tem) → Supabase Storage** (sem cartão, S3-compatível).
+- [`lib/storage.ts`](../lib/storage.ts): `blobUpload` agora é **genérico S3** via `aws4fetch` (dep nova). Envs na Vercel: `S3_ENDPOINT` (`https://brbpjjqigpmxombzbxiu.storage.supabase.co/storage/v1/s3`), `S3_REGION` (`us-west-2`), `S3_BUCKET` (`media`), `S3_PUBLIC_URL` (`https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media`), `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`. Os valores são **lidos com `.trim()`** (uma quebra de linha colada quebrava a assinatura). Cai pro Blob se S3 não setado.
+- Supabase: projeto `brbpjjqigpmxombzbxiu`, bucket **`media`** (público), região Oregon. Conta `mktjamesolaya@gmail.com`.
+
+**Localizador atualizado** ([`lib/wp-localize.ts`](../lib/wp-localize.ts)):
+- `localizePage` agora **normaliza antes de extrair** (de-lazy + `stripResponsiveImg` → **não baixa mais variantes**), aceita opts `{force, runCache, slugToPublic}`.
+- `relocatePage`: migração Blob→Supabase de 1 página = **re-busca HTML fresco do WP** (urls do WP de volta, já que o guardado aponta pro Blob bloqueado) + `force` re-download. `fetchAndStore` ganhou flag `force`. `addManyMedia` virou **upsert** (atualiza url Blob→Supabase). Campo `relocatedAt`.
+- ⚠️ **Migração só funciona se a página AINDA existe no WP** (re-fetch). Páginas WP deletadas (ex: fio-a-fio-realista lp deu 404) **não recuperam** (imagens presas no Blob bloqueado).
+
+**Endpoints admin novos em [`app/api/wp-localize/route.ts`](../app/api/wp-localize/route.ts)** (abrir logado): `?testupload=1` (testa S3), `?mediastats=1` (hosts das urls), `?organize=1` (agrupa mídia por página de origem), `?relocate=1` (migra TODAS as 95 em lote, 1/req), `?relocateproducts=1` (migra+publica as 5 LPs de produto), `?hotmartscan=1`, `?pricecontext=1`, `?publishproducts=1`, `?fixfiofio=1`, `?freshfiofio=1&wpid=&wpdomain=` (re-importa fresco do WP).
+
+**✅ HOTMART — 5 LPs publicadas (links+preços conferidos, imagens Supabase):**
+| LP | URL | Preço | Link Hotmart |
+|---|---|---|---|
+| Basic Magic Shadow | /basic-magic-shadow | R$97 | E98531587I?off=k2warcrt |
+| Basic Nano Fios | /basic-nanofios | R$297 | X98531821J?off=rckismlc |
+| Lips Sense | /pdv-lips-sense-technique | R$597 | Y98532335W?off=jxkw3xrd |
+| Profissão Remove | /curso-online-profissao-remove | R$997 | G106407672I?off=umo46sbb |
+| Fio a Fio Realista | /fio-a-fio-realista | R$197 | T98532267X?off=tlrmqecy (re-importada fresca do WP id 27) |
+
+**Biblioteca de mídia por páginas** ([`media-pages-store.ts`](../lib/media-pages-store.ts) + [`media-pages-workspace.tsx`](../components/media-pages-workspace.tsx)): coleções (`MediaPage`), `MediaItem.pageId`, imagens importadas do WP agrupadas pela página de origem (auto-migração 1x em `/midia`), busca de páginas, criar/mover. Auditoria de 3 agentes + vários bugs corrigidos (lixeira de forms apagava tudo, open redirect login, revalidate /wordpress no excluir).
+
+**⏳ PENDENTE:**
+- **Migração completa Blob→Supabase das ~90 páginas restantes** (só as 5 de produto foram migradas; rodar `?relocate=1` até 95/95 — mas páginas WP deletadas não recuperam).
+- **Grupos de projetos no dashboard** (pastas com card gradiente) — começado: [`lib/project-groups-store.ts`](../lib/project-groups-store.ts) pronto, falta actions + UI.
+- Triagem WP: busca + sem copiadas/ignoradas (feito). Dashboard recolhível + links WP (feito).
 
 ---
 
