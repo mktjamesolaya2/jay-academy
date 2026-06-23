@@ -11,6 +11,7 @@ import {
 } from "@/lib/wp-content-storage";
 import type { WpDomain } from "@/lib/wp-api";
 import { ensurePageSummary } from "@/lib/page-summary";
+import { localizePage } from "@/lib/wp-localize";
 import { logActivity } from "@/lib/activity-log";
 
 type Result = { url: string; ok: boolean; message: string };
@@ -97,6 +98,15 @@ export async function importByLinksAction(
           }
         : content;
       await saveContent(merged);
+
+      // Baixa imagens/CSS/JS do WP pro storage local na hora da cópia — a página
+      // já nasce independente do WP (não quebra quando ele sair do ar). Não-fatal:
+      // se falhar, a página fica copiada e o backfill conserta depois.
+      try {
+        await localizePage(domain, merged.slug);
+      } catch {
+        // segue mesmo se a localização falhar
+      }
 
       let published = false;
       if (autoPublish && !merged.published) {

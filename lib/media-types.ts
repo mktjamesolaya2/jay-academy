@@ -23,6 +23,7 @@ export const MEDIA_CATEGORIES = [
   "Banners",
   "Vídeos",
   "Downloads",
+  "Importadas do WP",
   "Outros",
 ] as const;
 

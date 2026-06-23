@@ -31,6 +31,14 @@ export type WpPageContent = BaseWpPageContent & {
   /** Agendamento (ISO). O cron publica/despublica quando a hora chega. */
   scheduledPublishAt?: string;
   scheduledUnpublishAt?: string;
+  /** Quando os assets do WP foram baixados pro storage local (independência do WP). */
+  localizedAt?: string;
+  localizeStats?: {
+    total: number;
+    localized: number;
+    failed: number;
+    at: string;
+  };
 };
 
 // Index: slug público → { domain, originalSlug }
@@ -146,6 +154,7 @@ export type SavedSummary = {
   publicSlug?: string;
   trashed?: boolean;
   trashedAt?: string;
+  localizedAt?: string;
 };
 
 function summarize(c: WpPageContent): SavedSummary {
@@ -161,6 +170,7 @@ function summarize(c: WpPageContent): SavedSummary {
     publicSlug: c.publicSlug,
     trashed: c.trashed,
     trashedAt: c.trashedAt,
+    localizedAt: c.localizedAt,
   };
 }
 

@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-16 (novo vídeo de entrada do PMU CLASS no ar)
+> **Última atualização**: 2026-06-23 (localizador de assets do WP — desconectar páginas copiadas do WordPress)
 
 ---
 
@@ -272,6 +272,36 @@ O site que o James vê em `jay-academy.vercel.app/pmuclass` é servido por `port
 - Sincronizado `PMUCLASS/PMU-CLASS/dist/` → `portal/public/pmuclass/` (limpa + copia assets/videos/index.html).
 - Commit `7c959a0` + push `main` → deploy automático Vercel.
 - ⚠️ **Fluxo pra atualizar o PMU CLASS no ar**: rodar `npm run build` em `PMUCLASS/PMU-CLASS/`, copiar `dist/{assets,videos,index.html}` pra `portal/public/pmuclass/`, commitar e pushar o repo `jay-academy`. Os backups pesados em `src/assets/` (`stvideo_*_backup`, `_original`, `video james.MOV` etc., ~320MB) **não** são usados — só `cinema.mp4` + `stvideo_audio.mp3` entram no build.
+
+---
+
+## 🆕 Sessão 2026-06-22/23 — Díptico Magic Shadow: nova imagem + faixa preta
+
+Iteração visual-first com James no díptico "PESO VISUAL" (dobra 8) de `portal/public/magicshadow/`.
+
+- **Imagem trocada**: `sobrancelha-pesada.png` → **`case_sonia.jpeg`** (copiada de `Magic Shadow 3/assets/` pra `portal/public/magicshadow/assets/`). Mantido enquadramento `right center / cover` (testei zoom 168% mas James pediu pra voltar ao original).
+- **Sombra reforçada**: overlay lateral do lado escuro subiu pra `0.96/0.8/0.48` + vinheta radial `::before` pra `0.76`.
+- **Base/faixa = PRETO PURO `#000000`** (decisão firme do James — aprovado "ficou bom agr"). Antes era `#140D08` (amostrado da imagem antiga); testei `#1B1714` e `#3A2A1E` (tons da `case_sonia`) mas ele queria preto. ⚠️ Contraria a regra antiga de evitar `#000` no MS — não reverter. Anotado em [[projeto_magic-shadow]].
+- Cache-buster do styles.css bumpado a cada push. Commits: `eb2349c` → `9d06d43` (main, deploy auto Vercel).
+
+---
+
+## 🆕 Sessão 2026-06-23 — Localizador de assets do WP (desconectar do WordPress)
+
+**Problema (James):** páginas copiadas do WP vinham "incompletas" (imagens em branco) e dependiam do WP. Como vamos **desligar o WP**, isso não pode acontecer.
+
+**Diagnóstico:** a "incompletude" eram imagens em **lazy-load** travadas no placeholder SVG (o `lazyload.min.js` do WP não roda direito no portal). Pior: a cópia puxa do WP **imagens (72) + CSS (26) + JS (15)** — todos absolutos pro `lp.jayacademy.com.br`. Quando o WP cair, a página perde imagem **e todo o visual (CSS)**. Decisão do James: **baixar TUDO**.
+
+**Solução — localizador de assets:**
+- [`lib/wp-localize-core.ts`](../lib/wp-localize-core.ts) — núcleo PURO (testável): `extractWpAssetUrls` (src/srcset/data-lazy-src/url()/JSON escapado do Elementor), `delazyHtml` (joga a imagem real no `src`, mata o placeholder → conserta a "incompleta"), `localizeHtml`/`rewriteUrls`/`rewriteCssUrls`. **13 testes** ([`.test.ts`](../lib/wp-localize-core.test.ts), `node --test`). Validado no HTML real: 127 assets, 0 refs WP, 0 placeholders.
+- [`lib/wp-localize.ts`](../lib/wp-localize.ts) — orquestrador `localizePage(domain, slug)`: baixa cada asset (imagens→Blob + biblioteca de mídia cat. "Importadas do WP"; CSS/JS→Blob), **CSS recursivo** (url() de fontes/fundos por dentro), **dedup global via KV** (`wpasset:<hash>` → CSS/JS do Elementor baixado 1x pras 95 páginas), reescreve `fullHtml`+`content`, marca `localizedAt`. Concorrência 8, teto 25MB/asset.
+- **Automático na cópia**: [`import-actions.ts`](../app/wp-pages/import-actions.ts) chama `localizePage` ao importar por link (não-fatal).
+- **Backfill das 95 já copiadas**: [`app/api/wp-localize/route.ts`](../app/api/wp-localize/route.ts) — abrir `/api/wp-localize` logado como admin → tela que processa em lotes de 2 e **auto-avança (meta-refresh)** até 100%. Resumível (pula `localizedAt`). Modo 1 página: `?slug=X&domain=lp` (JSON). **Não é botão permanente.**
+- Campos novos em `WpPageContent`: `localizedAt`, `localizeStats`. Categoria "Importadas do WP" em `media-types.ts`.
+
+**⚠️ Fora de escopo (a pedido do James):** reescrever os **links** dos botões (ainda apontam pro WP) — fica pra depois. **Limitações:** vídeos >25MB e URLs WP que só aparecem em JSON não-padrão ficam externos. Cópia em massa antiga (`copyMarkedPagesAction`) não localiza inline (timeout) — backfill cobre.
+
+**Status:** buildou + tsc limpo + 13 testes. ⏳ **Pendente: rodar o backfill no ar (James abre o link) + verificar `/basic-magic-shadow` apontando pro Blob.**
 
 ---
 
