@@ -3,11 +3,13 @@ import { getCurrentUser, canEdit } from "@/lib/auth";
 import {
   listSaved,
   loadContent,
+  saveContent,
   setPublished,
   unsetPublished,
   getPublishedBySlug,
   type WpDomain,
 } from "@/lib/wp-content-storage";
+import { fetchPageContent } from "@/lib/wp-fetch-page";
 import { revalidatePath } from "next/cache";
 import {
   localizePage,
@@ -80,6 +82,52 @@ export async function GET(req: Request) {
         error: e instanceof Error ? e.message : "erro",
       });
     }
+  }
+
+  // ── Importa FRESCO do WP a Fio a Fio (id 27) → Supabase → publica /fio-a-fio-realista ──
+  if (url.searchParams.get("freshfiofio") === "1") {
+    const steps: string[] = [];
+    // Permite escolher outro id/domínio: ?freshfiofio=1&wpid=27&wpdomain=main
+    const wpid = parseInt(url.searchParams.get("wpid") || "27", 10);
+    const wpdomain = (url.searchParams.get("wpdomain") as WpDomain) || "main";
+
+    const fresh = await fetchPageContent(wpdomain, wpid);
+    if (!fresh || !(fresh.fullHtml || fresh.content)) {
+      return NextResponse.json({
+        ok: false,
+        error: `não consegui buscar a página WP id ${wpid} (${wpdomain})`,
+      });
+    }
+    steps.push(`baixei do WP: "${fresh.title}" (slug ${fresh.slug}, ${fresh.link})`);
+    await saveContent(fresh);
+
+    const broken = await loadContent("lp", "fio-a-fio-realista");
+    if (broken?.published) {
+      await unsetPublished(broken);
+      steps.push("despubliquei a quebrada (lp/fio-a-fio-realista)");
+    }
+
+    const st = await localizePage(wpdomain, fresh.slug, { force: true });
+    steps.push(`localizei ${st.localized} assets pro Supabase (falhas: ${st.failed})`);
+
+    const good = await loadContent(wpdomain, fresh.slug);
+    if (good) {
+      try {
+        await setPublished(good, "fio-a-fio-realista");
+        revalidatePath("/fio-a-fio-realista");
+        revalidatePath("/dashboard");
+        steps.push("publiquei em /fio-a-fio-realista");
+      } catch (e) {
+        steps.push("ERRO ao publicar: " + (e instanceof Error ? e.message : "?"));
+      }
+    }
+    return NextResponse.json({
+      ok: st.localized > 0,
+      title: fresh.title,
+      slug: fresh.slug,
+      assets: st.localized,
+      steps,
+    });
   }
 
   // ── Conserta Fio a Fio: usa a página com WP vivo, publica em /fio-a-fio-realista ──
