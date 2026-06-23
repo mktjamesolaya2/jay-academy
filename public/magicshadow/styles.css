@@ -3726,9 +3726,10 @@ body {
 @media (max-width: 720px) {
   /* Mobile: foca no James subindo a escada (centro) + clareia um pouco */
   .dominar-bg img {
-    object-position: 100% 50%;
-    transform-origin: 100% 50%;
-    filter: brightness(0.6) contrast(1.15);
+    object-position: 48% 58%;          /* recorta no James subindo a escada (centro da foto) */
+    transform: scale(1.5);             /* aproxima ele no formato estreito do mobile */
+    transform-origin: 48% 58%;
+    filter: brightness(0.72) contrast(1.15);
   }
   .dominar-grid {
     grid-template-columns: 1fr;
