@@ -79,6 +79,54 @@ export async function GET(req: Request) {
     }
   }
 
+  // ── Contexto de preço: pras 5 páginas de produto, mostra cada R$ + o texto em volta ──
+  if (url.searchParams.get("pricecontext") === "1") {
+    const targets: Array<{ domain: WpDomain; slug: string; produto: string }> = [
+      { domain: "main", slug: "basic-magic-shadow", produto: "Basic Magic Shadow (R$97)" },
+      { domain: "main", slug: "basic-nanofios", produto: "Basic Nano Fios (R$297)" },
+      { domain: "main", slug: "pdv-lips-sense-technique", produto: "Lips Sense (R$597)" },
+      { domain: "main", slug: "curso-online-profissao-remove", produto: "Profissão Remove (R$997)" },
+      { domain: "lp", slug: "fio-a-fio-realista", produto: "Fio a Fio Realista (R$197)" },
+    ];
+    const result: Array<{
+      produto: string;
+      slug: string;
+      published: boolean;
+      precos: Array<{ valor: string; contexto: string }>;
+    }> = [];
+    for (const t of targets) {
+      const c = await loadContent(t.domain, t.slug);
+      if (!c) {
+        result.push({ produto: t.produto, slug: t.slug, published: false, precos: [] });
+        continue;
+      }
+      const text = `${c.fullHtml || ""}\n${c.content || ""}`
+        .replace(/<style[\s\S]*?<\/style>/gi, " ")
+        .replace(/<script[\s\S]*?<\/script>/gi, " ")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/&#0?38;|&amp;/g, "&")
+        .replace(/&nbsp;/g, " ")
+        .replace(/\s+/g, " ");
+      const precos: Array<{ valor: string; contexto: string }> = [];
+      const re = /R\$\s?[0-9][0-9.]*,?[0-9]{0,2}/g;
+      const seen = new Set<string>();
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(text)) && precos.length < 12) {
+        const ctx = text.slice(Math.max(0, m.index - 50), m.index + 50).trim();
+        if (seen.has(ctx)) continue;
+        seen.add(ctx);
+        precos.push({ valor: m[0], contexto: ctx });
+      }
+      result.push({
+        produto: t.produto,
+        slug: t.slug,
+        published: !!c.published,
+        precos,
+      });
+    }
+    return NextResponse.json(result);
+  }
+
   // ── Scan Hotmart: páginas com link pay.hotmart.com + preços que aparecem ──
   if (url.searchParams.get("hotmartscan") === "1") {
     const saved = (await listSaved()).filter((s) => !s.trashed);
