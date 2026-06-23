@@ -3511,9 +3511,9 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 68% 50%;            /* desloca pra esquerda → traz o James pra área visível */
+  object-position: 90% 50%;            /* desloca bem pra esquerda → James pra área visível */
   transform: scale(1.08);              /* presença leve, sem cortar ele */
-  transform-origin: 68% 55%;
+  transform-origin: 90% 55%;
   filter: brightness(0.5) contrast(1.18);
 }
 /* Gradiente: top heavy black, área da headline escura, vinheta lateral assimétrica */
@@ -3726,8 +3726,8 @@ body {
 @media (max-width: 720px) {
   /* Mobile: foca no James subindo a escada (centro) + clareia um pouco */
   .dominar-bg img {
-    object-position: 68% 50%;
-    transform-origin: 68% 55%;
+    object-position: 90% 50%;
+    transform-origin: 90% 55%;
     filter: brightness(0.6) contrast(1.15);
   }
   .dominar-grid {
