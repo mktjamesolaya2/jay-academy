@@ -249,9 +249,10 @@ export function ProjectsWorkspace({
         </p>
       ) : (
         <div>
-          {visible.map((p) => {
+          {visible.map((p, idx) => {
             const st = STATUS[p.status] || STATUS.draft;
             const inGroups = assign[p.key] || [];
+            const openUp = idx >= visible.length - 3 && visible.length > 4;
             return (
               <div
                 key={p.key}
@@ -298,7 +299,7 @@ export function ProjectsWorkspace({
                     {menuKey === p.key && (
                       <>
                         <div className="fixed inset-0 z-[5]" onClick={() => setMenuKey(null)} />
-                        <div className="absolute right-0 top-9 z-[6] w-52 bg-[#141414] border border-[#262626] rounded-lg shadow-xl p-1.5">
+                        <div className={`absolute right-0 ${openUp ? "bottom-9" : "top-9"} z-[6] w-52 max-h-64 overflow-y-auto bg-[#141414] border border-[#262626] rounded-lg shadow-xl p-1.5`}>
                           <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-500 font-semibold px-2 py-1.5">
                             Adicionar a pasta
                           </p>
