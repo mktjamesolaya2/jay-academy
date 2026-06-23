@@ -81,6 +81,84 @@ export async function GET(req: Request) {
     }
   }
 
+  // ── Migra imagens pro Supabase + publica as 5 LPs de produto (1 por vez) ──
+  if (url.searchParams.get("relocateproducts") === "1") {
+    const targets: Array<{ domain: WpDomain; slug: string }> = [
+      { domain: "main", slug: "basic-magic-shadow" },
+      { domain: "main", slug: "basic-nanofios" },
+      { domain: "main", slug: "pdv-lips-sense-technique" },
+      { domain: "main", slug: "curso-online-profissao-remove" },
+      { domain: "lp", slug: "fio-a-fio-realista" },
+    ];
+    const loaded = [];
+    for (const t of targets) {
+      const c = await loadContent(t.domain, t.slug);
+      if (c) loaded.push({ t, c });
+    }
+    const total = loaded.length;
+    const done = loaded.filter((x) => x.c.relocatedAt).length;
+    const next = loaded.find((x) => !x.c.relocatedAt);
+
+    if (!next) {
+      // Tudo migrado → garante publicação das 5
+      const urls: string[] = [];
+      for (const x of loaded) {
+        const ps = x.c.publicSlug || x.c.slug;
+        if (!x.c.published) {
+          try {
+            await setPublished(x.c, ps);
+          } catch {}
+        }
+        urls.push(`/${ps}`);
+        revalidatePath(`/${ps}`);
+      }
+      revalidatePath("/dashboard");
+      return page(
+        `<h1>✅ 5 LPs prontas</h1>
+         <div class="big">${total}/${total}</div>
+         <p class="muted">Imagens no Supabase + páginas publicadas com os links e
+         preços certos. URLs:</p>
+         <p class="muted">${urls
+           .map((u) => `<code>${u}</code>`)
+           .join("<br>")}</p>`
+      );
+    }
+
+    const slugToPublic = await buildSlugToPublic();
+    const runCache = new Map<string, Promise<string | null>>();
+    let assets = 0;
+    try {
+      const st = await relocatePage(
+        next.t.domain,
+        next.t.slug,
+        slugToPublic,
+        runCache
+      );
+      assets = st.localized;
+      const fresh = await loadContent(next.t.domain, next.t.slug);
+      if (fresh && !fresh.published) {
+        const ps = fresh.publicSlug || fresh.slug;
+        try {
+          await setPublished(fresh, ps);
+          revalidatePath(`/${ps}`);
+        } catch {}
+      }
+    } catch {
+      // segue; tenta de novo no próximo refresh
+    }
+    const doneAfter = done + 1;
+    const pct = Math.round((doneAfter / total) * 100);
+    return page(
+      `<h1>Preparando as LPs de produto…</h1>
+       <div class="big">${doneAfter}/${total}</div>
+       <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+       <p class="muted">Migrando imagens pro Supabase + publicando.
+       Acabei de fazer <strong>${next.t.slug}</strong> (${assets} assets).
+       Esta tela se atualiza sozinha.</p>`,
+      true
+    );
+  }
+
   // ── Publica as 5 páginas de produto (links + preços já conferidos) ──
   if (url.searchParams.get("publishproducts") === "1") {
     const targets: Array<{ domain: WpDomain; slug: string }> = [
