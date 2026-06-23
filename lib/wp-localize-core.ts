@@ -135,6 +135,18 @@ export function delazyHtml(html: string): string {
   });
 }
 
+/**
+ * Remove atributos responsivos (srcset/sizes/imagesrcset/data-lazy-srcset) das
+ * imagens. Assim só o `src` (imagem cheia) é usado — não precisamos baixar as
+ * variantes de tamanho do WP (economiza MUITO storage). Rode DEPOIS do de-lazy.
+ */
+export function stripResponsiveImg(html: string): string {
+  return html.replace(
+    /\s(?:srcset|data-lazy-srcset|imagesrcset|sizes)\s*=\s*("[^"]*"|'[^']*')/gi,
+    ""
+  );
+}
+
 /** Lê o valor de um atributo de uma tag. */
 function attr(tag: string, name: string): string | null {
   const m = tag.match(new RegExp(`\\b${name}\\s*=\\s*["']([^"']*)["']`, "i"));

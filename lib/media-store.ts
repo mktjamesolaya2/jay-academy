@@ -25,10 +25,20 @@ export async function addMedia(item: MediaItem): Promise<void> {
 export async function addManyMedia(items: MediaItem[]): Promise<void> {
   if (items.length === 0) return;
   const existing = (await kvGet<MediaItem[]>(KEY)) ?? [];
-  const have = new Set(existing.map((i) => i.id));
-  const fresh = items.filter((i) => !have.has(i.id));
-  if (fresh.length === 0) return;
-  await kvSet(KEY, [...existing, ...fresh]);
+  const byId = new Map(existing.map((i) => [i.id, i]));
+  let changed = false;
+  for (const it of items) {
+    const prev = byId.get(it.id);
+    if (!prev) {
+      byId.set(it.id, it);
+      changed = true;
+    } else if (prev.url !== it.url) {
+      // Upsert: mesma imagem (mesmo id), url mudou (ex: Blob → Supabase na migração).
+      byId.set(it.id, { ...prev, url: it.url, size: it.size, contentType: it.contentType });
+      changed = true;
+    }
+  }
+  if (changed) await kvSet(KEY, [...byId.values()]);
 }
 
 export async function deleteMedia(id: string): Promise<void> {

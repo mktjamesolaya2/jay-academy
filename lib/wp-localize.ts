@@ -15,11 +15,14 @@ import {
   listSaved,
   type WpPageContent,
 } from "./wp-content-storage";
+import { fetchPageContent } from "./wp-fetch-page";
 import type { WpDomain } from "./wp-api";
 import {
   extractWpAssetUrls,
   classifyAsset,
-  localizeHtml,
+  delazyHtml,
+  stripResponsiveImg,
+  rewriteUrls,
   rewriteCssUrls,
   rewriteWpAnchors,
   type AssetKind,
@@ -117,14 +120,19 @@ function guessContentType(url: string, headerCt?: string | null): string {
 async function fetchAndStore(
   url: string,
   runCache: Map<string, Promise<string | null>>,
-  mediaSink: Map<string, MediaItem>
+  mediaSink: Map<string, MediaItem>,
+  force = false
 ): Promise<string | null> {
   const cached = runCache.get(url);
   if (cached) return cached;
 
   const promise = (async (): Promise<string | null> => {
-    const existing = await getMapping(url);
-    if (existing) return existing;
+    // force = ignora o mapa antigo (usado na migração Blob→Supabase, pra
+    // re-baixar e re-subir em vez de devolver a url antiga em cache).
+    if (!force) {
+      const existing = await getMapping(url);
+      if (existing) return existing;
+    }
 
     try {
       const res = await fetch(url, {
@@ -236,7 +244,11 @@ export async function buildSlugToPublic(): Promise<Record<string, string>> {
 export async function localizePage(
   domain: WpDomain,
   slug: string,
-  slugToPublic?: Record<string, string>
+  opts: {
+    slugToPublic?: Record<string, string>;
+    force?: boolean;
+    runCache?: Map<string, Promise<string | null>>;
+  } = {}
 ): Promise<LocalizeStats> {
   const content = await loadContent(domain, slug);
   const empty: LocalizeStats = {
@@ -248,13 +260,21 @@ export async function localizePage(
   };
   if (!content) return empty;
 
-  const linkMap = slugToPublic ?? (await buildSlugToPublic());
+  const linkMap = opts.slugToPublic ?? (await buildSlugToPublic());
   const selfSlugs = [content.slug, content.publicSlug].filter(
     (s): s is string => !!s
   );
 
-  const source = `${content.fullHtml || ""}\n${content.content || ""}`;
-  const urls = extractWpAssetUrls(source, content.link);
+  // Normaliza ANTES de extrair: de-lazy (imagem real no src) + tira srcset/sizes
+  // (assim não baixamos as variantes de tamanho — economiza muito storage).
+  const normFull = content.fullHtml
+    ? stripResponsiveImg(delazyHtml(content.fullHtml))
+    : "";
+  const normContent = content.content
+    ? stripResponsiveImg(delazyHtml(content.content))
+    : "";
+
+  const urls = extractWpAssetUrls(`${normFull}\n${normContent}`, content.link);
 
   const map: Record<string, string> = {};
   const stats: LocalizeStats = {
@@ -266,10 +286,11 @@ export async function localizePage(
   };
 
   if (urls.length > 0) {
-    const runCache = new Map<string, Promise<string | null>>();
+    const runCache =
+      opts.runCache ?? new Map<string, Promise<string | null>>();
     const mediaSink = new Map<string, MediaItem>();
     const localUrls = await pool(urls, CONCURRENCY, (u) =>
-      fetchAndStore(u, runCache, mediaSink)
+      fetchAndStore(u, runCache, mediaSink, opts.force)
     );
     urls.forEach((u, idx) => {
       const local = localUrls[idx];
@@ -287,7 +308,6 @@ export async function localizePage(
     await addManyMedia([...mediaSink.values()]);
 
     // Agrupa as imagens dessa página numa "página de mídia" da origem (auto).
-    // Cobre tanto as recém-baixadas quanto as que já estavam na biblioteca.
     const imageIds = imageIdsForUrls(urls);
     if (imageIds.length > 0) {
       const pageId = await ensureWpPage(
@@ -300,12 +320,11 @@ export async function localizePage(
     }
   }
 
-  // Sempre aplica: de-lazy + reescrita de assets + reescrita de links de página.
-  // Roda mesmo sem assets baixados (os links de página independem disso).
+  // Reescreve a partir do HTML JÁ NORMALIZADO (de-lazy + sem srcset) + links.
   const apply = (h: string) =>
-    rewriteWpAnchors(localizeHtml(h, map), selfSlugs, linkMap);
-  if (content.fullHtml) content.fullHtml = apply(content.fullHtml);
-  if (content.content) content.content = apply(content.content);
+    rewriteWpAnchors(rewriteUrls(h, map), selfSlugs, linkMap);
+  if (content.fullHtml) content.fullHtml = apply(normFull);
+  if (content.content) content.content = apply(normContent);
 
   const at = new Date().toISOString();
   // Marca como localizada se não havia assets a baixar OU se baixou algo. Se havia
@@ -326,6 +345,49 @@ export async function localizePage(
 /** True se a página já foi localizada (não tem mais nada pra baixar). */
 export function isLocalized(c: Pick<WpPageContent, "localizedAt">): boolean {
   return !!c.localizedAt;
+}
+
+/**
+ * MIGRAÇÃO Blob→Supabase de UMA página: re-busca o HTML fresco do WordPress
+ * (que ainda está no ar, então traz as urls do WP de volta — as guardadas já
+ * apontam pro Blob bloqueado), re-baixa os assets com `force` e sobe pro storage
+ * novo (Supabase), reescrevendo HTML + biblioteca. Marca `relocatedAt`.
+ */
+export async function relocatePage(
+  domain: WpDomain,
+  slug: string,
+  slugToPublic?: Record<string, string>,
+  runCache?: Map<string, Promise<string | null>>
+): Promise<LocalizeStats> {
+  const content = await loadContent(domain, slug);
+  if (!content) {
+    return { total: 0, localized: 0, failed: 0, byKind: {}, failures: [] };
+  }
+
+  // Re-busca fresco do WP (urls do WP de volta). Se falhar, segue com o que tem.
+  try {
+    const fresh = await fetchPageContent(domain, content.id);
+    if (fresh && (fresh.fullHtml || fresh.content)) {
+      content.fullHtml = fresh.fullHtml ?? content.fullHtml;
+      content.content = fresh.content ?? content.content;
+      await saveContent(content);
+    }
+  } catch {
+    // mantém o HTML atual
+  }
+
+  const stats = await localizePage(domain, slug, {
+    slugToPublic,
+    force: true,
+    runCache,
+  });
+
+  const after = await loadContent(domain, slug);
+  if (after) {
+    after.relocatedAt = new Date().toISOString();
+    await saveContent(after);
+  }
+  return stats;
 }
 
 /**

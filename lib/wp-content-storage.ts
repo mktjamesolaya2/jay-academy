@@ -39,6 +39,8 @@ export type WpPageContent = BaseWpPageContent & {
     failed: number;
     at: string;
   };
+  /** Quando a página foi re-localizada pro storage novo (migração Blob→Supabase). */
+  relocatedAt?: string;
 };
 
 // Index: slug público → { domain, originalSlug }
@@ -156,6 +158,7 @@ export type SavedSummary = {
   trashedAt?: string;
   localizedAt?: string;
   localizeStats?: WpPageContent["localizeStats"];
+  relocatedAt?: string;
 };
 
 function summarize(c: WpPageContent): SavedSummary {
@@ -173,6 +176,7 @@ function summarize(c: WpPageContent): SavedSummary {
     trashedAt: c.trashedAt,
     localizedAt: c.localizedAt,
     localizeStats: c.localizeStats,
+    relocatedAt: c.relocatedAt,
   };
 }
 

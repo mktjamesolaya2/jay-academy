@@ -8,6 +8,7 @@ import {
 } from "@/lib/wp-content-storage";
 import {
   localizePage,
+  relocatePage,
   buildSlugToPublic,
   organizeImportedMediaByPage,
 } from "@/lib/wp-localize";
@@ -118,6 +119,51 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, ...res });
   }
 
+  // ── Migração Blob→Supabase (re-baixa do WP pro storage novo, em lotes) ──
+  if (url.searchParams.get("relocate") === "1") {
+    const saved = (await listSaved()).filter((s) => !s.trashed);
+    const total = saved.length;
+    const pending = saved.filter((s) => !s.relocatedAt);
+    const done = total - pending.length;
+
+    if (pending.length === 0) {
+      return page(
+        `<h1>✅ Imagens migradas pro Supabase</h1>
+         <div class="big">${total}/${total}</div>
+         <p class="muted">Todas as páginas foram re-baixadas do WordPress pro
+         storage novo (Supabase). As imagens já carregam de novo — independente
+         do Blob bloqueado.</p>`
+      );
+    }
+
+    const slugToPublic = await buildSlugToPublic();
+    const runCache = new Map<string, Promise<string | null>>();
+    const batch = pending.slice(0, 1); // 1 por vez (re-baixa tudo, é pesado)
+    let justDone = 0;
+    let assetsNow = 0;
+    for (const s of batch) {
+      try {
+        const st = await relocatePage(s.domain, s.slug, slugToPublic, runCache);
+        justDone++;
+        assetsNow += st.localized;
+      } catch {
+        // segue; a página continua pendente e pode ser tentada de novo
+      }
+    }
+    const doneAfter = done + justDone;
+    const pct = Math.round((doneAfter / total) * 100);
+    return page(
+      `<h1>Migrando imagens pro Supabase…</h1>
+       <div class="big">${doneAfter}/${total}</div>
+       <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+       <p class="muted">Re-baixando do WordPress pro storage novo. Acabei de
+       migrar uma página (${assetsNow} assets). Esta tela se atualiza sozinha
+       até terminar — pode deixar aberta.</p>
+       <p class="muted">Faltam <strong>${pending.length - justDone}</strong>.</p>`,
+      true
+    );
+  }
+
   const oneSlug = url.searchParams.get("slug");
   const oneDomain = url.searchParams.get("domain") as WpDomain | null;
 
@@ -170,7 +216,7 @@ export async function GET(req: Request) {
   let assetsNow = 0;
   for (const s of batch) {
     try {
-      const st = await localizePage(s.domain, s.slug, slugToPublic);
+      const st = await localizePage(s.domain, s.slug, { slugToPublic });
       justLocalized++;
       assetsNow += st.localized;
     } catch {
