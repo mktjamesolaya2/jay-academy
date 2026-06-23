@@ -22,6 +22,11 @@ import {
 } from "@/lib/landing-pages";
 import { loadLps } from "@/lib/lp-store";
 import { listSaved, type SavedSummary } from "@/lib/wp-content-storage";
+import { listGroups, getAssignments } from "@/lib/project-groups-store";
+import {
+  ProjectsWorkspace,
+  type ProjectLite,
+} from "@/components/projects-workspace";
 import { SiteUrlLink } from "@/components/site-url-link";
 import { EditQuickLink } from "@/components/edit-quick-link";
 import { EditableGreeting } from "@/components/editable-greeting";
@@ -33,13 +38,15 @@ import { getNotifications, unreadCount } from "@/lib/notifications";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [landingPages, savedWp, me, activity, notifications] =
+  const [landingPages, savedWp, me, activity, notifications, groups, assignments] =
     await Promise.all([
       loadLps(),
       listSaved(),
       getCurrentUser(),
       readActivityLog(15),
       getNotifications(),
+      listGroups(),
+      getAssignments(),
     ]);
   const unread = unreadCount(notifications);
 
@@ -93,6 +100,29 @@ export default async function DashboardPage() {
       new Date(b.fetchedAt ?? 0).getTime() -
       new Date(a.fetchedAt ?? 0).getTime()
   );
+
+  // Projetos serializados (LP + WP) pro workspace de pastas + busca.
+  const projectsLite: ProjectLite[] = [
+    ...allLps.map((lp) => ({
+      key: `lp:${lp.slug}`,
+      name: lp.name,
+      typeLabel: typeLabel[lp.type],
+      status: lp.status as ProjectLite["status"],
+      url: publicUrlFor(lp),
+      href: `/lps/${lp.slug}`,
+      accent: lp.accent,
+    })),
+    ...allWpSorted.map((wp) => ({
+      key: `wp:${wp.domain}:${wp.slug}`,
+      name: (wp.title || "").replace(/<[^>]*>/g, ""),
+      typeLabel:
+        wp.placed === "website" ? "Website" : wp.placed === "form" ? "Form" : "LP",
+      status: (wp.published ? "published" : "draft") as ProjectLite["status"],
+      url: wp.published ? `/${wp.publicSlug || wp.slug}` : null,
+      href: `/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}`,
+      accent: "blue-violet",
+    })),
+  ];
 
   const hour = new Date().getHours();
   const greeting =
@@ -175,15 +205,12 @@ export default async function DashboardPage() {
                 />
               )}
 
-              {/* Todos os projetos */}
-              <ProjectsSection
-                title="Todos os projetos"
-                emptyMessage="Sem projetos ainda. Crie uma LP ou copie uma página do WordPress."
-                lps={allLps}
-                wps={allWpSorted}
-                viewAllHref="/lps"
-                showCount={allLps.length + allWpSorted.length}
-                collapsible
+              {/* Todos os projetos — com pastas + busca */}
+              <ProjectsWorkspace
+                projects={projectsLite}
+                groups={groups}
+                assignments={assignments}
+                canEdit={userCanEdit}
               />
 
             </div>
