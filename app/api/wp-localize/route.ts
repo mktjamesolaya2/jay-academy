@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser, canEdit } from "@/lib/auth";
-import { listSaved, type WpDomain } from "@/lib/wp-content-storage";
+import {
+  listSaved,
+  loadContent,
+  getPublishedBySlug,
+  type WpDomain,
+} from "@/lib/wp-content-storage";
 import { localizePage } from "@/lib/wp-localize";
 
 // Backfill de localização: baixa os assets do WP das páginas já copiadas.
@@ -50,16 +55,37 @@ export async function GET(req: Request) {
   const oneSlug = url.searchParams.get("slug");
   const oneDomain = url.searchParams.get("domain") as WpDomain | null;
 
-  // ── Modo 1 página (JSON) ────────────────────────────────────────
-  if (oneSlug && oneDomain) {
-    const stats = await localizePage(oneDomain, oneSlug);
-    return NextResponse.json({ slug: oneSlug, domain: oneDomain, ...stats });
+  // ── Modo 1 página (JSON, reprocessa à força) ────────────────────
+  // Aceita o slug interno (com ?domain) OU o slug público (resolve sozinho).
+  // localizePage sempre reprocessa, então serve pra re-testar uma página.
+  if (oneSlug) {
+    let target: { domain: WpDomain; slug: string } | null = null;
+    if (oneDomain && (await loadContent(oneDomain, oneSlug))) {
+      target = { domain: oneDomain, slug: oneSlug };
+    }
+    if (!target) target = await getPublishedBySlug(oneSlug);
+    if (!target) {
+      return NextResponse.json(
+        { error: "página não encontrada", slug: oneSlug },
+        { status: 404 }
+      );
+    }
+    const stats = await localizePage(target.domain, target.slug);
+    return NextResponse.json({ ...target, ...stats });
   }
 
   // ── Modo backfill em lote (HTML auto-avançando) ─────────────────
   const saved = (await listSaved()).filter((s) => !s.trashed);
   const total = saved.length;
-  const pending = saved.filter((s) => !s.localizedAt);
+  // Pendente = nunca localizada OU localizada mas com falha total (0 baixados) —
+  // pega as que o código antigo marcou como "pronta" sem ter baixado nada.
+  const pending = saved.filter(
+    (s) =>
+      !s.localizedAt ||
+      (s.localizeStats != null &&
+        s.localizeStats.localized === 0 &&
+        s.localizeStats.total > 0)
+  );
   const done = total - pending.length;
 
   if (pending.length === 0) {

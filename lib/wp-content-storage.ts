@@ -155,6 +155,7 @@ export type SavedSummary = {
   trashed?: boolean;
   trashedAt?: string;
   localizedAt?: string;
+  localizeStats?: WpPageContent["localizeStats"];
 };
 
 function summarize(c: WpPageContent): SavedSummary {
@@ -171,6 +172,7 @@ function summarize(c: WpPageContent): SavedSummary {
     trashed: c.trashed,
     trashedAt: c.trashedAt,
     localizedAt: c.localizedAt,
+    localizeStats: c.localizeStats,
   };
 }
 
