@@ -3,6 +3,7 @@ import {
   FileCheck2,
   AlertTriangle,
   ChevronRight,
+  ChevronDown,
   MoreHorizontal,
   Globe,
   Layout,
@@ -182,6 +183,7 @@ export default async function DashboardPage() {
                 wps={allWpSorted}
                 viewAllHref="/lps"
                 showCount={allLps.length + allWpSorted.length}
+                collapsible
               />
 
             </div>
@@ -289,6 +291,7 @@ function ProjectsSection({
   wps,
   viewAllHref,
   showCount,
+  collapsible = false,
 }: {
   title: string;
   emptyMessage: string;
@@ -296,49 +299,79 @@ function ProjectsSection({
   wps: SavedSummary[];
   viewAllHref: string | null;
   showCount: number;
+  collapsible?: boolean;
 }) {
   const isEmpty = lps.length === 0 && wps.length === 0;
+
+  const headerInner = (
+    <>
+      <div className="flex items-center gap-2.5">
+        {collapsible && (
+          <ChevronDown
+            size={15}
+            strokeWidth={2.2}
+            className="text-neutral-500 transition-transform group-open:rotate-0 -rotate-90"
+          />
+        )}
+        <h2 className="text-sm font-semibold text-white">{title}</h2>
+        {!isEmpty && (
+          <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-600">
+            {showCount}
+          </span>
+        )}
+      </div>
+      {viewAllHref && (
+        <Link
+          href={viewAllHref}
+          className="text-xs font-medium text-neutral-500 hover:text-white transition"
+        >
+          Ver todos
+        </Link>
+      )}
+    </>
+  );
+
+  const body = isEmpty ? (
+    <div className="px-5 py-8 text-center">
+      <p className="text-xs text-neutral-500">{emptyMessage}</p>
+    </div>
+  ) : (
+    <div>
+      <div className="grid grid-cols-[1fr_auto] lg:grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 px-4 lg:px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold border-b border-[#1f1f1f]">
+        <div>Nome</div>
+        <div className="hidden lg:block">Tipo</div>
+        <div className="justify-self-end lg:justify-self-auto">Status</div>
+        <div className="hidden lg:block">Última edição</div>
+        <div className="hidden lg:block"></div>
+      </div>
+      {lps.slice(0, 8).map((lp) => (
+        <ProjectRow key={lp.slug} lp={lp} />
+      ))}
+      {wps.slice(0, 8).map((wp) => (
+        <WpProjectRow key={`${wp.domain}_${wp.slug}`} wp={wp} />
+      ))}
+    </div>
+  );
+
+  if (collapsible) {
+    return (
+      <section className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+        <details open className="group">
+          <summary className="px-5 py-4 flex items-center justify-between border-b border-[#1f1f1f] cursor-pointer select-none list-none hover:bg-[#101010] transition">
+            {headerInner}
+          </summary>
+          {body}
+        </details>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden">
       <div className="px-5 py-4 flex items-center justify-between border-b border-[#1f1f1f]">
-        <div className="flex items-center gap-2.5">
-          <h2 className="text-sm font-semibold text-white">{title}</h2>
-          {!isEmpty && (
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-600">
-              {showCount}
-            </span>
-          )}
-        </div>
-        {viewAllHref && (
-          <Link
-            href={viewAllHref}
-            className="text-xs font-medium text-neutral-500 hover:text-white transition"
-          >
-            Ver todos
-          </Link>
-        )}
+        {headerInner}
       </div>
-      {isEmpty ? (
-        <div className="px-5 py-8 text-center">
-          <p className="text-xs text-neutral-500">{emptyMessage}</p>
-        </div>
-      ) : (
-        <div>
-          <div className="grid grid-cols-[1fr_auto] lg:grid-cols-[1.5fr_100px_120px_140px_40px] gap-3 px-4 lg:px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold border-b border-[#1f1f1f]">
-            <div>Nome</div>
-            <div className="hidden lg:block">Tipo</div>
-            <div className="justify-self-end lg:justify-self-auto">Status</div>
-            <div className="hidden lg:block">Última edição</div>
-            <div className="hidden lg:block"></div>
-          </div>
-          {lps.slice(0, 8).map((lp) => (
-            <ProjectRow key={lp.slug} lp={lp} />
-          ))}
-          {wps.slice(0, 8).map((wp) => (
-            <WpProjectRow key={`${wp.domain}_${wp.slug}`} wp={wp} />
-          ))}
-        </div>
-      )}
+      {body}
     </section>
   );
 }
@@ -426,9 +459,15 @@ function WpProjectRow({ wp }: { wp: SavedSummary }) {
             className="text-sm font-semibold text-white truncate group-hover:text-blue-400 transition"
             dangerouslySetInnerHTML={{ __html: wp.title }}
           />
-          <p className="text-[11px] text-neutral-500 truncate font-mono">
-            /{wp.slug}
-          </p>
+          {wp.published ? (
+            <span className="relative z-[2] inline-block w-fit">
+              <SiteUrlLink url={`/${wp.publicSlug || wp.slug}`} />
+            </span>
+          ) : (
+            <p className="text-[11px] text-neutral-500 truncate font-mono">
+              /{wp.slug}
+            </p>
+          )}
         </div>
       </div>
       <span className="hidden lg:inline-block text-[10px] font-semibold uppercase tracking-[0.12em] bg-[#161616] text-neutral-300 px-2 py-1 rounded w-fit">
