@@ -4245,9 +4245,14 @@ body {
 /* ===== DOBRA 13 — CTA FINAL (fundo branco, foto à direita com fade pra branco) ===== */
 .section-final {
   position: relative;
-  /* Imagem limpa à direita, sem gradiente, ancorada no topo (desktop).
-     altura 82% → imagem maior (~proporção do print), sobra ~18% de faixa pro CTA. */
-  background: url("assets/final.jpg") right top / auto 82% no-repeat;
+  /* Imagem à direita, ancorada no topo (desktop), altura 82%.
+     Degradê branco radial bem leve por cima → bordas dissolvem no fundo (sem linha reta dura). */
+  background:
+    radial-gradient(ellipse 46% 62% at 75% 41%,
+      rgba(255, 255, 255, 0) 58%,
+      rgba(255, 255, 255, 0.55) 82%,
+      rgba(255, 255, 255, 0.92) 100%) no-repeat,
+    url("assets/final.jpg") right top / auto 82% no-repeat;
   background-color: #FFFFFF;
   color: #1A1A1A;
   padding: clamp(5rem, 8vw, 7rem) clamp(1.5rem, 5vw, 5rem) clamp(6rem, 10vw, 8rem);
