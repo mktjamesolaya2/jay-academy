@@ -11,6 +11,7 @@ import {
   Pencil,
   Trash2,
   LayoutGrid,
+  ChevronDown,
 } from "lucide-react";
 import { SiteUrlLink } from "./site-url-link";
 import type { ProjectGroup } from "@/lib/project-groups-store";
@@ -62,6 +63,7 @@ export function ProjectsWorkspace({
   canEdit: boolean;
 }) {
   const [assign, setAssign] = useState(assignments);
+  const [open, setOpen] = useState(false); // seção retrátil — começa fechada
   const [selected, setSelected] = useState<string | null>(null); // null = Todas
   const [q, setQ] = useState("");
   const [creating, setCreating] = useState(false);
@@ -113,8 +115,26 @@ export function ProjectsWorkspace({
 
   return (
     <section className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden">
+      {/* Cabeçalho retrátil — começa fechado */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full px-5 py-4 flex items-center gap-2.5 hover:bg-[#101010] transition cursor-pointer"
+      >
+        <ChevronDown
+          size={15}
+          strokeWidth={2.2}
+          className={`text-neutral-500 transition-transform ${open ? "" : "-rotate-90"}`}
+        />
+        <h2 className="text-sm font-semibold text-white">Todos os projetos</h2>
+        <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-neutral-600">
+          {projects.length}
+        </span>
+      </button>
+
+      {open && (
+        <>
       {/* Pastas (cards) */}
-      <div className="p-5 border-b border-[#1f1f1f]">
+      <div className="p-5 border-y border-[#1f1f1f]">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-white">Pastas</h2>
           {canEdit && (
@@ -311,6 +331,8 @@ export function ProjectsWorkspace({
             );
           })}
         </div>
+      )}
+        </>
       )}
     </section>
   );
