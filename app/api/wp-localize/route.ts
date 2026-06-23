@@ -4,6 +4,7 @@ import {
   listSaved,
   loadContent,
   setPublished,
+  unsetPublished,
   getPublishedBySlug,
   type WpDomain,
 } from "@/lib/wp-content-storage";
@@ -79,6 +80,50 @@ export async function GET(req: Request) {
         error: e instanceof Error ? e.message : "erro",
       });
     }
+  }
+
+  // ── Conserta Fio a Fio: usa a página com WP vivo, publica em /fio-a-fio-realista ──
+  if (url.searchParams.get("fixfiofio") === "1") {
+    const steps: string[] = [];
+    // 1. Despublica a quebrada (libera o slug + tira do ar)
+    const broken = await loadContent("lp", "fio-a-fio-realista");
+    if (broken?.published) {
+      await unsetPublished(broken);
+      steps.push("despubliquei a quebrada (lp/fio-a-fio-realista)");
+    } else {
+      steps.push("a quebrada já não estava publicada");
+    }
+    // 2. Baixa imagens da que tem WP vivo
+    const slugToPublic = await buildSlugToPublic();
+    const runCache = new Map<string, Promise<string | null>>();
+    let assets = 0;
+    try {
+      const st = await relocatePage(
+        "main",
+        "fio-a-fio-realista-by-james-olaya",
+        slugToPublic,
+        runCache
+      );
+      assets = st.localized;
+      steps.push(`baixei ${assets} assets pro Supabase`);
+    } catch (e) {
+      steps.push("ERRO ao baixar: " + (e instanceof Error ? e.message : "?"));
+    }
+    // 3. Publica a boa na URL limpa /fio-a-fio-realista
+    const good = await loadContent("main", "fio-a-fio-realista-by-james-olaya");
+    if (good) {
+      try {
+        await setPublished(good, "fio-a-fio-realista");
+        revalidatePath("/fio-a-fio-realista");
+        revalidatePath("/dashboard");
+        steps.push("publiquei em /fio-a-fio-realista");
+      } catch (e) {
+        steps.push("ERRO ao publicar: " + (e instanceof Error ? e.message : "?"));
+      }
+    } else {
+      steps.push("não achei a página boa (main/fio-a-fio-realista-by-james-olaya)");
+    }
+    return NextResponse.json({ ok: assets > 0, assets, steps });
   }
 
   // ── Migra imagens pro Supabase + publica as 5 LPs de produto (1 por vez) ──
