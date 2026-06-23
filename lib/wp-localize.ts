@@ -6,6 +6,7 @@ import { mediaTypeFromContentType, type MediaItem } from "./media-types";
 import {
   loadContent,
   saveContent,
+  listSaved,
   type WpPageContent,
 } from "./wp-content-storage";
 import type { WpDomain } from "./wp-api";
@@ -14,6 +15,7 @@ import {
   classifyAsset,
   localizeHtml,
   rewriteCssUrls,
+  rewriteWpAnchors,
   type AssetKind,
 } from "./wp-localize-core";
 
@@ -198,14 +200,28 @@ async function pool<T, R>(
   return results;
 }
 
+/** Mapa slug-do-WP → slug-público-no-portal de todas as páginas copiadas. */
+export async function buildSlugToPublic(): Promise<Record<string, string>> {
+  const saved = await listSaved();
+  const map: Record<string, string> = {};
+  for (const s of saved) {
+    if (s.publicSlug) map[s.slug.toLowerCase()] = s.publicSlug;
+  }
+  return map;
+}
+
 /**
- * Localiza UMA página: baixa todos os assets do WP que ela referencia e
- * reescreve o HTML guardado (fullHtml + content) pra apontar pras cópias locais.
- * Marca `localizedAt`. Idempotente.
+ * Localiza UMA página: baixa todos os assets do WP que ela referencia, reescreve
+ * o HTML (fullHtml + content) pras cópias locais E reescreve os `<a href>` de
+ * páginas do WP (próprias âncoras + links pra outras páginas copiadas). Idempotente.
+ *
+ * @param slugToPublic  opcional — passe o mapa pré-montado no backfill pra não
+ *                      reconstruí-lo a cada página.
  */
 export async function localizePage(
   domain: WpDomain,
-  slug: string
+  slug: string,
+  slugToPublic?: Record<string, string>
 ): Promise<LocalizeStats> {
   const content = await loadContent(domain, slug);
   const empty: LocalizeStats = {
@@ -217,19 +233,13 @@ export async function localizePage(
   };
   if (!content) return empty;
 
+  const linkMap = slugToPublic ?? (await buildSlugToPublic());
+  const selfSlugs = [content.slug, content.publicSlug].filter(
+    (s): s is string => !!s
+  );
+
   const source = `${content.fullHtml || ""}\n${content.content || ""}`;
   const urls = extractWpAssetUrls(source, content.link);
-  if (urls.length === 0) {
-    content.localizedAt = new Date().toISOString();
-    await saveContent(content);
-    return empty;
-  }
-
-  const runCache = new Map<string, Promise<string | null>>();
-  const mediaSink = new Map<string, MediaItem>();
-  const localUrls = await pool(urls, CONCURRENCY, (u) =>
-    fetchAndStore(u, runCache, mediaSink)
-  );
 
   const map: Record<string, string> = {};
   const stats: LocalizeStats = {
@@ -239,31 +249,41 @@ export async function localizePage(
     byKind: {},
     failures: [],
   };
-  urls.forEach((u, idx) => {
-    const local = localUrls[idx];
-    if (local) {
-      map[u] = local;
-      stats.localized++;
-      const k = classifyAsset(u);
-      stats.byKind[k] = (stats.byKind[k] || 0) + 1;
-    } else {
-      stats.failed++;
-      stats.failures.push(u);
-    }
-  });
 
-  // Grava as imagens novas na biblioteca de uma vez só (1 leitura + 1 escrita).
-  await addManyMedia([...mediaSink.values()]);
+  if (urls.length > 0) {
+    const runCache = new Map<string, Promise<string | null>>();
+    const mediaSink = new Map<string, MediaItem>();
+    const localUrls = await pool(urls, CONCURRENCY, (u) =>
+      fetchAndStore(u, runCache, mediaSink)
+    );
+    urls.forEach((u, idx) => {
+      const local = localUrls[idx];
+      if (local) {
+        map[u] = local;
+        stats.localized++;
+        const k = classifyAsset(u);
+        stats.byKind[k] = (stats.byKind[k] || 0) + 1;
+      } else {
+        stats.failed++;
+        stats.failures.push(u);
+      }
+    });
+    // Grava as imagens novas na biblioteca de uma vez (1 leitura + 1 escrita).
+    await addManyMedia([...mediaSink.values()]);
+  }
 
-  // O de-lazy + reescrita roda sempre (ajuda mesmo em localização parcial).
-  if (content.fullHtml) content.fullHtml = localizeHtml(content.fullHtml, map);
-  if (content.content) content.content = localizeHtml(content.content, map);
+  // Sempre aplica: de-lazy + reescrita de assets + reescrita de links de página.
+  // Roda mesmo sem assets baixados (os links de página independem disso).
+  const apply = (h: string) =>
+    rewriteWpAnchors(localizeHtml(h, map), selfSlugs, linkMap);
+  if (content.fullHtml) content.fullHtml = apply(content.fullHtml);
+  if (content.content) content.content = apply(content.content);
 
   const at = new Date().toISOString();
-  // Só marca como localizada se DE FATO baixou algo. Se nada baixou (Blob não
-  // configurado / falha transitória), NÃO marca — assim o backfill reprocessa e
-  // o <base> do WP continua (a página não "desconecta" às cegas com imagem quebrada).
-  if (stats.localized > 0) content.localizedAt = at;
+  // Marca como localizada se não havia assets a baixar OU se baixou algo. Se havia
+  // assets mas NADA baixou (Blob off / falha), NÃO marca — backfill reprocessa e o
+  // <base> do WP continua (não "desconecta" às cegas com imagem quebrada).
+  if (urls.length === 0 || stats.localized > 0) content.localizedAt = at;
   content.localizeStats = {
     total: stats.total,
     localized: stats.localized,

@@ -10,6 +10,7 @@ import {
   rewriteUrls,
   localizeHtml,
   rewriteCssUrls,
+  rewriteWpAnchors,
 } from "./wp-localize-core.ts";
 
 test("isWpHost reconhece subdomínios do WP e rejeita o resto", () => {
@@ -124,6 +125,36 @@ test("rewriteUrls troca também a forma escapada em JSON", () => {
   assert.ok(out.includes(`"url":"https:\\/\\/blob.x\\/bg.jpg"`), "forma escapada trocada");
   assert.ok(out.includes(`src="https://blob.x/bg.jpg"`), "forma normal trocada");
   assert.ok(!out.includes("lp.jayacademy.com.br"), "nada do WP sobra");
+});
+
+test("rewriteWpAnchors: link absoluto pra própria página vira âncora (rola)", () => {
+  const html = `<a class="btn" href="https://jayacademy.com.br/basic-magic-shadow/?_gl=1*x#VALOR">EU QUERO</a>`;
+  const out = rewriteWpAnchors(html, ["basic-magic-shadow"], {});
+  assert.ok(out.includes(`href="#VALOR"`), out);
+  assert.ok(!out.includes("jayacademy.com.br"));
+});
+
+test("rewriteWpAnchors: link pra outra página copiada vira rota do portal", () => {
+  const html = `<a href="https://lp.jayacademy.com.br/pmu-upsell-x/">ver</a>`;
+  const out = rewriteWpAnchors(html, ["basic-magic-shadow"], {
+    "pmu-upsell-x": "oferta-pmu",
+  });
+  assert.ok(out.includes(`href="/oferta-pmu"`), out);
+});
+
+test("rewriteWpAnchors: WhatsApp/Hotmart e página WP desconhecida ficam intactos", () => {
+  const wa = `<a href="https://wa.me/5519999?text=oi">whats</a>`;
+  const ht = `<a href="https://pay.hotmart.com/ABC?off=x">comprar</a>`;
+  const unknown = `<a href="https://jayacademy.com.br/pagina-nao-copiada/">x</a>`;
+  assert.equal(rewriteWpAnchors(wa, ["p"], {}), wa);
+  assert.equal(rewriteWpAnchors(ht, ["p"], {}), ht);
+  assert.equal(rewriteWpAnchors(unknown, ["p"], {}), unknown);
+});
+
+test("rewriteWpAnchors: self-link sem hash cai na raiz da própria página", () => {
+  const html = `<a href="https://jayacademy.com.br/basic-magic-shadow/">topo</a>`;
+  const out = rewriteWpAnchors(html, ["basic-magic-shadow"], {});
+  assert.ok(out.includes(`href="/basic-magic-shadow"`), out);
 });
 
 test("rewriteCssUrls resolve url() relativo e troca pelo destino", () => {

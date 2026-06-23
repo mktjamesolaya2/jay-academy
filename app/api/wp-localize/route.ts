@@ -6,7 +6,7 @@ import {
   getPublishedBySlug,
   type WpDomain,
 } from "@/lib/wp-content-storage";
-import { localizePage } from "@/lib/wp-localize";
+import { localizePage, buildSlugToPublic } from "@/lib/wp-localize";
 
 // Backfill de localização: baixa os assets do WP das páginas já copiadas.
 // Abra ESTE link no navegador (logado como admin):
@@ -97,13 +97,14 @@ export async function GET(req: Request) {
     );
   }
 
-  // Processa o próximo lote
+  // Processa o próximo lote. Mapa de slugs montado UMA vez pra todo o lote.
+  const slugToPublic = await buildSlugToPublic();
   const batch = pending.slice(0, BATCH);
   let justLocalized = 0;
   let assetsNow = 0;
   for (const s of batch) {
     try {
-      const st = await localizePage(s.domain, s.slug);
+      const st = await localizePage(s.domain, s.slug, slugToPublic);
       justLocalized++;
       assetsNow += st.localized;
     } catch {

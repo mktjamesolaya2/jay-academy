@@ -178,6 +178,52 @@ export function localizeHtml(html: string, map: Record<string, string>): string 
 }
 
 /**
+ * Reescreve os `<a href>` que apontam pra PÁGINAS do WordPress (não assets):
+ *   - link pra a PRÓPRIA página (mesmo slug) → vira âncora pura (`#valor`) pra
+ *     rolar na página em vez de navegar pro WP. (resolve "ver mais"/"eu quero")
+ *   - link pra OUTRA página já copiada → vira a rota do portal (`/slug-publico`).
+ *   - link pra página WP desconhecida (não copiada) → deixa intacto.
+ *   - link externo (WhatsApp, Hotmart, etc.) → deixa intacto.
+ *
+ * @param selfSlugs  slugs que representam ESTA página (slug interno + público)
+ * @param slugToPublic  mapa slug-do-WP → slug-público-no-portal das páginas copiadas
+ */
+export function rewriteWpAnchors(
+  html: string,
+  selfSlugs: string[],
+  slugToPublic: Record<string, string>
+): string {
+  const self = new Set(selfSlugs.filter(Boolean).map((s) => s.toLowerCase()));
+  return html.replace(
+    /<a\b[^>]*?\shref=(["'])([^"']*)\1[^>]*>/gi,
+    (tag, quote: string, href: string) => {
+      let u: URL;
+      try {
+        u = new URL(href);
+      } catch {
+        return tag; // relativo ou âncora já — não mexe
+      }
+      if (!isWpHost(u.host)) return tag; // externo (whatsapp/hotmart) intacto
+
+      const slug = (u.pathname.split("/").filter(Boolean).pop() || "").toLowerCase();
+      const pub = slugToPublic[slug];
+      let replacement: string | null = null;
+
+      if (self.has(slug) || (pub && self.has(pub.toLowerCase()))) {
+        // mesma página → âncora pura (rola); sem hash, cai na raiz da própria página
+        replacement = u.hash || `/${pub || slug}`;
+      } else if (pub) {
+        // outra página copiada → rota do portal
+        replacement = `/${pub}${u.search}${u.hash}`;
+      }
+
+      if (replacement == null) return tag; // página WP não copiada: não arrisca
+      return tag.replace(`href=${quote}${href}${quote}`, `href=${quote}${replacement}${quote}`);
+    }
+  );
+}
+
+/**
  * Reescreve url() dentro de um CSS. O mapa usa URLs ABSOLUTAS (resolvidas
  * contra a base do CSS), então primeiro resolvemos cada url() relativo e
  * trocamos pelo destino local correspondente.

@@ -99,23 +99,13 @@ ${body}
 
   let html: string;
   if (content.fullHtml) {
-    if (content.localizedAt) {
-      // Página já desconectada do WP: REMOVE qualquer <base> apontando pro
-      // WordPress. Sem ele, âncoras (#valor) e links relativos resolvem na
-      // própria página do portal (o "ver mais" rola na página em vez de pular
-      // pro WP). Os assets já são URLs absolutas (Blob), então não precisam de
-      // base. Links absolutos (WhatsApp, Hotmart) seguem pros próprios destinos.
-      html = cleaned.replace(/<base\b[^>]*>/gi, "");
-    } else {
-      // Ainda não localizada: injeta a base pro WP pra resolver assets relativos
-      // enquanto o WordPress está no ar (comportamento original pré-backfill).
-      html = /<base\s/i.test(cleaned)
-        ? cleaned
-        : cleaned.replace(
-            /<head([^>]*)>/i,
-            `<head$1>\n  <base href="${content.link}" />`
-          );
-    }
+    // NUNCA usa <base href> do WP. As páginas copiadas referenciam assets por URL
+    // absoluta (confirmado: nenhum asset relativo), então a base não ajuda — e
+    // atrapalha: faz âncoras (#valor, os botões "ver mais"/"eu quero") e links
+    // relativos resolverem pro WordPress em vez de rolar/ficar na página do portal.
+    // Removendo, as âncoras rolam na página e os links externos (WhatsApp/Hotmart)
+    // seguem pros próprios destinos. Vale pra QUALQUER página WP (localizada ou não).
+    html = cleaned.replace(/<base\b[^>]*>/gi, "");
     // Blindagem mobile: garante o <meta viewport>. Sem ele, o navegador
     // renderiza a versão desktop "encolhida" no celular (sem responsivo).
     if (!/<meta[^>]+name=["']viewport["']/i.test(html)) {
@@ -125,16 +115,13 @@ ${body}
       );
     }
   } else {
-    // Sem base pro WP quando já localizada (âncoras/links relativos ficam no portal).
-    const baseTag = content.localizedAt
-      ? ""
-      : `\n  <base href="${content.link}" />`;
+    // Sem <base> do WP (mesma razão acima: âncoras/links relativos ficam no portal).
     html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${safeTitle}</title>${baseTag}
+  <title>${safeTitle}</title>
 </head>
 <body>
 ${cleaned}
