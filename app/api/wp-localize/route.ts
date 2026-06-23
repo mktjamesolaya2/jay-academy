@@ -3,9 +3,11 @@ import { getCurrentUser, canEdit } from "@/lib/auth";
 import {
   listSaved,
   loadContent,
+  setPublished,
   getPublishedBySlug,
   type WpDomain,
 } from "@/lib/wp-content-storage";
+import { revalidatePath } from "next/cache";
 import {
   localizePage,
   relocatePage,
@@ -77,6 +79,43 @@ export async function GET(req: Request) {
         error: e instanceof Error ? e.message : "erro",
       });
     }
+  }
+
+  // ── Publica as 5 páginas de produto (links + preços já conferidos) ──
+  if (url.searchParams.get("publishproducts") === "1") {
+    const targets: Array<{ domain: WpDomain; slug: string }> = [
+      { domain: "main", slug: "basic-magic-shadow" },
+      { domain: "main", slug: "basic-nanofios" },
+      { domain: "main", slug: "pdv-lips-sense-technique" },
+      { domain: "main", slug: "curso-online-profissao-remove" },
+      { domain: "lp", slug: "fio-a-fio-realista" },
+    ];
+    const done: Array<{ slug: string; status: string; url?: string }> = [];
+    for (const t of targets) {
+      const c = await loadContent(t.domain, t.slug);
+      if (!c) {
+        done.push({ slug: t.slug, status: "não encontrada" });
+        continue;
+      }
+      const publicSlug = c.publicSlug || c.slug;
+      if (c.published) {
+        done.push({ slug: t.slug, status: "já publicada", url: `/${publicSlug}` });
+        continue;
+      }
+      try {
+        await setPublished(c, publicSlug);
+        revalidatePath(`/${publicSlug}`);
+        done.push({ slug: t.slug, status: "PUBLICADA", url: `/${publicSlug}` });
+      } catch (e) {
+        done.push({
+          slug: t.slug,
+          status: "erro: " + (e instanceof Error ? e.message : "?"),
+        });
+      }
+    }
+    revalidatePath("/wp-pages");
+    revalidatePath("/dashboard");
+    return NextResponse.json(done);
   }
 
   // ── Contexto de preço: pras 5 páginas de produto, mostra cada R$ + o texto em volta ──
