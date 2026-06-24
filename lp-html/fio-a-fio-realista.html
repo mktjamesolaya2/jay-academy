@@ -306,20 +306,19 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 <!-- ===== FIM SELETOR DE IDIOMA ===== -->
 
 <!-- ===== SEÇÃO "O QUE VAI APRENDER" — celular com módulos passando (ideia do James) ===== -->
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-.ffr-learn{position:relative;background:radial-gradient(130% 110% at 82% 18%,#3a2358 0%,#2a1840 46%,#1b0e2b 100%);font-family:'Poppins',system-ui,sans-serif;padding:58px 0 60px;overflow:hidden;}
+.ffr-learn{position:relative;background:radial-gradient(130% 110% at 82% 18%,#1a1024 0%,#100a18 50%,#08060c 100%);font-family:'Poppins',system-ui,sans-serif;padding:58px 0 60px;overflow:hidden;}
 .ffr-learn::before{content:"";position:absolute;top:-120px;right:6%;width:520px;height:520px;background:radial-gradient(closest-side,rgba(168,85,247,.28),transparent 70%);pointer-events:none;}
 .ffr-learn__wrap{position:relative;max-width:1200px;margin:0 auto;padding:0 40px;display:flex;align-items:center;gap:clamp(28px,5vw,70px);}
 .ffr-learn__left{flex:1 1 0;min-width:0;}
 .ffr-learn__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#d6b6ff;font-size:12.5px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;margin:0 0 16px;}
 .ffr-learn__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
-.ffr-learn__title{font-family:'Syne',sans-serif;font-size:clamp(34px,4.6vw,58px);font-weight:800;line-height:1.02;letter-spacing:-.01em;margin:0 0 14px;color:#fff;}
+.ffr-learn__title{font-family:'Poppins',system-ui,sans-serif;font-size:clamp(34px,4.6vw,58px);font-weight:800;line-height:1.02;letter-spacing:-.01em;margin:0 0 14px;color:#fff;}
 .ffr-learn__title b{font-weight:800;background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .ffr-learn__sub{font-size:clamp(15px,1.8vw,19px);font-weight:500;color:#e3d9f2;margin:0 0 30px;max-width:430px;line-height:1.5;}
 .ffr-learn__stats{display:flex;gap:16px;flex-wrap:wrap;}
 .ffr-stat2{flex:1 1 0;min-width:104px;background:#fff;border-radius:18px;padding:20px 14px;text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.28);}
-.ffr-stat2 b{display:block;font-family:'Syne',sans-serif;font-size:clamp(30px,3vw,42px);font-weight:800;line-height:1;background:linear-gradient(180deg,#a855f7,#7c3aed);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-stat2 b{display:block;font-family:'Poppins',system-ui,sans-serif;font-size:clamp(30px,3vw,42px);font-weight:800;line-height:1;background:linear-gradient(180deg,#a855f7,#7c3aed);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .ffr-stat2:nth-child(2) b{background:linear-gradient(180deg,#ec4899,#a855f7);-webkit-background-clip:text;background-clip:text;}
 .ffr-stat2:nth-child(3) b{background:linear-gradient(180deg,#22c55e,#15a34a);-webkit-background-clip:text;background-clip:text;}
 .ffr-stat2 span{display:block;margin-top:7px;font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3b2a52;}
@@ -335,9 +334,6 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 .ffr-slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;transform:scale(1.04);}
 .ffr-slide.is-on{opacity:1;transform:scale(1);transition:opacity .6s ease,transform 2.2s ease;}
 .ffr-slide img{width:100%;height:100%;object-fit:cover;display:block;}
-.ffr-slide__cap{position:absolute;left:0;right:0;bottom:0;padding:54px 18px 20px;background:linear-gradient(180deg,transparent,rgba(8,5,14,.92));z-index:6;}
-.ffr-slide__cap b{display:block;font-family:'Syne',sans-serif;color:#fff;font-size:16px;font-weight:700;letter-spacing:.04em;}
-.ffr-slide__cap small{display:block;margin-top:3px;color:#c9bce0;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;}
 @media(max-width:820px){
   .ffr-learn{padding:48px 0 52px;}
   .ffr-learn__wrap{flex-direction:column;text-align:center;gap:38px;}
@@ -397,9 +393,7 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
     MODS.forEach(function(m,i){
       var s=document.createElement("div"); s.className="ffr-slide";
       var img=document.createElement("img"); img.src=BASE+m.f; img.alt=m.t; img.loading= i<2?"eager":"lazy";
-      var cap=document.createElement("div"); cap.className="ffr-slide__cap";
-      cap.innerHTML="<small>Módulo "+((i+1<10?"0":"")+(i+1))+"</small><b>"+m.t+"</b>";
-      s.appendChild(img); s.appendChild(cap); sw.appendChild(s); slides.push(s);
+      s.appendChild(img); sw.appendChild(s); slides.push(s);
       var bar=document.createElement("div"); bar.className="ffr-bar";
       bar.appendChild(document.createElement("span")); bw.appendChild(bar); bars.push(bar.firstChild);
     });
