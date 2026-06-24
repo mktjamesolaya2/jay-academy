@@ -244,23 +244,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </head>
 <body class="wp-singular page-template page-template-elementor_canvas page page-id-27 wp-embed-responsive wp-theme-hello-elementor theme-default elementor-default elementor-template-canvas elementor-kit-9532 elementor-page elementor-page-27">
 <!-- ===== NOVO HERÓI FIO A FIO REALISTA (substitui o antigo) ===== -->
-<section class="ffr-hero" style="position:relative;width:100%;min-height:clamp(460px,52vw,720px);background:#0c0913;overflow:hidden;display:flex;align-items:center;font-family:'Poppins',system-ui,sans-serif;">
-  <!-- imagem de fundo (James + respingos + dermógrafo, fundo roxo) -->
-  <div style="position:absolute;inset:0;background:url('/lp/fio-a-fio-realista/hero.webp?v=2') center center / cover no-repeat;"></div>
-  <!-- gradiente acinzentado+roxo nos 4 cantos (centro transparente, não cobre o James) -->
-  <div style="position:absolute;inset:0;background:radial-gradient(125% 125% at 50% 48%, rgba(10,8,16,0) 42%, rgba(46,28,64,0.55) 74%, rgba(13,9,19,0.94) 100%);"></div>
-  <!-- escurecida à esquerda pra leitura do texto -->
-  <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(10,7,16,0.94) 0%, rgba(10,7,16,0.6) 28%, rgba(10,7,16,0) 56%);"></div>
-  <!-- fade no rodapé pra emendar com a próxima seção -->
-  <div style="position:absolute;left:0;right:0;bottom:0;height:120px;background:linear-gradient(180deg, rgba(12,9,19,0) 0%, #0c0913 100%);"></div>
-
-  <div style="position:relative;z-index:2;width:100%;max-width:1240px;margin:0 auto;padding:0 6%;">
-    <div style="max-width:560px;">
-      <span style="display:inline-block;background:#22c55e;color:#04130b;font-weight:700;font-size:13px;letter-spacing:.01em;padding:6px 15px;border-radius:6px;margin-bottom:24px;">Nova Turma!</span>
-      <h1 style="color:#fff;font-size:clamp(32px,4.6vw,56px);font-weight:800;line-height:1.04;letter-spacing:-0.02em;margin:0 0 20px;text-shadow:0 2px 24px rgba(0,0,0,.45);">Destaque-se da concorrência e valorize o seu trabalho</h1>
-      <p style="color:#ece7f5;font-size:clamp(17px,2.2vw,25px);font-weight:500;margin:0 0 6px;">Domine a técnica de</p>
-      <p style="font-size:clamp(26px,3.6vw,42px);font-weight:800;line-height:1.05;margin:0 0 30px;background:linear-gradient(90deg,#c084fc,#f5a8e0);-webkit-background-clip:text;background-clip:text;color:transparent;">Fio a Fio Realista</p>
-      <a href="https://pay.hotmart.com/T98532267X?off=tlrmqecy" style="display:inline-block;background:#22c55e;color:#04130b;font-weight:700;font-size:16px;letter-spacing:.02em;padding:17px 36px;border-radius:9px;text-decoration:none;box-shadow:0 10px 34px rgba(34,197,94,.38);transition:transform .15s,box-shadow .15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 14px 40px rgba(34,197,94,.5)'" onmouseout="this.style.transform='';this.style.boxShadow='0 10px 34px rgba(34,197,94,.38)'">QUERO GARANTIR MINHA VAGA</a>
+<style>
+.ffr-hero{position:relative;width:100%;overflow:hidden;background:#0c0913;font-family:'Poppins',system-ui,sans-serif;}
+/* Desktop: imagem INTEIRA, nunca corta o James (altura segue a imagem) */
+.ffr-hero__img{display:block;width:100%;height:auto;}
+.ffr-hero__ov{position:absolute;inset:0;pointer-events:none;}
+.ffr-hero__content{position:absolute;inset:0;display:flex;align-items:center;z-index:2;}
+.ffr-hero__inner{width:100%;max-width:1240px;margin:0 auto;padding:0 6%;}
+.ffr-hero__col{max-width:560px;}
+.ffr-hero__badge{display:inline-block;background:#22c55e;color:#04130b;font-weight:700;font-size:13px;padding:6px 15px;border-radius:6px;margin-bottom:24px;}
+.ffr-hero h1{color:#fff;font-size:clamp(30px,4.4vw,54px);font-weight:800;line-height:1.04;letter-spacing:-0.02em;margin:0 0 20px;text-shadow:0 2px 24px rgba(0,0,0,.45);}
+.ffr-hero__sub{color:#ece7f5;font-size:clamp(16px,2.1vw,24px);font-weight:500;margin:0 0 6px;}
+.ffr-hero__hl{font-size:clamp(24px,3.4vw,40px);font-weight:800;line-height:1.05;margin:0 0 28px;background:linear-gradient(90deg,#c084fc,#f5a8e0);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-hero__cta{display:inline-block;background:#22c55e;color:#04130b;font-weight:700;font-size:16px;letter-spacing:.02em;padding:17px 36px;border-radius:9px;text-decoration:none;box-shadow:0 10px 34px rgba(34,197,94,.38);transition:transform .15s,box-shadow .15s;}
+.ffr-hero__cta:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(34,197,94,.5);}
+/* Mobile: imagem cobre com foco no James + altura pro texto caber */
+@media(max-width:760px){
+  .ffr-hero{min-height:580px;}
+  .ffr-hero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% center;}
+  .ffr-hero__col{max-width:100%;}
+}
+</style>
+<section class="ffr-hero">
+  <img class="ffr-hero__img" src="/lp/fio-a-fio-realista/hero.webp?v=3" alt="Fio a Fio Realista por James Olaya">
+  <!-- gradiente acinzentado+roxo nos cantos (centro transparente) -->
+  <div class="ffr-hero__ov" style="background:radial-gradient(125% 125% at 50% 48%, rgba(10,8,16,0) 44%, rgba(46,28,64,0.5) 76%, rgba(13,9,19,0.9) 100%);"></div>
+  <!-- escurece a esquerda pra leitura do texto -->
+  <div class="ffr-hero__ov" style="background:linear-gradient(90deg, rgba(10,7,16,0.92) 0%, rgba(10,7,16,0.55) 30%, rgba(10,7,16,0) 56%);"></div>
+  <div class="ffr-hero__content">
+    <div class="ffr-hero__inner">
+      <div class="ffr-hero__col">
+        <span class="ffr-hero__badge">Nova Turma!</span>
+        <h1>Destaque-se da concorrência e valorize o seu trabalho</h1>
+        <p class="ffr-hero__sub">Domine a técnica de</p>
+        <p class="ffr-hero__hl">Fio a Fio Realista</p>
+        <a class="ffr-hero__cta" href="https://pay.hotmart.com/T98532267X?off=tlrmqecy">QUERO GARANTIR MINHA VAGA</a>
+      </div>
     </div>
   </div>
 </section>
