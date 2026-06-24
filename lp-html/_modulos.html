@@ -1,0 +1,175 @@
+<!-- ===== SEÇÃO "O QUE VAI APRENDER" — REDESIGN (cabeçalho + stats + coverflow) ===== -->
+<style>
+.ffr-mod{position:relative;background:radial-gradient(120% 90% at 50% 0%,#1a1024 0%,#0c0913 55%,#0a070f 100%);font-family:'Poppins',system-ui,sans-serif;padding:78px 20px 90px;overflow:hidden;}
+.ffr-mod::before{content:"";position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:680px;height:340px;background:radial-gradient(closest-side,rgba(168,85,247,.22),transparent 70%);pointer-events:none;}
+.ffr-mod__head{position:relative;text-align:center;max-width:760px;margin:0 auto 38px;}
+.ffr-mod__eyebrow{color:#c084fc;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 12px;}
+.ffr-mod__title{font-size:clamp(30px,5vw,56px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin:0 0 10px;background:linear-gradient(92deg,#f5a8e0 0%,#c084fc 45%,#a855f7 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-mod__sub{font-size:clamp(16px,2.3vw,24px);font-weight:500;color:#e7e1f2;margin:0;}
+.ffr-mod__sub span{position:relative;font-weight:700;color:#fff;white-space:nowrap;}
+.ffr-mod__sub span::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:7px;border-radius:4px;background:linear-gradient(90deg,#22c55e,#86efac);opacity:.85;}
+/* stats */
+.ffr-mod__stats{position:relative;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:0 auto 54px;}
+.ffr-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:138px;padding:20px 26px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;backdrop-filter:blur(6px);}
+.ffr-stat__num{font-size:46px;font-weight:800;line-height:1;background:linear-gradient(180deg,#f5a8e0,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-stat:nth-child(2) .ffr-stat__num{background:linear-gradient(180deg,#7dd3fc,#38bdf8);-webkit-background-clip:text;background-clip:text;}
+.ffr-stat:nth-child(3) .ffr-stat__num{background:linear-gradient(180deg,#86efac,#22c55e);-webkit-background-clip:text;background-clip:text;}
+.ffr-stat__lbl{margin-top:7px;font-size:14px;font-weight:500;color:#b9b2c9;}
+/* coverflow */
+.ffr-cf{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;max-width:1180px;margin:0 auto;}
+.ffr-cf__stage{position:relative;flex:1;height:clamp(380px,52vw,560px);perspective:1500px;transform-style:preserve-3d;touch-action:pan-y;}
+.ffr-cf__card{position:absolute;top:50%;left:50%;width:clamp(180px,23vw,272px);aspect-ratio:600/1050;margin:0;border-radius:18px;overflow:hidden;cursor:pointer;transform:translate(-50%,-50%);transition:transform .52s cubic-bezier(.22,.61,.36,1),opacity .52s,box-shadow .52s;box-shadow:0 24px 50px rgba(0,0,0,.5);background:#15101e;will-change:transform,opacity;}
+.ffr-cf__card img{width:100%;height:100%;object-fit:cover;display:block;}
+.ffr-cf__card.is-active{box-shadow:0 30px 70px rgba(168,85,247,.4),0 0 0 1px rgba(192,132,252,.5);}
+.ffr-cf__card.is-active::after{content:"";position:absolute;inset:0;border-radius:18px;padding:2px;background:linear-gradient(140deg,#f5a8e0,#a855f7);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+.ffr-cf__nav{flex:0 0 auto;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(20,15,28,.85);color:#fff;font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;z-index:50;}
+.ffr-cf__nav:hover{background:rgba(168,85,247,.5);transform:scale(1.08);}
+/* info embaixo */
+.ffr-cf__info{text-align:center;max-width:620px;margin:30px auto 0;min-height:78px;}
+.ffr-cf__mod{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.18em;color:#c084fc;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(192,132,252,.4);border-radius:999px;margin-bottom:12px;}
+.ffr-cf__desc{color:#d6d0e2;font-size:clamp(15px,1.9vw,18px);line-height:1.55;margin:0;transition:opacity .3s;}
+/* dots */
+.ffr-cf__dots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:26px;}
+.ffr-cf__dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(255,255,255,.2);cursor:pointer;padding:0;transition:background .25s,transform .25s,width .25s;}
+.ffr-cf__dot.is-active{width:26px;border-radius:5px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
+@media(max-width:680px){
+  .ffr-mod{padding:54px 12px 64px;}
+  .ffr-cf__nav{width:40px;height:40px;font-size:20px;}
+  .ffr-stat{min-width:104px;padding:15px 16px;}
+  .ffr-stat__num{font-size:36px;}
+}
+</style>
+<div id="ffr-mod-wrap" style="display:none">
+  <section class="ffr-mod notranslate-keep">
+    <div class="ffr-mod__head">
+      <p class="ffr-mod__eyebrow">Conteúdo do curso</p>
+      <h2 class="ffr-mod__title">O que vai aprender</h2>
+      <p class="ffr-mod__sub">O <span>curso mais completo</span> do mercado</p>
+    </div>
+    <div class="ffr-mod__stats">
+      <div class="ffr-stat"><span class="ffr-stat__num">12</span><span class="ffr-stat__lbl">Módulos</span></div>
+      <div class="ffr-stat"><span class="ffr-stat__num">81</span><span class="ffr-stat__lbl">Aulas</span></div>
+      <div class="ffr-stat"><span class="ffr-stat__num">3</span><span class="ffr-stat__lbl">Bônus</span></div>
+    </div>
+    <div class="ffr-cf">
+      <button class="ffr-cf__nav" id="ffrCfPrev" type="button" aria-label="Módulo anterior">&#8249;</button>
+      <div class="ffr-cf__stage" id="ffrCfStage"></div>
+      <button class="ffr-cf__nav" id="ffrCfNext" type="button" aria-label="Próximo módulo">&#8250;</button>
+    </div>
+    <div class="ffr-cf__info">
+      <span class="ffr-cf__mod" id="ffrCfMod">Módulo 01</span>
+      <p class="ffr-cf__desc" id="ffrCfDesc"></p>
+    </div>
+    <div class="ffr-cf__dots" id="ffrCfDots"></div>
+  </section>
+</div>
+<script>
+(function(){
+  var BASE="https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/";
+  var MODS=[
+    {f:"ed9555c9832c-modulo-0111-e5fe98a56b.png",d:"As etapas do realismo e como agregar valor ao seu trabalho."},
+    {f:"bb8b60a6e33e-modulo-021-d4e67d7146.png",d:"As estruturas faciais e como elas influenciam no visagismo."},
+    {f:"f52403dd7b41-modulo-031-ee741d35c7.png",d:"Como iniciar um processo de design e visagismo de excelência."},
+    {f:"7fc9c2b85fd2-modulo-041-0ad80a45b9.png",d:"Como funciona uma sobrancelha real para entregar um resultado natural."},
+    {f:"d15c93573279-modulo-051-607b42689d.png",d:"Avaliação de cor, densidade e saturação na prática."},
+    {f:"91e0b8b558ec-modulo-061-85d466d688.png",d:"O conceito de densidade por sobreposição, passo a passo."},
+    {f:"1f8165036282-modulo-07-708e7d70fd.jpg",d:"Linhas de tensão, angulação, pouso e decolagem, entradas e saídas."},
+    {f:"9a22136cb84d-modulo-081-5247283ab9.png",d:"Design exclusivo dentro das proporções faciais do cliente."},
+    {f:"8f37b1f14d43-modulo-091-ce937ae886.png",d:"Detalhes de acabamento, profundidade e saídas perfeitas dos fios."},
+    {f:"b46af3982ff8-modulo-101-f590753b88.png",d:"Exercícios técnicos e treino em pele artificial para evoluir em casa."},
+    {f:"1dc29627b352-modulo-111-6e640b96b0.png",d:"Um procedimento real, em alta qualidade e de vários ângulos."},
+    {f:"d2a37520f24d-modulo-121-ca31e71778.png",d:"Retoque, cuidados pós-procedimento e adaptações para a cliente."}
+  ];
+  var active=0, cards=[], dots=[], mounted=false;
+
+  function build(){
+    var stage=document.getElementById("ffrCfStage");
+    var dotsWrap=document.getElementById("ffrCfDots");
+    if(!stage) return;
+    MODS.forEach(function(m,i){
+      var c=document.createElement("div");
+      c.className="ffr-cf__card";
+      var img=document.createElement("img");
+      img.src=BASE+m.f; img.alt="Módulo "+(i+1); img.loading="lazy";
+      c.appendChild(img);
+      c.addEventListener("click",function(){ if(i===active){return;} setActive(i); });
+      stage.appendChild(c); cards.push(c);
+
+      var d=document.createElement("button");
+      d.className="ffr-cf__dot"; d.type="button"; d.setAttribute("aria-label","Ir ao módulo "+(i+1));
+      d.addEventListener("click",function(){ setActive(i); });
+      dotsWrap.appendChild(d); dots.push(d);
+    });
+    layout();
+    document.getElementById("ffrCfPrev").addEventListener("click",function(){ setActive(active-1); });
+    document.getElementById("ffrCfNext").addEventListener("click",function(){ setActive(active+1); });
+    enableDrag(stage);
+  }
+
+  function setActive(i){
+    if(i<0)i=0; if(i>MODS.length-1)i=MODS.length-1;
+    active=i; layout();
+  }
+
+  function layout(){
+    cards.forEach(function(c,i){
+      var pos=i-active, abs=Math.abs(pos);
+      c.style.zIndex=100-abs;
+      c.classList.toggle("is-active",abs===0);
+      if(abs>2){
+        c.style.opacity="0"; c.style.pointerEvents="none";
+        c.style.transform="translate(-50%,-50%) translateX("+(pos*60)+"%) scale(.5)";
+        return;
+      }
+      c.style.pointerEvents="auto";
+      c.style.opacity= abs===0?"1":(abs===1?"0.82":"0.42");
+      var tx=pos*52, rot=pos*-23, tz=-abs*130, sc= abs===0?1:(abs===1?.82:.66);
+      c.style.transform="translate(-50%,-50%) translateX("+tx+"%) translateZ("+tz+"px) rotateY("+rot+"deg) scale("+sc+")";
+    });
+    dots.forEach(function(d,i){ d.classList.toggle("is-active",i===active); });
+    var n=(active+1<10?"0":"")+(active+1);
+    document.getElementById("ffrCfMod").textContent="Módulo "+n;
+    var desc=document.getElementById("ffrCfDesc");
+    desc.style.opacity="0";
+    setTimeout(function(){ desc.textContent=MODS[active].d; desc.style.opacity="1"; },150);
+  }
+
+  function enableDrag(stage){
+    var startX=0, dragging=false;
+    stage.addEventListener("pointerdown",function(e){ dragging=true; startX=e.clientX; });
+    window.addEventListener("pointerup",function(e){
+      if(!dragging) return; dragging=false;
+      var dx=e.clientX-startX;
+      if(dx>45) setActive(active-1);
+      else if(dx<-45) setActive(active+1);
+    });
+    document.addEventListener("keydown",function(e){
+      if(e.key==="ArrowLeft") setActive(active-1);
+      else if(e.key==="ArrowRight") setActive(active+1);
+    });
+  }
+
+  // Relocaliza a seção nova pro lugar da antiga e esconde a antiga
+  function mount(){
+    if(mounted) return;
+    var wrap=document.getElementById("ffr-mod-wrap");
+    if(!wrap) return;
+    mounted=true;
+    var old=null;
+    var secs=document.querySelectorAll(".elementor-section");
+    for(var k=0;k<secs.length;k++){
+      var s=secs[k];
+      if(s.textContent && s.textContent.indexOf("O que vai aprender")!==-1){
+        old=s.closest(".elementor-top-section")||s; break;
+      }
+    }
+    if(old){ old.style.display="none"; old.insertAdjacentElement("afterend",wrap); }
+    wrap.style.display="block";
+    build();
+  }
+  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded",mount); }
+  else{ mount(); }
+  setTimeout(mount,600);
+})();
+</script>
+<!-- ===== FIM SEÇÃO MÓDULOS ===== -->
