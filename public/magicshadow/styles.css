@@ -2646,13 +2646,13 @@ body {
   justify-self: center;
   font-size: 2.4em;
   font-weight: 800;
-  line-height: 0;
+  line-height: 1;
   /* metade esquerda dourada (sobre o lado preto) | metade direita preta (sobre o lado branco) */
-  background: linear-gradient(90deg, #C9A24A 0 50%, #111 50% 100%);
+  background: linear-gradient(90deg, #C9A24A 0%, #C9A24A 50%, #111 50%, #111 100%);
   -webkit-background-clip: text;
           background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
-  transform: translateY(0.04em);
 }
 
 /* ===== PONTE — foto antes/depois flutuando entre os dois lados ===== */
