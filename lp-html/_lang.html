@@ -1,0 +1,19 @@
+<!-- ===== SELETOR DE IDIOMA (PT-BR principal, recolhível, canto sup. direito) ===== -->
+<div id="ffr-lang" class="notranslate" style="position:fixed;top:14px;right:16px;z-index:99999;font-family:'Poppins',system-ui,sans-serif;">
+  <button id="ffr-lang-btn" type="button" onclick="ffrLangToggle()" style="display:flex;align-items:center;gap:8px;background:rgba(16,12,22,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.3);">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+    <span id="ffr-lang-cur">PT-BR</span>
+    <svg id="ffr-lang-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" style="transition:transform .18s;"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+  <div id="ffr-lang-menu" style="display:none;margin-top:6px;background:rgba(16,12,22,.97);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:9px;overflow:hidden;min-width:150px;box-shadow:0 10px 30px rgba(0,0,0,.4);">
+    <a href="#" onclick="ffrLang('pt','PT-BR');return false;" style="display:block;padding:10px 14px;color:#fff;font-size:13px;font-weight:500;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.06);">Português (BR)</a>
+    <a href="#" onclick="ffrLang('en','EN');return false;" style="display:block;padding:10px 14px;color:#fff;font-size:13px;font-weight:500;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.06);">English</a>
+    <a href="#" onclick="ffrLang('es','ES');return false;" style="display:block;padding:10px 14px;color:#fff;font-size:13px;font-weight:500;text-decoration:none;">Español</a>
+  </div>
+</div>
+<script>
+function ffrLangToggle(){var m=document.getElementById('ffr-lang-menu'),c=document.getElementById('ffr-lang-chev');var open=m.style.display!=='none';m.style.display=open?'none':'block';c.style.transform=open?'':'rotate(180deg)';}
+function ffrLang(code,label){try{if(typeof doGTranslate==='function')doGTranslate('pt|'+code);}catch(e){}document.getElementById('ffr-lang-cur').textContent=label;ffrLangToggle();}
+document.addEventListener('click',function(e){var w=document.getElementById('ffr-lang');if(w&&!w.contains(e.target)){document.getElementById('ffr-lang-menu').style.display='none';document.getElementById('ffr-lang-chev').style.transform='';}});
+</script>
+<!-- ===== FIM SELETOR DE IDIOMA ===== -->
