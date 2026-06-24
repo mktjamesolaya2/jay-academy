@@ -84,6 +84,20 @@ export async function GET(req: Request) {
     }
   }
 
+  // ── Despublica uma página: ?unpub=1&slug=X&domain=Y ──
+  if (url.searchParams.get("unpub") === "1") {
+    const slug = url.searchParams.get("slug") || "";
+    const domain = (url.searchParams.get("domain") as WpDomain) || "lp";
+    const c = await loadContent(domain, slug);
+    if (!c) return NextResponse.json({ ok: false, error: "página não encontrada" });
+    if (!c.published) return NextResponse.json({ ok: false, error: "não estava publicada" });
+    const ps = c.publicSlug || c.slug;
+    await unsetPublished(c);
+    revalidatePath(`/${ps}`);
+    revalidatePath("/dashboard");
+    return NextResponse.json({ ok: true, unpublished: slug, era: `/${ps}` });
+  }
+
   // ── Importa FRESCO do WP a Fio a Fio (id 27) → Supabase → publica /fio-a-fio-realista ──
   if (url.searchParams.get("freshfiofio") === "1") {
     const steps: string[] = [];
