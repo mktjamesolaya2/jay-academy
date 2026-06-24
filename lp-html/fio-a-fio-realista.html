@@ -285,6 +285,46 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 <!-- ===== FIM NOVO HERÓI ===== -->
 
+<!-- ===== FAIXA DIVISÓRIA (entre herói e carrossel) — estilo dourado da referência ===== -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.ffr-div{position:relative;width:100%;overflow:hidden;text-align:center;
+  padding:clamp(72px,12vh,124px) 22px;
+  background:
+    radial-gradient(150% 130% at 50% 50%, rgba(214,176,96,.10), transparent 58%),
+    linear-gradient(180deg,
+      #efe6d6 0%, #b9ad98 6%, #423a2d 16%, #14110b 30%,
+      #0a0805 50%,
+      #14110b 70%, #423a2d 84%, #c2b6a0 94%, #f3ebdc 100%);}
+.ffr-div::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(2px 2px at 18% 38%, rgba(255,240,200,.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 76% 30%, rgba(255,240,200,.5), transparent 60%),
+    radial-gradient(1.5px 1.5px at 60% 70%, rgba(255,240,200,.4), transparent 60%),
+    radial-gradient(1.5px 1.5px at 30% 66%, rgba(255,240,200,.35), transparent 60%);}
+.ffr-div__inner{position:relative;display:flex;flex-direction:column;align-items:center;gap:18px;}
+.ffr-div__gem{width:11px;height:11px;transform:rotate(45deg);background:linear-gradient(135deg,#f6e3ad,#c8a052);box-shadow:0 0 14px rgba(214,176,96,.6);}
+.ffr-div__txt{margin:0;font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;
+  font-size:clamp(20px,3vw,40px);letter-spacing:.34em;text-transform:uppercase;line-height:1.2;
+  background:linear-gradient(180deg,#fbeec2 0%,#d8b066 52%,#a87d30 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 1px 30px rgba(214,176,96,.25);padding-left:.34em;}
+.ffr-div__line{display:block;width:clamp(120px,18vw,210px);height:1px;
+  background:linear-gradient(90deg,transparent,rgba(214,176,96,.85),transparent);}
+@media(max-width:600px){
+  .ffr-div{padding:56px 18px;}
+  .ffr-div__txt{letter-spacing:.2em;font-size:clamp(17px,5.4vw,24px);}
+}
+</style>
+<section class="ffr-div">
+  <div class="ffr-div__inner">
+    <span class="ffr-div__gem"></span>
+    <p class="ffr-div__txt">Mais que sobrancelhas, um novo olhar</p>
+    <span class="ffr-div__line"></span>
+  </div>
+</section>
+<!-- ===== FIM FAIXA DIVISÓRIA ===== -->
+
 <!-- ===== SELETOR DE IDIOMA (PT-BR principal, recolhível, canto sup. direito) ===== -->
 <div id="ffr-lang" class="notranslate" style="position:fixed;top:14px;right:16px;z-index:99999;font-family:'Poppins',system-ui,sans-serif;">
   <button id="ffr-lang-btn" type="button" onclick="ffrLangToggle()" style="display:flex;align-items:center;gap:8px;background:rgba(16,12,22,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.3);">
@@ -2549,7 +2589,7 @@ var CCFEFCustomData = {"pluginDir":"https:\/\/jayacademy.com.br\/wp-content\/plu
 if(typeof mutation.addedNodes[i].getElementsByClassName!=='function'){continue}
 images=mutation.addedNodes[i].getElementsByTagName('img');is_image=mutation.addedNodes[i].tagName=="IMG";iframes=mutation.addedNodes[i].getElementsByTagName('iframe');is_iframe=mutation.addedNodes[i].tagName=="IFRAME";rocket_lazy=mutation.addedNodes[i].getElementsByClassName('rocket-lazyload');image_count+=images.length;iframe_count+=iframes.length;rocketlazy_count+=rocket_lazy.length;if(is_image){image_count+=1}
 if(is_iframe){iframe_count+=1}}});if(image_count>0||iframe_count>0||rocketlazy_count>0){lazyLoadInstance.update()}});var b=document.getElementsByTagName("body")[0];var config={childList:!0,subtree:!0};observer.observe(b,config)}},!1)</script><script data-no-minify="1" async src="https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/167c666e25e6-lazyload.min-73979156c0.js"></script><script>function lazyLoadThumb(e,alt,l){var t='<img data-lazy-src="https://i.ytimg.com/vi/ID/hqdefault.jpg" alt="" width="480" height="360"><noscript><img src="https://i.ytimg.com/vi/ID/hqdefault.jpg" alt="" width="480" height="360"></noscript>',a='<button class="play" aria-label="play Youtube video"></button>';if(l){t=t.replace('data-lazy-','');t=t.replace('loading="lazy"','');t=t.replace(/<noscript>.*?<\/noscript>/g,'');}t=t.replace('alt=""','alt="'+alt+'"');return t.replace("ID",e)+a}function lazyLoadYoutubeIframe(){var e=document.createElement("iframe"),t="ID?autoplay=1";t+=0===this.parentNode.dataset.query.length?"":"&"+this.parentNode.dataset.query;e.setAttribute("src",t.replace("ID",this.parentNode.dataset.src)),e.setAttribute("frameborder","0"),e.setAttribute("allowfullscreen","1"),e.setAttribute("allow","accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"),this.parentNode.parentNode.replaceChild(e,this.parentNode)}document.addEventListener("DOMContentLoaded",function(){var exclusions=[];var e,t,p,u,l,a=document.getElementsByClassName("rll-youtube-player");for(t=0;t<a.length;t++)(e=document.createElement("div")),(u='https://i.ytimg.com/vi/ID/hqdefault.jpg'),(u=u.replace('ID',a[t].dataset.id)),(l=exclusions.some(exclusion=>u.includes(exclusion))),e.setAttribute("data-id",a[t].dataset.id),e.setAttribute("data-query",a[t].dataset.query),e.setAttribute("data-src",a[t].dataset.src),(e.innerHTML=lazyLoadThumb(a[t].dataset.id,a[t].dataset.alt,l)),a[t].appendChild(e),(p=e.querySelector(".play")),(p.onclick=lazyLoadYoutubeIframe)});</script>	<script>var rocket_beacon_data = {"ajax_url":"https:\/\/jayacademy.com.br\/wp-admin\/admin-ajax.php","nonce":"129d9b42ae","url":"https:\/\/jayacademy.com.br\/fio-a-fio-realista-by-james-olaya","is_mobile":false,"width_threshold":1600,"height_threshold":700,"delay":500,"debug":null,"status":{"atf":true,"lrc":true},"elements":"img, video, picture, p, main, div, li, svg, section, header, span","lrc_threshold":1800}</script><script data-name="wpr-wpr-beacon" src='https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/720dee6d0add-wpr-beacon.min-94e865f24f.js' async></script><script>class RocketElementorAnimation{constructor(){this.deviceMode=document.createElement("span"),this.deviceMode.id="elementor-device-mode-wpr",this.deviceMode.setAttribute("class","elementor-screen-only"),document.body.appendChild(this.deviceMode)}_detectAnimations(){let t=getComputedStyle(this.deviceMode,":after").content.replace(/"/g,"");this.animationSettingKeys=this._listAnimationSettingsKeys(t),document.querySelectorAll(".elementor-invisible[data-settings]").forEach(t=>{const e=t.getBoundingClientRect();if(e.bottom>=0&&e.top<=window.innerHeight)try{this._animateElement(t)}catch(t){}})}_animateElement(t){const e=JSON.parse(t.dataset.settings),i=e._animation_delay||e.animation_delay||0,n=e[this.animationSettingKeys.find(t=>e[t])];if("none"===n)return void t.classList.remove("elementor-invisible");t.classList.remove(n),this.currentAnimation&&t.classList.remove(this.currentAnimation),this.currentAnimation=n;let s=setTimeout(()=>{t.classList.remove("elementor-invisible"),t.classList.add("animated",n),this._removeAnimationSettings(t,e)},i);window.addEventListener("rocket-startLoading",function(){clearTimeout(s)})}_listAnimationSettingsKeys(t="mobile"){const e=[""];switch(t){case"mobile":e.unshift("_mobile");case"tablet":e.unshift("_tablet");case"desktop":e.unshift("_desktop")}const i=[];return["animation","_animation"].forEach(t=>{e.forEach(e=>{i.push(t+e)})}),i}_removeAnimationSettings(t,e){this._listAnimationSettingsKeys().forEach(t=>delete e[t]),t.dataset.settings=JSON.stringify(e)}static run(){const t=new RocketElementorAnimation;requestAnimationFrame(t._detectAnimations.bind(t))}}document.addEventListener("DOMContentLoaded",RocketElementorAnimation.run);</script>
-<script>(function(){function hide(){document.querySelectorAll(".elementor-section").forEach(function(s){if(s.textContent && s.textContent.indexOf("Diferencie-se da concorr")!==-1){var t=s.closest(".elementor-top-section")||s;t.style.display="none";}});document.querySelectorAll(".glink").forEach(function(g){var t=g.closest(".elementor-top-section");if(t)t.style.display="none";});}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",hide);}else{hide();}setTimeout(hide,500);})();</script>
+<script>(function(){function hide(){document.querySelectorAll(".elementor-section").forEach(function(s){if(!s.textContent)return;var t=s.textContent;if(t.indexOf("Diferencie-se da concorr")!==-1||t.indexOf("MICRO ARTE")!==-1){var top=s.closest(".elementor-top-section")||s;top.style.display="none";}});document.querySelectorAll(".glink").forEach(function(g){var t=g.closest(".elementor-top-section");if(t)t.style.display="none";});}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",hide);}else{hide();}setTimeout(hide,500);})();</script>
 </body>
 </html>
 <!-- This website is like a Rocket, isn't it? Performance optimized by WP Rocket. Learn more: https://wp-rocket.me - Debug: cached@1782224692 -->
