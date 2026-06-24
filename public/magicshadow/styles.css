@@ -2624,30 +2624,30 @@ body {
 
 /* ===== KICKERS dos dois lados — são o "título" comparativo da seção.
    Ancorados no topo de cada lado, na MESMA altura, pra ler como par. ===== */
-.diptico-kicker {
+.diptico-labels {
   position: absolute;
   top: clamp(2.5rem, 6vw, 4.25rem);
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 3;
   margin: 0;
-  font-style: normal;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 1.4vw, 1rem);
   font-weight: 700;
-  font-size: clamp(0.85rem, 1.05vw, 1.1rem);
-  letter-spacing: 0.16em;
+  font-size: clamp(1rem, 1.5vw, 1.5rem);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
-.diptico-kicker--dark  {
-  right: 50%;
-  left: auto;
-  padding-right: 0.55rem;
-  text-align: right;
-  color: rgba(245, 240, 224, 0.92);
-}
-.diptico-kicker--light {
-  left: 50%;
-  right: auto;
-  padding-left: 0.55rem;
-  text-align: left;
-  color: #A98A4A;
+.diptico-labels__era  { color: rgba(245, 240, 224, 0.95); }
+.diptico-labels__mkt  { color: #A98A4A; }
+.diptico-labels__x {
+  font-size: 2em;
+  font-weight: 300;
+  line-height: 0;
+  color: #C9A24A;
+  transform: translateY(0.04em);
 }
 
 /* ===== PONTE — foto antes/depois flutuando entre os dois lados ===== */
@@ -2790,14 +2790,19 @@ body {
   }
   /* No empilhado os kickers voltam pro fluxo (topo de cada bloco),
      senão o absolute escaparia pra fora por causa do display:contents. */
-  .diptico-kicker {
+  .diptico-labels {
     position: static;
+    transform: none;
     top: auto;
     left: auto;
-    right: auto;
-    text-align: left;
-    margin-bottom: clamp(0.75rem, 2.5vw, 1.1rem);
+    justify-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+    font-size: clamp(0.85rem, 3.4vw, 1.1rem);
+    padding: clamp(1.25rem, 4vw, 2rem) 1rem 0;
+    margin-bottom: clamp(0.5rem, 2vw, 0.9rem);
   }
+  .diptico-labels__x { font-size: 1.6em; }
   /* Escadinha progressiva no título "leves, elegantes e naturais" */
   .diptico-light__title-line:nth-child(2) {
     padding-left: 0;
