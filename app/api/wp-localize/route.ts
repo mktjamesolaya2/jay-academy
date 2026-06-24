@@ -84,6 +84,16 @@ export async function GET(req: Request) {
     }
   }
 
+  // ── Exclui da biblioteca as imagens quebradas (que estão no Blob bloqueado) ──
+  if (url.searchParams.get("deletebroken") === "1") {
+    const { removeMediaByUrlSubstring } = await import("@/lib/media-store");
+    const removed = await removeMediaByUrlSubstring(
+      "blob.vercel-storage.com"
+    );
+    revalidatePath("/midia");
+    return NextResponse.json({ ok: true, removed });
+  }
+
   // ── Despublica uma página: ?unpub=1&slug=X&domain=Y ──
   if (url.searchParams.get("unpub") === "1") {
     const slug = url.searchParams.get("slug") || "";

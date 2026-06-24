@@ -49,6 +49,15 @@ export async function deleteMedia(id: string): Promise<void> {
   );
 }
 
+/** Remove (numa escrita só) todas as mídias cuja url contém `sub`. Retorna quantas. */
+export async function removeMediaByUrlSubstring(sub: string): Promise<number> {
+  const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
+  const keep = items.filter((i) => !i.url.includes(sub));
+  const removed = items.length - keep.length;
+  if (removed > 0) await kvSet(KEY, keep);
+  return removed;
+}
+
 export async function updateMedia(
   id: string,
   patch: Partial<MediaItem>
