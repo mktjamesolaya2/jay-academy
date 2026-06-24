@@ -13,10 +13,7 @@ import { getRecentDeploys } from "@/lib/vercel-deploys";
 
 export function ActivityFeed({ entries }: { entries: ActivityEntry[] }) {
   return (
-    <details
-      open
-      className="group bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl overflow-hidden"
-    >
+    <details className="group bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl overflow-hidden">
       <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none select-none hover:bg-[#101010] transition">
         <h3 className="text-sm font-semibold text-white">Atividade recente</h3>
         <ChevronDown
