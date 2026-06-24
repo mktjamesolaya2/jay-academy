@@ -77,22 +77,16 @@ export async function kvGet<T>(key: string): Promise<T | null> {
 
 export async function kvSet<T>(key: string, value: T): Promise<void> {
   if (HAS_KV) {
-    try {
-      const { kv } = await import("@vercel/kv");
-      await kv.set(key, value);
-    } catch {
-      // ignora — não bloqueia user flow
-    }
+    // NÃO engole mais o erro: se a gravação falhar, deixa estourar pra quem
+    // salvou saber (evita o "Salvo" fantasma — mostrar sucesso e perder o dado).
+    const { kv } = await import("@vercel/kv");
+    await kv.set(key, value);
     return;
   }
-  // Fallback filesystem
-  try {
-    const filePath = path.join(LOCAL_DATA, `${kvKeyToFile(key)}.json`);
-    await fs.mkdir(path.dirname(filePath), { recursive: true });
-    await fs.writeFile(filePath, JSON.stringify(value, null, 2), "utf-8");
-  } catch {
-    // Filesystem read-only (Vercel sem KV configurado) — falha silenciosa
-  }
+  // Fallback filesystem (dev local) — também propaga o erro.
+  const filePath = path.join(LOCAL_DATA, `${kvKeyToFile(key)}.json`);
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  await fs.writeFile(filePath, JSON.stringify(value, null, 2), "utf-8");
 }
 
 export async function kvDel(key: string): Promise<void> {

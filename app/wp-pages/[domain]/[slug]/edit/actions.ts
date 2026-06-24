@@ -23,14 +23,30 @@ export async function saveEditedContentAction(formData: FormData) {
     return { ok: false as const, error: "domain/slug ausentes" };
   }
 
+  // Proteção: HTML vazio/truncado não pode sobrescrever a página (apagaria tudo).
+  if (html.trim().length < 200) {
+    return {
+      ok: false as const,
+      error: "Conteúdo vazio ou muito pequeno — não salvei (proteção contra apagar a página).",
+    };
+  }
+
   const content = await loadContent(domain, slug);
   if (!content) {
     return { ok: false as const, error: "Página não encontrada" };
   }
 
-  content.fullHtml = cleanEditorArtifacts(html);
-  content.fetchedAt = new Date().toISOString();
-  await saveContent(content);
+  try {
+    content.fullHtml = cleanEditorArtifacts(html);
+    content.fetchedAt = new Date().toISOString();
+    await saveContent(content);
+  } catch (e) {
+    // Sem "salvo" fantasma: se a gravação falhar, o usuário fica sabendo.
+    return {
+      ok: false as const,
+      error: "Falha ao salvar: " + (e instanceof Error ? e.message : "erro no banco"),
+    };
+  }
   await logActivity("wp.edit", content.title || slug);
 
   // NÃO revalida a rota /edit — isso causa re-render do iframe e perde estado

@@ -43,7 +43,12 @@ export async function GET(req: Request) {
       if (!content.published) {
         const publicSlug = content.publicSlug || content.slug;
         await setPublished(content, publicSlug);
-        await ensurePageSummary(s.domain, s.slug);
+        // Resumo IA é best-effort — não pode abortar o loop de publicação.
+        try {
+          await ensurePageSummary(s.domain, s.slug);
+        } catch {
+          // segue sem resumo
+        }
         published++;
       } else {
         await saveContent(content);
