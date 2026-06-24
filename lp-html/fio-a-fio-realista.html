@@ -288,8 +288,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- ===== FAIXA DIVISÓRIA (entre herói e carrossel) — estilo dourado da referência ===== -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-.ffr-div{position:relative;width:100%;overflow:hidden;text-align:center;
-  padding:clamp(72px,12vh,124px) 22px;
+.ffr-div-wrap{background:#08060e;padding:34px 16px;}
+.ffr-div{position:relative;width:min(880px,90%);margin:0 auto;border-radius:16px;overflow:hidden;text-align:center;
+  padding:clamp(26px,4.5vh,46px) 22px;
   background:
     radial-gradient(150% 130% at 50% 50%, rgba(124,58,173,.12), transparent 58%),
     linear-gradient(180deg,
@@ -314,12 +315,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .ffr-div__txt{letter-spacing:.2em;font-size:clamp(17px,5.4vw,24px);}
 }
 </style>
-<section class="ffr-div">
-  <div class="ffr-div__inner">
-    <p class="ffr-div__txt">Mais que sobrancelhas, um novo olhar</p>
-    <span class="ffr-div__line"></span>
-  </div>
-</section>
+<div class="ffr-div-wrap">
+  <section class="ffr-div">
+    <div class="ffr-div__inner">
+      <p class="ffr-div__txt">Mais que sobrancelhas, um novo olhar</p>
+      <span class="ffr-div__line"></span>
+    </div>
+  </section>
+</div>
 <!-- ===== FIM FAIXA DIVISÓRIA ===== -->
 
 <!-- ===== SELETOR DE IDIOMA (PT-BR principal, recolhível, canto sup. direito) ===== -->
