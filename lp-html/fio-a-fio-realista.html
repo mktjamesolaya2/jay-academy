@@ -305,49 +305,56 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 </script>
 <!-- ===== FIM SELETOR DE IDIOMA ===== -->
 
-<!-- ===== SEÇÃO "O QUE VAI APRENDER" — REDESIGN (cabeçalho + stats + coverflow) ===== -->
+<!-- ===== SEÇÃO "O QUE VAI APRENDER" — REDESIGN (cabeçalho + stats + trilho Netflix) ===== -->
 <style>
-.ffr-mod{position:relative;background:radial-gradient(120% 90% at 50% 0%,#1a1024 0%,#0c0913 55%,#0a070f 100%);font-family:'Poppins',system-ui,sans-serif;padding:78px 20px 90px;overflow:hidden;}
+.ffr-mod{position:relative;background:radial-gradient(120% 90% at 50% 0%,#1a1024 0%,#0c0913 55%,#0a070f 100%);font-family:'Poppins',system-ui,sans-serif;padding:78px 0 90px;overflow:hidden;}
 .ffr-mod::before{content:"";position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:680px;height:340px;background:radial-gradient(closest-side,rgba(168,85,247,.22),transparent 70%);pointer-events:none;}
-.ffr-mod__head{position:relative;text-align:center;max-width:760px;margin:0 auto 38px;}
+.ffr-mod__head{position:relative;text-align:center;max-width:760px;margin:0 auto 38px;padding:0 20px;}
 .ffr-mod__eyebrow{color:#c084fc;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 12px;}
 .ffr-mod__title{font-size:clamp(30px,5vw,56px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin:0 0 10px;background:linear-gradient(92deg,#f5a8e0 0%,#c084fc 45%,#a855f7 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .ffr-mod__sub{font-size:clamp(16px,2.3vw,24px);font-weight:500;color:#e7e1f2;margin:0;}
 .ffr-mod__sub span{position:relative;font-weight:700;color:#fff;white-space:nowrap;}
 .ffr-mod__sub span::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:7px;border-radius:4px;background:linear-gradient(90deg,#22c55e,#86efac);opacity:.85;}
 /* stats */
-.ffr-mod__stats{position:relative;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:0 auto 54px;}
+.ffr-mod__stats{position:relative;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:0 auto 50px;padding:0 20px;}
 .ffr-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:138px;padding:20px 26px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;backdrop-filter:blur(6px);}
 .ffr-stat__num{font-size:46px;font-weight:800;line-height:1;background:linear-gradient(180deg,#f5a8e0,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .ffr-stat:nth-child(2) .ffr-stat__num{background:linear-gradient(180deg,#7dd3fc,#38bdf8);-webkit-background-clip:text;background-clip:text;}
 .ffr-stat:nth-child(3) .ffr-stat__num{background:linear-gradient(180deg,#86efac,#22c55e);-webkit-background-clip:text;background-clip:text;}
 .ffr-stat__lbl{margin-top:7px;font-size:14px;font-weight:500;color:#b9b2c9;}
-/* coverflow */
-.ffr-cf{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;max-width:1180px;margin:0 auto;}
-.ffr-cf__stage{position:relative;flex:1;height:clamp(380px,52vw,560px);perspective:1500px;transform-style:preserve-3d;touch-action:pan-y;}
-.ffr-cf__card{position:absolute;top:50%;left:50%;width:clamp(180px,23vw,272px);aspect-ratio:600/1050;margin:0;border-radius:18px;overflow:hidden;cursor:pointer;transform:translate(-50%,-50%);transition:transform .52s cubic-bezier(.22,.61,.36,1),opacity .52s,box-shadow .52s;box-shadow:0 24px 50px rgba(0,0,0,.5);background:#15101e;will-change:transform,opacity;}
-.ffr-cf__card img{width:100%;height:100%;object-fit:cover;display:block;}
-.ffr-cf__card.is-active{box-shadow:0 30px 70px rgba(168,85,247,.4),0 0 0 1px rgba(192,132,252,.5);}
-.ffr-cf__card.is-active::after{content:"";position:absolute;inset:0;border-radius:18px;padding:2px;background:linear-gradient(140deg,#f5a8e0,#a855f7);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
-.ffr-cf__nav{flex:0 0 auto;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(20,15,28,.85);color:#fff;font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;z-index:50;}
-.ffr-cf__nav:hover{background:rgba(168,85,247,.5);transform:scale(1.08);}
-/* info embaixo */
-.ffr-cf__info{text-align:center;max-width:620px;margin:30px auto 0;min-height:78px;}
-.ffr-cf__mod{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.18em;color:#c084fc;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(192,132,252,.4);border-radius:999px;margin-bottom:12px;}
-.ffr-cf__desc{color:#d6d0e2;font-size:clamp(15px,1.9vw,18px);line-height:1.55;margin:0;transition:opacity .3s;}
-/* dots */
-.ffr-cf__dots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:26px;}
-.ffr-cf__dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(255,255,255,.2);cursor:pointer;padding:0;transition:background .25s,transform .25s,width .25s;}
-.ffr-cf__dot.is-active{width:26px;border-radius:5px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
+/* trilho netflix */
+.ffr-rail{position:relative;max-width:1280px;margin:0 auto;}
+.ffr-row{display:flex;gap:18px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x proximity;padding:30px 48px;-ms-overflow-style:none;scrollbar-width:none;}
+.ffr-row::-webkit-scrollbar{display:none;}
+.ffr-card{position:relative;flex:0 0 auto;width:clamp(190px,22vw,250px);aspect-ratio:600/1050;border-radius:16px;overflow:hidden;scroll-snap-align:center;cursor:pointer;background:#15101e;box-shadow:0 18px 40px rgba(0,0,0,.45);transition:transform .35s cubic-bezier(.22,.61,.36,1),box-shadow .35s;}
+.ffr-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.ffr-card__ov{position:absolute;inset:0;display:flex;align-items:flex-end;padding:18px 16px;background:linear-gradient(180deg,rgba(10,7,15,0) 40%,rgba(10,7,15,.92) 100%);opacity:0;transition:opacity .35s;}
+.ffr-card__ov p{margin:0;color:#f2eefa;font-size:13.5px;font-weight:500;line-height:1.45;transform:translateY(10px);transition:transform .35s;}
+.ffr-card:hover{transform:translateY(-10px) scale(1.045);box-shadow:0 28px 60px rgba(168,85,247,.4),0 0 0 2px rgba(192,132,252,.55);z-index:5;}
+.ffr-card:hover .ffr-card__ov{opacity:1;}
+.ffr-card:hover .ffr-card__ov p{transform:translateY(0);}
+.ffr-nav{position:absolute;top:50%;transform:translateY(-50%);width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(16,12,22,.92);color:#fff;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:20;transition:background .2s,transform .2s,opacity .2s;backdrop-filter:blur(6px);}
+.ffr-nav:hover{background:rgba(168,85,247,.55);transform:translateY(-50%) scale(1.08);}
+.ffr-nav.ffr-prev{left:0;}
+.ffr-nav.ffr-next{right:0;}
+.ffr-nav[disabled]{opacity:0;pointer-events:none;}
+.ffr-rail::before,.ffr-rail::after{content:"";position:absolute;top:0;bottom:0;width:60px;z-index:10;pointer-events:none;}
+.ffr-rail::before{left:0;background:linear-gradient(90deg,#0c0913,transparent);}
+.ffr-rail::after{right:0;background:linear-gradient(270deg,#0c0913,transparent);}
 @media(max-width:680px){
-  .ffr-mod{padding:54px 12px 64px;}
-  .ffr-cf__nav{width:40px;height:40px;font-size:20px;}
+  .ffr-mod{padding:54px 0 64px;}
+  .ffr-row{padding:24px 20px;gap:12px;}
+  .ffr-card{width:clamp(160px,62vw,210px);}
+  .ffr-nav{display:none;}
+  .ffr-rail::before,.ffr-rail::after{width:24px;}
   .ffr-stat{min-width:104px;padding:15px 16px;}
   .ffr-stat__num{font-size:36px;}
+  .ffr-card__ov{opacity:1;}
+  .ffr-card__ov p{transform:translateY(0);}
 }
 </style>
 <div id="ffr-mod-wrap" style="display:none">
-  <section class="ffr-mod notranslate-keep">
+  <section class="ffr-mod">
     <div class="ffr-mod__head">
       <p class="ffr-mod__eyebrow">Conteúdo do curso</p>
       <h2 class="ffr-mod__title">O que vai aprender</h2>
@@ -358,16 +365,11 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
       <div class="ffr-stat"><span class="ffr-stat__num">81</span><span class="ffr-stat__lbl">Aulas</span></div>
       <div class="ffr-stat"><span class="ffr-stat__num">3</span><span class="ffr-stat__lbl">Bônus</span></div>
     </div>
-    <div class="ffr-cf">
-      <button class="ffr-cf__nav" id="ffrCfPrev" type="button" aria-label="Módulo anterior">&#8249;</button>
-      <div class="ffr-cf__stage" id="ffrCfStage"></div>
-      <button class="ffr-cf__nav" id="ffrCfNext" type="button" aria-label="Próximo módulo">&#8250;</button>
+    <div class="ffr-rail">
+      <button class="ffr-nav ffr-prev" id="ffrRowPrev" type="button" aria-label="Voltar">&#8249;</button>
+      <div class="ffr-row" id="ffrRow"></div>
+      <button class="ffr-nav ffr-next" id="ffrRowNext" type="button" aria-label="Avançar">&#8250;</button>
     </div>
-    <div class="ffr-cf__info">
-      <span class="ffr-cf__mod" id="ffrCfMod">Módulo 01</span>
-      <p class="ffr-cf__desc" id="ffrCfDesc"></p>
-    </div>
-    <div class="ffr-cf__dots" id="ffrCfDots"></div>
   </section>
 </div>
 <script>
@@ -387,83 +389,48 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
     {f:"1dc29627b352-modulo-111-6e640b96b0.png",d:"Um procedimento real, em alta qualidade e de vários ângulos."},
     {f:"d2a37520f24d-modulo-121-ca31e71778.png",d:"Retoque, cuidados pós-procedimento e adaptações para a cliente."}
   ];
-  var active=0, cards=[], dots=[], mounted=false;
+  var mounted=false;
 
   function build(){
-    var stage=document.getElementById("ffrCfStage");
-    var dotsWrap=document.getElementById("ffrCfDots");
-    if(!stage) return;
+    var row=document.getElementById("ffrRow");
+    if(!row) return;
     MODS.forEach(function(m,i){
       var c=document.createElement("div");
-      c.className="ffr-cf__card";
+      c.className="ffr-card";
       var img=document.createElement("img");
       img.src=BASE+m.f; img.alt="Módulo "+(i+1); img.loading="lazy";
-      c.appendChild(img);
-      c.addEventListener("click",function(){ if(i===active){return;} setActive(i); });
-      stage.appendChild(c); cards.push(c);
-
-      var d=document.createElement("button");
-      d.className="ffr-cf__dot"; d.type="button"; d.setAttribute("aria-label","Ir ao módulo "+(i+1));
-      d.addEventListener("click",function(){ setActive(i); });
-      dotsWrap.appendChild(d); dots.push(d);
+      var ov=document.createElement("div");
+      ov.className="ffr-card__ov";
+      var p=document.createElement("p"); p.textContent=m.d;
+      ov.appendChild(p);
+      c.appendChild(img); c.appendChild(ov);
+      row.appendChild(c);
     });
-    layout();
-    document.getElementById("ffrCfPrev").addEventListener("click",function(){ setActive(active-1); });
-    document.getElementById("ffrCfNext").addEventListener("click",function(){ setActive(active+1); });
-    enableDrag(stage);
+    var prev=document.getElementById("ffrRowPrev");
+    var next=document.getElementById("ffrRowNext");
+    function step(){ return Math.round(row.clientWidth*0.82); }
+    prev.addEventListener("click",function(){ row.scrollBy({left:-step(),behavior:"smooth"}); });
+    next.addEventListener("click",function(){ row.scrollBy({left:step(),behavior:"smooth"}); });
+    function upd(){
+      prev.disabled = row.scrollLeft<=4;
+      next.disabled = row.scrollLeft >= (row.scrollWidth-row.clientWidth-4);
+    }
+    row.addEventListener("scroll",upd); window.addEventListener("resize",upd);
+    // arrasta com o mouse
+    var down=false,sx=0,sl=0,moved=false;
+    row.addEventListener("pointerdown",function(e){ down=true;moved=false;sx=e.clientX;sl=row.scrollLeft;row.style.scrollBehavior="auto"; });
+    window.addEventListener("pointermove",function(e){ if(!down)return; var dx=e.clientX-sx; if(Math.abs(dx)>4)moved=true; row.scrollLeft=sl-dx; });
+    window.addEventListener("pointerup",function(){ if(down){down=false;row.style.scrollBehavior="smooth";} });
+    row.addEventListener("click",function(e){ if(moved){ e.preventDefault();e.stopPropagation(); } },true);
+    upd();
   }
 
-  function setActive(i){
-    if(i<0)i=0; if(i>MODS.length-1)i=MODS.length-1;
-    active=i; layout();
-  }
-
-  function layout(){
-    cards.forEach(function(c,i){
-      var pos=i-active, abs=Math.abs(pos);
-      c.style.zIndex=100-abs;
-      c.classList.toggle("is-active",abs===0);
-      if(abs>2){
-        c.style.opacity="0"; c.style.pointerEvents="none";
-        c.style.transform="translate(-50%,-50%) translateX("+(pos*60)+"%) scale(.5)";
-        return;
-      }
-      c.style.pointerEvents="auto";
-      c.style.opacity= abs===0?"1":(abs===1?"0.82":"0.42");
-      var tx=pos*52, rot=pos*-23, tz=-abs*130, sc= abs===0?1:(abs===1?.82:.66);
-      c.style.transform="translate(-50%,-50%) translateX("+tx+"%) translateZ("+tz+"px) rotateY("+rot+"deg) scale("+sc+")";
-    });
-    dots.forEach(function(d,i){ d.classList.toggle("is-active",i===active); });
-    var n=(active+1<10?"0":"")+(active+1);
-    document.getElementById("ffrCfMod").textContent="Módulo "+n;
-    var desc=document.getElementById("ffrCfDesc");
-    desc.style.opacity="0";
-    setTimeout(function(){ desc.textContent=MODS[active].d; desc.style.opacity="1"; },150);
-  }
-
-  function enableDrag(stage){
-    var startX=0, dragging=false;
-    stage.addEventListener("pointerdown",function(e){ dragging=true; startX=e.clientX; });
-    window.addEventListener("pointerup",function(e){
-      if(!dragging) return; dragging=false;
-      var dx=e.clientX-startX;
-      if(dx>45) setActive(active-1);
-      else if(dx<-45) setActive(active+1);
-    });
-    document.addEventListener("keydown",function(e){
-      if(e.key==="ArrowLeft") setActive(active-1);
-      else if(e.key==="ArrowRight") setActive(active+1);
-    });
-  }
-
-  // Relocaliza a seção nova pro lugar da antiga e esconde a antiga
   function mount(){
     if(mounted) return;
     var wrap=document.getElementById("ffr-mod-wrap");
     if(!wrap) return;
     mounted=true;
-    var old=null;
-    var secs=document.querySelectorAll(".elementor-section");
+    var old=null, secs=document.querySelectorAll(".elementor-section");
     for(var k=0;k<secs.length;k++){
       var s=secs[k];
       if(s.textContent && s.textContent.indexOf("O que vai aprender")!==-1){
