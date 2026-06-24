@@ -2460,24 +2460,23 @@ body {
   flex-direction: column;
   gap: 0;
   font-family: "Poppins", sans-serif;
-  font-weight: 600;
+  font-weight: 200;
   font-size: clamp(2.5rem, 6vw, 5rem);
   line-height: 0.98;
   letter-spacing: -0.015em;
   text-transform: uppercase;
-  color: #F5F0E0;
+  background: linear-gradient(180deg, #E8C97A 0%, #B5934F 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
   -webkit-text-stroke: 0;
 }
 .diptico-heavy__title span {
   display: block;
 }
 .diptico-heavy__title span:nth-child(2) {
-  /* "PESO" em dourado pra criar foco elegante e amarrar com o lado claro */
-  font-weight: 700;
-  background: linear-gradient(180deg, #E8C97A 0%, #B5934F 100%);
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
+  /* "PESO" segue a mesma espessura fina e o mesmo dourado do título inteiro */
+  font-weight: 200;
 }
 
 .diptico-heavy__caption {
@@ -2630,19 +2629,24 @@ body {
   top: clamp(2.5rem, 6vw, 4.25rem);
   z-index: 3;
   margin: 0;
-  font-style: italic;
-  font-weight: 500;
+  font-style: normal;
+  font-weight: 700;
   font-size: clamp(0.85rem, 1.05vw, 1.1rem);
-  letter-spacing: 0.3em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 .diptico-kicker--dark  {
-  left: clamp(2rem, 5vw, 5rem);
-  color: rgba(245, 240, 224, 0.7);
+  right: 50%;
+  left: auto;
+  padding-right: 0.55rem;
+  text-align: right;
+  color: rgba(245, 240, 224, 0.92);
 }
 .diptico-kicker--light {
-  right: clamp(2rem, 5vw, 5rem);
-  text-align: right;
+  left: 50%;
+  right: auto;
+  padding-left: 0.55rem;
+  text-align: left;
   color: #A98A4A;
 }
 
