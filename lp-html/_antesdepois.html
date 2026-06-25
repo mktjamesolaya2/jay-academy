@@ -1,0 +1,91 @@
+<!-- ===== SEÇÃO ANTES/DEPOIS — slider de comparação interativo ===== -->
+<style>
+.ffr-ad{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
+  padding:clamp(56px,7vw,92px) 20px;
+  background:
+    linear-gradient(180deg,#070509 0%,rgba(7,5,9,0) 14%,rgba(7,5,9,0) 86%,#070509 100%),
+    radial-gradient(130% 110% at 82% 18%,#16121d 0%,#0d0a12 52%,#070509 100%);}
+.ffr-ad__head{position:relative;z-index:1;text-align:center;max-width:820px;margin:0 auto clamp(40px,5vw,58px);}
+.ffr-ad__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 14px;}
+.ffr-ad__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
+.ffr-ad__title{font-size:clamp(27px,3.6vw,46px);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin:0 0 10px;color:#fff;}
+.ffr-ad__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-ad__sub{color:#b9b2c9;font-size:clamp(14px,1.6vw,16px);margin:0;}
+.ffr-ad__grid{position:relative;z-index:1;max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,3vw,40px);}
+/* comparador */
+.ffr-ad__cmp{position:relative;aspect-ratio:828/317;border-radius:16px;overflow:hidden;cursor:ew-resize;user-select:none;touch-action:none;
+  box-shadow:0 22px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.07);--pos:50%;}
+.ffr-ad__after{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
+.ffr-ad__before{position:absolute;top:0;left:0;height:100%;width:var(--pos);overflow:hidden;pointer-events:none;}
+.ffr-ad__before img{position:absolute;left:0;top:0;height:100%;width:auto;max-width:none;display:block;}
+.ffr-ad__handle{position:absolute;top:0;bottom:0;left:var(--pos);width:2px;background:#fff;transform:translateX(-1px);box-shadow:0 0 14px rgba(0,0,0,.6);pointer-events:none;}
+.ffr-ad__handle::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:rgba(20,15,28,.6);backdrop-filter:blur(4px);border:2px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,.5);}
+.ffr-ad__handle::before{content:"‹ ›";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;color:#fff;font-size:15px;font-weight:700;letter-spacing:-1px;}
+.ffr-ad__lbl{position:absolute;top:12px;z-index:2;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(8,5,14,.62);backdrop-filter:blur(4px);padding:5px 11px;border-radius:999px;pointer-events:none;}
+.ffr-ad__lbl--a{left:12px;}
+.ffr-ad__lbl--d{right:12px;color:#d8b9ff;}
+.ffr-ad__cap{margin:12px 2px 0;color:#b9b2c9;font-size:13px;text-align:center;}
+@media(max-width:720px){ .ffr-ad__grid{grid-template-columns:1fr;gap:30px;} }
+</style>
+<div id="ffr-ad-wrap" style="display:none">
+  <section class="ffr-ad">
+    <div class="ffr-ad__head">
+      <p class="ffr-ad__eyebrow">Antes & depois</p>
+      <h2 class="ffr-ad__title">A evolução das alunas <b>depois do curso</b></h2>
+      <p class="ffr-ad__sub">Arraste para comparar o trabalho antes e depois do Fio a Fio Realista.</p>
+    </div>
+    <div class="ffr-ad__grid">
+      <div>
+        <div class="ffr-ad__cmp">
+          <img class="ffr-ad__after" src="/lp/fio-a-fio-realista/ad2-depois.webp" alt="Depois do curso">
+          <div class="ffr-ad__before"><img src="/lp/fio-a-fio-realista/ad2-antes.webp" alt="Antes do curso"></div>
+          <div class="ffr-ad__handle"></div>
+          <span class="ffr-ad__lbl ffr-ad__lbl--a">Antes do curso</span>
+          <span class="ffr-ad__lbl ffr-ad__lbl--d">Depois do curso</span>
+        </div>
+      </div>
+      <div>
+        <div class="ffr-ad__cmp">
+          <img class="ffr-ad__after" src="/lp/fio-a-fio-realista/ad3-depois.webp" alt="Depois do curso">
+          <div class="ffr-ad__before"><img src="/lp/fio-a-fio-realista/ad3-antes.webp" alt="Antes do curso"></div>
+          <div class="ffr-ad__handle"></div>
+          <span class="ffr-ad__lbl ffr-ad__lbl--a">Antes do curso</span>
+          <span class="ffr-ad__lbl ffr-ad__lbl--d">Depois do curso</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+(function(){
+  var mounted=false;
+  function wire(){
+    document.querySelectorAll("#ffr-ad-wrap .ffr-ad__cmp").forEach(function(cmp){
+      function setPos(x){
+        var r=cmp.getBoundingClientRect();
+        var p=Math.max(0,Math.min(100,(x-r.left)/r.width*100));
+        cmp.style.setProperty("--pos",p+"%");
+      }
+      var down=false;
+      cmp.addEventListener("pointerdown",function(e){down=true;setPos(e.clientX);try{cmp.setPointerCapture(e.pointerId);}catch(_){}});
+      cmp.addEventListener("pointermove",function(e){if(down)setPos(e.clientX);});
+      cmp.addEventListener("pointerup",function(){down=false;});
+      cmp.addEventListener("pointercancel",function(){down=false;});
+    });
+  }
+  function mount(){
+    if(mounted) return;
+    var wrap=document.getElementById("ffr-ad-wrap");
+    if(!wrap) return;
+    mounted=true;
+    var dep=document.getElementById("ffr-dep-wrap");
+    if(dep && dep.parentNode){ dep.insertAdjacentElement("afterend",wrap); }
+    wrap.style.display="block";
+    wire();
+  }
+  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded",mount); }
+  else{ mount(); }
+  setTimeout(mount,800);
+})();
+</script>
+<!-- ===== FIM SEÇÃO ANTES/DEPOIS ===== -->
