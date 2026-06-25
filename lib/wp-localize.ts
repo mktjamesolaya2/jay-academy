@@ -131,7 +131,11 @@ async function fetchAndStore(
     // re-baixar e re-subir em vez de devolver a url antiga em cache).
     if (!force) {
       const existing = await getMapping(url);
-      if (existing) return existing;
+      // Ignora mapeamentos antigos que apontam pro Vercel Blob bloqueado (de antes
+      // da migração pro Supabase). Sem isso, os assets COMPARTILHADOS do Elementor
+      // (CSS/JS) deduplicados em KV devolviam a URL do Blob 403 — e toda página NOVA
+      // copiada nascia sem estilo. Re-baixa e re-mapeia pro storage atual (Supabase).
+      if (existing && !existing.includes("blob.vercel-storage.com")) return existing;
     }
 
     try {
