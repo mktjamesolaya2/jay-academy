@@ -936,7 +936,8 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
     var d=DEP[active];
     var vid=document.getElementById("ffrDepVideo");
     vid.innerHTML='<img src="https://img.youtube.com/vi/'+d.id+'/hqdefault.jpg" alt="Depoimento"><span class="ffr-dep__play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>';
-    vid.onclick=function(){ vid.innerHTML='<iframe src="https://www.youtube.com/embed/'+d.id+'?autoplay=1&rel=0" title="Depoimento" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>'; };
+    vid.style.cursor="pointer";
+    vid.onclick=function(){ vid.innerHTML='<iframe src="https://www.youtube.com/embed/'+d.id+'?autoplay=1&rel=0" title="Depoimento" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>'; vid.onclick=null; vid.style.cursor="default"; };
     var q=document.getElementById("ffrDepQuote");
     q.style.opacity="0";
     setTimeout(function(){ q.innerHTML=d.quotes.map(function(t){return "<p>"+t+"</p>";}).join(""); q.style.opacity="1"; },150);
