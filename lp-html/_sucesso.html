@@ -1,54 +1,66 @@
-<!-- ===== SEÇÃO "SEU SUCESSO" — remodelada com a arte James-Pix ===== -->
+<!-- ===== SEÇÃO "SEU SUCESSO" — redesign prova de faturamento ===== -->
 <style>
 .ffr-suc{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
-  padding:clamp(60px,7vw,96px) 20px;
+  padding:clamp(58px,7vw,96px) 20px;
   background:
-    linear-gradient(180deg,#070509 0%,rgba(7,5,9,0) 14%,rgba(7,5,9,0) 86%,#070509 100%),
-    radial-gradient(80% 90% at 88% 50%, rgba(124,58,173,.32) 0%, rgba(88,28,135,.12) 38%, transparent 70%),
+    linear-gradient(180deg,#070509 0%,rgba(7,5,9,0) 12%,rgba(7,5,9,0) 88%,#070509 100%),
+    radial-gradient(70% 80% at 22% 60%, rgba(124,58,173,.3) 0%, rgba(88,28,135,.1) 40%, transparent 72%),
     radial-gradient(130% 110% at 82% 18%,#16121d 0%,#0d0a12 52%,#070509 100%);}
-.ffr-suc__inner{position:relative;z-index:1;max-width:1180px;margin:0 auto;
-  display:grid;grid-template-columns:1.04fr .96fr;gap:clamp(28px,4vw,56px);align-items:center;}
-/* texto */
+.ffr-suc__head{position:relative;z-index:1;text-align:center;max-width:880px;margin:0 auto clamp(36px,5vw,56px);}
 .ffr-suc__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin:0 0 16px;}
-.ffr-suc__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
-.ffr-suc__title{font-size:clamp(26px,3.4vw,42px);font-weight:800;line-height:1.1;letter-spacing:-.02em;margin:0 0 18px;color:#fff;}
+.ffr-suc__eyebrow::before,.ffr-suc__eyebrow::after{content:"";width:26px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
+.ffr-suc__title{font-size:clamp(27px,3.7vw,46px);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin:0;color:#fff;}
 .ffr-suc__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ffr-suc__lead{font-size:clamp(17px,2vw,22px);font-weight:700;color:#fff;margin:0 0 26px;}
-.ffr-suc__lead b{background:linear-gradient(92deg,#86efac,#22c55e);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ffr-suc__list{list-style:none;margin:0 0 30px;padding:0;display:flex;flex-direction:column;gap:14px;}
-.ffr-suc__list li{display:flex;gap:12px;align-items:flex-start;color:#e3dcf0;font-size:clamp(14.5px,1.5vw,16.5px);line-height:1.5;}
-.ffr-suc__list svg{flex:0 0 auto;width:22px;height:22px;margin-top:1px;}
-.ffr-suc__cta{display:inline-block;background:#22c55e;color:#04130b;font-weight:700;font-size:15px;letter-spacing:.02em;text-transform:uppercase;padding:16px 32px;border-radius:9px;text-decoration:none;box-shadow:0 12px 34px rgba(34,197,94,.36);transition:transform .15s,box-shadow .15s;}
+/* corpo: imagem + painel */
+.ffr-suc__body{position:relative;z-index:1;max-width:1180px;margin:0 auto;
+  display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(24px,4vw,56px);align-items:center;}
+.ffr-suc__art{position:relative;display:flex;justify-content:center;align-items:flex-end;}
+.ffr-suc__art::before{content:"";position:absolute;width:88%;height:80%;top:8%;border-radius:50%;
+  background:radial-gradient(closest-side, rgba(168,85,247,.42), rgba(236,72,153,.12) 55%, transparent 75%);filter:blur(42px);z-index:0;}
+.ffr-suc__art img{position:relative;z-index:1;width:100%;max-width:500px;height:auto;display:block;filter:drop-shadow(0 30px 60px rgba(0,0,0,.55));}
+/* painel direito */
+.ffr-suc__money{position:relative;background:linear-gradient(135deg, rgba(34,197,94,.14), rgba(34,197,94,.04));border:1px solid rgba(34,197,94,.3);border-radius:18px;padding:clamp(18px,2.4vw,26px) clamp(20px,3vw,30px);margin-bottom:22px;}
+.ffr-suc__money small{display:block;color:#cfeede;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;}
+.ffr-suc__money b{display:block;font-size:clamp(34px,4.6vw,56px);font-weight:800;line-height:1;letter-spacing:-.02em;background:linear-gradient(92deg,#86efac,#22c55e);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-suc__money span{display:block;color:#e3dcf0;font-size:14.5px;font-weight:500;margin-top:7px;}
+.ffr-suc__grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px;}
+.ffr-suc__card{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:14px 15px;}
+.ffr-suc__card svg{flex:0 0 auto;width:20px;height:20px;margin-top:1px;}
+.ffr-suc__card p{margin:0;color:#e3dcf0;font-size:14px;line-height:1.4;}
+.ffr-suc__card p b{color:#fff;font-weight:600;}
+.ffr-suc__cta{display:inline-block;background:#22c55e;color:#04130b;font-weight:700;font-size:15px;letter-spacing:.02em;text-transform:uppercase;padding:16px 34px;border-radius:9px;text-decoration:none;box-shadow:0 12px 34px rgba(34,197,94,.36);transition:transform .15s,box-shadow .15s;}
 .ffr-suc__cta:hover{transform:translateY(-2px);box-shadow:0 16px 42px rgba(34,197,94,.5);}
-/* imagem James-Pix */
-.ffr-suc__art{position:relative;display:flex;justify-content:center;align-items:center;}
-.ffr-suc__art::before{content:"";position:absolute;width:90%;height:90%;border-radius:50%;
-  background:radial-gradient(closest-side, rgba(168,85,247,.4), rgba(236,72,153,.12) 55%, transparent 75%);filter:blur(40px);z-index:0;}
-.ffr-suc__art img{position:relative;z-index:1;width:100%;max-width:480px;height:auto;display:block;
-  filter:drop-shadow(0 30px 60px rgba(0,0,0,.55));}
 @media(max-width:860px){
-  .ffr-suc__inner{grid-template-columns:1fr;gap:18px;}
+  .ffr-suc__body{grid-template-columns:1fr;gap:24px;}
   .ffr-suc__art{order:-1;}
-  .ffr-suc__art img{max-width:min(78vw,380px);}
+  .ffr-suc__art img{max-width:min(80vw,400px);}
+  .ffr-suc__grid{grid-template-columns:1fr;}
 }
 </style>
 <div id="ffr-suc-wrap" style="display:none">
   <section class="ffr-suc">
-    <div class="ffr-suc__inner">
-      <div class="ffr-suc__text">
-        <p class="ffr-suc__eyebrow">Seu sucesso · Técnica anti-crise</p>
-        <h2 class="ffr-suc__title">Por que dominar o <b>Fio a Fio Realista</b> é o caminho para o seu sucesso?</h2>
-        <p class="ffr-suc__lead">Fature de <b>R$500 a R$3mil</b> por cada procedimento.</p>
-        <ul class="ffr-suc__list">
-          <li><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="url(#g1)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#04130b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><defs><linearGradient id="g1" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#86efac"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs></svg>Dominando o Fio a Fio você cobra <strong style="color:#fff">muito mais caro</strong> pelo seu serviço.</li>
-          <li><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="url(#g1)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#04130b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Resultados tão perfeitos que suas clientes <strong style="color:#fff">te indicam sozinhas</strong>.</li>
-          <li><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="url(#g1)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#04130b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Destaque-se no mercado e deixe a <strong style="color:#fff">concorrência para trás</strong>.</li>
-          <li><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="url(#g1)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#04130b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Aprenda com um dos <strong style="color:#fff">melhores profissionais</strong> de micropigmentação.</li>
-        </ul>
-        <a class="ffr-suc__cta" href="#inscricao">Quero garantir minha vaga agora</a>
-      </div>
+    <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="ffrChk" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#86efac"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs></svg>
+    <div class="ffr-suc__head">
+      <p class="ffr-suc__eyebrow">Seu sucesso · técnica anti-crise</p>
+      <h2 class="ffr-suc__title">Por que dominar o <b>Fio a Fio Realista</b> é o caminho para o seu sucesso?</h2>
+    </div>
+    <div class="ffr-suc__body">
       <div class="ffr-suc__art">
         <img src="/lp/fio-a-fio-realista/james-pix-semfundo.png" alt="James Olaya e comprovantes de Pix recebidos" loading="lazy">
+      </div>
+      <div class="ffr-suc__right">
+        <div class="ffr-suc__money">
+          <small>Por cada procedimento você fatura</small>
+          <b>R$500 a R$3.000</b>
+          <span>É uma técnica anti-crise: resultado que a cliente paga caro e indica.</span>
+        </div>
+        <div class="ffr-suc__grid">
+          <div class="ffr-suc__card"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="url(#ffrChk)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#04130b" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg><p>Cobre <b>muito mais caro</b> pelo seu serviço.</p></div>
+          <div class="ffr-suc__card"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="url(#ffrChk)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#04130b" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg><p>Clientes que <b>te indicam sozinhas</b>.</p></div>
+          <div class="ffr-suc__card"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="url(#ffrChk)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#04130b" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg><p>Deixe a <b>concorrência para trás</b>.</p></div>
+          <div class="ffr-suc__card"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="url(#ffrChk)"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#04130b" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg><p>Aprenda com <b>um dos melhores</b> do Brasil.</p></div>
+        </div>
+        <a class="ffr-suc__cta" href="#inscricao">Quero garantir minha vaga agora</a>
       </div>
     </div>
   </section>
