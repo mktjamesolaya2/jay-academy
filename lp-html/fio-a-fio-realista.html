@@ -688,7 +688,9 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 <!-- ===== SEÇÃO "VÁ ALÉM DO SHADOW" — imagem integrada no gradiente roxo (esq) + texto (dir) ===== -->
 <style>
 .ffr-sh{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
-  background:radial-gradient(90% 100% at 18% 50%, #241544 0%, #150d28 46%, #0a0712 100%);
+  background:
+    linear-gradient(180deg,#070509 0%,rgba(7,5,9,0) 18%,rgba(7,5,9,0) 82%,#070509 100%),
+    radial-gradient(130% 110% at 82% 18%,#16121d 0%,#0d0a12 52%,#070509 100%);
   display:grid;grid-template-columns:1.05fr 1fr;align-items:center;height:clamp(300px,34vw,420px);}
 /* imagem à esquerda, dissolvendo no fundo (integrada) */
 .ffr-sh__img{position:relative;align-self:stretch;}
