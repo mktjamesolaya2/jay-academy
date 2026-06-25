@@ -685,43 +685,44 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 </script>
 <!-- ===== FIM SEÇÃO POR QUE ===== -->
 
-<!-- ===== SEÇÃO "VÁ ALÉM DO SHADOW" — imagem integrada no gradiente roxo (esq) + texto (dir) ===== -->
+<!-- ===== SEÇÃO "VÁ ALÉM DO SHADOW" — título centralizado no topo, texto à direita, imagem com fade suave ===== -->
 <style>
 .ffr-sh{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
   background:
     linear-gradient(180deg,#070509 0%,rgba(7,5,9,0) 18%,rgba(7,5,9,0) 82%,#070509 100%),
     radial-gradient(130% 110% at 82% 18%,#16121d 0%,#0d0a12 52%,#070509 100%);
-  display:grid;grid-template-columns:1.05fr 1fr;align-items:center;height:clamp(300px,34vw,420px);}
-/* imagem à esquerda, dissolvendo no fundo (integrada) */
-.ffr-sh__img{position:relative;align-self:stretch;}
+  height:clamp(380px,44vw,520px);}
+/* imagem ao fundo, dissolvendo suave pra direita e nas bordas */
+.ffr-sh__img{position:absolute;inset:0;z-index:0;}
 .ffr-sh__img img{width:100%;height:100%;object-fit:cover;object-position:50% 41%;display:block;
-  filter:grayscale(.32) brightness(.66) contrast(1.05);
+  filter:grayscale(.3) brightness(.7) contrast(1.04);
   -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 32%, #000 70%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 22%, #000 80%, transparent 100%);
+    linear-gradient(103deg, #000 0%, #000 40%, rgba(0,0,0,.4) 66%, transparent 88%),
+    linear-gradient(to bottom, transparent 0%, #000 16%, #000 86%, transparent 100%);
   -webkit-mask-composite:source-in;mask-composite:intersect;
   mask-image:
-    linear-gradient(to right, transparent 0%, #000 32%, #000 70%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 22%, #000 80%, transparent 100%);}
+    linear-gradient(103deg, #000 0%, #000 40%, rgba(0,0,0,.4) 66%, transparent 88%),
+    linear-gradient(to bottom, transparent 0%, #000 16%, #000 86%, transparent 100%);}
 .ffr-sh__img::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(105deg, rgba(13,10,18,.18) 0%, rgba(9,7,14,.4) 40%, rgba(7,5,9,.92) 76%, #070509 100%);}
-.ffr-sh__img::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
-  background:radial-gradient(120% 90% at 35% 50%, rgba(168,85,247,.1), transparent 62%);}
-/* texto à direita */
-.ffr-sh__txt{position:relative;z-index:2;padding:clamp(36px,5vw,72px) clamp(24px,6vw,80px) clamp(36px,5vw,72px) 0;}
-.ffr-sh__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 16px;}
+  background:linear-gradient(105deg, rgba(10,7,15,.15) 0%, rgba(8,6,12,.35) 55%, rgba(7,5,9,.7) 100%);}
+/* título centralizado no topo */
+.ffr-sh__head{position:absolute;top:clamp(24px,4.6vw,52px);left:0;right:0;z-index:2;text-align:center;padding:0 18px;}
+.ffr-sh__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:12.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 12px;}
 .ffr-sh__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
-.ffr-sh__title{font-size:clamp(30px,4.4vw,56px);font-weight:800;line-height:1.04;letter-spacing:-.02em;margin:0 0 20px;color:#fff;}
+.ffr-sh__title{font-size:clamp(30px,4.6vw,58px);font-weight:800;line-height:1.04;letter-spacing:-.02em;margin:0;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.5);}
 .ffr-sh__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ffr-sh__sub{color:#e3dcf0;font-size:clamp(16px,1.9vw,20px);line-height:1.55;margin:0;max-width:30ch;}
+/* resto do texto à direita */
+.ffr-sh__txt{position:absolute;right:clamp(24px,5vw,76px);bottom:clamp(30px,5vw,58px);z-index:2;max-width:40ch;text-align:right;}
+.ffr-sh__sub{color:#e3dcf0;font-size:clamp(15px,1.8vw,19px);line-height:1.55;margin:0;}
 .ffr-sh__sub strong{color:#fff;font-weight:600;}
-@media(max-width:820px){
-  .ffr-sh{grid-template-columns:1fr;min-height:0;}
-  .ffr-sh__img{height:clamp(280px,70vw,420px);}
-  .ffr-sh__img img{-webkit-mask-image:linear-gradient(to bottom, transparent 0%, #000 30%, #000 72%, transparent 100%);mask-image:linear-gradient(to bottom, transparent 0%, #000 30%, #000 72%, transparent 100%);}
-  .ffr-sh__txt{padding:8px clamp(22px,6vw,32px) clamp(40px,9vw,56px);text-align:center;}
+@media(max-width:760px){
+  .ffr-sh{height:auto;padding:clamp(34px,8vw,52px) 22px clamp(40px,9vw,60px);}
+  .ffr-sh__img img{
+    -webkit-mask-image:linear-gradient(to bottom, transparent 0%, #000 22%, #000 80%, transparent 100%);
+    mask-image:linear-gradient(to bottom, transparent 0%, #000 22%, #000 80%, transparent 100%);}
+  .ffr-sh__head{position:static;text-align:center;}
   .ffr-sh__eyebrow{justify-content:center;}
-  .ffr-sh__sub{margin:0 auto;}
+  .ffr-sh__txt{position:static;max-width:none;text-align:center;margin-top:clamp(180px,52vw,300px);}
 }
 </style>
 <div id="ffr-sh-wrap" style="display:none">
@@ -729,9 +730,11 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
     <div class="ffr-sh__img">
       <img src="/lp/fio-a-fio-realista/shadow.webp" alt="Resultado de micropigmentação de sobrancelhas" loading="lazy">
     </div>
-    <div class="ffr-sh__txt">
+    <div class="ffr-sh__head">
       <p class="ffr-sh__eyebrow">Próximo nível</p>
       <h2 class="ffr-sh__title">Vá muito além do <b>shadow</b></h2>
+    </div>
+    <div class="ffr-sh__txt">
       <p class="ffr-sh__sub">Domine as técnicas mais desejadas da micropigmentação e leve o <strong>faturamento do seu estúdio</strong> a outro patamar.</p>
     </div>
   </section>
