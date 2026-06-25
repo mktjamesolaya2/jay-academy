@@ -602,11 +602,8 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 .ffr-pq__art::before{content:"";position:absolute;width:115%;height:88%;top:6%;left:-7%;
   background:radial-gradient(closest-side, rgba(168,85,247,.5), rgba(236,72,153,.22) 55%, transparent 78%);
   filter:blur(46px);z-index:0;}
-.ffr-pq__ring{position:absolute;inset:-14px;border-radius:26px;
-  background:conic-gradient(from 140deg, #f5a8e0, #a855f7, #6d28d9, #ec4899, #f5a8e0);
-  opacity:.45;filter:blur(2px);z-index:0;}
 .ffr-pq__frame{position:relative;z-index:1;width:clamp(260px,34vw,400px);border-radius:22px;overflow:hidden;
-  box-shadow:0 40px 90px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08);
+  box-shadow:0 40px 90px rgba(0,0,0,.55);
   animation:ffrFloat 6s ease-in-out infinite;}
 .ffr-pq__frame img{display:block;width:100%;height:auto;}
 .ffr-pq__badge{position:absolute;z-index:2;left:50%;bottom:14px;transform:translateX(-50%);
@@ -635,7 +632,6 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
   <section class="ffr-pq">
     <div class="ffr-pq__inner">
       <div class="ffr-pq__art">
-        <div class="ffr-pq__ring"></div>
         <div class="ffr-pq__frame">
           <img src="/lp/fio-a-fio-realista/mini-james.webp" alt="James Olaya em um procedimento de micropigmentação" loading="lazy">
           <span class="ffr-pq__badge"><i></i>Precisão em cada fio</span>
