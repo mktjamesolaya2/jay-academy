@@ -1,0 +1,87 @@
+<!-- ===== SEÇÃO "POR QUE SER MICROPIGMENTADORA" — editorial sobre fundo de pigmento (Higgsfield) ===== -->
+<style>
+.ffr-pq{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
+  padding:clamp(64px,9vw,110px) 20px;background:#0a0710;}
+.ffr-pq__bg{position:absolute;inset:0;background:url('/lp/fio-a-fio-realista/bg-micro.webp') center center/cover no-repeat;opacity:.85;z-index:0;}
+.ffr-pq__bg::after{content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,#0a0710 0%,rgba(10,7,16,.35) 16%,rgba(10,7,16,.45) 84%,#0a0710 100%),
+    radial-gradient(120% 80% at 50% 50%,rgba(10,7,16,.2),rgba(10,7,16,.78));}
+.ffr-pq__inner{position:relative;z-index:1;max-width:1120px;margin:0 auto;}
+.ffr-pq__head{text-align:center;max-width:760px;margin:0 auto clamp(44px,6vw,72px);}
+.ffr-pq__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 14px;}
+.ffr-pq__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
+.ffr-pq__title{font-size:clamp(30px,4.6vw,56px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin:0;color:#fff;text-shadow:0 2px 30px rgba(0,0,0,.5);}
+.ffr-pq__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-pq__row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,60px);align-items:center;margin-bottom:clamp(40px,5vw,72px);}
+.ffr-pq__row:last-child{margin-bottom:0;}
+.ffr-pq__fig{margin:0;position:relative;border-radius:20px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(192,132,252,.28);}
+.ffr-pq__fig img{display:block;width:100%;height:100%;object-fit:cover;aspect-ratio:16/11;}
+.ffr-pq__txt p{color:#e9e3f3;font-size:clamp(15px,1.55vw,17.5px);line-height:1.62;margin:0 0 16px;}
+.ffr-pq__txt p:last-child{margin-bottom:0;}
+.ffr-pq__txt strong{color:#fff;font-weight:600;}
+.ffr-pq__hl{color:#fff;font-weight:700;font-size:clamp(17px,2vw,22px);line-height:1.4;margin:0 0 16px;}
+.ffr-pq__hl span{background:linear-gradient(92deg,#f5a8e0,#c084fc);-webkit-background-clip:text;background-clip:text;color:transparent;}
+@media(max-width:760px){
+  .ffr-pq__bg{background-attachment:scroll;}
+  .ffr-pq__row{grid-template-columns:1fr;gap:24px;}
+  .ffr-pq__row--flip .ffr-pq__fig{order:-1;}
+}
+</style>
+<div id="ffr-pq-wrap" style="display:none">
+  <section class="ffr-pq">
+    <div class="ffr-pq__bg"></div>
+    <div class="ffr-pq__inner">
+      <div class="ffr-pq__head">
+        <p class="ffr-pq__eyebrow">Seja o seu melhor</p>
+        <h2 class="ffr-pq__title">Por que ser uma <b>micropigmentadora?</b></h2>
+      </div>
+
+      <div class="ffr-pq__row">
+        <figure class="ffr-pq__fig">
+          <img src="https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/7c5d3b084609-10-1024x682-a09a30755e.jpg" alt="James Olaya em atendimento" loading="lazy">
+        </figure>
+        <div class="ffr-pq__txt">
+          <p class="ffr-pq__hl">Um profissional bem preparado abre portas para <span>inúmeras oportunidades</span> na beleza e na estética.</p>
+          <p>A estética nunca esteve tão valorizada — e, por ser um mercado que não conhece crise, cada vez mais pessoas encontram nele uma carreira <strong>sólida e segura</strong>.</p>
+          <p>Mais do que transformar a autoestima de quem se cuida, a técnica conquistou os grandes palcos da moda e não para de crescer.</p>
+        </div>
+      </div>
+
+      <div class="ffr-pq__row ffr-pq__row--flip">
+        <div class="ffr-pq__txt">
+          <p class="ffr-pq__hl">Hoje uma micropigmentadora pode faturar como <span>médicos, advogados e engenheiros</span>.</p>
+          <p>O mercado da beleza explodiu — e está na hora de você também fazer parte disso como uma <strong>artista de referência</strong>.</p>
+          <p>Afinal, a micropigmentação vai muito além das sobrancelhas: cílios, lábios, aréolas e tantas outras possibilidades de transformação.</p>
+        </div>
+        <figure class="ffr-pq__fig">
+          <img src="https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/2525e4ece752-permanent-make-up-eyebrows-2285156e51.jpg" alt="Procedimento de micropigmentação" loading="lazy">
+        </figure>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+(function(){
+  var mounted=false;
+  function mount(){
+    if(mounted) return;
+    var wrap=document.getElementById("ffr-pq-wrap");
+    if(!wrap) return;
+    mounted=true;
+    var old=null, secs=document.querySelectorAll(".elementor-section");
+    for(var k=0;k<secs.length;k++){
+      var s=secs[k];
+      if(s.textContent && s.textContent.indexOf("Seja o seu melhor")!==-1){
+        old=s.closest(".elementor-top-section")||s; break;
+      }
+    }
+    if(old){ old.style.display="none"; old.insertAdjacentElement("afterend",wrap); }
+    wrap.style.display="block";
+  }
+  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded",mount); }
+  else{ mount(); }
+  setTimeout(mount,600);
+})();
+</script>
+<!-- ===== FIM SEÇÃO POR QUE ===== -->
