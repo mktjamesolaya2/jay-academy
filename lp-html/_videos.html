@@ -85,14 +85,16 @@
     var wrap=document.getElementById("ffr-vid-wrap");
     if(!wrap) return;
     mounted=true;
-    var old=null, secs=document.querySelectorAll(".elementor-section");
-    for(var k=0;k<secs.length;k++){
-      var s=secs[k];
-      if(s.textContent && s.textContent.indexOf("Aperte o Play")!==-1){
-        old=s.closest(".elementor-top-section")||s; break;
+    // esconde a seção do título "Aperte o Play" E a(s) seção(ões) dos vídeos antigos
+    var marks=["Aperte o","b10a39e931ec","3267b48f325a","bd101e4bfb63","b5e8876d62b6"];
+    var tops=document.querySelectorAll(".elementor-top-section"), firstHidden=null;
+    for(var i=0;i<tops.length;i++){
+      var t=tops[i], h=t.innerHTML;
+      for(var m=0;m<marks.length;m++){
+        if(h.indexOf(marks[m])!==-1){ t.style.display="none"; if(!firstHidden)firstHidden=t; break; }
       }
     }
-    if(old){ old.style.display="none"; old.insertAdjacentElement("afterend",wrap); }
+    if(firstHidden){ firstHidden.insertAdjacentElement("afterend",wrap); }
     wrap.style.display="block";
     build();
   }
