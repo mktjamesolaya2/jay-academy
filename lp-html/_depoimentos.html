@@ -13,13 +13,8 @@
 .ffr-dep__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
 .ffr-dep__title{font-size:clamp(30px,4vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.025em;margin:0 0 38px;color:#fff;}
 .ffr-dep__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ffr-dep__arrows{display:flex;gap:14px;}
-.ffr-dep__arrow{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s,opacity .2s,border-color .2s;}
-.ffr-dep__arrow:hover{background:linear-gradient(135deg,#f5a8e0,#a855f7);transform:scale(1.06);border-color:transparent;}
-.ffr-dep__arrow[disabled]{opacity:.3;pointer-events:none;}
-.ffr-dep__view{overflow:hidden;}
-.ffr-dep__track{display:flex;gap:clamp(28px,3.5vw,52px);transition:transform .5s cubic-bezier(.22,.61,.36,1);}
-.ffr-dep__card{flex:0 0 clamp(280px,60%,400px);padding:24px 0 22px;
+.ffr-dep__track{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,3.5vw,48px);}
+.ffr-dep__card{padding:24px 0 22px;
   border-top:1px solid rgba(192,132,252,.45);border-bottom:1px solid rgba(255,255,255,.1);}
 .ffr-dep__stars{display:flex;gap:3px;margin:0 0 16px;}
 .ffr-dep__stars svg{width:15px;height:15px;fill:#f5b740;}
@@ -51,10 +46,6 @@
       <div class="ffr-dep__left">
         <p class="ffr-dep__eyebrow">Depoimentos reais</p>
         <h2 class="ffr-dep__title">O que as alunas dizem sobre o <b>Fio a Fio Realista</b></h2>
-        <div class="ffr-dep__arrows">
-          <button class="ffr-dep__arrow" id="ffrDepPrev" type="button" aria-label="Anterior">&#8249;</button>
-          <button class="ffr-dep__arrow" id="ffrDepNext" type="button" aria-label="Próximo">&#8250;</button>
-        </div>
       </div>
       <div class="ffr-dep__view">
         <div class="ffr-dep__track" id="ffrDepTrack"></div>
@@ -97,29 +88,9 @@
       c.querySelector(".ffr-dep__play").addEventListener("click",function(){ open(d.id); });
       track.appendChild(c);
     });
-    prev=document.getElementById("ffrDepPrev"); next=document.getElementById("ffrDepNext");
-    prev.addEventListener("click",function(){ go(idx-1); });
-    next.addEventListener("click",function(){ go(idx+1); });
     document.getElementById("ffrDepClose").addEventListener("click",close);
     modal.addEventListener("click",function(e){ if(e.target===modal) close(); });
     document.addEventListener("keydown",function(e){ if(e.key==="Escape") close(); });
-    window.addEventListener("resize",update);
-    update();
-  }
-  function visible(){
-    var card=track.children[0]; if(!card) return 1;
-    var cw=card.getBoundingClientRect().width + parseFloat(getComputedStyle(track).gap||0);
-    var view=track.parentElement.getBoundingClientRect().width;
-    return Math.max(1, Math.floor((view+2)/cw));
-  }
-  function maxIdx(){ return Math.max(0, DEP.length-visible()); }
-  function go(i){ idx=Math.max(0,Math.min(maxIdx(),i)); update(); }
-  function update(){
-    var card=track.children[0]; if(!card) return;
-    var cw=card.getBoundingClientRect().width + parseFloat(getComputedStyle(track).gap||0);
-    idx=Math.min(idx,maxIdx());
-    track.style.transform="translateX("+(-idx*cw)+"px)";
-    prev.disabled=idx<=0; next.disabled=idx>=maxIdx();
   }
 
   function mount(){
