@@ -855,96 +855,116 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 </script>
 <!-- ===== FIM SEÇÃO SUCESSO ===== -->
 
-<!-- ===== SEÇÃO DEPOIMENTOS — slider minimalista (hairlines) + play que abre o vídeo ===== -->
+<!-- ===== SEÇÃO DEPOIMENTOS — título + card featured (Tânia, thumb+play) + depoimento full-width ===== -->
 <style>
 .ffr-dep{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
   padding:clamp(60px,8vw,104px) 20px clamp(34px,4vw,52px);
   background:linear-gradient(180deg,#17121f 0%,#100b18 55%,#14101e 100%);}
-.ffr-dep__wrap{position:relative;z-index:1;max-width:1340px;margin:0 auto;display:grid;grid-template-columns:.72fr 1.28fr;gap:clamp(28px,4vw,64px);align-items:center;}
+.ffr-dep__top{position:relative;z-index:1;max-width:1300px;margin:0 auto clamp(22px,3vw,34px);display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(28px,4vw,56px);align-items:center;}
 .ffr-dep__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 16px;}
 .ffr-dep__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
-.ffr-dep__title{font-size:clamp(34px,4.8vw,62px);font-weight:800;line-height:1.04;letter-spacing:-.025em;margin:0;color:#fff;}
+.ffr-dep__title{font-size:clamp(34px,4.8vw,62px);font-weight:800;line-height:1.04;letter-spacing:-.025em;margin:0 0 16px;color:#fff;}
 .ffr-dep__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ffr-dep__track{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,3.5vw,48px);}
-.ffr-dep__card{padding:30px 0 28px;
-  border-top:1px solid rgba(192,132,252,.45);border-bottom:1px solid rgba(255,255,255,.1);}
-.ffr-dep__stars{display:flex;gap:4px;margin:0 0 20px;}
+.ffr-dep__lead{color:#9890a8;font-size:clamp(14px,1.6vw,16px);line-height:1.55;margin:0;max-width:34ch;}
+/* card featured */
+.ffr-dep__feat{display:flex;border-radius:16px;overflow:hidden;background:#1a1326;border:1px solid rgba(255,255,255,.08);box-shadow:0 24px 56px rgba(0,0,0,.45);}
+.ffr-dep__feat-body{flex:1.04;min-width:0;padding:clamp(24px,2.4vw,34px);display:flex;flex-direction:column;justify-content:center;}
+.ffr-dep__stars{display:flex;gap:4px;margin:0 0 16px;}
 .ffr-dep__stars svg{width:17px;height:17px;fill:#f5b740;}
-.ffr-dep__quote{color:#d9d2e8;font-size:17px;line-height:1.68;margin:0 0 30px;}
-.ffr-dep__foot{display:flex;align-items:center;gap:14px;}
+.ffr-dep__quote{color:#e7e1f2;font-size:clamp(15px,1.5vw,16.5px);line-height:1.6;font-style:italic;margin:0 0 22px;}
+.ffr-dep__foot{display:flex;align-items:center;gap:13px;}
 .ffr-dep__play{flex:0 0 auto;width:46px;height:46px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,#f5a8e0,#a855f7);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(168,85,247,.4);transition:transform .2s,box-shadow .2s;}
 .ffr-dep__play:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(168,85,247,.55);}
 .ffr-dep__play svg{width:19px;height:19px;fill:#fff;margin-left:2px;}
 .ffr-dep__who b{display:block;color:#fff;font-size:15px;font-weight:700;}
 .ffr-dep__who span{display:block;color:#a98cd6;font-size:12.5px;margin-top:2px;}
+.ffr-dep__feat-media{flex:.96;position:relative;cursor:pointer;min-height:240px;overflow:hidden;}
+.ffr-dep__feat-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.ffr-dep__feat-media::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,19,38,.6),transparent 35%);}
+.ffr-dep__media-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;width:62px;height:62px;border-radius:14px;background:linear-gradient(135deg,#f5a8e0,#a855f7);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(168,85,247,.5);transition:transform .25s;}
+.ffr-dep__feat-media:hover .ffr-dep__media-play{transform:translate(-50%,-50%) scale(1.08);}
+.ffr-dep__media-play svg{width:24px;height:24px;fill:#fff;margin-left:3px;}
+/* depoimento full-width */
+.ffr-dep__full{position:relative;z-index:1;max-width:1300px;margin:0 auto;display:flex;align-items:center;gap:clamp(20px,3vw,40px);
+  border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);padding:clamp(26px,3vw,40px) clamp(26px,4vw,52px);}
+.ffr-dep__full .ffr-dep__play{width:56px;height:56px;border-radius:12px;}
+.ffr-dep__full .ffr-dep__play svg{width:23px;height:23px;}
+.ffr-dep__full-q{flex:1;min-width:0;}
+.ffr-dep__full-q .ffr-dep__stars{margin-bottom:12px;}
+.ffr-dep__full-q p{color:#fff;font-size:clamp(17px,2.1vw,26px);font-weight:600;line-height:1.45;letter-spacing:-.01em;margin:0 0 12px;font-style:italic;}
+.ffr-dep__full-q span{color:#a98cd6;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
 /* modal */
 .ffr-dep__modal{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(5,3,9,.9);backdrop-filter:blur(6px);padding:24px;}
 .ffr-dep__modal.is-open{display:flex;}
 .ffr-dep__modal-inner{position:relative;width:min(920px,94vw);}
 .ffr-dep__frame{position:relative;width:100%;padding-bottom:56.25%;border-radius:12px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#000;}
 .ffr-dep__frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
-.ffr-dep__close{position:fixed;top:22px;right:24px;z-index:100000;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff;font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ffr-dep__close{position:fixed;top:22px;right:24px;z-index:100000;width:46px;height:46px;border-radius:10px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff;font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .ffr-dep__close:hover{background:rgba(168,85,247,.65);}
-@media(max-width:820px){
-  .ffr-dep__wrap{grid-template-columns:1fr;gap:30px;}
-  .ffr-dep__title{margin-bottom:24px;}
-  .ffr-dep__card{flex:0 0 84%;}
-  .ffr-dep::before{-webkit-mask-image:none;mask-image:none;opacity:.3;}
+@media(max-width:860px){
+  .ffr-dep__top{grid-template-columns:1fr;gap:26px;}
+  .ffr-dep__feat{flex-direction:column;}
+  .ffr-dep__feat-media{min-height:220px;}
+  .ffr-dep__feat-media::after{background:linear-gradient(0deg,rgba(26,19,38,.6),transparent 35%);}
+  .ffr-dep__full{flex-direction:column;text-align:center;}
 }
 </style>
 <div id="ffr-dep-wrap" style="display:none">
   <section class="ffr-dep">
-    <div class="ffr-dep__wrap">
-      <div class="ffr-dep__left">
+    <div class="ffr-dep__top">
+      <div class="ffr-dep__intro">
         <p class="ffr-dep__eyebrow">Depoimentos reais</p>
         <h2 class="ffr-dep__title">O que as alunas dizem sobre o <b>Fio a Fio Realista</b></h2>
+        <p class="ffr-dep__lead">Histórias reais de quem transformou conhecimento em liberdade, confiança e resultados extraordinários.</p>
       </div>
-      <div class="ffr-dep__view">
-        <div class="ffr-dep__track" id="ffrDepTrack"></div>
+      <div class="ffr-dep__feat">
+        <div class="ffr-dep__feat-body">
+          <div class="ffr-dep__stars"></div>
+          <p class="ffr-dep__quote">"Eu sempre via sobre micropigmentação, mas achava uma coisa muito superficial, muito cosmética. Quando comecei a ver o trabalho dele, que era mais sútil, mais suave, mais próximo do real… Isso me fez sentir vontade de aprender, porque eu me identifiquei com o trabalho dele."</p>
+          <div class="ffr-dep__foot">
+            <button class="ffr-dep__play" type="button" data-yt="LCyp-yAH1WM" aria-label="Assistir"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+            <div class="ffr-dep__who"><b>Tânia Barros</b><span>Aluna</span></div>
+          </div>
+        </div>
+        <div class="ffr-dep__feat-media" data-yt="LCyp-yAH1WM">
+          <img src="https://img.youtube.com/vi/LCyp-yAH1WM/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/LCyp-yAH1WM/hqdefault.jpg'" alt="Tânia Barros">
+          <span class="ffr-dep__media-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+        </div>
+      </div>
+    </div>
+    <div class="ffr-dep__full">
+      <button class="ffr-dep__play" type="button" data-yt="IbbX1miaGoI" aria-label="Assistir"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <div class="ffr-dep__full-q">
+        <div class="ffr-dep__stars"></div>
+        <p>"Ele entregou para a gente todo o conhecimento de uma técnica que muitas pessoas não sabem fazer, que é o fio a fio. Eu tive a alegria de saber que a parte teórica e parte também prática tinha no online."</p>
+        <span>— Aluna do Fio a Fio Realista</span>
       </div>
     </div>
   </section>
 </div>
 <div class="ffr-dep__modal" id="ffrDepModal">
   <button class="ffr-dep__close" id="ffrDepClose" type="button" aria-label="Fechar">&times;</button>
-  <div class="ffr-dep__modal-inner">
-    <div class="ffr-dep__frame" id="ffrDepModalBody"></div>
-  </div>
+  <div class="ffr-dep__modal-inner"><div class="ffr-dep__frame" id="ffrDepModalBody"></div></div>
 </div>
 <script>
 (function(){
-  var DEP=[
-    {id:"IbbX1miaGoI",name:"Aluna do Fio a Fio Realista",role:"Turma online",quote:"Ele entregou para a gente todo o conhecimento de uma técnica que muitas pessoas não sabem fazer, que é o fio a fio. E tive a alegria de saber que a parte teórica e prática tinha no online."},
-    {id:"LCyp-yAH1WM",name:"Tânia Barros",role:"Aluna",quote:"Eu sempre via sobre micropigmentação, mas achava muito superficial. Quando vi o trabalho dele, mais sútil, suave, mais próximo do real… me deu vontade de aprender, porque me identifiquei com o trabalho dele."}
-  ];
   var STAR='<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
-  var mounted=false, idx=0, track, prev, next, modal;
-
+  var mounted=false, modal;
   function open(id){
     document.getElementById("ffrDepModalBody").innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0" title="Depoimento" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
     modal.classList.add("is-open");
   }
   function close(){ modal.classList.remove("is-open"); document.getElementById("ffrDepModalBody").innerHTML=""; }
-
   function build(){
-    track=document.getElementById("ffrDepTrack");
     modal=document.getElementById("ffrDepModal");
-    DEP.forEach(function(d){
-      var c=document.createElement("div"); c.className="ffr-dep__card";
-      c.innerHTML='<div class="ffr-dep__stars">'+STAR+STAR+STAR+STAR+STAR+'</div>'+
-        '<p class="ffr-dep__quote">"'+d.quote+'"</p>'+
-        '<div class="ffr-dep__foot">'+
-          '<button class="ffr-dep__play" type="button" aria-label="Assistir depoimento"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>'+
-          '<div class="ffr-dep__who"><b>'+d.name+'</b><span>'+d.role+'</span></div>'+
-        '</div>';
-      c.querySelector(".ffr-dep__play").addEventListener("click",function(){ open(d.id); });
-      track.appendChild(c);
+    document.querySelectorAll("#ffr-dep-wrap .ffr-dep__stars").forEach(function(s){ s.innerHTML=STAR+STAR+STAR+STAR+STAR; });
+    document.querySelectorAll("#ffr-dep-wrap [data-yt]").forEach(function(el){
+      el.addEventListener("click",function(){ open(el.getAttribute("data-yt")); });
     });
     document.getElementById("ffrDepClose").addEventListener("click",close);
     modal.addEventListener("click",function(e){ if(e.target===modal) close(); });
     document.addEventListener("keydown",function(e){ if(e.key==="Escape") close(); });
   }
-
   function mount(){
     if(mounted) return;
     var wrap=document.getElementById("ffr-dep-wrap");
