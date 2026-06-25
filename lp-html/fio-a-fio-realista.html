@@ -858,28 +858,23 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 <!-- ===== SEÇÃO DEPOIMENTOS — slider minimalista (hairlines) + play que abre o vídeo ===== -->
 <style>
 .ffr-dep{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
-  padding:clamp(60px,8vw,104px) 20px clamp(24px,3vw,40px);
-  background:
-    linear-gradient(180deg,#070509 0%,rgba(7,5,9,0) 14%,rgba(7,5,9,0) 86%,#070509 100%),
-    radial-gradient(130% 110% at 82% 18%,#16121d 0%,#0d0a12 52%,#070509 100%);}
-.ffr-dep::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.4px);background-size:26px 26px;opacity:.5;
-  -webkit-mask-image:linear-gradient(90deg,#000,transparent 55%);mask-image:linear-gradient(90deg,#000,transparent 55%);}
-.ffr-dep__wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:.78fr 1.22fr;gap:clamp(28px,4vw,60px);align-items:center;}
+  padding:clamp(60px,8vw,104px) 20px clamp(34px,4vw,52px);
+  background:linear-gradient(180deg,#17121f 0%,#100b18 55%,#14101e 100%);}
+.ffr-dep__wrap{position:relative;z-index:1;max-width:1340px;margin:0 auto;display:grid;grid-template-columns:.72fr 1.28fr;gap:clamp(28px,4vw,64px);align-items:center;}
 .ffr-dep__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 16px;}
 .ffr-dep__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
-.ffr-dep__title{font-size:clamp(30px,4vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.025em;margin:0 0 38px;color:#fff;}
+.ffr-dep__title{font-size:clamp(34px,4.8vw,62px);font-weight:800;line-height:1.04;letter-spacing:-.025em;margin:0;color:#fff;}
 .ffr-dep__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .ffr-dep__track{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,3.5vw,48px);}
-.ffr-dep__card{padding:24px 0 22px;
+.ffr-dep__card{padding:30px 0 28px;
   border-top:1px solid rgba(192,132,252,.45);border-bottom:1px solid rgba(255,255,255,.1);}
-.ffr-dep__stars{display:flex;gap:3px;margin:0 0 16px;}
-.ffr-dep__stars svg{width:15px;height:15px;fill:#f5b740;}
-.ffr-dep__quote{color:#d9d2e8;font-size:15.5px;line-height:1.62;margin:0 0 26px;}
+.ffr-dep__stars{display:flex;gap:4px;margin:0 0 20px;}
+.ffr-dep__stars svg{width:17px;height:17px;fill:#f5b740;}
+.ffr-dep__quote{color:#d9d2e8;font-size:17px;line-height:1.68;margin:0 0 30px;}
 .ffr-dep__foot{display:flex;align-items:center;gap:14px;}
-.ffr-dep__play{flex:0 0 auto;width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#f5a8e0,#a855f7);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(168,85,247,.45);transition:transform .2s,box-shadow .2s;}
-.ffr-dep__play:hover{transform:scale(1.08);box-shadow:0 12px 28px rgba(168,85,247,.6);}
-.ffr-dep__play svg{width:20px;height:20px;fill:#fff;margin-left:2px;}
+.ffr-dep__play{flex:0 0 auto;width:46px;height:46px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,#f5a8e0,#a855f7);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(168,85,247,.4);transition:transform .2s,box-shadow .2s;}
+.ffr-dep__play:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(168,85,247,.55);}
+.ffr-dep__play svg{width:19px;height:19px;fill:#fff;margin-left:2px;}
 .ffr-dep__who b{display:block;color:#fff;font-size:15px;font-weight:700;}
 .ffr-dep__who span{display:block;color:#a98cd6;font-size:12.5px;margin-top:2px;}
 /* modal */
@@ -973,76 +968,27 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 </script>
 <!-- ===== FIM SEÇÃO DEPOIMENTOS ===== -->
 
-<!-- ===== SEÇÃO ANTES/DEPOIS — slider de comparação interativo ===== -->
+<!-- ===== SEÇÃO ANTES/DEPOIS — imagens completas, limpo (continuação dos depoimentos) ===== -->
 <style>
 .ffr-ad{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
-  padding:clamp(6px,1.5vw,20px) 20px clamp(56px,7vw,90px);
-  background:radial-gradient(130% 130% at 82% 0%,#16121d 0%,#0d0a12 50%,#070509 100%);}
-.ffr-ad__head{position:relative;z-index:1;text-align:center;max-width:760px;margin:0 auto clamp(28px,3.5vw,40px);}
-.ffr-ad__title{font-size:clamp(18px,2.1vw,26px);font-weight:700;line-height:1.25;margin:0 0 6px;color:#fff;}
-.ffr-ad__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700;}
-.ffr-ad__sub{color:#9890a8;font-size:clamp(13px,1.5vw,15px);margin:0;}
-.ffr-ad__grid{position:relative;z-index:1;max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(22px,3vw,40px);}
-/* comparador */
-.ffr-ad__cmp{position:relative;aspect-ratio:828/317;border-radius:16px;overflow:hidden;cursor:ew-resize;user-select:none;touch-action:none;
-  box-shadow:0 22px 50px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.07);--pos:50%;}
-.ffr-ad__after{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
-.ffr-ad__before{position:absolute;top:0;left:0;height:100%;width:var(--pos);overflow:hidden;pointer-events:none;}
-.ffr-ad__before img{position:absolute;left:0;top:0;height:100%;width:auto;max-width:none;display:block;}
-.ffr-ad__handle{position:absolute;top:0;bottom:0;left:var(--pos);width:2px;background:#fff;transform:translateX(-1px);box-shadow:0 0 14px rgba(0,0,0,.6);pointer-events:none;}
-.ffr-ad__handle::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:rgba(20,15,28,.6);backdrop-filter:blur(4px);border:2px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,.5);}
-.ffr-ad__handle::before{content:"‹ ›";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;color:#fff;font-size:15px;font-weight:700;letter-spacing:-1px;}
-.ffr-ad__lbl{position:absolute;top:12px;z-index:2;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:rgba(8,5,14,.62);backdrop-filter:blur(4px);padding:5px 11px;border-radius:999px;pointer-events:none;}
-.ffr-ad__lbl--a{left:12px;}
-.ffr-ad__lbl--d{right:12px;color:#d8b9ff;}
-.ffr-ad__cap{margin:12px 2px 0;color:#b9b2c9;font-size:13px;text-align:center;}
-@media(max-width:720px){ .ffr-ad__grid{grid-template-columns:1fr;gap:30px;} }
+  padding:0 20px clamp(60px,8vw,96px);
+  background:linear-gradient(180deg,#14101e 0%,#0b0813 60%,#08060e 100%);}
+.ffr-ad__grid{position:relative;z-index:1;max-width:1040px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,2.6vw,34px);}
+.ffr-ad__item{position:relative;border-radius:10px;overflow:hidden;box-shadow:0 18px 44px rgba(0,0,0,.45);}
+.ffr-ad__item img{display:block;width:100%;height:auto;}
+@media(max-width:680px){ .ffr-ad__grid{grid-template-columns:1fr;gap:22px;max-width:420px;} }
 </style>
 <div id="ffr-ad-wrap" style="display:none">
   <section class="ffr-ad">
-    <div class="ffr-ad__head">
-      <h3 class="ffr-ad__title">E veja a <b>evolução das alunas</b> depois do curso</h3>
-      <p class="ffr-ad__sub">Arraste para comparar o trabalho antes e depois do Fio a Fio Realista.</p>
-    </div>
     <div class="ffr-ad__grid">
-      <div>
-        <div class="ffr-ad__cmp">
-          <img class="ffr-ad__after" src="/lp/fio-a-fio-realista/ad2-depois.webp" alt="Depois do curso">
-          <div class="ffr-ad__before"><img src="/lp/fio-a-fio-realista/ad2-antes.webp" alt="Antes do curso"></div>
-          <div class="ffr-ad__handle"></div>
-          <span class="ffr-ad__lbl ffr-ad__lbl--a">Antes do curso</span>
-          <span class="ffr-ad__lbl ffr-ad__lbl--d">Depois do curso</span>
-        </div>
-      </div>
-      <div>
-        <div class="ffr-ad__cmp">
-          <img class="ffr-ad__after" src="/lp/fio-a-fio-realista/ad3-depois.webp" alt="Depois do curso">
-          <div class="ffr-ad__before"><img src="/lp/fio-a-fio-realista/ad3-antes.webp" alt="Antes do curso"></div>
-          <div class="ffr-ad__handle"></div>
-          <span class="ffr-ad__lbl ffr-ad__lbl--a">Antes do curso</span>
-          <span class="ffr-ad__lbl ffr-ad__lbl--d">Depois do curso</span>
-        </div>
-      </div>
+      <div class="ffr-ad__item"><img src="/lp/fio-a-fio-realista/antesdepois-1.webp" alt="Antes e depois do curso" loading="lazy"></div>
+      <div class="ffr-ad__item"><img src="/lp/fio-a-fio-realista/antesdepois-2.webp" alt="Antes e depois do curso" loading="lazy"></div>
     </div>
   </section>
 </div>
 <script>
 (function(){
   var mounted=false;
-  function wire(){
-    document.querySelectorAll("#ffr-ad-wrap .ffr-ad__cmp").forEach(function(cmp){
-      function setPos(x){
-        var r=cmp.getBoundingClientRect();
-        var p=Math.max(0,Math.min(100,(x-r.left)/r.width*100));
-        cmp.style.setProperty("--pos",p+"%");
-      }
-      var down=false;
-      cmp.addEventListener("pointerdown",function(e){down=true;setPos(e.clientX);try{cmp.setPointerCapture(e.pointerId);}catch(_){}});
-      cmp.addEventListener("pointermove",function(e){if(down)setPos(e.clientX);});
-      cmp.addEventListener("pointerup",function(){down=false;});
-      cmp.addEventListener("pointercancel",function(){down=false;});
-    });
-  }
   function mount(){
     if(mounted) return;
     var wrap=document.getElementById("ffr-ad-wrap");
@@ -1051,7 +997,6 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
     var dep=document.getElementById("ffr-dep-wrap");
     if(dep && dep.parentNode){ dep.insertAdjacentElement("afterend",wrap); }
     wrap.style.display="block";
-    wire();
   }
   if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded",mount); }
   else{ mount(); }
