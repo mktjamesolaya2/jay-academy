@@ -1,4 +1,4 @@
-<!-- ===== SEÇÃO VÍDEOS "NA PRÁTICA" — hover dá play (mobile: toca), sem texto sobre o vídeo ===== -->
+<!-- ===== SEÇÃO VÍDEOS "NA PRÁTICA" — acordeão: tiras altas e finas que abrem pro lado no hover ===== -->
 <style>
 .ffr-vid{position:relative;background:radial-gradient(130% 110% at 82% 18%,#16121d 0%,#0d0a12 52%,#070509 100%);font-family:'Poppins',system-ui,sans-serif;padding:74px 20px 84px;overflow:hidden;}
 .ffr-vid::before{content:"";position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:620px;height:320px;background:radial-gradient(closest-side,rgba(168,85,247,.16),transparent 70%);pointer-events:none;}
@@ -7,16 +7,19 @@
 .ffr-vid__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
 .ffr-vid__title{font-size:clamp(28px,4.4vw,50px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin:0;color:#fff;}
 .ffr-vid__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ffr-vid__row{position:relative;display:flex;flex-wrap:wrap;gap:clamp(14px,1.8vw,22px);justify-content:center;max-width:1080px;margin:0 auto;}
-.ffr-vid__card{position:relative;flex:0 0 auto;width:clamp(172px,21vw,236px);aspect-ratio:9/16;border-radius:16px;overflow:hidden;cursor:pointer;background:#15101e;box-shadow:0 20px 44px rgba(0,0,0,.5);transition:transform .35s cubic-bezier(.22,.61,.36,1),box-shadow .35s;}
+/* acordeão de tiras altas e finas */
+.ffr-vid__row{position:relative;display:flex;gap:clamp(8px,1vw,14px);height:clamp(460px,66vh,660px);max-width:1100px;margin:0 auto;}
+.ffr-vid__card{position:relative;flex:1 1 0;min-width:0;height:100%;border-radius:16px;overflow:hidden;cursor:pointer;background:#15101e;box-shadow:0 20px 44px rgba(0,0,0,.5);transition:flex .6s cubic-bezier(.22,.61,.36,1),box-shadow .4s;}
 .ffr-vid__card video{width:100%;height:100%;object-fit:cover;display:block;background:#000;}
-.ffr-vid__play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.85);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:2;transition:opacity .3s;pointer-events:none;}
-.ffr-vid__play svg{width:20px;height:20px;fill:#fff;margin-left:2px;}
+.ffr-vid__play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.85);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:2;transition:opacity .3s;pointer-events:none;}
+.ffr-vid__play svg{width:18px;height:18px;fill:#fff;margin-left:2px;}
+.ffr-vid__card:hover,.ffr-vid__card.is-open{flex:3.6 1 0;box-shadow:0 28px 60px rgba(168,85,247,.42),0 0 0 2px rgba(192,132,252,.6);}
 .ffr-vid__card.is-playing .ffr-vid__play{opacity:0;}
-.ffr-vid__card:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 30px 60px rgba(168,85,247,.4),0 0 0 2px rgba(192,132,252,.6);z-index:3;}
 @media(max-width:680px){
-  .ffr-vid{padding:54px 14px 64px;}
-  .ffr-vid__card{width:clamp(150px,44vw,200px);}
+  .ffr-vid{padding:54px 12px 64px;}
+  .ffr-vid__row{height:clamp(360px,58vh,460px);gap:7px;}
+  .ffr-vid__card:hover,.ffr-vid__card.is-open{flex:4 1 0;}
+  .ffr-vid__play{width:40px;height:40px;}
 }
 </style>
 <div id="ffr-vid-wrap" style="display:none">
@@ -37,7 +40,15 @@
     "bd101e4bfb63-snapinsta.app-118692842-349397012914962-2903286034012503326-n-704702c23d.mp4",
     "b5e8876d62b6-snapinsta.app-118701628-998662293981544-2590609756776100733-n-3e76fcb236.mp4"
   ];
-  var mounted=false;
+  var mounted=false, cards=[];
+
+  function stopAll(except){
+    cards.forEach(function(c){
+      if(c===except) return;
+      c.classList.remove("is-open","is-playing");
+      var v=c.querySelector("video"); v.pause(); v.currentTime=0;
+    });
+  }
 
   function build(){
     var row=document.getElementById("ffrVidRow");
@@ -50,17 +61,22 @@
       pl.innerHTML="<svg viewBox=\"0 0 24 24\"><path d=\"M8 5v14l11-7z\"/></svg>";
       card.appendChild(v); card.appendChild(pl);
 
-      function play(){ v.play().then(function(){card.classList.add("is-playing");}).catch(function(){}); }
+      function play(){ v.play().catch(function(){}); }
       function stop(){ v.pause(); v.currentTime=0; card.classList.remove("is-playing"); }
-      // desktop: passa o mouse dá play / sai pausa
-      card.addEventListener("mouseenter",play);
+      // desktop: hover abre (CSS) + dá play
+      card.addEventListener("mouseenter",function(){ stopAll(card); play(); });
       card.addEventListener("mouseleave",stop);
-      // mobile/toque: toca pra dar play/pausar
-      card.addEventListener("click",function(){ if(v.paused){play();}else{v.pause();card.classList.remove("is-playing");} });
+      // mobile/toque: toca pra abrir e dar play
+      card.addEventListener("click",function(){
+        var open=card.classList.contains("is-open");
+        stopAll(card);
+        if(open){ card.classList.remove("is-open"); stop(); }
+        else{ card.classList.add("is-open"); play(); }
+      });
       v.addEventListener("playing",function(){card.classList.add("is-playing");});
       v.addEventListener("pause",function(){card.classList.remove("is-playing");});
 
-      row.appendChild(card);
+      row.appendChild(card); cards.push(card);
     });
   }
 
