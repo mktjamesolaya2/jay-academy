@@ -126,6 +126,9 @@
       }
     }
     if(old){ old.style.display="none"; old.insertAdjacentElement("afterend",wrap); }
+    // posiciona a faixa divisória logo DEPOIS da seção dos módulos
+    var divsec=document.getElementById("ffr-divisor");
+    if(divsec){ wrap.insertAdjacentElement("afterend",divsec); }
     wrap.style.display="block";
     build();
   }

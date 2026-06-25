@@ -295,7 +295,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   font-size:clamp(13px,2.4vw,24px);letter-spacing:clamp(.1em,.7vw,.3em);text-transform:uppercase;
   white-space:nowrap;color:#fff;text-shadow:0 1px 24px rgba(168,85,247,.3);}
 </style>
-<section class="ffr-div">
+<section class="ffr-div" id="ffr-divisor">
   <p class="ffr-div__txt">Mais que sobrancelhas, um novo olhar</p>
 </section>
 <!-- ===== FIM FAIXA DIVISÓRIA ===== -->
@@ -448,6 +448,9 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
       }
     }
     if(old){ old.style.display="none"; old.insertAdjacentElement("afterend",wrap); }
+    // posiciona a faixa divisória logo DEPOIS da seção dos módulos
+    var divsec=document.getElementById("ffr-divisor");
+    if(divsec){ wrap.insertAdjacentElement("afterend",divsec); }
     wrap.style.display="block";
     build();
   }
