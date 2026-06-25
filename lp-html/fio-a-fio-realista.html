@@ -285,21 +285,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 <!-- ===== FIM NOVO HERÓI ===== -->
 
-<!-- ===== FAIXA DIVISÓRIA — preta com bordas dissolvendo (feather estilo laser) ===== -->
+<!-- ===== FAIXA DIVISÓRIA — cópia do CinematicDivider do laser (só preto, pequena) ===== -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-.ffr-div{position:relative;width:100%;overflow:hidden;text-align:center;background:#060507;
-  padding:clamp(64px,11vh,120px) 16px;}
-/* feather superior e inferior: a borda da faixa dissolve no preto, sem linha de emenda */
-.ffr-div::before,.ffr-div::after{content:"";position:absolute;left:0;right:0;height:clamp(80px,14vh,140px);pointer-events:none;z-index:1;}
-.ffr-div::before{top:0;background:linear-gradient(to bottom,#0c0a12 0%,rgba(6,5,7,0) 100%);}
-.ffr-div::after{bottom:0;background:linear-gradient(to top,#0c0a12 0%,rgba(6,5,7,0) 100%);}
+/* fundo = gradiente de profundidade do laser (centro levemente mais claro) */
+.ffr-div{position:relative;width:100%;overflow:hidden;text-align:center;
+  padding:clamp(22px,4vh,44px) 16px;
+  background:linear-gradient(180deg,#0c0c0c 0%,#151515 50%,#0c0c0c 100%);}
+/* feathers topo/base: dissolvem a faixa nas seções vizinhas (sem linha) */
+.ffr-div::before,.ffr-div::after{content:"";position:absolute;left:0;right:0;height:clamp(30px,6vh,56px);z-index:1;pointer-events:none;}
+.ffr-div::before{top:0;background:linear-gradient(to bottom,#0a0a0a 0%,rgba(12,12,12,0) 100%);}
+.ffr-div::after{bottom:0;background:linear-gradient(to top,#0a0a0a 0%,rgba(12,12,12,0) 100%);}
 .ffr-div__txt{position:relative;z-index:2;margin:0;font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;
-  font-size:clamp(16px,2.4vw,28px);letter-spacing:clamp(.12em,.7vw,.34em);text-transform:uppercase;
+  font-size:clamp(15px,2.2vw,24px);letter-spacing:clamp(.12em,.7vw,.32em);text-transform:uppercase;
   white-space:nowrap;color:#fff;}
 @media(max-width:600px){
-  .ffr-div{padding:clamp(48px,9vh,80px) 14px;}
-  .ffr-div__txt{letter-spacing:.16em;font-size:clamp(14px,4.6vw,20px);}
+  .ffr-div__txt{letter-spacing:.16em;font-size:clamp(13px,4.4vw,18px);}
 }
 </style>
 <section class="ffr-div" id="ffr-divisor">
