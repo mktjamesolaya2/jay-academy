@@ -285,16 +285,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </section>
 <!-- ===== FIM NOVO HERÓI ===== -->
 
-<!-- ===== FAIXA DIVISÓRIA — roxo escuro chapado, baixa ===== -->
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- ===== FAIXA DIVISÓRIA — dermógrafo desenhando a frase (quebra de página minimalista) ===== -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-.ffr-div{width:100%;text-align:center;padding:clamp(12px,2.2vh,22px) 16px;background:#1e1336;}
-.ffr-div__txt{margin:0;font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;
-  font-size:clamp(14px,2.2vw,23px);letter-spacing:clamp(.1em,.7vw,.3em);text-transform:uppercase;
-  white-space:nowrap;color:#fff;}
+.ffr-div{width:100%;background:#1e1336;text-align:center;padding:clamp(40px,7vh,72px) 16px;overflow:hidden;}
+.ffr-div__stage{position:relative;display:inline-block;}
+.ffr-div__txt{display:inline-block;margin:0;font-family:'Poppins',system-ui,sans-serif;font-weight:500;
+  font-size:clamp(16px,2.6vw,30px);letter-spacing:.01em;color:#fff;white-space:nowrap;
+  clip-path:inset(0 100% 0 0);animation:ffrReveal 5.2s ease-in-out infinite;}
+.ffr-div__pen{position:absolute;left:0;top:50%;width:clamp(34px,4.6vw,50px);height:auto;
+  transform:translate(-58%,-150%);opacity:0;pointer-events:none;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));animation:ffrPen 5.2s ease-in-out infinite;}
+@keyframes ffrReveal{
+  0%{clip-path:inset(0 100% 0 0);opacity:1;}
+  52%{clip-path:inset(0 0 0 0);opacity:1;}
+  80%{clip-path:inset(0 0 0 0);opacity:1;}
+  92%{clip-path:inset(0 0 0 0);opacity:0;}
+  100%{clip-path:inset(0 100% 0 0);opacity:0;}
+}
+@keyframes ffrPen{
+  0%{left:0%;opacity:0;}
+  6%{opacity:1;}
+  52%{left:100%;opacity:1;}
+  62%{left:100%;opacity:0;}
+  100%{left:0%;opacity:0;}
+}
+@media(max-width:600px){
+  .ffr-div__txt{font-size:clamp(13px,4.2vw,18px);white-space:normal;}
+}
 </style>
 <section class="ffr-div" id="ffr-divisor">
-  <p class="ffr-div__txt">Mais que sobrancelhas, um novo olhar</p>
+  <span class="ffr-div__stage">
+    <span class="ffr-div__txt">Mais que sobrancelhas, um novo olhar</span>
+    <img class="ffr-div__pen" src="/lp/fio-a-fio-realista/dermografo.png" alt="" aria-hidden="true">
+  </span>
 </section>
 <!-- ===== FIM FAIXA DIVISÓRIA ===== -->
 
