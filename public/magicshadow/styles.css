@@ -1897,7 +1897,6 @@ body {
   max-width: 680px;
   height: auto;
   object-fit: cover;
-  filter: grayscale(1);   /* preto e branco */
   /* máscara radial agressiva: foco no centro/ação, dissolve forte nas bordas */
   -webkit-mask-image: radial-gradient(
     ellipse 60% 72% at 50% 52%,
@@ -4049,7 +4048,7 @@ body {
         rgba(255, 255, 255, 0.4) 45%,
         rgba(255, 255, 255, 0) 70%
       ),
-      url("assets/final.jpg") center center / cover no-repeat;
+      url("assets/final-bw.jpg") center center / cover no-repeat;
     z-index: 0;
     pointer-events: none;
   }
@@ -4272,7 +4271,7 @@ body {
       rgba(255, 255, 255, 0) 40%,
       rgba(255, 255, 255, 0.78) 68%,
       rgba(255, 255, 255, 1) 86%) no-repeat,
-    url("assets/final.jpg") right top / auto 82% no-repeat;
+    url("assets/final-bw.jpg") right top / auto 82% no-repeat;
   background-color: #FFFFFF;
   color: #1A1A1A;
   padding: clamp(5rem, 8vw, 7rem) clamp(1.5rem, 5vw, 5rem) clamp(6rem, 10vw, 8rem);
