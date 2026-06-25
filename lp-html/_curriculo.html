@@ -1,0 +1,108 @@
+<!-- ===== SEÇÃO CURRÍCULO — accordion premium dos 12 módulos + capa ===== -->
+<style>
+.ffr-cur{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
+  padding:clamp(62px,8vw,104px) 20px;
+  background:radial-gradient(120% 90% at 50% 0%,#1a1024 0%,#0d0a12 55%,#08060e 100%);}
+.ffr-cur__head{position:relative;z-index:1;max-width:1180px;margin:0 auto clamp(34px,4.5vw,52px);text-align:center;}
+.ffr-cur__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#c084fc;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 14px;}
+.ffr-cur__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
+.ffr-cur__title{font-size:clamp(28px,4vw,50px);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin:0;color:#fff;}
+.ffr-cur__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-cur__wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.35fr .65fr;gap:clamp(30px,4vw,56px);align-items:start;}
+/* accordion */
+.ffr-cur__acc{display:flex;flex-direction:column;gap:10px;}
+.ffr-acc{border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden;transition:border-color .3s,background .3s;}
+.ffr-acc.open{border-color:rgba(192,132,252,.5);background:rgba(168,85,247,.06);}
+.ffr-acc__head{display:flex;align-items:center;gap:14px;width:100%;background:none;border:none;cursor:pointer;text-align:left;padding:16px 18px;font-family:inherit;}
+.ffr-acc__num{flex:0 0 auto;width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;background:linear-gradient(135deg,#f5a8e0,#a855f7);}
+.ffr-acc__t{flex:1;min-width:0;color:#fff;font-size:clamp(14.5px,1.5vw,16.5px);font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.ffr-acc__tag{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px;}
+.ffr-acc__tag.c{color:#7dd3fc;background:rgba(125,211,252,.12);}
+.ffr-acc__tag.a{color:#f9a8d4;background:rgba(249,168,212,.12);}
+.ffr-acc__tag.t{color:#86efac;background:rgba(134,239,172,.12);}
+.ffr-acc__plus{flex:0 0 auto;width:26px;height:26px;position:relative;transition:transform .3s;}
+.ffr-acc__plus::before,.ffr-acc__plus::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#c084fc;border-radius:2px;}
+.ffr-acc__plus::before{width:14px;height:2px;}
+.ffr-acc__plus::after{width:2px;height:14px;transition:transform .3s;}
+.ffr-acc.open .ffr-acc__plus::after{transform:translate(-50%,-50%) scaleY(0);}
+.ffr-acc__body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease;}
+.ffr-acc.open .ffr-acc__body{grid-template-rows:1fr;}
+.ffr-acc__body>div{overflow:hidden;}
+.ffr-acc__body p{margin:0;padding:0 18px 18px 70px;color:#cfc7de;font-size:14.5px;line-height:1.6;}
+/* capa */
+.ffr-cur__poster{position:relative;justify-self:center;}
+.ffr-cur__poster::before{content:"";position:absolute;inset:-10% -8%;border-radius:50%;background:radial-gradient(closest-side,rgba(168,85,247,.4),rgba(236,72,153,.12) 55%,transparent 75%);filter:blur(40px);z-index:0;}
+.ffr-cur__poster img{position:relative;z-index:1;width:100%;max-width:340px;height:auto;border-radius:16px;display:block;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.08);}
+@media(max-width:880px){
+  .ffr-cur__wrap{grid-template-columns:1fr;gap:34px;}
+  .ffr-cur__poster{order:-1;}
+  .ffr-cur__poster img{max-width:280px;}
+  .ffr-acc__body p{padding-left:18px;}
+}
+</style>
+<div id="ffr-cur-wrap" style="display:none">
+  <section class="ffr-cur">
+    <div class="ffr-cur__head">
+      <p class="ffr-cur__eyebrow">Conteúdo completo</p>
+      <h2 class="ffr-cur__title">O que você vai aprender no <b>Fio a Fio Realista</b></h2>
+    </div>
+    <div class="ffr-cur__wrap">
+      <div class="ffr-cur__acc" id="ffrCurAcc"></div>
+      <div class="ffr-cur__poster">
+        <img src="/lp/fio-a-fio-realista/capa.webp" alt="Fio a Fio Realista — James Olaya" loading="lazy">
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+(function(){
+  var MOD=[
+    {n:"01",t:"Apresentação",g:"",d:"As etapas do realismo e como agregar valor ao seu trabalho. Você também conhece os métodos e materiais de treino pra evoluir em casa."},
+    {n:"02",t:"A face humana",g:"c",gt:"Ciência",d:"A fisiologia e as estruturas faciais, e como elas influenciam no visagismo e nos seus processos de implante."},
+    {n:"03",t:"Design facial",g:"c",gt:"Ciência",d:"Como iniciar um processo de design e visagismo de excelência, com os materiais certos e a importância de cada um."},
+    {n:"04",t:"Mentalidade do micropigmentador",g:"c",gt:"Ciência",d:"Como funciona uma sobrancelha real e seus estilos. Aqui muda a sua mentalidade pra entregar um resultado natural de verdade."},
+    {n:"05",t:"Essência da base",g:"t",gt:"Tecnologia",d:"Avaliação e variação de cor por densidade, além de exercícios de saturação."},
+    {n:"06",t:"Densidade",g:"a",gt:"Arte",d:"O conceito de densidade por sobreposição na prática, com os primeiros treinos de aplicação."},
+    {n:"07",t:"Técnica de implante",g:"c",gt:"Ciência",d:"Linhas de tensão e pontos de esticamento, posição e angulação, pouso e decolagem, entradas e saídas."},
+    {n:"08",t:"Arquitetura de fios",g:"",d:"Adapte o que já existe e crie algo exclusivo pro cliente, com design e visagismo dentro das proporções faciais."},
+    {n:"09",t:"Acabamentos",g:"a",gt:"Arte",d:"Os detalhes de acabamento, densidade dos fios e efeitos de profundidade pra fios perfeitos e saídas impecáveis."},
+    {n:"10",t:"Exercícios técnicos",g:"c",gt:"Ciência",d:"Treinos técnicos em pele artificial de látex pra desenvolver a mão e evoluir em casa."},
+    {n:"11",t:"Demonstração prática em modelo",g:"",d:"A aplicação em um procedimento real, em alta qualidade e de vários ângulos — como se você estivesse do meu lado."},
+    {n:"12",t:"Cuidados pós",g:"",d:"Retoque, cuidados pós-procedimento e as adaptações necessárias pra cuidar bem da cliente."}
+  ];
+  var mounted=false;
+  function build(){
+    var acc=document.getElementById("ffrCurAcc");
+    if(!acc) return;
+    MOD.forEach(function(m){
+      var item=document.createElement("div"); item.className="ffr-acc";
+      var tag=m.g?'<span class="ffr-acc__tag '+m.g+'">'+m.gt+'</span>':'';
+      item.innerHTML='<button class="ffr-acc__head" type="button"><span class="ffr-acc__num">'+m.n+'</span>'+
+        '<span class="ffr-acc__t">'+m.t+tag+'</span><span class="ffr-acc__plus"></span></button>'+
+        '<div class="ffr-acc__body"><div><p>'+m.d+'</p></div></div>';
+      item.querySelector(".ffr-acc__head").addEventListener("click",function(){ item.classList.toggle("open"); });
+      acc.appendChild(item);
+    });
+  }
+  function mount(){
+    if(mounted) return;
+    var wrap=document.getElementById("ffr-cur-wrap");
+    if(!wrap) return;
+    mounted=true;
+    var old=null, secs=document.querySelectorAll(".elementor-section");
+    for(var k=0;k<secs.length;k++){
+      var s=secs[k];
+      if(s.textContent && s.textContent.indexOf("Demonstração prática em modelo")!==-1){
+        old=s.closest(".elementor-top-section")||s; break;
+      }
+    }
+    if(old){ old.style.display="none"; old.insertAdjacentElement("afterend",wrap); }
+    wrap.style.display="block";
+    build();
+  }
+  if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded",mount); }
+  else{ mount(); }
+  setTimeout(mount,600);
+})();
+</script>
+<!-- ===== FIM SEÇÃO CURRÍCULO ===== -->
