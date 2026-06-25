@@ -1,93 +1,119 @@
-<!-- ===== SEÇÃO DEPOIMENTOS — player em destaque + fala gigante ===== -->
+<!-- ===== SEÇÃO DEPOIMENTOS — slider de falas + play que abre o vídeo (estilo referência) ===== -->
 <style>
 .ffr-dep{position:relative;font-family:'Poppins',system-ui,sans-serif;overflow:hidden;
-  padding:clamp(60px,8vw,100px) 20px;
+  padding:clamp(60px,8vw,104px) 20px;
   background:
     linear-gradient(180deg,#070509 0%,rgba(7,5,9,0) 14%,rgba(7,5,9,0) 86%,#070509 100%),
     radial-gradient(130% 110% at 82% 18%,#16121d 0%,#0d0a12 52%,#070509 100%);}
-.ffr-dep__head{position:relative;z-index:1;text-align:center;max-width:820px;margin:0 auto clamp(40px,5vw,58px);}
-.ffr-dep__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 14px;}
+.ffr-dep__wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(28px,4vw,56px);align-items:center;}
+/* esquerda: título + setas */
+.ffr-dep__eyebrow{display:inline-flex;align-items:center;gap:9px;color:#e7b8ff;font-size:13px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin:0 0 16px;}
 .ffr-dep__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
-.ffr-dep__title{font-size:clamp(27px,3.6vw,46px);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin:0;color:#fff;}
+.ffr-dep__title{font-size:clamp(30px,4vw,52px);font-weight:800;line-height:1.06;letter-spacing:-.02em;margin:0 0 34px;color:#fff;}
 .ffr-dep__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
-.ffr-dep__stage{position:relative;z-index:1;max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(28px,4vw,60px);align-items:center;}
-/* vídeo */
-.ffr-dep__video{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;cursor:pointer;background:#000;box-shadow:0 26px 56px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06);}
-.ffr-dep__video img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s;}
-.ffr-dep__video::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,5,14,.08),rgba(8,5,14,.5));}
-.ffr-dep__play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#f5a8e0,#a855f7);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(168,85,247,.5);transition:transform .25s;}
-.ffr-dep__play svg{width:25px;height:25px;fill:#fff;margin-left:3px;}
-.ffr-dep__video:hover img{transform:scale(1.05);}
-.ffr-dep__video:hover .ffr-dep__play{transform:translate(-50%,-50%) scale(1.1);}
-.ffr-dep__video iframe{width:100%;height:100%;border:0;display:block;}
-/* citação gigante */
-.ffr-dep__quotebox{position:relative;}
-.ffr-dep__mark{font-family:Georgia,serif;font-size:clamp(80px,11vw,150px);line-height:.7;background:linear-gradient(92deg,#f5a8e0,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;display:block;height:.5em;}
-.ffr-dep__qtext{transition:opacity .3s;}
-.ffr-dep__qtext p{color:#fff;font-size:clamp(18px,2.2vw,27px);font-weight:600;line-height:1.4;letter-spacing:-.01em;margin:0 0 16px;}
-.ffr-dep__qtext p:last-child{margin-bottom:0;}
-.ffr-dep__stars{display:flex;gap:3px;margin:22px 0 10px;}
-.ffr-dep__stars svg{width:18px;height:18px;fill:#f5b740;}
-.ffr-dep__name{color:#c9a8f5;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0;}
-/* navegação */
-.ffr-dep__nav{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:clamp(34px,4vw,48px);}
-.ffr-dep__arrow{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(20,15,28,.85);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s;}
-.ffr-dep__arrow:hover{background:rgba(168,85,247,.55);transform:scale(1.08);}
-.ffr-dep__dots{display:flex;gap:8px;}
-.ffr-dep__dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(255,255,255,.2);cursor:pointer;padding:0;transition:width .25s,background .25s;}
-.ffr-dep__dot.is-active{width:26px;border-radius:5px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
-@media(max-width:780px){
-  .ffr-dep__stage{grid-template-columns:1fr;gap:26px;}
+.ffr-dep__arrows{display:flex;gap:14px;}
+.ffr-dep__arrow{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(20,15,28,.7);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,transform .2s,opacity .2s;}
+.ffr-dep__arrow:hover{background:linear-gradient(135deg,#f5a8e0,#a855f7);transform:scale(1.07);border-color:transparent;}
+.ffr-dep__arrow[disabled]{opacity:.35;pointer-events:none;}
+/* direita: slider */
+.ffr-dep__view{overflow:hidden;}
+.ffr-dep__track{display:flex;gap:clamp(18px,2vw,26px);transition:transform .5s cubic-bezier(.22,.61,.36,1);}
+.ffr-dep__card{flex:0 0 clamp(280px,40%,360px);position:relative;padding:26px 26px 24px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);}
+.ffr-dep__card::before{content:"";position:absolute;top:0;left:26px;right:26px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);border-radius:2px;}
+.ffr-dep__stars{display:flex;gap:3px;margin:6px 0 14px;}
+.ffr-dep__stars svg{width:16px;height:16px;fill:#f5b740;}
+.ffr-dep__quote{color:#e7e1f2;font-size:15px;line-height:1.6;margin:0 0 22px;font-style:italic;}
+.ffr-dep__foot{display:flex;align-items:center;justify-content:space-between;gap:14px;}
+.ffr-dep__who b{display:block;color:#fff;font-size:15px;font-weight:700;}
+.ffr-dep__who span{display:block;color:#b9a8d6;font-size:12.5px;margin-top:2px;}
+.ffr-dep__playbtn{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#f5a8e0,#a855f7);color:#fff;border:none;border-radius:999px;padding:9px 16px 9px 12px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;box-shadow:0 8px 22px rgba(168,85,247,.4);transition:transform .2s,box-shadow .2s;}
+.ffr-dep__playbtn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(168,85,247,.55);}
+.ffr-dep__playbtn svg{width:14px;height:14px;fill:#fff;}
+/* modal do vídeo */
+.ffr-dep__modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(5,3,9,.88);backdrop-filter:blur(6px);padding:20px;}
+.ffr-dep__modal.is-open{display:flex;}
+.ffr-dep__modal-inner{position:relative;width:min(900px,94vw);aspect-ratio:16/9;border-radius:14px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+.ffr-dep__modal-inner iframe{width:100%;height:100%;border:0;}
+.ffr-dep__close{position:absolute;top:-46px;right:0;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ffr-dep__close:hover{background:rgba(168,85,247,.6);}
+@media(max-width:820px){
+  .ffr-dep__wrap{grid-template-columns:1fr;gap:30px;}
+  .ffr-dep__title{margin-bottom:22px;}
+  .ffr-dep__card{flex:0 0 86%;}
 }
 </style>
 <div id="ffr-dep-wrap" style="display:none">
   <section class="ffr-dep">
-    <div class="ffr-dep__head">
-      <p class="ffr-dep__eyebrow">Depoimentos reais</p>
-      <h2 class="ffr-dep__title">Veja o que as alunas dizem sobre o <b>Fio a Fio Realista</b></h2>
-    </div>
-    <div class="ffr-dep__stage">
-      <div class="ffr-dep__video" id="ffrDepVideo"></div>
-      <div class="ffr-dep__quotebox">
-        <span class="ffr-dep__mark">&ldquo;</span>
-        <div class="ffr-dep__qtext" id="ffrDepQuote"></div>
-        <div class="ffr-dep__stars">
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <div class="ffr-dep__wrap">
+      <div class="ffr-dep__left">
+        <p class="ffr-dep__eyebrow">Depoimentos reais</p>
+        <h2 class="ffr-dep__title">O que as alunas dizem sobre o <b>Fio a Fio Realista</b></h2>
+        <div class="ffr-dep__arrows">
+          <button class="ffr-dep__arrow" id="ffrDepPrev" type="button" aria-label="Anterior">&#8249;</button>
+          <button class="ffr-dep__arrow" id="ffrDepNext" type="button" aria-label="Próximo">&#8250;</button>
         </div>
-        <p class="ffr-dep__name" id="ffrDepName"></p>
+      </div>
+      <div class="ffr-dep__view">
+        <div class="ffr-dep__track" id="ffrDepTrack"></div>
       </div>
     </div>
-    <div class="ffr-dep__nav">
-      <button class="ffr-dep__arrow" id="ffrDepPrev" type="button" aria-label="Anterior">&#8249;</button>
-      <div class="ffr-dep__dots" id="ffrDepDots"></div>
-      <button class="ffr-dep__arrow" id="ffrDepNext" type="button" aria-label="Próximo">&#8250;</button>
-    </div>
   </section>
+</div>
+<div class="ffr-dep__modal" id="ffrDepModal">
+  <div class="ffr-dep__modal-inner">
+    <button class="ffr-dep__close" id="ffrDepClose" type="button" aria-label="Fechar">&times;</button>
+    <div id="ffrDepModalBody"></div>
+  </div>
 </div>
 <script>
 (function(){
   var DEP=[
-    {id:"IbbX1miaGoI",name:"— Aluna do Fio a Fio Realista",quotes:[
-      "Ele entregou para a gente todo o conhecimento de uma técnica que muitas pessoas não sabem fazer, que é o fio a fio.",
-      "Eu tive a alegria de saber que a parte teórica e parte também prática tinha no online."]},
-    {id:"LCyp-yAH1WM",name:"— Tânia Barros",quotes:[
-      "Eu sempre via sobre micropigmentação, mas achava uma coisa muito superficial, muito cosmética. Quando comecei a ver o trabalho dele, que era mais sútil, mais suave, mais próximo do real… Isso me fez sentir vontade de aprender, porque eu me identifiquei com o trabalho dele."]}
+    {id:"IbbX1miaGoI",name:"Aluna do Fio a Fio Realista",role:"Turma online",quote:"Ele entregou para a gente todo o conhecimento de uma técnica que muitas pessoas não sabem fazer, que é o fio a fio. E tive a alegria de saber que a parte teórica e prática tinha no online."},
+    {id:"LCyp-yAH1WM",name:"Tânia Barros",role:"Aluna",quote:"Eu sempre via sobre micropigmentação, mas achava muito superficial. Quando vi o trabalho dele, mais sútil, suave, mais próximo do real… me deu vontade de aprender, porque me identifiquei com o trabalho dele."}
   ];
-  var mounted=false, active=0, dots=[];
+  var STAR='<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  var mounted=false, idx=0, track, prev, next;
 
-  function render(){
-    var d=DEP[active];
-    var vid=document.getElementById("ffrDepVideo");
-    vid.innerHTML='<img src="https://img.youtube.com/vi/'+d.id+'/hqdefault.jpg" alt="Depoimento"><span class="ffr-dep__play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>';
-    vid.style.cursor="pointer";
-    vid.onclick=function(){ vid.innerHTML='<iframe src="https://www.youtube.com/embed/'+d.id+'?autoplay=1&rel=0" title="Depoimento" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>'; vid.onclick=null; vid.style.cursor="default"; };
-    var q=document.getElementById("ffrDepQuote");
-    q.style.opacity="0";
-    setTimeout(function(){ q.innerHTML=d.quotes.map(function(t){return "<p>"+t+"</p>";}).join(""); q.style.opacity="1"; },150);
-    document.getElementById("ffrDepName").textContent=d.name;
-    dots.forEach(function(dt,i){ dt.classList.toggle("is-active",i===active); });
+  function open(id){
+    document.getElementById("ffrDepModalBody").innerHTML='<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0" title="Depoimento" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+    document.getElementById("ffrDepModal").classList.add("is-open");
   }
-  function go(i){ active=(i+DEP.length)%DEP.length; render(); }
+  function close(){ document.getElementById("ffrDepModal").classList.remove("is-open"); document.getElementById("ffrDepModalBody").innerHTML=""; }
+
+  function build(){
+    track=document.getElementById("ffrDepTrack");
+    DEP.forEach(function(d){
+      var c=document.createElement("div"); c.className="ffr-dep__card";
+      c.innerHTML='<div class="ffr-dep__stars">'+STAR+STAR+STAR+STAR+STAR+'</div>'+
+        '<p class="ffr-dep__quote">"'+d.quote+'"</p>'+
+        '<div class="ffr-dep__foot"><div class="ffr-dep__who"><b>'+d.name+'</b><span>'+d.role+'</span></div>'+
+        '<button class="ffr-dep__playbtn" type="button"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Ver vídeo</button></div>';
+      c.querySelector(".ffr-dep__playbtn").addEventListener("click",function(){ open(d.id); });
+      track.appendChild(c);
+    });
+    prev=document.getElementById("ffrDepPrev"); next=document.getElementById("ffrDepNext");
+    prev.addEventListener("click",function(){ go(idx-1); });
+    next.addEventListener("click",function(){ go(idx+1); });
+    document.getElementById("ffrDepClose").addEventListener("click",close);
+    document.getElementById("ffrDepModal").addEventListener("click",function(e){ if(e.target.id==="ffrDepModal") close(); });
+    window.addEventListener("resize",update);
+    update();
+  }
+  function maxIdx(){
+    var card=track.children[0]; if(!card) return 0;
+    var cw=card.getBoundingClientRect().width + parseFloat(getComputedStyle(track).gap||0);
+    var view=track.parentElement.getBoundingClientRect().width;
+    var perView=Math.max(1,Math.round(view/cw));
+    return Math.max(0, DEP.length-perView);
+  }
+  function go(i){ idx=Math.max(0,Math.min(maxIdx(),i)); update(); }
+  function update(){
+    var card=track.children[0]; if(!card) return;
+    var cw=card.getBoundingClientRect().width + parseFloat(getComputedStyle(track).gap||0);
+    idx=Math.min(idx,maxIdx());
+    track.style.transform="translateX("+(-idx*cw)+"px)";
+    prev.disabled=idx<=0; next.disabled=idx>=maxIdx();
+  }
 
   function mount(){
     if(mounted) return;
@@ -103,11 +129,7 @@
     }
     if(old){ old.style.display="none"; old.insertAdjacentElement("afterend",wrap); }
     wrap.style.display="block";
-    var dotsWrap=document.getElementById("ffrDepDots");
-    DEP.forEach(function(_,i){ var b=document.createElement("button"); b.className="ffr-dep__dot"; b.type="button"; b.setAttribute("aria-label","Depoimento "+(i+1)); b.addEventListener("click",function(){go(i);}); dotsWrap.appendChild(b); dots.push(b); });
-    document.getElementById("ffrDepPrev").addEventListener("click",function(){go(active-1);});
-    document.getElementById("ffrDepNext").addEventListener("click",function(){go(active+1);});
-    render();
+    build();
   }
   if(document.readyState==="loading"){ document.addEventListener("DOMContentLoaded",mount); }
   else{ mount(); }
