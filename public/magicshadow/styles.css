@@ -163,8 +163,10 @@ body {
 .hero-images {
   position: absolute;
   inset: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  background-image: url("assets/hero-composite.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   z-index: 1;
 }
 
