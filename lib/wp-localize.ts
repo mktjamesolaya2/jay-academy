@@ -25,6 +25,7 @@ import {
   rewriteUrls,
   rewriteCssUrls,
   rewriteWpAnchors,
+  deRocketUrl,
   type AssetKind,
 } from "./wp-localize-core";
 
@@ -139,28 +140,47 @@ async function fetchAndStore(
     }
 
     try {
-      const res = await fetch(url, {
+      let fetchUrl = url;
+      let res = await fetch(url, {
         headers: { "User-Agent": UA, Accept: "*/*" },
         cache: "no-store",
       });
+      // Fallback do cache volátil do WP Rocket: a URL `/wp-content/cache/min/N/…`
+      // dá 404 quando o cache é regenerado (mesmo com o WP no ar), mas o arquivo
+      // ORIGINAL ainda existe. Sem isso, ~metade do CSS do tema não localizava e a
+      // página nascia sem estilo (texto escuro no escuro). Usamos `fetchUrl` (o
+      // original) como base pras url() de dentro do CSS — o caminho é outro.
+      if (!res.ok) {
+        const orig = deRocketUrl(url);
+        if (orig) {
+          const alt = await fetch(orig, {
+            headers: { "User-Agent": UA, Accept: "*/*" },
+            cache: "no-store",
+          });
+          if (alt.ok) {
+            res = alt;
+            fetchUrl = orig;
+          }
+        }
+      }
       if (!res.ok) return null;
 
       const ab = await res.arrayBuffer();
       if (ab.byteLength > MAX_ASSET_BYTES) return null;
       let buf = Buffer.from(ab);
       const kind = classifyAsset(url);
-      const contentType = guessContentType(url, res.headers.get("content-type"));
+      const contentType = guessContentType(fetchUrl, res.headers.get("content-type"));
 
       // CSS: localiza as url() de dentro (fontes, imagens de fundo) antes de salvar.
       if (kind === "css") {
         const cssText = buf.toString("utf8");
-        const subUrls = extractWpAssetUrls(cssText, url);
+        const subUrls = extractWpAssetUrls(cssText, fetchUrl);
         const subMap: Record<string, string> = {};
         for (const sub of subUrls) {
           const local = await fetchAndStore(sub, runCache, mediaSink);
           if (local) subMap[sub] = local;
         }
-        buf = Buffer.from(rewriteCssUrls(cssText, url, subMap), "utf8");
+        buf = Buffer.from(rewriteCssUrls(cssText, fetchUrl, subMap), "utf8");
       }
 
       const filename = `wpmirror/${createHash("sha1")

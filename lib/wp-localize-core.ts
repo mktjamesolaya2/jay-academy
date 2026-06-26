@@ -147,20 +147,48 @@ export function stripResponsiveImg(html: string): string {
   );
 }
 
-/** Lê o valor de um atributo de uma tag. */
+/**
+ * Regex de um atributo HTML, ciente das aspas. O valor é capturado INTEIRO
+ * respeitando a aspa de abertura (`"[^"]*"` OU `'[^']*'`) — então um valor
+ * entre aspas duplas pode conter aspas simples por dentro (e vice-versa). Isso
+ * é essencial pro `src` do placeholder lazy, que é um data:image/svg contendo
+ * `xmlns='...'`: o regex ingênuo `["'][^"']*["']` parava na aspa interna e
+ * corrompia a tag. O lookbehind `(?<![-\w])` evita que `src` case com o final
+ * de `data-lazy-src` (que termina em "src").
+ */
+function attrRe(name: string): RegExp {
+  return new RegExp(`(?<![-\\w])${name}\\s*=\\s*("[^"]*"|'[^']*')`, "i");
+}
+
+/** Lê o valor de um atributo de uma tag (sem as aspas). */
 function attr(tag: string, name: string): string | null {
-  const m = tag.match(new RegExp(`\\b${name}\\s*=\\s*["']([^"']*)["']`, "i"));
-  return m ? m[1] : null;
+  const m = tag.match(attrRe(name));
+  return m ? m[1].slice(1, -1) : null;
 }
 
 /** Seta (ou substitui) um atributo numa string de tag. */
 function setAttr(tag: string, name: string, value: string): string {
-  const re = new RegExp(`\\b${name}\\s*=\\s*["'][^"']*["']`, "i");
+  const re = attrRe(name);
   if (re.test(tag)) {
     return tag.replace(re, `${name}="${value}"`);
   }
   // Insere antes do fechamento da tag (> ou />)
   return tag.replace(/\s*\/?>$/, (end) => ` ${name}="${value}"${end}`);
+}
+
+/**
+ * WP Rocket guarda CSS/JS minificados em `/wp-content/cache/min/N/<original>`.
+ * Esse cache é VOLÁTIL: quando o WP Rocket regenera, as URLs antigas passam a
+ * dar 404 mesmo com o WordPress no ar — e a página copiada nasce sem estilo. O
+ * arquivo ORIGINAL (sem o prefixo de cache) continua existindo. Esta função
+ * reconstrói a URL original; devolve null se a URL não for do cache do WP Rocket.
+ */
+export function deRocketUrl(url: string): string | null {
+  const m = url.match(
+    /^(https?:\/\/[^/]+)\/wp-content\/cache\/min\/\d+\/(.+)$/i
+  );
+  if (!m) return null;
+  return `${m[1]}/${m[2]}`;
 }
 
 /**

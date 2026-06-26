@@ -11,6 +11,7 @@ import {
   localizeHtml,
   rewriteCssUrls,
   rewriteWpAnchors,
+  deRocketUrl,
 } from "./wp-localize-core.ts";
 
 test("isWpHost reconhece subdomínios do WP e rejeita o resto", () => {
@@ -85,6 +86,26 @@ test("delazyHtml cria src quando não existe e cobre srcset", () => {
   assert.ok(out.includes(`srcset="https://lp.jayacademy.com.br/r-2x.jpg 2x"`));
 });
 
+test("delazyHtml troca placeholder data-URI SVG (com aspas internas) sem corromper a tag", () => {
+  // O placeholder real do lazy-load do WP é um data:image/svg que contém ASPAS
+  // SIMPLES por dentro (xmlns='...'). O setAttr ingênuo parava na primeira aspa
+  // interna e deixava lixo no meio da <img> → imagem quebrada. Regressão real.
+  const ph =
+    `<img width="959" height="519" ` +
+    `src="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20959%20519'%3E%3C/svg%3E" ` +
+    `data-lazy-src="https://lp.jayacademy.com.br/logo.png" />`;
+  const out = delazyHtml(ph);
+  assert.ok(
+    out.includes(`src="https://lp.jayacademy.com.br/logo.png"`),
+    "src deve apontar pra imagem real"
+  );
+  assert.ok(!out.includes("data:image/svg"), "placeholder removido");
+  assert.ok(!out.includes("w3.org"), "nenhum resto do data-URI sobra na tag: " + out);
+  // a tag continua sendo UMA <img ...> bem-formada (uma abertura, um fechamento)
+  assert.equal((out.match(/<img\b/gi) || []).length, 1);
+  assert.equal((out.match(/>/g) || []).length, 1);
+});
+
 test("delazyHtml não inventa src a partir de placeholder data:", () => {
   const html = `<img src="x.jpg" data-src="data:image/gif;base64,AAAA" />`;
   const out = delazyHtml(html);
@@ -155,6 +176,29 @@ test("rewriteWpAnchors: self-link sem hash cai na raiz da própria página", () 
   const html = `<a href="https://jayacademy.com.br/basic-magic-shadow/">topo</a>`;
   const out = rewriteWpAnchors(html, ["basic-magic-shadow"], {});
   assert.ok(out.includes(`href="/basic-magic-shadow"`), out);
+});
+
+test("deRocketUrl reconstrói o original do cache volátil do WP Rocket", () => {
+  // /wp-content/cache/min/N/<caminho-original> → /<caminho-original>. O cache do
+  // WP Rocket é purgado e passa a dar 404 mesmo com o WP no ar; o original fica.
+  assert.equal(
+    deRocketUrl(
+      "https://lp.jayacademy.com.br/wp-content/cache/min/1/wp-content/themes/hello-elementor/assets/css/reset.css?ver=1779830030"
+    ),
+    "https://lp.jayacademy.com.br/wp-content/themes/hello-elementor/assets/css/reset.css?ver=1779830030"
+  );
+  assert.equal(
+    deRocketUrl(
+      "https://lp.jayacademy.com.br/wp-content/cache/min/3/wp-content/uploads/elementor/google-fonts/css/roboto.css"
+    ),
+    "https://lp.jayacademy.com.br/wp-content/uploads/elementor/google-fonts/css/roboto.css"
+  );
+  // URLs que NÃO são do cache do WP Rocket → null
+  assert.equal(
+    deRocketUrl("https://lp.jayacademy.com.br/wp-content/uploads/2025/04/logo.png"),
+    null
+  );
+  assert.equal(deRocketUrl("https://outro.com/cache/min/1/x.css"), null);
 });
 
 test("rewriteCssUrls resolve url() relativo e troca pelo destino", () => {
