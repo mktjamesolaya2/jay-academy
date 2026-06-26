@@ -2,7 +2,21 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-23 (noite) — STORAGE migrado Blob→Supabase + Hotmart 5 LPs publicadas
+> **Última atualização**: 2026-06-26 — FIX cópia WP: imagens quebradas + CSS sem estilo (2 causas raiz)
+
+---
+
+## 🆕 Sessão 2026-06-26 — Fix das páginas WP copiadas vindo quebradas
+
+**Sintoma (James, screenshots):** páginas copiadas do WP vinham com **imagens quebradas** (ícone vazio) + **texto escuro no escuro** (sem estilo). Crítico porque vamos desligar o WP.
+
+**2 causas raiz reproduzidas + corrigidas (commit `7407119`):**
+1. **Imagens quebradas** — `setAttr`/`attr` do de-lazy ([`wp-localize-core.ts`](../lib/wp-localize-core.ts)) usavam regex de aspas ingênua (`["'][^"']*["']`). O `src` do placeholder lazy é um `data:image/svg` com **aspas simples por dentro** (`xmlns='...'`) → o regex parava na aspa interna e **corrompia a `<img>`**. Agora são quote-aware (`"[^"]*"|'[^']*'`) + lookbehind `(?<![-\w])` pra `src` não casar com o fim de `data-lazy-src`. (15/32 imgs quebravam.)
+2. **Texto sem estilo** — o CSS minificado do WP Rocket (`/wp-content/cache/min/N/…`) é **volátil e dá 404 mesmo com o WP no ar** → ~metade do CSS do tema não localizava. Novo `deRocketUrl()` reconstrói a URL original (sem `/cache/min/N/`, que **continua viva**) e o `fetchAndStore` ([`wp-localize.ts`](../lib/wp-localize.ts)) usa como **fallback** quando o cache 404 (com a base correta pras `url()` de dentro do CSS). (9/9 CSS recuperados no teste.)
+
+**Validado:** 2 testes novos (TDD) + 19 passando, tsc limpo, e simulação end-to-end na página real (`lp_pmu-upsell-basic-magic-shadow`): 32 imgs sem corrupção/placeholder, 9/9 CSS de cache recuperados, imagens vivas.
+
+**⏳ PENDENTE pra valer em produção:** re-localizar as páginas já copiadas (que têm o HTML antigo quebrado salvo) — rodar o **backfill** (`/api/wp-localize`) ou `?relocate=1`. Páginas NOVAS copiadas já nascem certas. Páginas **deletadas do WP** que já tinham sido mal-localizadas podem precisar re-import (mas o re-fetch falha se deletadas — caso conhecido sem recuperação).
 
 ---
 
