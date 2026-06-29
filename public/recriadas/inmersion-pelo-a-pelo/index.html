@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Inmersión Intensiva Pelo a Pelo — James Olaya | Jay Academy</title>
+<meta name="description" content="Domina la técnica Pelo a Pelo junto al artista internacional James Olaya. Inmersión online en vivo, 25 de abril de 2026. 8 horas en español + certificado." />
+<meta property="og:title" content="Inmersión Intensiva Pelo a Pelo con James Olaya" />
+<meta property="og:image" content="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-1.avif" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0a0a0a; --bg2:#100d10; --surf:#16121a; --surf2:#1d1820;
+    --line:rgba(233,194,166,.16);
+    --ink:#f4efe9; --mut:#a89ca2; --mut2:#776c74;
+    --nude:#e9c2a6; --pink:#ec4899; --orange:#f97316;
+    --grad:linear-gradient(100deg,#ec4899 0%,#f97316 100%);
+    --grad-soft:linear-gradient(100deg,rgba(236,72,153,.18),rgba(249,115,22,.18));
+    --max:1180px;
+    --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  html,body{overflow-x:clip;max-width:100%}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  .eyebrow{
+    font-family:'Archivo',sans-serif;font-weight:700;letter-spacing:.28em;
+    text-transform:uppercase;font-size:12px;color:var(--nude);
+    display:inline-flex;align-items:center;gap:12px;
+  }
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--grad)}
+  h1,h2,h3{font-family:'Archivo',sans-serif;font-weight:800;line-height:1.04;letter-spacing:-.02em;overflow-wrap:break-word}
+  .ital{font-family:'Fraunces',serif;font-style:italic;font-weight:500;letter-spacing:-.01em}
+  .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* hairstroke signature */
+  .stroke{display:block;width:100%;height:40px;opacity:.7}
+  .stroke path{fill:none;stroke:url(#hs);stroke-width:1.4;stroke-linecap:round}
+
+  /* buttons */
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;justify-content:center;
+    font-family:'Archivo',sans-serif;font-weight:800;font-size:15px;letter-spacing:.02em;
+    text-transform:uppercase;padding:17px 30px;border-radius:999px;
+    background:var(--grad);color:#fff;border:0;cursor:pointer;
+    box-shadow:0 12px 34px -12px rgba(236,72,153,.6);
+    transition:transform .18s ease, box-shadow .18s ease;
+    text-align:center;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 18px 44px -12px rgba(249,115,22,.7)}
+  .btn:focus-visible{outline:3px solid var(--nude);outline-offset:3px}
+  .btn .arw{font-size:18px;transition:transform .2s}
+  .btn:hover .arw{transform:translateX(4px)}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink);box-shadow:none}
+  .btn-ghost:hover{border-color:var(--nude);background:rgba(233,194,166,.06)}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
+    background:rgba(10,10,10,.72);border-bottom:1px solid rgba(255,255,255,.05)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .nav-logo{height:26px;width:auto;opacity:.95}
+  .nav-live{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mut);font-weight:500}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 0 rgba(236,72,153,.6);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(236,72,153,.55)}70%{box-shadow:0 0 0 9px rgba(236,72,153,0)}100%{box-shadow:0 0 0 0 rgba(236,72,153,0)}}
+  .nav-cta{font-family:'Archivo';font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;
+    padding:10px 20px;border-radius:999px;background:var(--grad);color:#fff}
+  .nav-cta:focus-visible{outline:3px solid var(--nude);outline-offset:2px}
+
+  /* HERO */
+  .hero{position:relative;overflow:hidden;padding:72px 0 0}
+  .hero-bg{position:absolute;inset:0;z-index:0}
+  .hero-bg img{width:100%;height:100%;object-fit:cover;opacity:.32;filter:grayscale(.2) contrast(1.05)}
+  .hero-bg::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 90% at 78% 18%,rgba(236,72,153,.28),transparent 55%),
+    linear-gradient(180deg,rgba(10,10,10,.6) 0%,rgba(10,10,10,.78) 55%,var(--bg) 100%)}
+  .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding-bottom:40px}
+  .hero h1{font-size:clamp(44px,7vw,86px);font-weight:900;margin:22px 0 0}
+  .hero h1 .ital{font-weight:600;display:block;font-size:.92em}
+  .hero-sub{color:var(--mut);font-size:clamp(16px,2vw,19px);max-width:30em;margin:22px 0 0}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin:28px 0 30px}
+  .chip{display:inline-flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink);
+    background:rgba(255,255,255,.04);border:1px solid var(--line);padding:9px 15px;border-radius:999px}
+  .chip b{color:var(--nude);font-weight:600}
+  .hero-cta-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .hero-photo{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:4/5;
+    border:1px solid var(--line);box-shadow:0 40px 80px -40px rgba(0,0,0,.9)}
+  .hero-photo img{width:100%;height:100%;object-fit:cover}
+  .hero-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,10,10,.5))}
+  .hero-badge{position:absolute;left:16px;bottom:16px;z-index:3;font-family:'Archivo';font-weight:700;
+    font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#fff;
+    background:rgba(10,10,10,.55);backdrop-filter:blur(6px);border:1px solid var(--line);
+    padding:8px 14px;border-radius:999px}
+
+  /* marquee band */
+  .band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    background:linear-gradient(90deg,rgba(236,72,153,.08),rgba(249,115,22,.08));overflow:hidden;padding:14px 0}
+  .band-track{display:flex;gap:48px;white-space:nowrap;animation:scroll 28s linear infinite;font-family:'Archivo';
+    font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:14px;color:var(--nude)}
+  .band-track span{display:inline-flex;align-items:center;gap:48px}
+  .band-track span::after{content:"✶";color:var(--pink)}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+
+  /* sections */
+  section{position:relative}
+  .sec{padding:88px 0}
+  .sec-head{max-width:46rem}
+  .sec-head h2{font-size:clamp(30px,4.4vw,52px);margin:16px 0 0}
+  .sec-head p{color:var(--mut);font-size:17px;margin-top:16px}
+
+  /* benefits grid */
+  .ben-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
+  .ben{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:30px 26px;
+    position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+  .ben:hover{border-color:rgba(233,194,166,.4);transform:translateY(-3px)}
+  .ben-n{font-family:'Fraunces';font-style:italic;font-size:22px;color:var(--nude);opacity:.55}
+  .ben h3{font-size:18px;margin:14px 0 10px;letter-spacing:-.01em;text-transform:uppercase;font-weight:700}
+  .ben p{color:var(--mut);font-size:15px}
+  .ben::before{content:"";position:absolute;left:0;top:0;width:0;height:3px;background:var(--grad);transition:width .3s}
+  .ben:hover::before{width:100%}
+
+  /* split feature */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center}
+  .split-media{border-radius:24px;overflow:hidden;border:1px solid var(--line);aspect-ratio:1/1;position:relative}
+  .split-media img{width:100%;height:100%;object-fit:cover}
+  .feat-list{display:flex;flex-direction:column;gap:22px;margin-top:30px}
+  .feat{display:flex;gap:16px}
+  .feat .ic{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:var(--grad-soft);
+    border:1px solid var(--line);display:grid;place-items:center;font-size:18px}
+  .feat h4{font-family:'Archivo';font-weight:700;font-size:16px;margin-bottom:4px}
+  .feat p{color:var(--mut);font-size:14.5px}
+
+  /* curriculum = episodes */
+  .ep-parts{display:flex;flex-direction:column;gap:14px;margin-top:46px}
+  .part-label{font-family:'Archivo';font-weight:800;text-transform:uppercase;letter-spacing:.16em;
+    font-size:13px;color:var(--nude);display:flex;align-items:center;gap:14px;margin:30px 0 6px}
+  .part-label::before{content:"";width:26px;height:1px;background:var(--nude);opacity:.5}
+  .ep{background:var(--surf);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .ep>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:20px;padding:20px 24px}
+  .ep>summary::-webkit-details-marker{display:none}
+  .ep-num{font-family:'Fraunces';font-style:italic;font-size:26px;color:var(--mut2);min-width:42px}
+  .ep[open] .ep-num{color:var(--nude)}
+  .ep-ti{font-family:'Archivo';font-weight:700;font-size:17px;flex:1}
+  .ep-tg{color:var(--mut);font-size:24px;transition:transform .25s;line-height:1}
+  .ep[open] .ep-tg{transform:rotate(45deg);color:var(--nude)}
+  .ep-body{padding:0 24px 22px 86px}
+  .ep-body li{color:var(--mut);font-size:15px;margin:8px 0;list-style:none;padding-left:20px;position:relative}
+  .ep-body li::before{content:"";position:absolute;left:0;top:10px;width:9px;height:1.5px;background:var(--grad)}
+
+  /* gallery */
+  .gal{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:44px}
+  .gal a{border-radius:14px;overflow:hidden;border:1px solid var(--line);aspect-ratio:3/4;position:relative;background:var(--surf)}
+  .gal img{width:100%;height:100%;object-fit:cover;transition:transform .5s,filter .4s;filter:saturate(.95)}
+  .gal a:hover img{transform:scale(1.06);filter:saturate(1.1)}
+  .gal .wide{grid-column:span 2;aspect-ratio:3/2}
+
+  /* includes */
+  .incl-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:30px;margin-top:44px;align-items:start}
+  .incl-list{display:grid;gap:2px}
+  .incl-list li{display:flex;gap:14px;align-items:flex-start;padding:16px 4px;border-bottom:1px solid rgba(255,255,255,.05);list-style:none;font-size:15.5px}
+  .incl-list li .ck{flex:0 0 auto;color:var(--nude);font-weight:800;margin-top:1px}
+  .info-card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:30px;position:sticky;top:84px}
+  .info-card .mk{border-radius:12px;overflow:hidden;margin-bottom:22px;border:1px solid var(--line)}
+  .info-card h4{font-family:'Archivo';font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--nude);margin-bottom:16px}
+  .info-card ul{list-style:none;display:grid;gap:11px}
+  .info-card li{font-size:14.5px;color:var(--ink)}
+
+  /* price */
+  .price-sec{text-align:center;background:
+    radial-gradient(80% 120% at 50% 0%,rgba(236,72,153,.14),transparent 60%);}
+  .price-box{max-width:560px;margin:40px auto 0;background:var(--surf);border:1px solid var(--line);
+    border-radius:28px;padding:50px 40px;position:relative;overflow:hidden}
+  .price-box::before{content:"";position:absolute;inset:0;padding:1px;border-radius:28px;
+    background:var(--grad);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;opacity:.6}
+  .price-old{color:var(--mut);font-size:17px}
+  .price-old s{text-decoration-color:var(--pink)}
+  .price-now{font-family:'Archivo';font-weight:900;font-size:84px;line-height:1;margin:8px 0 4px}
+  .price-now small{font-size:30px;vertical-align:super;font-weight:700}
+  .price-note{color:var(--mut);font-size:14px;margin-top:6px}
+  .price-box .btn{margin-top:30px;width:100%}
+
+  /* professor */
+  .prof{display:grid;grid-template-columns:.8fr 1.2fr;gap:50px;align-items:center}
+  .prof-photo{border-radius:24px;overflow:hidden;border:1px solid var(--line);position:relative}
+  .prof-photo img{width:100%}
+  .stars{color:var(--nude);letter-spacing:4px;font-size:18px}
+  .prof h2{font-size:clamp(34px,5vw,60px);margin:14px 0}
+  .prof .role{color:var(--mut);font-size:17px;max-width:32em}
+  .flags{font-size:22px;margin-top:20px;line-height:1.7;letter-spacing:3px}
+  .cert{margin-top:26px;display:flex;gap:16px;align-items:center;background:var(--surf);
+    border:1px solid var(--line);border-radius:14px;padding:14px 18px;max-width:420px}
+  .cert img{width:84px;border-radius:8px;flex:0 0 auto}
+  .cert span{font-size:14px;color:var(--mut)}
+  .cert b{color:var(--ink);font-family:'Archivo'}
+
+  /* faq */
+  .faq{max-width:780px;margin:44px auto 0;display:flex;flex-direction:column;gap:12px}
+  .qa{background:var(--surf);border:1px solid var(--line);border-radius:14px}
+  .qa>summary{list-style:none;cursor:pointer;padding:22px 24px;font-family:'Archivo';font-weight:700;
+    font-size:16.5px;display:flex;justify-content:space-between;gap:18px;align-items:center}
+  .qa>summary::-webkit-details-marker{display:none}
+  .qa .pm{color:var(--nude);font-size:24px;transition:transform .2s;flex:0 0 auto}
+  .qa[open] .pm{transform:rotate(45deg)}
+  .qa p{padding:0 24px 22px;color:var(--mut);font-size:15px}
+
+  /* final cta */
+  .final{text-align:center;padding:96px 0;position:relative;
+    background:radial-gradient(70% 120% at 50% 100%,rgba(249,115,22,.16),transparent 60%)}
+  .final h2{font-size:clamp(34px,6vw,68px);max-width:14ch;margin:18px auto 0}
+
+  footer{border-top:1px solid rgba(255,255,255,.06);padding:48px 0;text-align:center}
+  footer img{height:30px;margin:0 auto 18px;opacity:.8}
+  footer p{color:var(--mut2);font-size:13px}
+  .foot-tag{font-family:'Fraunces';font-style:italic;color:var(--mut);font-size:16px;margin-bottom:14px}
+
+  /* sticky mobile cta */
+  .sticky-cta{display:none}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+  .rv.in{opacity:1;transform:none}
+
+  @media(max-width:920px){
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-photo{aspect-ratio:16/12;order:-1}
+    .ben-grid{grid-template-columns:1fr 1fr}
+    .split{grid-template-columns:1fr;gap:30px}
+    .split-media{aspect-ratio:16/10}
+    .incl-grid{grid-template-columns:1fr}
+    .info-card{position:static}
+    .prof{grid-template-columns:1fr;gap:28px}
+    .gal{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:560px){
+    .sec{padding:60px 0}.wrap{padding:0 18px}
+    .ben-grid{grid-template-columns:1fr}
+    .ep-body{padding-left:24px}
+    .nav-live{display:none}
+    .price-now{font-size:66px}
+    body{padding-bottom:74px}
+    .sticky-cta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;padding:12px 16px;
+      background:rgba(10,10,10,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+    .sticky-cta .btn{width:100%;padding:15px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;scroll-behavior:auto!important;transition:none!important}
+    .rv{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="hs" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#ec4899"/><stop offset="1" stop-color="#f97316"/>
+  </linearGradient></defs></svg>
+
+<!-- CHECKOUT link reused everywhere -->
+<nav>
+  <div class="wrap nav-in">
+    <img class="nav-logo" src="/recriadas/inmersion-pelo-a-pelo/assets/jay-academy.png" alt="Jay Academy" />
+    <span class="nav-live"><span class="dot"></span> En vivo · 25 de abril, 2026</span>
+    <a class="nav-cta" href="https://pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10">Reservar</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-bg"><img src="/recriadas/inmersion-pelo-a-pelo/assets/8637a3fd-f2f7-41fe-a2f7-e9b9f609f3aa-copiar.avif" alt="" aria-hidden="true" /></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Inmersión Intensiva · Online en vivo</span>
+      <h1>Pelo a Pelo<span class="ital grad-text">con James Olaya</span></h1>
+      <p class="hero-sub">Domina la técnica Pelo a Pelo junto al artista internacional James Olaya y lleva tu micropigmentación a un nuevo nivel de <em class="ital">naturalidad, precisión y reconocimiento.</em></p>
+      <div class="chips">
+        <span class="chip">🗓️ <b>Sábado 25 de abril, 2026</b></span>
+        <span class="chip">⏱️ <b>8 horas</b> en vivo</span>
+        <span class="chip">🌎 <b>100% en español</b></span>
+      </div>
+      <div class="hero-cta-row">
+        <a class="btn" href="https://pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10">Reservar mi lugar ahora <span class="arw">→</span></a>
+        <a class="btn btn-ghost" href="#aprender">Ver el programa</a>
+      </div>
+      <p style="color:var(--mut2);font-size:13px;margin-top:16px">Inicio: 8am Colombia, Perú, Miami y New York · 9am Bolivia · 10am Argentina y Chile</p>
+    </div>
+    <div class="hero-photo">
+      <img src="/recriadas/inmersion-pelo-a-pelo/assets/jayexplicando.avif" alt="James Olaya enseñando la técnica Pelo a Pelo" />
+      <span class="hero-badge">James Olaya · En directo</span>
+    </div>
+  </div>
+</header>
+
+<div class="band"><div class="band-track">
+  <span>Técnica Pelo a Pelo&nbsp;&nbsp;Resultados naturales&nbsp;&nbsp;Demostración en vivo&nbsp;&nbsp;Certificado Jay.O Academy&nbsp;&nbsp;8 horas intensivas</span>
+  <span>Técnica Pelo a Pelo&nbsp;&nbsp;Resultados naturales&nbsp;&nbsp;Demostración en vivo&nbsp;&nbsp;Certificado Jay.O Academy&nbsp;&nbsp;8 horas intensivas</span>
+</div></div>
+
+<!-- INTRO LINE -->
+<section class="sec" style="padding-bottom:40px">
+  <div class="wrap" style="text-align:center;max-width:760px">
+    <h2 style="font-size:clamp(28px,4.4vw,46px)">Pelo a Pelo Realista: la técnica que <span class="ital grad-text">eleva tu nivel</span> como artista de la micropigmentación</h2>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="sec" style="padding-top:30px">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Para quién es</span>
+      <h2>¿Para quién es esta Inmersión?</h2>
+    </div>
+    <div class="ben-grid">
+      <article class="ben"><div class="ben-n">01</div><h3>Libertad financiera</h3><p>Para quien quiere su propio negocio, sin depender de un salario fijo. Valora más tu trabajo y aumenta tus ganancias.</p></article>
+      <article class="ben"><div class="ben-n">02</div><h3>Llenar tu agenda</h3><p>Ofrece un servicio de alta calidad y resultados superiores. Impresiona a tus clientas y genera recomendaciones.</p></article>
+      <article class="ben"><div class="ben-n">03</div><h3>Valora tu trabajo</h3><p>Valora tu conocimiento y recibe el reconocimiento —y la tarifa— que realmente mereces.</p></article>
+      <article class="ben"><div class="ben-n">04</div><h3>Destácate en tu región</h3><p>Conviértete en una referencia en tu ciudad, entregando resultados naturales que impresionan.</p></article>
+      <article class="ben"><div class="ben-n">05</div><h3>Seguridad técnica real</h3><p>Un método que te da control y precisión en cada trazo, con resultados bellos y dignos de Instagram.</p></article>
+      <article class="ben"><div class="ben-n">06</div><h3>La técnica más valorada</h3><p>El Pelo a Pelo es la técnica más demandada y admirada hoy. Dominarla abre nuevas puertas en tu carrera.</p></article>
+    </div>
+  </div>
+</section>
+
+<svg class="stroke" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0,30 C200,5 380,5 560,22 S920,38 1200,12"/></svg>
+
+<!-- FEATURE SPLIT -->
+<section class="sec">
+  <div class="wrap split">
+    <div class="split-media"><img src="/recriadas/inmersion-pelo-a-pelo/assets/jayexplicando.avif" alt="Transmisión profesional de la inmersión" /></div>
+    <div>
+      <span class="eyebrow">Experiencia visual</span>
+      <h2 style="font-size:clamp(28px,3.6vw,42px);margin-top:14px">Pensada para que aprendas <span class="ital grad-text">como en primera fila</span></h2>
+      <div class="feat-list">
+        <div class="feat"><div class="ic">🎥</div><div><h4>Transmisión profesional</h4><p>Ángulos estratégicos, iluminación clara y enfoque detallado para que no pierdas ni un trazo.</p></div></div>
+        <div class="feat"><div class="ic">✦</div><div><h4>Lo mejor de la técnica actual</h4><p>Contenido actualizado, claro y profesional para dominar la técnica más valorada de la micropigmentación.</p></div></div>
+        <div class="feat"><div class="ic">🎯</div><div><h4>Seguridad en cada trazo</h4><p>Perfecciona tu técnica, corrige la profundidad y los movimientos, y aprende a no maltratar la piel.</p></div></div>
+      </div>
+      <a class="btn" style="margin-top:32px" href="https://pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10">Garantizar mi ingreso <span class="arw">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- CURRICULUM / EPISODES -->
+<section class="sec" id="aprender" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">El programa</span>
+      <h2>¿Qué vas a aprender?</h2>
+      <p>Una inmersión intensiva de 8 horas diseñada para transformar tu técnica desde los fundamentos hasta la aplicación práctica, guiada paso a paso por James Olaya.</p>
+    </div>
+
+    <div class="ep-parts">
+      <div class="part-label">Parte 1 — Revisión teórica</div>
+      <details class="ep" open><summary><span class="ep-num">1</span><span class="ep-ti">Fundamentos del Pelo a Pelo con dermógrafo</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Diferencia entre dermógrafo y tebori en la construcción de los trazos</li><li>Indicaciones de la técnica para distintos tipos de piel y cejas</li><li>Resultados esperados: naturalidad vs. efecto cosmético</li></ul></details>
+      <details class="ep"><summary><span class="ep-num">2</span><span class="ep-ti">Visión técnica avanzada</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Tipos de trazos: rectos, curvos, ramificados, cruzados</li><li>Dirección, inclinación y espaciado según la forma del rostro</li><li>Mapas de trazos clásicos y actualizados para dermógrafo</li></ul></details>
+      <details class="ep"><summary><span class="ep-num">3</span><span class="ep-ti">Diseño y arquitectura de la ceja</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Cómo adaptar el diseño a la forma del rostro y la simetría natural</li><li>Corrección de cejas asimétricas con técnica Pelo a Pelo</li></ul></details>
+      <details class="ep"><summary><span class="ep-num">4</span><span class="ep-ti">Pigmentología aplicada</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Selección de pigmentos específicos para Pelo a Pelo con dermógrafo</li><li>Fijación y previsibilidad del color</li><li>Cómo prevenir y corregir trazos que desaparecen o se difuminan</li></ul></details>
+
+      <div class="part-label">Parte 2 — Consejos de entrenamiento</div>
+      <details class="ep"><summary><span class="ep-num">5</span><span class="ep-ti">Entrenamientos inteligentes en papel y piel artificial</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Secuencia de ejercicios para mejorar dirección y fluidez</li><li>Entrenamientos de calentamiento antes de atender a clientas</li><li>Cómo entrenar trazos en secuencia para ganar firmeza en la mano</li></ul></details>
+      <details class="ep"><summary><span class="ep-num">6</span><span class="ep-ti">Control de mano y presión</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Punto de apoyo ideal para mayor precisión</li><li>Importancia del movimiento y la rotación de la muñeca</li><li>Velocidad correcta del dermógrafo y tipo de aguja ideal</li></ul></details>
+      <details class="ep"><summary><span class="ep-num">7</span><span class="ep-ti">Checkpoints para autoevaluación</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Cómo saber si los trazos están bien construidos antes de pasar a la piel real</li><li>Técnicas para corregir los trazos durante el procedimiento</li></ul></details>
+
+      <div class="part-label">Parte 3 — Demostración en vivo</div>
+      <details class="ep"><summary><span class="ep-num">8</span><span class="ep-ti">Pre-procedimiento en modelo</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Elección del diseño</li><li>Mapeo y preparación de la piel</li><li>Pigmento y anestesia</li></ul></details>
+      <details class="ep"><summary><span class="ep-num">9</span><span class="ep-ti">Ejecución paso a paso de la técnica</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Aplicación de cada trazo con explicaciones en tiempo real</li><li>Consejos sobre ritmo, ergonomía y visibilidad</li><li>Cómo corregir un trazo durante la ejecución</li></ul></details>
+      <details class="ep"><summary><span class="ep-num">10</span><span class="ep-ti">Finalización y orientación post-procedimiento</span><span class="ep-tg">+</span></summary>
+        <ul class="ep-body"><li>Limpieza, fotos y orientación para la clienta</li><li>Cicatrización y retoque: qué esperar</li></ul></details>
+    </div>
+    <div style="text-align:center;margin-top:40px"><a class="btn" href="https://pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10">Quiero perfeccionar mi técnica <span class="arw">→</span></a></div>
+  </div>
+</section>
+
+<!-- GALLERY antes y despues -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Resultados reales</span>
+      <h2>Antes y después que <span class="ital grad-text">hablan por sí solos</span></h2>
+      <p>Descubre la naturalidad y precisión que solo el método James Olaya entrega.</p>
+    </div>
+    <div class="gal">
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/antes-e-depois-1.avif" class="wide"><img src="/recriadas/inmersion-pelo-a-pelo/assets/antes-e-depois-1.avif" alt="Antes y después Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/antes-e-depois-2-e1749824997495.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/antes-e-depois-2-e1749824997495.avif" alt="Resultado natural de cejas" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/antes-e-depois-3.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/antes-e-depois-3.avif" alt="Resultado de micropigmentación" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-1.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-1.avif" alt="Trabajo Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-2.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-2.avif" alt="Trabajo Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-3.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-3.avif" alt="Trabajo Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-4.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-4.avif" alt="Trabajo Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-5.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-5.avif" alt="Trabajo Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-6.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-6.avif" alt="Trabajo Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-7.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-7.avif" alt="Trabajo Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-8.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/dp-fioafio-8.avif" alt="Trabajo Pelo a Pelo" loading="lazy"/></a>
+      <a href="/recriadas/inmersion-pelo-a-pelo/assets/4-visual.avif"><img src="/recriadas/inmersion-pelo-a-pelo/assets/4-visual.avif" alt="Detalle de trazos" loading="lazy"/></a>
+    </div>
+    <div style="text-align:center;margin-top:38px"><a class="btn" href="https://pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10">Quiero mi cupo <span class="arw">→</span></a></div>
+  </div>
+</section>
+
+<!-- INCLUDES -->
+<section class="sec" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Todo incluido</span><h2>¿Qué incluye?</h2><p>Esto es lo que recibirás al participar en la Inmersión Intensiva Pelo a Pelo.</p></div>
+    <div class="incl-grid">
+      <ul class="incl-list">
+        <li><span class="ck">✦</span> Clase en vivo 100% en español, impartida directamente por James Olaya</li>
+        <li><span class="ck">✦</span> 8 horas de inmersión intensiva para dominar la técnica Pelo a Pelo</li>
+        <li><span class="ck">✦</span> Transmisión profesional con múltiples ángulos de cámara y alta calidad de imagen e iluminación</li>
+        <li><span class="ck">✦</span> Material de apoyo en PDF para seguir el contenido paso a paso</li>
+        <li><span class="ck">✦</span> Certificado de participación emitido por Jay.O Academy</li>
+        <li><span class="ck">✦</span> Experiencia inédita, pensada para enseñarte con claridad hasta los detalles más mínimos</li>
+        <li><span class="ck">✦</span> Contenido enfocado en la práctica: ejecución real, no solo conceptos</li>
+        <li><span class="ck">✦</span> Precio especial de lanzamiento para las primeras alumnas</li>
+        <li><span class="ck">✦</span> Grabación disponible por 7 días</li>
+      </ul>
+      <aside class="info-card">
+        <div class="mk"><img src="/recriadas/inmersion-pelo-a-pelo/assets/mockup-peloapelo.avif" alt="Material de la inmersión" loading="lazy"/></div>
+        <h4>La jornada</h4>
+        <ul>
+          <li>📆 25 de abril de 2026 (sábado)</li>
+          <li>⏰ 8 horas de formación intensiva</li>
+          <li>🎓 Certificado + Material PDF</li>
+          <li>🌍 En español, desde cualquier lugar</li>
+          <li>📸 Transmisión profesional y clara</li>
+          <li>📹 Grabación disponible por 7 días</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- PRICE -->
+<section class="sec price-sec">
+  <div class="wrap">
+    <span class="eyebrow" style="justify-content:center">Precio de lanzamiento</span>
+    <div class="price-box">
+      <p class="price-old">De <s>U$ 297</s> por solo</p>
+      <div class="price-now grad-text"><small>U$</small>47</div>
+      <p class="price-note">Precio exclusivo para las primeras alumnas de esta formación única.</p>
+      <a class="btn" href="https://pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10">Quiero mi ingreso <span class="arw">→</span></a>
+      <p class="price-note" style="margin-top:14px">Pago seguro vía Hotmart · Acceso inmediato a los datos del evento</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROFESSOR -->
+<section class="sec" style="background:var(--bg2)">
+  <div class="wrap prof">
+    <div class="prof-photo"><img src="/recriadas/inmersion-pelo-a-pelo/assets/james-olaya.png" alt="James Olaya" loading="lazy"/></div>
+    <div>
+      <span class="eyebrow">Su profesor</span>
+      <div class="stars" style="margin-top:14px">★★★★★</div>
+      <h2>James Olaya</h2>
+      <p class="role">Biomédico, micropigmentador, educador y conferencista internacional. Referencia mundial en la técnica Pelo a Pelo.</p>
+      <div class="flags">🇧🇷 🇺🇸 🇦🇷 🇺🇾 🇨🇱 🇵🇹 🇨🇦 🇫🇷 🇩🇪 🇮🇩 🇪🇸 🇳🇱 🇯🇵 🇻🇳 🇲🇽</div>
+      <div class="cert">
+        <img src="/recriadas/inmersion-pelo-a-pelo/assets/certificado-fio-a-fio-james-olaya1.png" alt="Certificado Jay.O Academy" loading="lazy"/>
+        <span>Al finalizar recibes tu <b>Certificado de participación</b> emitido por Jay.O Academy.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head" style="margin:0 auto;text-align:center"><span class="eyebrow" style="justify-content:center">Dudas</span><h2>Preguntas frecuentes</h2></div>
+    <div class="faq">
+      <details class="qa"><summary>¿Necesito experiencia previa para participar?<span class="pm">+</span></summary><p>No. Esta formación fue diseñada tanto para quienes están comenzando en la micropigmentación como para quienes ya tienen experiencia y desean perfeccionar su técnica.</p></details>
+      <details class="qa"><summary>¿Dónde será transmitida la clase?<span class="pm">+</span></summary><p>La transmisión será online y en español, a través de una plataforma accesible desde cualquier dispositivo con internet. No es necesario instalar nada.</p></details>
+      <details class="qa"><summary>¿Recibiré certificado?<span class="pm">+</span></summary><p>Sí. Al finalizar la inmersión recibirás un certificado de participación emitido por Jay.O Academy.</p></details>
+      <details class="qa"><summary>¿Cómo hago el pago?<span class="pm">+</span></summary><p>El pago se realiza de forma segura a través de Hotmart. Aceptamos tarjeta y otros métodos disponibles según tu país.</p></details>
+      <details class="qa"><summary>¿Cuántas horas dura la inmersión?<span class="pm">+</span></summary><p>La inmersión tendrá una duración total de 8 horas, con una jornada completa de contenido teórico, consejos prácticos y demostración en vivo con James Olaya.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <div class="wrap">
+    <span class="eyebrow" style="justify-content:center">Cupos limitados</span>
+    <h2>Transforma tu técnica con <span class="ital grad-text">James Olaya</span></h2>
+    <p style="color:var(--mut);max-width:40ch;margin:18px auto 0">Una jornada rica en detalles para dominar la técnica Pelo a Pelo y destacar como artista de la micropigmentación.</p>
+    <div style="margin-top:34px"><a class="btn" href="https://pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10">Reservar mi lugar ahora <span class="arw">→</span></a></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img src="/recriadas/inmersion-pelo-a-pelo/assets/jay-academy.png" alt="Jay Academy" />
+    <p class="foot-tag">Educación, técnica y arte en la belleza.</p>
+    <p>© 2026 Jay.O Academy · Todos los derechos reservados</p>
+  </div>
+</footer>
+
+<div class="sticky-cta"><a class="btn" href="https://pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10">Reservar mi lugar · U$47</a></div>
+
+<script>
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.sec-head,.ben,.split-media,.feat,.ep,.gal a,.info-card,.price-box,.prof-photo,.qa').forEach((el,i)=>{el.classList.add('rv');el.style.transitionDelay=(i%6*40)+'ms';io.observe(el)});
+</script>
+</body>
+</html>

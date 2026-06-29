@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
       // dos rewrites estáticos. PMU CLASS continua servido como skeleton
       // estático — o conteúdo editável é puxado em runtime via /api/lp-content.
       { source: "/pmuclass", destination: "/pmuclass/index.html" },
+      // LPs reconstruídas (estáticas em /public/recriadas/<slug>) ficam na URL
+      // limpa original da LP. Rewrites correm antes do [slug] dinâmico, então
+      // não colidem com as páginas WP publicadas.
+      { source: "/inmersion-pelo-a-pelo", destination: "/recriadas/inmersion-pelo-a-pelo/index.html" },
     ];
   },
 };
