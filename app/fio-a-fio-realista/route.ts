@@ -1,23 +1,14 @@
-import { NextResponse } from "next/server";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
+import { NextResponse, type NextRequest } from "next/server";
 
-// Página redesenhada da Fio a Fio Realista, servida a partir de um arquivo HTML
-// no repositório (lp-html/fio-a-fio-realista.html). Rota estática "fio-a-fio-realista"
-// tem prioridade sobre o dinâmico [slug], então isto substitui a versão do KV.
-// Edito o arquivo aqui no código e dou push → vai pro ar.
+// A página Fio a Fio Realista foi movida para a URL oficial
+// /metodo-fio-a-fio-by-james-olaya. Esta rota antiga redireciona
+// (308 permanente) pra não quebrar links já divulgados.
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export async function GET() {
-  const html = await readFile(
-    path.join(process.cwd(), "lp-html", "fio-a-fio-realista.html"),
-    "utf8"
+export function GET(req: NextRequest) {
+  return NextResponse.redirect(
+    new URL("/metodo-fio-a-fio-by-james-olaya", req.url),
+    308
   );
-  return new NextResponse(html, {
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "public, max-age=0, s-maxage=60, stale-while-revalidate=86400",
-    },
-  });
 }
