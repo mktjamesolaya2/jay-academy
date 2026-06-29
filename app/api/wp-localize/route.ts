@@ -94,6 +94,38 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, removed });
   }
 
+  // ── Troca o slug público (URL) de uma página publicada: ?reslug=1&from=X&to=Y ──
+  if (url.searchParams.get("reslug") === "1") {
+    const from = (url.searchParams.get("from") || "").trim().replace(/^\/+|\/+$/g, "");
+    const to = (url.searchParams.get("to") || "").trim().replace(/^\/+|\/+$/g, "");
+    if (!from || !to) {
+      return NextResponse.json({ ok: false, error: "informe from e to" });
+    }
+    const idx = await getPublishedBySlug(from);
+    if (!idx) {
+      return NextResponse.json({ ok: false, error: `nenhuma página publicada em "/${from}"` });
+    }
+    const content = await loadContent(idx.domain, idx.slug);
+    if (!content) {
+      return NextResponse.json({ ok: false, error: "conteúdo da página não encontrado" });
+    }
+    try {
+      await setPublished(content, to);
+    } catch (e) {
+      return NextResponse.json({ ok: false, error: e instanceof Error ? e.message : "erro" });
+    }
+    revalidatePath(`/${from}`);
+    revalidatePath(`/${to}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/wp-pages");
+    return NextResponse.json({
+      ok: true,
+      message: `URL trocada de /${from} para /${to}`,
+      titulo: (content.title || "").replace(/<[^>]+>/g, ""),
+      nova_url: `/${to}`,
+    });
+  }
+
   // ── Despublica uma página: ?unpub=1&slug=X&domain=Y ──
   if (url.searchParams.get("unpub") === "1") {
     const slug = url.searchParams.get("slug") || "";
