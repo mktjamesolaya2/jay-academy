@@ -101,6 +101,7 @@ export async function GET(req: Request) {
     if (!from || !to) {
       return NextResponse.json({ ok: false, error: "informe from e to" });
     }
+    const force = url.searchParams.get("force") === "1";
     const idx = await getPublishedBySlug(from);
     if (!idx) {
       return NextResponse.json({ ok: false, error: `nenhuma página publicada em "/${from}"` });
@@ -108,6 +109,22 @@ export async function GET(req: Request) {
     const content = await loadContent(idx.domain, idx.slug);
     if (!content) {
       return NextResponse.json({ ok: false, error: "conteúdo da página não encontrado" });
+    }
+    // Se o slug destino já está ocupado por OUTRA página, libera (só com force).
+    let substituida: string | null = null;
+    const occupant = await getPublishedBySlug(to);
+    if (occupant && !(occupant.domain === idx.domain && occupant.slug === idx.slug)) {
+      if (!force) {
+        return NextResponse.json({
+          ok: false,
+          error: `/${to} já está ocupada por outra página. Adicione &force=1 no link pra substituí-la.`,
+        });
+      }
+      const occContent = await loadContent(occupant.domain, occupant.slug);
+      if (occContent) {
+        substituida = (occContent.title || "").replace(/<[^>]+>/g, "");
+        await unsetPublished(occContent);
+      }
     }
     try {
       await setPublished(content, to);
@@ -122,6 +139,7 @@ export async function GET(req: Request) {
       ok: true,
       message: `URL trocada de /${from} para /${to}`,
       titulo: (content.title || "").replace(/<[^>]+>/g, ""),
+      substituida: substituida ? `despubliquei a antiga "${substituida}"` : undefined,
       nova_url: `/${to}`,
     });
   }
