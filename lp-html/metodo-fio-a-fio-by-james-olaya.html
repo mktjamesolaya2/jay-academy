@@ -601,6 +601,10 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 .ffr-pq__eyebrow::before{content:"";width:30px;height:2px;background:linear-gradient(90deg,#f5a8e0,#a855f7);}
 .ffr-pq__title{font-size:clamp(28px,3.6vw,46px);font-weight:800;line-height:1.06;letter-spacing:-.02em;margin:0 0 22px;color:#fff;}
 .ffr-pq__title b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-pq__head{text-align:center;max-width:840px;margin:0 auto;}
+.ffr-pq__head .ffr-pq__eyebrow{justify-content:center;}
+.ffr-pq__head .ffr-pq__eyebrow::after{content:"";width:30px;height:2px;background:linear-gradient(90deg,#a855f7,#f5a8e0);}
+.ffr-pq__head .ffr-pq__title{margin:0;}
 .ffr-pq__txt p{color:#e3dcf0;font-size:clamp(15px,1.5vw,17px);line-height:1.62;margin:0 0 15px;}
 .ffr-pq__txt p:last-child{margin-bottom:0;}
 .ffr-pq__txt strong{color:#fff;font-weight:600;}
@@ -616,6 +620,10 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
 <div id="ffr-pq-wrap" style="display:none">
   <section class="ffr-pq">
     <div class="ffr-pq__inner">
+      <div class="ffr-pq__head">
+        <p class="ffr-pq__eyebrow">Seja o seu melhor</p>
+        <h2 class="ffr-pq__title">Por que ser uma <b>micropigmentadora?</b></h2>
+      </div>
 
       <div class="ffr-pq__row">
         <div class="ffr-pq__art">
@@ -624,8 +632,6 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
           </div>
         </div>
         <div class="ffr-pq__txt">
-          <p class="ffr-pq__eyebrow">Seja o seu melhor</p>
-          <h2 class="ffr-pq__title">Por que ser uma <b>micropigmentadora?</b></h2>
           <p class="ffr-pq__lead">Um profissional bem preparado abre portas para <span>inúmeras oportunidades</span> na beleza e na estética.</p>
           <p>A estética nunca esteve tão valorizada — e, por ser um mercado que não conhece crise, cada vez mais pessoas encontram nele uma carreira <strong>sólida e segura</strong>.</p>
         </div>
