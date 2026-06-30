@@ -1790,21 +1790,46 @@ no  <span style="color: #F666A9";>Fio a Fio Realista</span>?</h2>				</div>
 		</div>
 					</div>
 		</section>
-				<section data-particle_enable="false" data-particle-mobile-disabled="false" class="elementor-section elementor-top-section elementor-element elementor-element-47d3f43 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="47d3f43" data-element_type="section" data-settings="{&quot;jet_parallax_layout_list&quot;:[]}">
-							<div data-rocket-location-hash="7ae5f0bec3161279ce0a6ce48832b186" class="elementor-background-overlay"></div>
-							<div data-rocket-location-hash="a452d305139b21f025d1f77911a443fb" class="elementor-container elementor-column-gap-default">
-					<div class="elementor-column elementor-col-100 elementor-top-column elementor-element elementor-element-df638aa" data-id="df638aa" data-element_type="column">
-			<div class="elementor-widget-wrap elementor-element-populated">
-						<div class="elementor-element elementor-element-3766c64 elementor-widget elementor-widget-heading" data-id="3766c64" data-element_type="widget" data-widget_type="heading.default">
-					<h2 class="elementor-heading-title elementor-size-default">Seu Certificado</h2>				</div>
-				<div class="elementor-element elementor-element-a4a0142 elementor-invisible elementor-widget elementor-widget-heading" data-id="a4a0142" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeIn&quot;}" data-widget_type="heading.default">
-					<h2 class="elementor-heading-title elementor-size-default">Tenha um certificado <span style="color: #F666A9";>Jay Academy</span></h2>				</div>
-				<div class="elementor-element elementor-element-8e5d0bd elementor-invisible elementor-widget elementor-widget-image" data-id="8e5d0bd" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeInUp&quot;}" data-widget_type="image.default">
-															<img decoding="async" width="800" height="534" src="https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/132dfed7d728-certificado-fio-a-fio-james-olaya1-1024x683-61e837453c.png"http://www.w3.org/2000/svg'%20viewBox='0%200%20800%20534'%3E%3C/svg%3E" class="attachment-large size-large wp-image-1501" alt="" data-lazy-sizes="(max-width: 800px) 100vw, 800px" data-lazy-src="https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/132dfed7d728-certificado-fio-a-fio-james-olaya1-1024x683-61e837453c.png" /><noscript><img loading="lazy" decoding="async" width="800" height="534" src="https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/132dfed7d728-certificado-fio-a-fio-james-olaya1-1024x683-61e837453c.png" class="attachment-large size-large wp-image-1501" alt="" /></noscript>															</div>
-					</div>
-		</div>
-					</div>
-		</section>
+				<!-- ===== SEÇÃO CERTIFICADO (redesign) ===== -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+.ffr-cert{position:relative;font-family:'Poppins',system-ui,sans-serif;background:radial-gradient(125% 120% at 50% 0%,#16121d 0%,#0d0a12 48%,#070509 100%);padding:clamp(70px,9vw,110px) 20px;overflow:hidden;}
+.ffr-cert::before{content:"";position:absolute;top:-180px;right:-90px;width:560px;height:560px;background:radial-gradient(closest-side,rgba(168,85,247,.16),transparent 70%);pointer-events:none;}
+.ffr-cert__wrap{position:relative;z-index:2;max-width:1040px;margin:0 auto;text-align:center;}
+.ffr-cert__eyebrow{display:inline-flex;align-items:center;gap:12px;color:#e8c98a;font-size:12.5px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;margin:0 0 18px;}
+.ffr-cert__eyebrow::before,.ffr-cert__eyebrow::after{content:"";width:30px;height:1.5px;}
+.ffr-cert__eyebrow::before{background:linear-gradient(90deg,transparent,#d4af6a);}
+.ffr-cert__eyebrow::after{background:linear-gradient(90deg,#d4af6a,transparent);}
+.ffr-cert__title{margin:0;color:#fff;font-weight:800;font-size:clamp(31px,4.6vw,56px);line-height:1.04;letter-spacing:-.015em;}
+.ffr-cert__title b{font-weight:800;background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ffr-cert__sub{max-width:600px;margin:20px auto 0;color:#d8cfe6;font-size:clamp(15px,1.7vw,18px);line-height:1.62;font-weight:400;}
+.ffr-cert__stage{position:relative;margin-top:clamp(40px,5.5vw,64px);display:flex;justify-content:center;align-items:center;}
+.ffr-cert__glow{position:absolute;left:50%;top:50%;width:min(720px,90%);height:80%;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(212,175,106,.20),rgba(212,175,106,.06) 46%,transparent 72%);pointer-events:none;}
+.ffr-cert__img{position:relative;display:block;width:min(720px,92%);height:auto;filter:drop-shadow(0 34px 64px rgba(0,0,0,.6));animation:ffrCertFloat 6.5s ease-in-out infinite;}
+.ffr-cert__facts{margin-top:clamp(36px,4.5vw,52px);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:13px 24px;}
+.ffr-cert__facts span{display:inline-flex;align-items:center;gap:10px;color:#cfc7de;font-size:14.5px;font-weight:500;letter-spacing:.01em;}
+.ffr-cert__facts span::before{content:"";width:6px;height:6px;border-radius:50%;background:linear-gradient(180deg,#f3ddae,#d4af6a);box-shadow:0 0 9px rgba(212,175,106,.55);}
+@keyframes ffrCertFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@media(max-width:600px){.ffr-cert__img,.ffr-cert__glow{width:100%;}.ffr-cert__facts{gap:11px 18px;}.ffr-cert__facts span{font-size:13px;}}
+@media(prefers-reduced-motion:reduce){.ffr-cert__img{animation:none;}}
+</style>
+<section class="ffr-cert" id="ffr-cert">
+  <div class="ffr-cert__wrap">
+    <p class="ffr-cert__eyebrow">Seu certificado</p>
+    <h2 class="ffr-cert__title">Termine com um certificado<br><b>que carrega o seu nome</b></h2>
+    <p class="ffr-cert__sub">Concluiu o Fio a Fio Realista? A certificação Jay Academy sai emitida no seu nome — a prova da sua especialização pra valorizar o portfólio e atrair mais clientes.</p>
+    <div class="ffr-cert__stage">
+      <div class="ffr-cert__glow"></div>
+      <img class="ffr-cert__img" src="https://brbpjjqigpmxombzbxiu.supabase.co/storage/v1/object/public/media/wpmirror/132dfed7d728-certificado-fio-a-fio-james-olaya1-1024x683-61e837453c.png" alt="Certificado de participação Jay Academy do curso Fio a Fio Realista" width="1024" height="683" decoding="async" loading="lazy">
+    </div>
+    <div class="ffr-cert__facts">
+      <span>Certificado de participação</span>
+      <span>40 horas de carga horária</span>
+      <span>Emitido no seu nome</span>
+    </div>
+  </div>
+</section>
+<!-- ===== FIM SEÇÃO CERTIFICADO ===== -->
 				<section data-particle_enable="false" data-particle-mobile-disabled="false" class="elementor-section elementor-top-section elementor-element elementor-element-6b7efc5 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="6b7efc5" data-element_type="section" data-settings="{&quot;jet_parallax_layout_list&quot;:[]}">
 							<div data-rocket-location-hash="cff69994d339be224dc89238e7355ade" class="elementor-background-overlay"></div>
 							<div data-rocket-location-hash="0bab313ba47eba38276077e18f76573f" class="elementor-container elementor-column-gap-default">
