@@ -2,7 +2,19 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-06-26 — FIX cópia WP: imagens quebradas + CSS sem estilo (2 causas raiz)
+> **Última atualização**: 2026-07-01 — LP Lips Sense (redesign grego): depoimentos + módulos
+
+---
+
+## 🆕 Sessão 2026-07-01 — Lips Sense (`lp-html/pdv-lips-sense-technique.html`) redesign grego continua
+
+Iteração visual-first com James na LP **PDV Lips Sense** (servida por [pdv-lips-sense-technique.html](../lp-html/pdv-lips-sense-technique.html) via rota estática; editar arquivo + push repo `jay-academy`). Metade de cima já era tema grego/coral; continuamos descendo.
+
+- **Depoimentos** ("O que minhas alunas falam..."): Galeria de Musas (molduras douradas) → **painéis diagonais** (filmstrip skew -9° que expande no hover, lightbox YouTube). Commits `37b1f38`, e **`959ec2b` = FIX crítico**: a galeria renderizava INVISÍVEL (só coral vazio de 470px). Causa: painéis `flex:1 1 0` + imgs `position:absolute` (sem largura intrínseca) dentro de widget Elementor flex centralizado → **colapsava p/ largura 0**. Fix: `[data-id="8169d9f"]{width:100% !important}` + `.diagwrap{width:100%}`.
+- **Módulos** ("Todos os módulos..."): carrossel Elementor genérico → **mockup de celular com stories passando** (padrão da fio a fio `_modulos.html`, tema plum/dourado). 8 módulos passam sozinhos (barras de progresso), esconde carrossel via `data-id="02f2b34"` + heading `18ccd2c`, revela `#lips-mod-wrap`. Commit `99fabe6`. ⚠️ Fundo precisou `!important` (Elementor tinha coral `!important` na seção) + `width:100%` (mesma lição do colapso). Mobile empilha + passa. **8 módulos, sem contagem de aulas/bônus na página (não inventar).**
+- ⚙️ **Método de verificação usado:** headless Chrome (`chrome.exe --headless=new --screenshot`) + `sharp` (em `portal/node_modules`) pra cropar/amostrar pixels — confirma render real antes de entregar. Útil pra achar bugs de layout invisível.
+
+**⏳ Ainda cru (default WP) na Lips, de cima p/ baixo:** Garantia ("Ainda está insegura?") · Oferta+Preço ("condição especial" / 12x) · Bio James ("Quem será seu professor") · Rodapé.
 
 ---
 
