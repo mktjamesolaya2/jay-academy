@@ -1033,9 +1033,13 @@ Transforme sua micropigmentação com o que há de melhor.
 [data-id="7f416d7"] .elementor-heading-title{font-family:'Cormorant Garamond',Georgia,serif !important;font-weight:700 !important;font-size:clamp(32px,4.2vw,50px) !important;color:#fff !important;line-height:1.02 !important;margin:0 0 16px !important;letter-spacing:.005em !important;}
 [data-id="f1a972f"] .elementor-heading-title{font-family:'Poppins',system-ui,sans-serif !important;font-weight:400 !important;font-size:clamp(14px,1.45vw,16px) !important;line-height:1.72 !important;color:#fff !important;letter-spacing:.004em !important;text-align:left !important;}
 @media(max-width:900px){
-  [data-id="33fc8f0"]{max-width:100%;}
-  .elementor-element-f4f38fd::before{background-position:76% center !important;}
-  .elementor-element-f4f38fd::after{background:linear-gradient(180deg, rgba(150,48,52,.62) 0%, rgba(150,48,52,.44) 52%, rgba(150,48,52,.30) 100%) !important;}
+  /* banner 16:9 no topo, texto abaixo no coral solido */
+  .elementor-element-f4f38fd{padding-top:calc(56.25vw + 8px) !important;padding-bottom:26px !important;overflow-x:hidden !important;align-items:flex-start !important;justify-content:flex-start !important;min-height:0 !important;}
+  .elementor-element-f4f38fd::before{top:0 !important;left:0 !important;right:0 !important;bottom:auto !important;height:56.25vw !important;background-position:center !important;background-size:cover !important;}
+  .elementor-element-f4f38fd::after{display:none !important;}
+  .elementor-element-f4f38fd > .e-con-inner{width:100% !important;max-width:100% !important;padding:0 !important;margin:0 !important;box-sizing:border-box !important;}
+  [data-id="33fc8f0"]{width:100% !important;max-width:100% !important;margin:0 !important;padding:0 20px !important;box-sizing:border-box !important;gap:0 !important;}
+  [data-id="7f416d7"] .elementor-heading-title,[data-id="f1a972f"] .elementor-heading-title{text-align:left !important;max-width:100% !important;box-sizing:border-box !important;overflow-wrap:break-word !important;word-break:normal !important;}
 }
 </style>
 <div data-particle_enable="false" data-particle-mobile-disabled="false" class="elementor-element elementor-element-f4f38fd e-flex e-con-boxed e-con e-parent" data-id="f4f38fd" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;jet_parallax_layout_list&quot;:[]}">
