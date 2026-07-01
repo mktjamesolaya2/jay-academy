@@ -578,12 +578,11 @@ Transforme sua micropigmentação com o que há de melhor.
 .llt__fg{position:relative;z-index:2;display:block;width:auto;max-width:94%;max-height:100%;height:auto;margin:0 auto;
   filter:drop-shadow(0 0 26px rgba(255,150,195,.55)) drop-shadow(0 26px 40px rgba(90,15,30,.42));}
 @media(max-width:900px){
-  /* empilha (nao lado a lado) e contem os labios flutuantes p/ nao sobrepor texto/proxima secao */
-  .elementor-element-902df8c{overflow:hidden !important;}
+  /* empilha: texto em cima, imagem abaixo; a proxima dobra comeca depois das imagens */
+  .elementor-element-902df8c{overflow-x:hidden !important;}
   .elementor-element-902df8c > .e-con-inner{flex-direction:column !important;align-items:center !important;}
   .elementor-element-902df8c > .e-con-inner > .elementor-element{width:100% !important;max-width:100% !important;flex:0 0 auto !important;}
-  .llt{max-width:330px;aspect-ratio:600/760;margin:14px auto 0 !important;}
-  .llt__lip{display:none !important;}
+  .llt{max-width:300px;aspect-ratio:600/760;margin:48px auto 36px !important;}
 }
 @media(prefers-reduced-motion:reduce){.llt__glow,.llt__lip{animation:none;}}
 /* ===== HIERARQUIA: titulo dominante (serif grande) + corpo uniforme menor ===== */
