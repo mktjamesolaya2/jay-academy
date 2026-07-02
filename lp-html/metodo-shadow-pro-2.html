@@ -78,7 +78,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .method-line b{color:var(--gold2);}
 /* ===== PILLARS ===== */
 .pillars{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:44px;}
-.pillar{display:flex;gap:20px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;transition:border-color .3s,transform .3s;}
+.pillar{display:flex;gap:18px;align-items:center;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;transition:border-color .3s,transform .3s;}
+.pillar__b{min-width:0;}
 .pillar:hover{border-color:rgba(217,180,88,.4);transform:translateY(-3px);}
 .pillar__img{flex:0 0 auto;width:118px;height:118px;border-radius:14px;overflow:hidden;position:relative;}
 .pillar__img img{width:100%;height:100%;object-fit:cover;}
@@ -119,6 +120,14 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px;}
 .gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:1px solid var(--line2);transition:transform .4s;}
 .gallery img:hover{transform:scale(1.03);}
+/* carrossel de resultados */
+.carousel{position:relative;margin-top:42px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
+.carousel__track{display:flex;gap:16px;width:max-content;animation:carscroll 42s linear infinite;}
+.carousel:hover .carousel__track{animation-play-state:paused;}
+.carousel__track figure{position:relative;flex:0 0 auto;width:clamp(210px,24vw,290px);margin:0;}
+.carousel__track img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:16px;border:1px solid var(--line);box-shadow:0 18px 44px rgba(0,0,0,.55);}
+.carousel__track figure::after{content:"Aluna Shadow PRO";position:absolute;left:12px;bottom:12px;right:12px;color:#fff;font-size:12px;font-weight:600;letter-spacing:.02em;text-shadow:0 2px 8px rgba(0,0,0,.7);background:linear-gradient(0deg,rgba(0,0,0,.55),transparent);padding:22px 8px 6px;border-radius:0 0 16px 16px;}
+@keyframes carscroll{from{transform:translateX(0);}to{transform:translateX(calc(-50% - 8px));}}
 .pills{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:26px 0 0;}
 .pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 20px;color:#e6dfd2;font-size:14px;font-weight:500;display:flex;align-items:center;gap:9px;}
 .pill svg{width:16px;height:16px;}
@@ -127,9 +136,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .offer__stack{list-style:none;max-width:520px;margin:0 auto 34px;display:grid;gap:2px;}
 .offer__stack li{display:flex;align-items:center;gap:14px;padding:14px 4px;border-bottom:1px solid var(--line2);color:#ece7f0;font-size:clamp(14.5px,1.6vw,16px);font-weight:500;}
 .offer__stack li:last-child{border-bottom:none;}
-.price{max-width:480px;margin:0 auto;background:linear-gradient(#1c1727,#15111e);border-radius:22px;border:1px solid var(--line);box-shadow:0 0 0 1px rgba(217,180,88,.25),0 30px 70px rgba(0,0,0,.55);padding:38px 30px 34px;text-align:center;position:relative;overflow:hidden;}
-.price::before{content:"";position:absolute;top:14px;left:20px;right:20px;height:11px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='11' viewBox='0 0 22 11'%3E%3Cpath d='M1.5,9 L1.5,2 L14,2 L14,9 L7,9 L7,4.5 L10,4.5' fill='none' stroke='%23d9b458' stroke-width='1.2'/%3E%3C/svg%3E");background-repeat:repeat-x;background-size:auto 11px;opacity:.4;}
-.price__k{color:var(--gold);font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin:10px 0 4px;}
+.price{max-width:480px;margin:0 auto;background:linear-gradient(#1c1727,#15111e);border-radius:22px;border:1px solid var(--line);box-shadow:0 0 0 1px rgba(217,180,88,.25),0 30px 70px rgba(0,0,0,.55);padding:52px 30px 34px;text-align:center;position:relative;overflow:hidden;}
+.price__k{color:var(--gold);font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin:2px 0 4px;}
 .price__from{color:var(--muted);font-size:14px;}
 .price__big{font-family:'Cormorant Garamond',serif;color:#fff;font-weight:700;line-height:.95;margin:6px 0 4px;}
 .price__big .x{font-size:clamp(26px,4vw,36px);opacity:.85;}
@@ -163,6 +171,39 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .foot{padding:40px 0 46px;text-align:center;border-top:1px solid var(--line2);}
 .foot p{color:var(--muted);font-size:13px;margin:4px 0;}
 .foot .b{font-family:'Cormorant Garamond',serif;color:var(--gold2);font-size:20px;font-style:italic;}
+/* ===== SALE BAR (sticky topo) ===== */
+.salebar{position:sticky;top:0;z-index:1000;background:linear-gradient(90deg,#1a1206,#2c1f0a 50%,#1a1206);border-bottom:1px solid rgba(217,180,88,.3);box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.salebar__in{max-width:1180px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
+.salebar__txt{font-size:13px;color:#f4ead6;font-weight:600;letter-spacing:.01em;display:flex;align-items:center;gap:8px;}
+.salebar__txt b{color:var(--gold2);font-weight:800;}
+.salebar__fire{animation:pulse 1.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.18);opacity:.85;}}
+.timer{display:inline-flex;gap:4px;font-variant-numeric:tabular-nums;}
+.timer span{background:rgba(217,180,88,.16);border:1px solid rgba(217,180,88,.3);color:var(--gold2);font-weight:800;font-size:13px;padding:3px 7px;border-radius:6px;min-width:32px;text-align:center;font-family:'Poppins',sans-serif;}
+.salebar__cta{background:linear-gradient(180deg,var(--gold2),var(--gold3));color:#1a1206;font-weight:800;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;padding:7px 15px;border-radius:8px;text-decoration:none;white-space:nowrap;transition:transform .15s;}
+.salebar__cta:hover{transform:translateY(-1px);}
+@media(max-width:680px){.salebar__cta{display:none;}.salebar__txt{font-size:11.5px;gap:6px;}.salebar__in{gap:10px;}}
+/* ===== MARQUEE ===== */
+.marquee{background:linear-gradient(90deg,#150e05,#251b0a 50%,#150e05);border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap;padding:15px 0;}
+.marquee__t{display:inline-block;animation:mq 30s linear infinite;font-family:'Cormorant Garamond',serif;font-size:clamp(19px,2.6vw,30px);font-weight:700;font-style:italic;color:var(--gold2);will-change:transform;}
+.marquee__t span{padding:0 34px;}
+.marquee__t span i{color:var(--gold3);font-style:normal;}
+@keyframes mq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+/* ===== problema reformulado ===== */
+.prob{background:linear-gradient(160deg,#241318,#170f16);box-shadow:0 14px 40px rgba(120,20,30,.14);}
+.prob__tag{position:absolute;top:-12px;left:20px;background:linear-gradient(135deg,#e94b5a,#c0392b);color:#fff;font-family:'Poppins',sans-serif;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:7px;box-shadow:0 8px 18px rgba(192,57,43,.5);}
+.prob__x{width:44px;height:44px;background:rgba(233,75,90,.16);border:1px solid rgba(233,75,90,.3);}
+.prob__x svg{width:20px;height:20px;}
+.prob h4{font-size:18px;}
+.prob-vs{text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(20px,2.6vw,30px);color:var(--gold);margin:8px 0 4px;}
+/* ===== oferta com desconto/urgencia ===== */
+.price__badge{position:absolute;top:0;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#e94b5a,#c0392b);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:14px;padding:7px 20px;border-radius:0 0 12px 12px;box-shadow:0 10px 22px rgba(192,57,43,.45);letter-spacing:.03em;z-index:2;}
+.price__anchor{color:var(--muted);font-size:15px;margin-bottom:2px;}
+.price__anchor s{color:#c98;opacity:.8;}
+.price__cd{display:flex;align-items:center;justify-content:center;gap:8px;margin:0 0 18px;color:#f0d9a6;font-size:12.5px;font-weight:600;}
+.price__cd .timer span{font-size:15px;padding:5px 9px;background:rgba(233,75,90,.14);border-color:rgba(233,75,90,.35);color:#f6c9a0;}
+.spots{max-width:480px;margin:14px auto 0;background:rgba(233,75,90,.08);border:1px solid rgba(233,75,90,.25);border-radius:12px;padding:12px 18px;color:#f2c4b0;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:9px;}
+.spots svg{width:17px;height:17px;flex:0 0 auto;}
 /* ===== RESPONSIVE ===== */
 @media(max-width:900px){
   .hero{min-height:auto;padding:96px 0 60px;}
@@ -181,6 +222,14 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 </head>
 <body>
 
+<!-- ===== SALE BAR ===== -->
+<div class="salebar">
+  <div class="salebar__in">
+    <span class="salebar__txt"><span class="salebar__fire">🔥</span> <b>CONDIÇÃO ESPECIAL</b> · Shadow PRO por <b>12x&nbsp;R$&nbsp;20,37</b> · encerra em <span class="timer" id="sbTimer"><span>00</span>:<span>00</span>:<span>00</span></span></span>
+    <a class="salebar__cta" href="#oferta">Garantir agora</a>
+  </div>
+</div>
+
 <!-- ===== HERO ===== -->
 <header class="hero">
   <div class="wrap hero__in">
@@ -197,6 +246,11 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <div class="trust"><span><b>Acesso imediato</b></span><span><b>Compra segura</b></span><span><b>Garantia de 7 dias</b></span></div>
   </div>
 </header>
+
+<!-- ===== MARQUEE ===== -->
+<div class="marquee"><div class="marquee__t">
+  <span>Degradê limpo <i>✦</i></span><span>Cicatrizado bonito <i>✦</i></span><span>Sem marcação aparente <i>✦</i></span><span>Cor estável <i>✦</i></span><span>Acabamento premium <i>✦</i></span><span>Resultado que vende <i>✦</i></span><span>Degradê limpo <i>✦</i></span><span>Cicatrizado bonito <i>✦</i></span><span>Sem marcação aparente <i>✦</i></span><span>Cor estável <i>✦</i></span><span>Acabamento premium <i>✦</i></span><span>Resultado que vende <i>✦</i></span>
+</div></div>
 
 <!-- ===== PROVA / RESULTADO ===== -->
 <section class="sec">
@@ -226,9 +280,9 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <div class="meandro"></div>
     <p class="sec-sub">Quando você domina o degradê, seu Shadow deixa de variar e vira referência. A maioria não erra porque é ruim — erra porque aprende Shadow sem técnica de controle:</p>
     <div class="probs">
-      <div class="prob"><div class="prob__x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div><h4>Degradê sem sentido</h4><p>Você satura onde deveria suavizar e o resultado pesa.</p></div>
-      <div class="prob"><div class="prob__x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div><h4>Cor sem critério</h4><p>O pigmento "vira" e a naturalidade some na cicatrização.</p></div>
-      <div class="prob"><div class="prob__x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div><h4>Execução instável</h4><p>Pressão e velocidade variam e aparecem falhas/marcações.</p></div>
+      <div class="prob"><span class="prob__tag">✕ Erro comum</span><div class="prob__x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div><h4>Degradê sem sentido</h4><p>Você satura onde deveria suavizar e o resultado pesa.</p></div>
+      <div class="prob"><span class="prob__tag">✕ Erro comum</span><div class="prob__x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div><h4>Cor sem critério</h4><p>O pigmento "vira" e a naturalidade some na cicatrização.</p></div>
+      <div class="prob"><span class="prob__tag">✕ Erro comum</span><div class="prob__x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div><h4>Execução instável</h4><p>Pressão e velocidade variam e aparecem falhas/marcações.</p></div>
     </div>
     <div class="method-line">O método é simples: <b>controle de distribuição + saturação + acabamento</b>, para construir um degradê limpo do começo ao fim.</div>
     <div style="margin-top:30px;"><a class="cta" href="#oferta">Quero aprender o método</a></div>
@@ -364,14 +418,24 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <h2 class="sec-title">Resultados reais de alunas que <span class="gold">aplicaram o método</span></h2>
     <div class="meandro"></div>
     <p class="sec-sub">Quando a técnica é clara, o resultado aparece — e a confiança muda junto.</p>
-    <div class="gallery">
-      <img src="/lp/shadow-pro/r1.webp" alt="Resultado aluna" loading="lazy">
-      <img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna" loading="lazy">
-      <img src="/lp/shadow-pro/r3.webp" alt="Resultado aluna" loading="lazy">
-      <img src="/lp/shadow-pro/r4.webp" alt="Resultado aluna" loading="lazy">
-      <img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna" loading="lazy">
-      <img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna" loading="lazy">
-    </div>
+    <div class="carousel"><div class="carousel__track">
+      <figure><img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r4.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r1.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r4.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna" loading="lazy"></figure>
+      <figure><img src="/lp/shadow-pro/r1.webp" alt="Resultado aluna" loading="lazy"></figure>
+    </div></div>
     <div class="pills">
       <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Menos medo de errar</span>
       <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Mais consistência e acabamento</span>
@@ -396,13 +460,16 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
       <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span>Garantia incondicional de 7 dias</li>
     </ul>
     <div class="price">
-      <div class="price__k">Condição especial do pacote completo</div>
-      <div class="price__from">por apenas</div>
+      <span class="price__badge">🔥 OFERTA</span>
+      <div class="price__k">Pacote completo · Condição especial</div>
+      <div class="price__from">hoje por apenas</div>
       <div class="price__big"><span class="x">12x</span> <span class="v">R$&nbsp;20,37</span></div>
       <div class="price__vista">ou R$ 197,00 à vista</div>
+      <div class="price__cd">⏳ Encerra em <span class="timer" id="pcTimer"><span>00</span>:<span>00</span>:<span>00</span></span></div>
       <a class="cta" href="https://pay.hotmart.com/E98531587I?checkoutMode=10">Quero garantir meu acesso</a>
       <div class="price__trust">Compra segura · Acesso imediato · Garantia de 7 dias</div>
     </div>
+    <div class="spots"><svg viewBox="0 0 24 24" fill="none" stroke="#e97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg> Condição por tempo limitado — não perca essa janela.</div>
   </div>
 </section>
 
@@ -475,6 +542,18 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   document.querySelectorAll('.qa__q').forEach(function(b){
     b.addEventListener('click',function(){ b.closest('.qa').classList.toggle('open'); });
   });
+  // countdown de urgencia (persiste 30min por visitante)
+  var DUR=30*60*1000, key='shpro_deadline';
+  var end=parseInt(localStorage.getItem(key)||'0',10);
+  if(!end || end<Date.now()){ end=Date.now()+DUR; localStorage.setItem(key,end); }
+  function pad(n){return n<10?'0'+n:''+n;}
+  function tick(){
+    var d=Math.max(0,end-Date.now());
+    var h=Math.floor(d/3600000), m=Math.floor(d%3600000/60000), s=Math.floor(d%60000/1000);
+    ['sbTimer','pcTimer'].forEach(function(id){var el=document.getElementById(id);if(!el)return;var sp=el.querySelectorAll('span');if(sp[0])sp[0].textContent=pad(h);if(sp[1])sp[1].textContent=pad(m);if(sp[2])sp[2].textContent=pad(s);});
+    if(d<=0){ end=Date.now()+DUR; localStorage.setItem(key,end); }
+  }
+  tick(); setInterval(tick,1000);
 })();
 </script>
 </body>
