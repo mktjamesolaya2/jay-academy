@@ -2,11 +2,30 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-02 — LP Lips Sense COMPLETA (todas as seções redesenhadas) + polimento mobile
+> **Última atualização**: 2026-07-02 — Lips Sense COMPLETA + Fio a Fio mobile + **Shadow PRO recriada e turbinada**
 
 ---
 
-## 🆕 Sessão 2026-07-02 — Lips Sense: fecha o redesign (oferta, bio, garantia rosa) + ajustes mobile
+## 🆕 Sessão 2026-07-02 (parte 2) — Fio a Fio mobile + Método Shadow PRO (recriação + overhaul visual)
+
+### Fio a Fio ([metodo-fio-a-fio-by-james-olaya.html](../lp-html/metodo-fio-a-fio-by-james-olaya.html)) — ajustes mobile
+- Botão de idioma: `position:fixed`→`absolute` no mobile (não flutua mais, fica plotado no início).
+- Seção "Vá muito além do shadow" (`.ffr-sh`): foto trocada `shadow.webp`→`fioafio.webp` (PC + mobile).
+- 2º depoimento (`.ffr-dep__full`): adicionado frame de template de vídeo no mobile.
+- ⚠️ **Lição/atrito:** James disse "sessão do shadow **no fio a fio**", eu editei a página Magic Shadow por engano. "sessão de X na página Y" = editar a seção dentro de Y, nunca a página X.
+
+### 🌑 Método Shadow PRO — LP recriada do zero + turbinada
+A página WP `/metodo-shadow-pro-2` foi **excluída e não pôde ser recuperada** → recriei como **LP custom dark+gold** e depois turbinei ("muito visual, faixas de sale, seja criativo").
+- **Arquivo:** [lp-html/metodo-shadow-pro-2.html](../lp-html/metodo-shadow-pro-2.html) · **rota estática:** [app/metodo-shadow-pro-2/route.ts](../app/metodo-shadow-pro-2/route.ts) (mesmo padrão das outras LPs custom).
+- **Assets:** [public/lp/shadow-pro/](../public/lp/shadow-pro/) — 16 webp copiados de `Magic Shadow 3/assets` via sharp (hero, f1-f3, prob, p1-p4, r1-r6, james).
+- **Design:** Cormorant Garamond + Poppins · vars `--bg:#0a090c --gold:#d9b458 --card:#15121c` · Hotmart `E98531587I?checkoutMode=10` em todos os CTAs de preço.
+- **Overhaul visual entregue:** barra de oferta sticky + **countdown** (localStorage `shpro_deadline`, 30min, atualiza `sbTimer`+`pcTimer`) · marquee de palavras-chave · problemas com tag "✕ Erro comum" · **oferta com badge 🔥 OFERTA (ribbon top-center) + countdown + faixa de urgência** · fix overflow dos 4 pilares (`min-width:0`) · **carrossel auto-scroll** nos resultados · checklist "Tudo o que você precisa" virou **grid de cards** com chips dourados · cicatrizados viraram **cards com selo "✓ Cicatrizado real"** + legenda de prova.
+- ⏳ **Pendente:** seção de **certificado** (James vai buscar o certificado ORIGINAL dele → placeholder `.cert__card` aguardando). "Para quem" já está bom (2 colunas é/não é).
+- 15 seções, conteúdo extraído da página quebrada ao vivo. `.meandro` (grego) foi escondido a pedido do James.
+
+---
+
+## Sessão 2026-07-02 (parte 1) — Lips Sense: fecha o redesign (oferta, bio, garantia rosa) + ajustes mobile
 
 LP **PDV Lips Sense** ([pdv-lips-sense-technique.html](../lp-html/pdv-lips-sense-technique.html)) — **todas as seções** agora no tema grego/coral. Continuação da sessão 07-01.
 
