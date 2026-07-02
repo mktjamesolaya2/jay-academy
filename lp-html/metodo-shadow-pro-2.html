@@ -173,6 +173,20 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .pillar__n{position:absolute;top:8px;left:8px;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--gold2),var(--gold3));color:#1a1206;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;}
 .pillar__b h4{font-family:'Poppins',sans-serif;font-size:17px;font-weight:600;color:#fff;margin-bottom:6px;}
 .pillar__b p{color:var(--muted);font-size:14px;line-height:1.55;}
+/* 4 pilares como colunas */
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,20px);margin:50px 0 42px;text-align:left;}
+.col{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);aspect-ratio:.64;box-shadow:0 26px 54px rgba(0,0,0,.52);transition:transform .35s,border-color .35s;}
+.col:hover{transform:translateY(-8px);border-color:rgba(217,180,88,.55);}
+.col>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s;}
+.col:hover>img{transform:scale(1.05);}
+.col::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(10,9,12,.1) 0%,transparent 26%,transparent 42%,rgba(10,9,12,.55) 70%,rgba(10,9,12,.96) 100%);}
+.col::after{content:"";position:absolute;top:0;left:0;right:0;height:3px;z-index:2;background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:.75;}
+.col__n{position:absolute;top:14px;left:14px;z-index:3;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:23px;width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#12100c;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(217,180,88,.4);}
+.col__b{position:absolute;left:0;right:0;bottom:0;z-index:3;padding:20px 17px;}
+.col__b h4{font-family:'Poppins',sans-serif;font-size:clamp(14.5px,1.45vw,16.5px);font-weight:700;color:#fff;margin-bottom:5px;line-height:1.22;}
+.col__b p{color:#cbc3b7;font-size:12.5px;line-height:1.45;margin:0;}
+@media(max-width:860px){.cols{grid-template-columns:repeat(2,1fr);gap:14px;}.col{aspect-ratio:.72;}}
+@media(max-width:400px){.col__b p{display:none;}}
 /* ===== CHECKLIST (o que você aprende / recebe) ===== */
 .checklist{list-style:none;max-width:860px;margin:36px auto 0;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;text-align:left;}
 .checklist li{display:flex;align-items:flex-start;gap:13px;padding:18px 18px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(150deg,#181322,#120e19);color:#e9e2d6;font-size:clamp(14px,1.55vw,15.5px);line-height:1.45;font-weight:500;transition:border-color .2s,transform .2s;}
@@ -454,11 +468,11 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <h2 class="sec-title">Os 4 pilares do <span class="gold">Método</span></h2>
     <div class="meandro"></div>
     <p class="sec-sub">O que sustenta o "cicatrizado bonito".</p>
-    <div class="pillars" style="text-align:left;">
-      <div class="pillar"><div class="pillar__img"><img src="/lp/shadow-pro/p1.webp" alt="Distribuição do degradê"><span class="pillar__n">1</span></div><div class="pillar__b"><h4>Distribuição do degradê</h4><p>Onde depositar, onde suavizar e como criar transições limpas.</p></div></div>
-      <div class="pillar"><div class="pillar__img"><img src="/lp/shadow-pro/p2.webp" alt="Controle de saturação"><span class="pillar__n">2</span></div><div class="pillar__b"><h4>Controle de saturação</h4><p>O ponto certo para fixar bem sem pesar a cor.</p></div></div>
-      <div class="pillar"><div class="pillar__img"><img src="/lp/shadow-pro/p3.webp" alt="Execução estável"><span class="pillar__n">3</span></div><div class="pillar__b"><h4>Execução estável</h4><p>Consistência para seu resultado parar de variar.</p></div></div>
-      <div class="pillar"><div class="pillar__img"><img src="/lp/shadow-pro/p4.webp" alt="Acabamento que valoriza"><span class="pillar__n">4</span></div><div class="pillar__b"><h4>Acabamento que valoriza</h4><p>Finalização correta para uniformidade e retenção.</p></div></div>
+    <div class="cols">
+      <div class="col"><img src="/lp/shadow-pro/pilar1.webp" alt="Distribuição do degradê" loading="lazy"><span class="col__n">1</span><div class="col__b"><h4>Distribuição do degradê</h4><p>Onde depositar, onde suavizar e como criar transições limpas.</p></div></div>
+      <div class="col"><img src="/lp/shadow-pro/pilar2.webp" alt="Controle de saturação" loading="lazy"><span class="col__n">2</span><div class="col__b"><h4>Controle de saturação</h4><p>O ponto certo para fixar bem sem pesar a cor.</p></div></div>
+      <div class="col"><img src="/lp/shadow-pro/pilar3.webp" alt="Execução estável" loading="lazy"><span class="col__n">3</span><div class="col__b"><h4>Execução estável</h4><p>Consistência para o resultado parar de variar.</p></div></div>
+      <div class="col"><img src="/lp/shadow-pro/pilar4.webp" alt="Acabamento que valoriza" loading="lazy"><span class="col__n">4</span><div class="col__b"><h4>Acabamento que valoriza</h4><p>Finalização correta para uniformidade e retenção.</p></div></div>
     </div>
     <p style="color:#f0e7d6;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.4vw,26px);margin:40px auto 0;max-width:46ch;">Quando você domina esses 4 pontos, o Shadow deixa de ser tentativa e vira a sua marca.</p>
   </div>
