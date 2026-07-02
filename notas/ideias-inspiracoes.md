@@ -155,3 +155,6 @@
 - Toda vez que pensar "isso vale considerar mas não agora" → **Conceitos pra explorar**
 - Quando uma ideia for **rejeitada**, move pra `historico-decisoes.md` com motivo
 - Quando uma ideia for **implementada**, move pra `progresso-atual.md`
+
+## 💡 Shadow PRO — dobra "4 pilares" · ideia #2 guardada (2026-07-02)
+Alternativa à versão de colunas (que foi a escolhida): **Raio-X de UM shadow perfeito** — uma macro grande de um cicatrizado impecável no centro, com 4 marcadores dourados apontando onde cada pilar aparece naquele resultado (distribuição → saturação → execução → acabamento). Transforma o abstrato em anatomia visual de um resultado real. James curtiu, guardar pra possível uso futuro.
