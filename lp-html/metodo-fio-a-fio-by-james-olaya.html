@@ -927,7 +927,11 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
   .ffr-dep__feat-media{min-height:220px;}
   .ffr-dep__feat-media::after{background:linear-gradient(0deg,rgba(26,19,38,.6),transparent 35%);}
   .ffr-dep__full{flex-direction:column;text-align:center;}
+  .ffr-dep__full-media{display:block !important;position:relative;width:100%;aspect-ratio:16/10;border-radius:14px;overflow:hidden;cursor:pointer;margin-bottom:20px;box-shadow:0 16px 40px rgba(0,0,0,.42);}
+  .ffr-dep__full-media img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ffr-dep__full > .ffr-dep__play{display:none;}
 }
+.ffr-dep__full-media{display:none;}
 </style>
 <div id="ffr-dep-wrap" style="display:none">
   <section class="ffr-dep">
@@ -953,6 +957,10 @@ document.addEventListener('click',function(e){var w=document.getElementById('ffr
       </div>
     </div>
     <div class="ffr-dep__full">
+      <div class="ffr-dep__full-media" data-yt="IbbX1miaGoI">
+        <img src="https://i.ytimg.com/vi/IbbX1miaGoI/maxresdefault.jpg" alt="Depoimento aluna Fio a Fio Realista" loading="lazy">
+        <span class="ffr-dep__media-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      </div>
       <button class="ffr-dep__play" type="button" data-yt="IbbX1miaGoI" aria-label="Assistir"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
       <div class="ffr-dep__full-q">
         <div class="ffr-dep__stars"></div>
