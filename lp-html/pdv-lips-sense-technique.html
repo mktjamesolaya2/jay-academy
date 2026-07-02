@@ -321,7 +321,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 .lcf__dots{display:none;}
 .lcf__dot{width:8px;height:8px;border-radius:50%;background:#caa45a;opacity:.4;cursor:pointer;border:none;padding:0;transition:opacity .2s,transform .2s;}
 .lcf__dot.is-on{opacity:1;transform:scale(1.25);background:#9c7a3e;}
-@media(max-width:600px){.lcf__col{display:none;}.lcf__arrow--prev{left:2px;}.lcf__arrow--next{right:2px;}}
+@media(max-width:600px){.lcf__col{display:block;width:clamp(40px,12vw,58px);bottom:36px;}.lcf__col--l{right:calc(50% + 106px);}.lcf__col--r{left:calc(50% + 106px);}.lcf__arrow--prev{left:2px;}.lcf__arrow--next{right:2px;}}
 </style>
 <div class="lcf">
   <div class="lcf__spot"></div>
@@ -578,12 +578,10 @@ Transforme sua micropigmentação com o que há de melhor.
 .llt__fg{position:relative;z-index:2;display:block;width:auto;max-width:94%;max-height:100%;height:auto;margin:0 auto;
   filter:drop-shadow(0 0 26px rgba(255,150,195,.55)) drop-shadow(0 26px 40px rgba(90,15,30,.42));}
 @media(max-width:900px){
-  /* empilha: texto em cima, imagem abaixo; a proxima dobra comeca depois das imagens */
-  .elementor-element-902df8c{overflow-x:hidden !important;}
+  /* mobile: so o texto empilhado; imagens removidas (bugavam o scroll) */
   .elementor-element-902df8c > .e-con-inner{flex-direction:column !important;align-items:center !important;}
   .elementor-element-902df8c > .e-con-inner > .elementor-element{width:100% !important;max-width:100% !important;flex:0 0 auto !important;}
-  .llt{max-width:200px;aspect-ratio:600/760;margin:40px auto 30px !important;}
-  .llt__lip{width:30px !important;}
+  [data-id="04e043b"]{display:none !important;}
 }
 @media(prefers-reduced-motion:reduce){.llt__glow,.llt__lip{animation:none;}}
 /* ===== HIERARQUIA: titulo dominante (serif grande) + corpo uniforme menor ===== */
@@ -859,7 +857,8 @@ Transforme sua micropigmentação com o que há de melhor.
 .lipsslide.is-on{opacity:1;transform:scale(1);transition:opacity .55s ease,transform 2.4s ease;}
 .lipsslide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
 @media(max-width:820px){
-  .lipsmod__in{flex-direction:column;text-align:center;gap:34px;}
+  .lipsmod__in{flex-direction:column;align-items:center;text-align:center;gap:34px;}
+  .lipsmod__left{width:100%;}
   .lipsmod__eye{justify-content:center;}
   .lipsmod__sub{margin-left:auto;margin-right:auto;}
   .lipsmod__stats{justify-content:center;}
