@@ -44,7 +44,9 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 /* ===== HERO ===== */
 .hero{position:relative;min-height:min(94vh,800px);display:flex;align-items:center;padding:110px 0 70px;overflow:hidden;background:radial-gradient(120% 90% at 78% 12%,#241a10 0%,#100b12 46%,#0a090c 100%);}
 .hero::after{content:"";position:absolute;inset:0;background:url("/lp/shadow-pro/hero.webp") right center / cover no-repeat;opacity:.5;-webkit-mask-image:linear-gradient(90deg,transparent 8%,#000 60%);mask-image:linear-gradient(90deg,transparent 8%,#000 60%);z-index:0;}
-.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0a090c 6%,rgba(10,9,12,.72) 42%,rgba(10,9,12,.2) 72%,transparent);z-index:1;}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:
+  linear-gradient(180deg, transparent 55%, rgba(10,9,12,.5) 76%, rgba(10,9,12,.9) 90%, #0a090c 96%),
+  linear-gradient(90deg,#0a090c 6%,rgba(10,9,12,.72) 42%,rgba(10,9,12,.2) 72%,transparent);}
 .hero__in{position:relative;z-index:2;max-width:640px;}
 .hero__logo{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(26px,3vw,36px);letter-spacing:.08em;color:#fff;margin-bottom:26px;}
 .hero__logo b{color:var(--gold2);}
@@ -69,7 +71,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   radial-gradient(circle at 12% 46%, rgba(255,244,214,.7) 0, rgba(242,211,138,.35) 1px, transparent 4px),
   radial-gradient(circle at 19% 80%, rgba(255,244,214,.75) 0, rgba(242,211,138,.4) 1px, transparent 4px),
   radial-gradient(ellipse 40% 55% at 9% 46%, rgba(242,211,138,.12), transparent 70%),
-  linear-gradient(180deg,#0a090c 0%, rgba(10,9,12,.42) 9%, transparent 18%),
+  linear-gradient(180deg,#0a090c 0%, #0a090c 4%, rgba(10,9,12,.62) 13%, transparent 26%),
   linear-gradient(90deg, rgba(10,9,12,.97) 0%, rgba(10,9,12,.85) 20%, rgba(10,9,12,.55) 38%, rgba(10,9,12,.2) 54%, transparent 68%),
   linear-gradient(270deg,#0a090c 8%,rgba(10,9,12,.62) 44%,rgba(10,9,12,.12) 76%,transparent);}
 .prova__in{position:relative;z-index:2;width:100%;}
@@ -226,7 +228,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .foot p{color:var(--muted);font-size:13px;margin:4px 0;}
 .foot .b{font-family:'Cormorant Garamond',serif;color:var(--gold2);font-size:20px;font-style:italic;}
 /* ===== SALE BAR (sticky topo) ===== */
-.salebar{position:sticky;top:0;z-index:1000;background:linear-gradient(90deg,#1a1206,#2c1f0a 50%,#1a1206);border-bottom:1px solid rgba(217,180,88,.3);box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.salebar{position:relative;z-index:1000;background:linear-gradient(90deg,#1a1206,#2c1f0a 50%,#1a1206);border-bottom:1px solid rgba(217,180,88,.3);box-shadow:0 6px 20px rgba(0,0,0,.4);}
 .salebar__in{max-width:1180px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
 .salebar__txt{font-size:13px;color:#f4ead6;font-weight:600;letter-spacing:.01em;display:flex;align-items:center;gap:8px;}
 .salebar__txt b{color:var(--gold2);font-weight:800;}
