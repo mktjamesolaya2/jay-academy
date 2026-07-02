@@ -158,3 +158,6 @@
 
 ## 💡 Shadow PRO — dobra "4 pilares" · ideia #2 guardada (2026-07-02)
 Alternativa à versão de colunas (que foi a escolhida): **Raio-X de UM shadow perfeito** — uma macro grande de um cicatrizado impecável no centro, com 4 marcadores dourados apontando onde cada pilar aparece naquele resultado (distribuição → saturação → execução → acabamento). Transforma o abstrato em anatomia visual de um resultado real. James curtiu, guardar pra possível uso futuro.
+
+## 💡 Shadow PRO — dobra "Para quem" · ideia #2 guardada (2026-07-02)
+Escolhida foi a #1 (passe premium / perfil compatível). Guardar a #2: **Split diagonal cinematográfico** — cortar a dobra "é pra você / não é pra você" numa diagonal: lado dourado (é pra você) com macro de shadow premium + critérios em ✦ dourado; lado escuro/dessaturado (não é pra você) em ✕ vermelho apagado. Tensão visual forte, editorial, casa com as faixas da prova/técnica. James gostou.
