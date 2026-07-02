@@ -275,6 +275,36 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .forwho__col ul{list-style:none;display:grid;gap:12px;}
 .forwho__col li{display:flex;align-items:flex-start;gap:11px;color:#ded7cb;font-size:14.5px;line-height:1.5;}
 .forwho__col li svg{flex:0 0 auto;width:19px;height:19px;margin-top:1px;}
+/* ===== PASSE PREMIUM (perfil compatível) ===== */
+.pass{max-width:920px;margin:48px auto 18px;display:grid;grid-template-columns:250px 1fr;background:linear-gradient(150deg,#1b1523,#120e18);border:1px solid rgba(217,180,88,.42);border-radius:20px;overflow:hidden;box-shadow:0 32px 74px rgba(0,0,0,.55),0 0 0 1px rgba(217,180,88,.1);text-align:left;position:relative;}
+.pass__stub{position:relative;padding:34px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;background:linear-gradient(180deg,rgba(217,180,88,.12),rgba(217,180,88,.02));border-right:2px dashed rgba(217,180,88,.4);}
+.pass__stub::before,.pass__stub::after{content:"";position:absolute;right:-12px;width:22px;height:22px;border-radius:50%;background:var(--bg2);}
+.pass__stub::before{top:-11px;}
+.pass__stub::after{bottom:-11px;}
+.pass__seal{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#fbe6bd,var(--gold2) 42%,var(--gold) 72%,#b98f2e);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px rgba(217,180,88,.4),inset 0 0 0 2px rgba(255,255,255,.22),inset 0 -6px 14px rgba(120,80,10,.4);}
+.pass__seal svg{width:40px;height:40px;stroke:#3a2a08;stroke-width:3.2;}
+.pass__ttl{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:24px;color:#fff;line-height:1.06;}
+.pass__meta{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);}
+.pass__bars{width:100%;height:30px;margin-top:2px;background:repeating-linear-gradient(90deg,var(--gold2) 0 2px,transparent 2px 4px,var(--gold2) 4px 5px,transparent 5px 8px,var(--gold2) 8px 11px,transparent 11px 13px);opacity:.45;border-radius:2px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);}
+.pass__body{padding:32px 34px;}
+.pass__body h3{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(20px,2.3vw,27px);color:#fff;margin-bottom:18px;}
+.pass__body h3 b{color:var(--gold2);}
+.pass__body ul{list-style:none;display:grid;gap:13px;}
+.pass__body li{display:flex;align-items:flex-start;gap:12px;color:#e6dfd2;font-size:clamp(14px,1.5vw,15.5px);line-height:1.45;}
+.pass__body li svg{flex:0 0 auto;width:20px;height:20px;margin-top:1px;}
+.pass-out{max-width:920px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;padding:15px 24px;border:1px solid rgba(203,106,116,.24);border-radius:14px;background:rgba(203,106,116,.05);text-align:left;}
+.pass-out__lab{display:inline-flex;align-items:center;gap:8px;color:#e2929a;font-family:'Poppins',sans-serif;font-weight:700;font-size:11px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;}
+.pass-out__items{display:flex;flex-wrap:wrap;gap:8px 18px;}
+.pass-out__items span{display:inline-flex;align-items:center;gap:7px;color:#b9b0a4;font-size:13px;}
+.pass-out__items span::before{content:"✕";color:#cb6a74;font-weight:700;}
+@media(max-width:760px){
+  .pass{grid-template-columns:1fr;max-width:440px;}
+  .pass__stub{border-right:none;border-bottom:2px dashed rgba(217,180,88,.4);}
+  .pass__stub::before{top:auto;bottom:-11px;left:-11px;right:auto;}
+  .pass__stub::after{top:auto;bottom:-11px;right:-11px;}
+  .pass__body{padding:26px 24px;}
+  .pass-out{max-width:440px;flex-direction:column;align-items:flex-start;}
+}
 /* ===== BIO ===== */
 .bio{position:relative;overflow:hidden;background:linear-gradient(180deg,#0a090c 0%,transparent 13%,transparent 87%,#0a090c 100%),radial-gradient(110% 100% at 82% 20%,#241a10,#0d0a10 55%,#0a090c);}
 .bio__in{display:grid;grid-template-columns:1fr .82fr;gap:clamp(30px,5vw,64px);align-items:center;}
@@ -584,24 +614,30 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <h2 class="sec-title">Para quem quer um <span class="gold">Shadow Natural premium</span></h2>
     <div class="meandro"></div>
     <p class="sec-sub">(e cobrar como premium)</p>
-    <div class="forwho">
-      <div class="forwho__col">
-        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg> É pra você que...</h4>
+    <div class="pass">
+      <div class="pass__stub">
+        <div class="pass__seal"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
+        <div class="pass__ttl">Perfil<br>compatível</div>
+        <div class="pass__meta">Método Shadow PRO · Acesso premium</div>
+        <div class="pass__bars"></div>
+      </div>
+      <div class="pass__body">
+        <h3>É pra <b>você</b> que…</h3>
         <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Já faz Shadow e quer elevar o padrão para um resultado mais natural e uniforme</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer um passo a passo que tira o "e se der errado"</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer controle de degradê, cor e execução (sem copiar e torcer)</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer um resultado premium que justifique preço premium</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Está disposta a treinar para transformar técnica em assinatura</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Já faz Shadow e quer elevar o padrão para um resultado mais natural e uniforme</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer um passo a passo que tira o "e se der errado"</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer controle de degradê, cor e execução (sem copiar e torcer)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer um resultado premium que justifique preço premium</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Está disposta a treinar para transformar técnica em assinatura</li>
         </ul>
       </div>
-      <div class="forwho__col no">
-        <h4><svg viewBox="0 0 24 24" fill="none" stroke="#e77" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg> Não é pra você que...</h4>
-        <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e77" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Procura truque rápido sem prática</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e77" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Quer resultado perfeito ignorando pele, técnica e cicatrização</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e77" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Não pretende seguir sequência e aplicar o método</li>
-        </ul>
+    </div>
+    <div class="pass-out">
+      <span class="pass-out__lab">Ainda não é o seu momento se você</span>
+      <div class="pass-out__items">
+        <span>Procura truque rápido sem prática</span>
+        <span>Ignora pele, técnica e cicatrização</span>
+        <span>Não pretende seguir o método</span>
       </div>
     </div>
     <div style="margin-top:34px;"><a class="cta" href="#oferta">Quero dominar o Shadow Natural</a></div>
