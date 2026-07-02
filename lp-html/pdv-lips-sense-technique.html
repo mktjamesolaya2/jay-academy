@@ -234,18 +234,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   background:linear-gradient(92deg,#f1d49d,#caa45a 55%,#e6c486);box-shadow:0 14px 34px rgba(170,120,55,.5),inset 0 1px 0 rgba(255,255,255,.45);transition:transform .15s ease,box-shadow .15s ease;}
 .lst__cta:hover{transform:translateY(-2px);box-shadow:0 20px 46px rgba(170,120,55,.66),inset 0 1px 0 rgba(255,255,255,.45);}
 @media(max-width:900px){
-  /* HERO mobile: arte 9:16 (James+modelos em cima, nuvens embaixo) + texto sobre as nuvens */
-  .elementor-element-7668ea6{position:relative !important;min-height:177.78vw !important;overflow:hidden !important;padding:0 !important;}
-  .elementor-element-7668ea6::before{content:"" !important;position:absolute !important;inset:0 !important;z-index:0 !important;pointer-events:none;background:url("/lp/lips-sense/hero-9x16.png") center top / cover no-repeat !important;}
-  .elementor-element-7668ea6::after{content:"" !important;position:absolute !important;inset:0 !important;z-index:1 !important;pointer-events:none;background:linear-gradient(180deg, transparent 44%, rgba(70,18,28,.12) 56%, rgba(60,14,22,.5) 74%, rgba(48,10,18,.85) 100%) !important;}
-  .elementor-element-7668ea6 > .e-con-inner{position:relative !important;z-index:2 !important;min-height:177.78vw !important;display:flex !important;flex-direction:column !important;justify-content:flex-end !important;padding:0 !important;}
-  .lst{flex:none !important;width:100% !important;max-width:100% !important;margin:0 !important;align-self:auto !important;border-radius:0 !important;overflow:visible !important;box-shadow:none !important;background:none !important;}
-  .lst__veins{display:none !important;}
-  .lst__inner{padding:16px 22px 30px !important;}
-  .lst__logo{width:min(220px,60%) !important;}
+  /* HERO mobile: imagem (James+modelos) no topo -> fumaca -> marmore roxo com o texto embaixo */
+  .elementor-element-7668ea6{position:relative !important;overflow:hidden !important;padding:0 !important;background-color:#67232f !important;}
+  .elementor-element-7668ea6::before{content:"" !important;position:absolute !important;top:0 !important;left:0 !important;right:0 !important;bottom:auto !important;height:118vw !important;z-index:0 !important;pointer-events:none;background:url("/lp/lips-sense/hero-9x16.png") center 14% / cover no-repeat !important;-webkit-mask-image:linear-gradient(180deg,#000 56%,transparent 99%) !important;mask-image:linear-gradient(180deg,#000 56%,transparent 99%) !important;}
+  .elementor-element-7668ea6::after{display:none !important;}
+  .elementor-element-7668ea6 > .e-con-inner{position:relative !important;z-index:2 !important;padding:0 !important;display:block !important;min-height:0 !important;}
+  .lst{margin:96vw 0 0 0 !important;flex:none !important;width:100% !important;max-width:100% !important;align-self:auto !important;border-radius:0 !important;overflow:visible !important;box-shadow:none !important;background-color:#67232f !important;background-image:linear-gradient(158deg,#9a4654 0%,#6c2733 52%,rgba(120,50,62,.55) 100%) !important;}
+  .lst__veins{display:block !important;opacity:.26 !important;}
+  .lst__inner{padding:8px 22px 34px !important;}
+  .lst__logo{width:min(230px,62%) !important;}
   .lst__div{margin-top:6px !important;margin-bottom:14px !important;}
-  .lst__title{font-size:clamp(20px,5.4vw,27px) !important;text-shadow:0 2px 12px rgba(0,0,0,.55);}
-  .lst__sub{font-size:clamp(13px,3.4vw,15px) !important;margin-bottom:20px !important;text-shadow:0 1px 8px rgba(0,0,0,.45);}
+  .lst__title{font-size:clamp(20px,5.4vw,27px) !important;}
+  .lst__sub{font-size:clamp(13px,3.4vw,15px) !important;margin-bottom:20px !important;}
 }
 </style><div class="lst">
   <svg class="lst__veins" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 540" preserveAspectRatio="none" aria-hidden="true">
