@@ -57,6 +57,35 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .hero__list li{display:flex;align-items:flex-start;gap:12px;color:#e6dfd2;font-size:clamp(14px,1.5vw,15.5px);}
 .chk{flex:0 0 auto;width:23px;height:23px;border-radius:50%;background:linear-gradient(150deg,var(--gold2),var(--gold3));display:flex;align-items:center;justify-content:center;margin-top:1px;}
 .chk svg{width:12px;height:12px;}
+/* ===== PROVA (faixa editorial, espelho da hero) ===== */
+.prova{position:relative;overflow:hidden;min-height:min(90vh,780px);display:flex;align-items:center;padding:96px 0;background:radial-gradient(120% 90% at 22% 20%,#241a10 0%,#100b12 46%,#0a090c 100%);}
+.prova::after{content:"";position:absolute;inset:0;background:url("/lp/shadow-pro/prova-editorial.webp") left center / cover no-repeat;opacity:.92;-webkit-mask-image:linear-gradient(90deg,#000 26%,transparent 70%);mask-image:linear-gradient(90deg,#000 26%,transparent 70%);z-index:0;}
+.prova::before{content:"";position:absolute;inset:0;background:linear-gradient(270deg,#0a090c 8%,rgba(10,9,12,.62) 44%,rgba(10,9,12,.12) 76%,transparent);z-index:1;}
+.prova__in{position:relative;z-index:2;width:100%;}
+.prova__box{max-width:540px;margin-left:auto;text-align:left;}
+.prova__eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+.prova__eyebrow::before{content:"";width:32px;height:1px;background:var(--gold);opacity:.6;}
+.prova__box h2{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(30px,4.4vw,52px);line-height:1.04;color:#fff;margin-bottom:16px;}
+.prova__box h2 .gold{color:var(--gold2);}
+.prova__box .lead{color:#d3ccc0;font-size:clamp(15px,1.6vw,17px);line-height:1.6;max-width:46ch;margin-bottom:8px;}
+.prova__proofs{list-style:none;margin:22px 0 30px;}
+.prova__proofs li{display:flex;align-items:flex-start;gap:15px;padding:17px 2px;border-top:1px solid rgba(217,180,88,.16);}
+.prova__proofs li:last-child{border-bottom:1px solid rgba(217,180,88,.16);}
+.prova__proofs .mk{flex:0 0 auto;color:var(--gold2);font-size:19px;line-height:1.2;}
+.prova__proofs b{display:block;font-family:'Poppins',sans-serif;color:#fff;font-size:15.5px;font-weight:600;margin-bottom:3px;}
+.prova__proofs p{color:var(--muted);font-size:13.8px;line-height:1.5;margin:0;}
+.prova__close{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--gold2);font-size:clamp(19px,2.3vw,25px);margin:0 0 22px;}
+.prova__close b{color:#fff;font-style:normal;font-weight:700;}
+@media(max-width:820px){
+  .prova{min-height:0;padding:0 0 54px;display:block;}
+  .prova::after{inset:auto;top:0;left:0;right:0;height:300px;width:100%;opacity:1;-webkit-mask-image:linear-gradient(180deg,#000 55%,transparent 97%);mask-image:linear-gradient(180deg,#000 55%,transparent 97%);background-position:center 32%;}
+  .prova::before{display:none;}
+  .prova__in{position:relative;padding-top:236px;}
+  .prova__box{max-width:none;margin:0;text-align:center;}
+  .prova__eyebrow{justify-content:center;}
+  .prova__proofs li{text-align:left;}
+  .prova__box .lead{margin-left:auto;margin-right:auto;}
+}
 /* ===== FEATURE GRID ===== */
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,26px);margin-top:44px;}
 .fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s;}
@@ -261,21 +290,19 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   </div>
 </header>
 
-<!-- ===== PROVA / RESULTADO ===== -->
-<section class="sec">
-  <div class="wrap center">
-    <span class="eyebrow c">A prova está no cicatrizado</span>
-    <h2 class="sec-title">O Shadow que vende é o que fica <span class="gold">bonito depois</span></h2>
-    <div class="meandro"></div>
-    <p class="sec-sub">Veja o resultado cicatrizado: degradê limpo, cor mais estável e acabamento natural. É aqui que a técnica se prova.</p>
-    <div class="grid3">
-      <div class="fcard"><div class="fcard__img"><img src="/lp/shadow-pro/f1.webp" alt="Resultado em diferentes peles" loading="lazy"></div><div class="fcard__b"><h4>Resultados reais em diferentes peles</h4><p>Padrão que se mantém em cada tipo de pele.</p></div></div>
-      <div class="fcard"><div class="fcard__img"><img src="/lp/shadow-pro/f2.webp" alt="Cicatrizados em diferentes estágios" loading="lazy"></div><div class="fcard__b"><h4>Cicatrizados em diferentes estágios</h4><p>Do fresco ao cicatrizado, a cor se comporta.</p></div></div>
-      <div class="fcard"><div class="fcard__img"><img src="/lp/shadow-pro/f3.webp" alt="Acabamento leve" loading="lazy"></div><div class="fcard__b"><h4>Acabamento leve, sem "peso" visual</h4><p>Transições suaves e naturais, sem marcação.</p></div></div>
-    </div>
-    <div style="margin-top:44px;max-width:640px;margin-left:auto;margin-right:auto;">
-      <h3 style="font-size:clamp(26px,3.4vw,40px);color:#fff;margin-bottom:12px;">Resultado que <span class="gold">não depende de sorte</span></h3>
-      <p class="sec-sub" style="margin-bottom:26px;">Você aprende controle real para repetir padrão e cobrar mais.</p>
+<!-- ===== PROVA / RESULTADO (faixa editorial) ===== -->
+<section class="prova">
+  <div class="wrap prova__in">
+    <div class="prova__box">
+      <span class="prova__eyebrow">A prova está no cicatrizado</span>
+      <h2>O Shadow que vende é o que fica <span class="gold">bonito depois</span></h2>
+      <p class="lead">Cicatrizado: degradê limpo, cor estável e acabamento natural. É aqui que a técnica se prova — não na foto do dia.</p>
+      <ul class="prova__proofs">
+        <li><span class="mk">✦</span><div><b>Segura o padrão em qualquer pele</b><p>Do fototipo claro ao mais escuro, o resultado se mantém.</p></div></li>
+        <li><span class="mk">✦</span><div><b>A cor se comporta ao cicatrizar</b><p>Sem virar acinzentado, avermelhado ou apagar.</p></div></li>
+        <li><span class="mk">✦</span><div><b>Acabamento leve, sem "peso" visual</b><p>Transições suaves, sem marcação — natural de perto e de longe.</p></div></li>
+      </ul>
+      <p class="prova__close">Resultado que <b>não depende de sorte.</b> Você repete o padrão e cobra mais.</p>
       <a class="cta" href="#oferta">Quero ter esse padrão no meu trabalho</a>
     </div>
   </div>
