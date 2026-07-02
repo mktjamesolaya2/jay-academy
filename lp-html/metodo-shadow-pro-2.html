@@ -187,6 +187,31 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .col__b p{color:#cbc3b7;font-size:12.5px;line-height:1.45;margin:0;}
 @media(max-width:860px){.cols{grid-template-columns:repeat(2,1fr);gap:14px;}.col{aspect-ratio:.72;}}
 @media(max-width:400px){.col__b p{display:none;}}
+/* ===== TEMPLO (4 pilares sustentando a viga) ===== */
+.temple{max-width:1000px;margin:54px auto 0;}
+.temple__beam{position:relative;height:clamp(54px,6vw,70px);border:1px solid rgba(217,180,88,.42);border-radius:9px 9px 0 0;background:linear-gradient(180deg,rgba(217,180,88,.18),rgba(217,180,88,.04));display:flex;align-items:center;justify-content:center;margin:0 4px;box-shadow:0 -14px 30px rgba(217,180,88,.06) inset;}
+.temple__beam::before{content:"";position:absolute;top:9px;left:16px;right:16px;height:1px;background:linear-gradient(90deg,transparent,rgba(217,180,88,.5),transparent);}
+.temple__beam::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:6px;background:repeating-linear-gradient(90deg,var(--gold) 0 4px,transparent 4px 13px);opacity:.5;}
+.temple__beam span{font-family:'Cormorant Garamond',serif;font-weight:700;font-style:italic;font-size:clamp(19px,2.7vw,31px);color:var(--gold2);letter-spacing:.01em;}
+.temple__cols{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.5vw,18px);padding-top:12px;}
+.tcol{display:flex;flex-direction:column;}
+.tcol__cap{height:9px;background:linear-gradient(180deg,var(--gold2),var(--gold));border-radius:3px 3px 0 0;margin:0 -4px;box-shadow:0 5px 13px rgba(217,180,88,.28);}
+.tcol__shaft{position:relative;aspect-ratio:.6;overflow:hidden;border-left:1px solid var(--line);border-right:1px solid var(--line);transition:border-color .35s;}
+.tcol:hover .tcol__shaft{border-color:rgba(217,180,88,.4);}
+.tcol__shaft>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.96) contrast(1.02);transition:transform .6s;}
+.tcol:hover .tcol__shaft>img{transform:scale(1.05);}
+.tcol__shaft::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(40,27,14,.2) 0%,transparent 22%,transparent 46%,rgba(10,9,12,.55) 72%,rgba(10,9,12,.96) 100%);}
+.tcol__n{position:absolute;top:13px;left:50%;transform:translateX(-50%);z-index:2;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:19px;color:var(--gold2);width:40px;height:40px;border:1px solid rgba(217,180,88,.5);border-radius:50%;background:rgba(10,9,12,.5);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;}
+.tcol__b{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:18px 14px;text-align:center;}
+.tcol__b h4{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(16px,1.75vw,21px);color:#fff;line-height:1.14;margin-bottom:5px;}
+.tcol__b p{color:#cbc3b7;font-size:12px;line-height:1.4;margin:0;}
+.tcol__base{height:13px;background:linear-gradient(180deg,var(--gold),var(--gold3));border-radius:0 0 4px 4px;margin:0 -8px;box-shadow:0 9px 17px rgba(0,0,0,.45);}
+@media(max-width:860px){
+  .temple__cols{grid-template-columns:repeat(2,1fr);gap:16px 12px;}
+  .tcol__shaft{aspect-ratio:.72;}
+  .temple__beam span{font-size:clamp(17px,5vw,24px);}
+}
+@media(max-width:400px){.tcol__b p{display:none;}}
 /* ===== BLUEPRINT / ficha técnica ===== */
 .bp{position:relative;overflow:hidden;background:#0a090c;padding:clamp(64px,9vw,108px) 0;}
 .bp__grid{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(217,180,88,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(217,180,88,.055) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(130% 100% at 50% 42%,#000 36%,transparent 82%);mask-image:radial-gradient(130% 100% at 50% 42%,#000 36%,transparent 82%);}
@@ -503,12 +528,15 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <span class="eyebrow c">A base do método</span>
     <h2 class="sec-title">Os 4 pilares do <span class="gold">Método</span></h2>
     <div class="meandro"></div>
-    <p class="sec-sub">O que sustenta o "cicatrizado bonito".</p>
-    <div class="cols">
-      <div class="col"><img src="/lp/shadow-pro/pilar1.webp" alt="Distribuição do degradê" loading="lazy"><span class="col__n">1</span><div class="col__b"><h4>Distribuição do degradê</h4><p>Onde depositar, onde suavizar e como criar transições limpas.</p></div></div>
-      <div class="col"><img src="/lp/shadow-pro/pilar2.webp" alt="Controle de saturação" loading="lazy"><span class="col__n">2</span><div class="col__b"><h4>Controle de saturação</h4><p>O ponto certo para fixar bem sem pesar a cor.</p></div></div>
-      <div class="col"><img src="/lp/shadow-pro/pilar3.webp" alt="Execução estável" loading="lazy"><span class="col__n">3</span><div class="col__b"><h4>Execução estável</h4><p>Consistência para o resultado parar de variar.</p></div></div>
-      <div class="col"><img src="/lp/shadow-pro/pilar4.webp" alt="Acabamento que valoriza" loading="lazy"><span class="col__n">4</span><div class="col__b"><h4>Acabamento que valoriza</h4><p>Finalização correta para uniformidade e retenção.</p></div></div>
+    <p class="sec-sub">Os quatro fundamentos que sustentam o seu resultado.</p>
+    <div class="temple">
+      <div class="temple__beam"><span>O cicatrizado bonito</span></div>
+      <div class="temple__cols">
+        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/pilar1.webp" alt="Distribuição do degradê" loading="lazy"><span class="tcol__n">I</span><div class="tcol__b"><h4>Distribuição do degradê</h4><p>Onde depositar, onde suavizar e criar transições limpas.</p></div></div><span class="tcol__base"></span></div>
+        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/pilar2.webp" alt="Controle de saturação" loading="lazy"><span class="tcol__n">II</span><div class="tcol__b"><h4>Controle de saturação</h4><p>O ponto certo para fixar bem sem pesar a cor.</p></div></div><span class="tcol__base"></span></div>
+        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/pilar3.webp" alt="Execução estável" loading="lazy"><span class="tcol__n">III</span><div class="tcol__b"><h4>Execução estável</h4><p>Consistência para o resultado parar de variar.</p></div></div><span class="tcol__base"></span></div>
+        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/pilar4.webp" alt="Acabamento que valoriza" loading="lazy"><span class="tcol__n">IV</span><div class="tcol__b"><h4>Acabamento que valoriza</h4><p>Finalização correta para uniformidade e retenção.</p></div></div><span class="tcol__base"></span></div>
+      </div>
     </div>
     <p style="color:#f0e7d6;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.4vw,26px);margin:40px auto 0;max-width:46ch;">Quando você domina esses 4 pontos, o Shadow deixa de ser tentativa e vira a sua marca.</p>
   </div>
