@@ -2,7 +2,27 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-01 — LP Lips Sense (redesign grego): depoimentos + módulos
+> **Última atualização**: 2026-07-02 — LP Lips Sense COMPLETA (todas as seções redesenhadas) + polimento mobile
+
+---
+
+## 🆕 Sessão 2026-07-02 — Lips Sense: fecha o redesign (oferta, bio, garantia rosa) + ajustes mobile
+
+LP **PDV Lips Sense** ([pdv-lips-sense-technique.html](../lp-html/pdv-lips-sense-technique.html)) — **todas as seções** agora no tema grego/coral. Continuação da sessão 07-01.
+
+**Seções finalizadas nesta rodada:**
+- **Garantia ("Ainda está insegura?"):** banner **rosa** (Higgsfield: James sorrindo `Group 1.png` + selo 30 dias rosé + procedimentos). Selo recolorido com flux_kontext, composto com nano_banana_pro. Aplicado via `::before` (WP Rocket bloqueia `background-image` direto). Tampei o nome invertido no jaleco com patch sharp. Mobile: **arte 9:16 dedicada** ([garantia-rosa-9x16.png](../public/lp/lips-sense/garantia-rosa-9x16.png)) — James+selo em cima, texto sobre procedimentos embaixo (e-con-inner flex column justify-end).
+- **Oferta ("Eu tenho uma condição especial"):** value-stack (selos dourados + âncoras riscadas R$12mil→R$1.997) + **tábua de mármore creme** (moldura dourada + meandro) com preço serif + CTA dourado (link Hotmart `Y98532335W` preservado).
+- **Bio ("Quem será seu Professor"):** banner Higgsfield (James **sério** `cine_2` + fundo palestrando `palestra.jpg`, coral) via `::before` + **card de vidro escuro** (backdrop-blur + moldura dourada): estrelas + nome serif + bio + CTA.
+- **Hero mobile:** arte **9:16** (Higgsfield: James + 2 modelos lábios vermelhos + folhas douradas, das refs `desktop-lips-technic` + `destaque`) no topo → **fumaça (mask-fade)** → **mármore roxo** (o `.lst` restaurado) com logo+título+CTA. Assets: [hero-9x16.png](../public/lp/lips-sense/hero-9x16.png), [professor.png](../public/lp/lips-sense/professor.png).
+
+**Ajustes mobile (batch):**
+- "Porque escolher": removidas as imagens de lábios no mobile (`overflow-x:hidden` virava `overflow-y:auto` = scroll trap).
+- Módulos: celular centralizado (`.lipsmod__in align-items:center`).
+- Resultados: pilastras (`.lcf__col`) não somem mais no mobile (eram `display:none`), reposicionadas ao lado da imagem.
+
+⚠️ **Regra WP Rocket:** remove `background-image` (inclusive gradiente) de elementos → usar `background-color` sólido OU `::before`/`::after` (pseudos passam). Higgsfield só aceita imagem por **URL pública** (Supabase wpmirror já servem; assets locais → copiar pra `public/` + push antes de importar). James **rejeita rosto de IA** → sempre foto real como base.
+⚠️ **Headless mobile:** renderiza layout viewport ~467px (escala do sistema) mesmo com window 390 → prints cortam à direita (artefato). Renderizar com `--window-size=470,...` pra ver sem corte.
 
 ---
 
