@@ -305,6 +305,38 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   .pass__body{padding:26px 24px;}
   .pass-out{max-width:440px;flex-direction:column;align-items:flex-start;}
 }
+/* ===== SPLIT DIAGONAL (é pra você / não é) ===== */
+.split{position:relative;max-width:1080px;margin:48px auto 0;border-radius:20px;overflow:hidden;min-height:470px;border:1px solid rgba(217,180,88,.3);box-shadow:0 32px 74px rgba(0,0,0,.55);}
+.split__yes,.split__no,.split__edge{position:absolute;inset:0;}
+.split__yes{clip-path:polygon(0 0,58% 0,42% 100%,0 100%);background:url("/lp/shadow-pro/prova-editorial.webp") center/cover;}
+.split__yes::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(28,20,10,.5),rgba(10,9,12,.32)),linear-gradient(90deg,rgba(217,180,88,.14),transparent 60%);}
+.split__no{clip-path:polygon(58% 0,100% 0,100% 100%,42% 100%);background:linear-gradient(160deg,#17121c,#0c0910);}
+.split__edge{clip-path:polygon(58% 0,58.7% 0,42.7% 100%,42% 100%);background:linear-gradient(180deg,var(--gold2),var(--gold));filter:drop-shadow(0 0 14px rgba(217,180,88,.5));}
+.split__content{position:absolute;inset:0;z-index:3;display:flex;justify-content:space-between;padding:clamp(26px,3.6vw,48px);}
+.split__side{width:41%;display:flex;flex-direction:column;}
+.split__side--no{align-items:flex-end;text-align:right;}
+.split__tag{align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font-family:'Poppins',sans-serif;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:7px 14px;border-radius:999px;}
+.split__side--no .split__tag{align-self:flex-end;}
+.split__side--yes .split__tag{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#12100c;box-shadow:0 8px 20px rgba(217,180,88,.35);}
+.split__side--no .split__tag{background:rgba(203,106,116,.14);border:1px solid rgba(203,106,116,.42);color:#e2929a;}
+.split__list{list-style:none;display:grid;gap:12px;margin-top:auto;padding-top:22px;}
+.split__list li{display:flex;align-items:flex-start;gap:10px;font-size:clamp(13px,1.4vw,14.5px);line-height:1.4;}
+.split__side--no .split__list li{flex-direction:row-reverse;}
+.split__side--yes .split__list li{color:#fff;font-weight:500;}
+.split__side--no .split__list li{color:#a79ea6;}
+.split__list svg{flex:0 0 auto;width:18px;height:18px;margin-top:1px;}
+@media(max-width:760px){
+  .split{min-height:0;}
+  .split__yes{clip-path:polygon(0 0,100% 0,100% 52%,0 60%);}
+  .split__no{clip-path:polygon(0 60%,100% 52%,100% 100%,0 100%);}
+  .split__edge{clip-path:polygon(0 60%,100% 52%,100% 53.6%,0 61.6%);}
+  .split__content{position:relative;flex-direction:column;justify-content:space-between;min-height:min(128vw,600px);gap:0;padding:26px 22px 30px;}
+  .split__side{width:100%;}
+  .split__side--no{align-items:flex-start;text-align:left;}
+  .split__side--no .split__tag{align-self:flex-start;}
+  .split__side--no .split__list li{flex-direction:row;}
+  .split__list{margin-top:16px;padding-top:0;}
+}
 /* ===== BIO ===== */
 .bio{position:relative;overflow:hidden;background:linear-gradient(180deg,#0a090c 0%,transparent 13%,transparent 87%,#0a090c 100%),radial-gradient(110% 100% at 82% 20%,#241a10,#0d0a10 55%,#0a090c);}
 .bio__in{display:grid;grid-template-columns:1fr .82fr;gap:clamp(30px,5vw,64px);align-items:center;}
@@ -614,30 +646,29 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <h2 class="sec-title">Para quem quer um <span class="gold">Shadow Natural premium</span></h2>
     <div class="meandro"></div>
     <p class="sec-sub">(e cobrar como premium)</p>
-    <div class="pass">
-      <div class="pass__stub">
-        <div class="pass__seal"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
-        <div class="pass__ttl">Perfil<br>compatível</div>
-        <div class="pass__meta">Método Shadow PRO · Acesso premium</div>
-        <div class="pass__bars"></div>
-      </div>
-      <div class="pass__body">
-        <h3>É pra <b>você</b> que…</h3>
-        <ul>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Já faz Shadow e quer elevar o padrão para um resultado mais natural e uniforme</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer um passo a passo que tira o "e se der errado"</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer controle de degradê, cor e execução (sem copiar e torcer)</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer um resultado premium que justifique preço premium</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#e9c877" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Está disposta a treinar para transformar técnica em assinatura</li>
-        </ul>
-      </div>
-    </div>
-    <div class="pass-out">
-      <span class="pass-out__lab">Ainda não é o seu momento se você</span>
-      <div class="pass-out__items">
-        <span>Procura truque rápido sem prática</span>
-        <span>Ignora pele, técnica e cicatrização</span>
-        <span>Não pretende seguir o método</span>
+    <div class="split">
+      <div class="split__yes"></div>
+      <div class="split__no"></div>
+      <div class="split__edge"></div>
+      <div class="split__content">
+        <div class="split__side split__side--yes">
+          <span class="split__tag">É pra você</span>
+          <ul class="split__list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Já faz Shadow e quer elevar o padrão</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer um passo a passo sem "e se der errado"</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer controle de degradê, cor e execução</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Quer resultado premium — e cobrar como premium</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Está disposta a treinar até virar assinatura</li>
+          </ul>
+        </div>
+        <div class="split__side split__side--no">
+          <span class="split__tag">Não é pra você</span>
+          <ul class="split__list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#cb6a74" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Procura truque rápido sem prática</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#cb6a74" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Ignora pele, técnica e cicatrização</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="#cb6a74" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Não pretende seguir a sequência do método</li>
+          </ul>
+        </div>
       </div>
     </div>
     <div style="margin-top:34px;"><a class="cta" href="#oferta">Quero dominar o Shadow Natural</a></div>
