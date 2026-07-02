@@ -60,7 +60,18 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 /* ===== PROVA (faixa editorial, espelho da hero) ===== */
 .prova{position:relative;overflow:hidden;min-height:min(90vh,780px);display:flex;align-items:center;padding:96px 0;background:radial-gradient(120% 90% at 22% 20%,#241a10 0%,#100b12 46%,#0a090c 100%);}
 .prova::after{content:"";position:absolute;inset:0;background:url("/lp/shadow-pro/prova-editorial.webp") left center / cover no-repeat;opacity:.92;-webkit-mask-image:linear-gradient(90deg,#000 26%,transparent 70%);mask-image:linear-gradient(90deg,#000 26%,transparent 70%);z-index:0;}
-.prova::before{content:"";position:absolute;inset:0;background:linear-gradient(270deg,#0a090c 8%,rgba(10,9,12,.62) 44%,rgba(10,9,12,.12) 76%,transparent);z-index:1;}
+.prova::before{content:"";position:absolute;inset:0;z-index:1;background:
+  radial-gradient(circle at 8% 30%, rgba(255,244,214,.95) 0, rgba(242,211,138,.6) 1.6px, transparent 7px),
+  radial-gradient(circle at 15% 58%, rgba(255,244,214,.9) 0, rgba(242,211,138,.5) 1.4px, transparent 6px),
+  radial-gradient(circle at 22% 22%, rgba(255,244,214,.85) 0, rgba(242,211,138,.45) 1.2px, transparent 5px),
+  radial-gradient(circle at 5% 72%, rgba(255,244,214,.8) 0, rgba(242,211,138,.4) 1.2px, transparent 5px),
+  radial-gradient(circle at 27% 44%, rgba(255,244,214,.85) 0, rgba(242,211,138,.45) 1px, transparent 4.5px),
+  radial-gradient(circle at 12% 46%, rgba(255,244,214,.7) 0, rgba(242,211,138,.35) 1px, transparent 4px),
+  radial-gradient(circle at 19% 80%, rgba(255,244,214,.75) 0, rgba(242,211,138,.4) 1px, transparent 4px),
+  radial-gradient(ellipse 40% 55% at 9% 46%, rgba(242,211,138,.12), transparent 70%),
+  linear-gradient(180deg,#0a090c 0%, rgba(10,9,12,.42) 9%, transparent 18%),
+  linear-gradient(90deg, rgba(10,9,12,.97) 0%, rgba(10,9,12,.85) 20%, rgba(10,9,12,.55) 38%, rgba(10,9,12,.2) 54%, transparent 68%),
+  linear-gradient(270deg,#0a090c 8%,rgba(10,9,12,.62) 44%,rgba(10,9,12,.12) 76%,transparent);}
 .prova__in{position:relative;z-index:2;width:100%;}
 .prova__box{max-width:540px;margin-left:auto;text-align:left;}
 .prova__eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
