@@ -1198,7 +1198,54 @@ Transforme sua micropigmentação com o que há de melhor.
 				</div>
 		<div data-particle_enable="false" data-particle-mobile-disabled="false" class="elementor-element elementor-element-18545ff e-flex e-con-boxed e-con e-parent" data-id="18545ff" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;jet_parallax_layout_list&quot;:[]}">
 					<div class="e-con-inner">
-				<div class="elementor-element elementor-element-1d8743f elementor-widget__width-initial elementor-widget-mobile__width-inherit elementor-invisible elementor-widget elementor-widget-heading" data-id="1d8743f" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeIn&quot;}" data-widget_type="heading.default">
+				<!-- ===== BIO PROFESSOR: redesign (banner James + card de vidro) ===== -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,700&display=swap" rel="stylesheet">
+<style id="lips-prof">
+[data-id="1d8743f"],[data-id="64490c4"]{display:none !important;}
+.elementor-element-18545ff{position:relative !important;min-height:min(50vw,880px) !important;overflow:hidden !important;background-color:#1a0a0c !important;padding:0 !important;}
+.elementor-element-18545ff::before{content:"" !important;position:absolute !important;inset:0 !important;z-index:0 !important;pointer-events:none;background:url("/lp/lips-sense/professor.png") right center / cover no-repeat !important;}
+.elementor-element-18545ff::after{content:"" !important;position:absolute !important;inset:0 !important;z-index:1 !important;pointer-events:none;background:linear-gradient(90deg, rgba(18,7,9,.86) 0%, rgba(18,7,9,.55) 38%, rgba(18,7,9,0) 66%) !important;}
+.elementor-element-18545ff > .e-con-inner{position:relative !important;z-index:2 !important;max-width:100% !important;width:100% !important;display:flex !important;align-items:center !important;min-height:min(50vw,880px);}
+.prof{max-width:600px;margin:0 auto 0 clamp(18px,4vw,80px);padding:clamp(24px,4vw,44px) clamp(14px,2vw,16px);font-family:'Poppins',system-ui,sans-serif;}
+.prof__eye{display:inline-flex;align-items:center;gap:10px;color:#f3d9a6;font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;margin:0 0 12px;}
+.prof__eye::before{content:"";width:28px;height:2px;background:linear-gradient(90deg,transparent,#caa45a);}
+.prof__title{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(32px,4.4vw,56px);color:#fff;line-height:1.02;margin:0 0 20px;}
+.prof__title b{color:#f0c877;font-style:italic;font-weight:700;}
+.prof__card{background-color:rgba(38,13,17,.6);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);border:1px solid rgba(202,164,90,.42);border-radius:18px;padding:clamp(20px,3vw,30px);box-shadow:0 26px 54px rgba(0,0,0,.44);}
+.prof__stars{color:#f0c877;font-size:17px;letter-spacing:4px;margin-bottom:8px;}
+.prof__name{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(28px,3.2vw,44px);color:#fff;line-height:1;margin:0 0 4px;}
+.prof__role{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:600;font-size:clamp(15px,1.7vw,20px);color:#f3d9a6;margin:0 0 16px;}
+.prof__bio p{font-family:'Poppins',system-ui,sans-serif;font-size:clamp(13px,1.35vw,14.5px);line-height:1.62;color:#f2e2de;margin:0 0 11px;}
+.prof__bio p:last-child{margin-bottom:0;}
+.prof__bio b{color:#fff;font-weight:600;}
+.prof__cta{display:inline-block;margin-top:18px;font-family:'Poppins',system-ui,sans-serif;font-weight:700;font-size:clamp(13px,1.5vw,16px);letter-spacing:.04em;text-transform:uppercase;color:#3a1410;text-decoration:none;padding:15px 34px;border-radius:12px;background-color:#e6c05a !important;background-image:linear-gradient(180deg,#f7e6b2,#d9b458) !important;box-shadow:0 12px 26px rgba(120,60,10,.42),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .2s ease,box-shadow .2s ease;}
+.prof__cta:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(120,60,10,.52);}
+@media(max-width:900px){
+  .elementor-element-18545ff{min-height:0 !important;padding-top:56.25vw !important;background-color:#220d10 !important;}
+  .elementor-element-18545ff::before{inset:0 0 auto 0 !important;height:56.25vw !important;background-position:center !important;}
+  .elementor-element-18545ff::after{top:0 !important;left:0 !important;right:0 !important;bottom:auto !important;height:56.25vw !important;background:linear-gradient(180deg, transparent 66%, rgba(34,13,16,.95) 100%) !important;}
+  .elementor-element-18545ff > .e-con-inner{min-height:0 !important;display:block !important;padding:0 !important;margin:0 !important;}
+  .prof{max-width:100% !important;margin:0 !important;padding:22px 20px 30px !important;box-sizing:border-box;}
+  .prof__title{font-size:clamp(28px,7.5vw,40px);}
+}
+</style>
+<div class="prof">
+  <p class="prof__eye">Seu professor</p>
+  <h2 class="prof__title">Quem será seu <b>Professor?</b></h2>
+  <div class="prof__card">
+    <div class="prof__stars">★★★★★</div>
+    <h3 class="prof__name">James Olaya</h3>
+    <p class="prof__role">Biomédico, Micropigmentador, Educador e Palestrante!</p>
+    <div class="prof__bio">
+      <p>Ganhador de muitos prêmios internacionais e mais uma vez com o título de melhor Micropigmentador do ano por eleição do público a quem ele dedica sua profissão e sua vida! Especialista técnico em Micropigmentação de Sobrancelhas e Lábios.</p>
+      <p>Criador e desenvolvedor da Técnica Free Hand para Micropigmentação e muito famoso pela arte e delicadeza em seus trabalhos. Master Trainer Internacional. Coordenador Científico de eventos de Micropigmentação.</p>
+      <p><b>CEO do Instituto James Olaya Beauty and Academy com mais de 10 mil alunos em mais de 70 países.</b></p>
+    </div>
+    <a class="prof__cta" href="#preco">Quero aprender com o melhor</a>
+  </div>
+</div>
+<!-- ===== FIM BIO PROFESSOR ===== -->
+<div class="elementor-element elementor-element-1d8743f elementor-widget__width-initial elementor-widget-mobile__width-inherit elementor-invisible elementor-widget elementor-widget-heading" data-id="1d8743f" data-element_type="widget" data-settings="{&quot;_animation&quot;:&quot;fadeIn&quot;}" data-widget_type="heading.default">
 					<h2 class="elementor-heading-title elementor-size-default">Quem será seu <span style="color: #FFE8BE;">Professor?</span></h2>				</div>
 		<div data-particle_enable="false" data-particle-mobile-disabled="false" class="elementor-element elementor-element-64490c4 e-con-full e-flex e-con e-child" data-id="64490c4" data-element_type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;,&quot;jet_parallax_layout_list&quot;:[]}">
 				<div class="elementor-element elementor-element-30fb579 elementor-view-default elementor-widget elementor-widget-icon" data-id="30fb579" data-element_type="widget" data-widget_type="icon.default">
