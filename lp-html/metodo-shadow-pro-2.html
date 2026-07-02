@@ -87,9 +87,23 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .pillar__b h4{font-family:'Poppins',sans-serif;font-size:17px;font-weight:600;color:#fff;margin-bottom:6px;}
 .pillar__b p{color:var(--muted);font-size:14px;line-height:1.55;}
 /* ===== CHECKLIST (o que você aprende / recebe) ===== */
-.checklist{list-style:none;max-width:760px;margin:34px auto 0;display:grid;gap:2px;}
-.checklist li{display:flex;align-items:flex-start;gap:14px;padding:15px 6px;border-bottom:1px solid var(--line2);color:#e6dfd2;font-size:clamp(14.5px,1.6vw,16px);line-height:1.5;}
-.checklist li:last-child{border-bottom:none;}
+.checklist{list-style:none;max-width:860px;margin:36px auto 0;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;text-align:left;}
+.checklist li{display:flex;align-items:flex-start;gap:13px;padding:18px 18px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(150deg,#181322,#120e19);color:#e9e2d6;font-size:clamp(14px,1.55vw,15.5px);line-height:1.45;font-weight:500;transition:border-color .2s,transform .2s;}
+.checklist li:hover{border-color:rgba(217,180,88,.5);transform:translateY(-3px);}
+.checklist .chk{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--gold2),var(--gold));display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(217,180,88,.28);}
+.checklist .chk svg{width:15px;height:15px;}
+@media(max-width:640px){.checklist{grid-template-columns:1fr;gap:11px;}.checklist li{padding:15px 15px;}}
+/* ===== CICATRIZADOS (cards com prova) ===== */
+.scarrow{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px;}
+.scar{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--card);box-shadow:0 22px 44px rgba(0,0,0,.5);}
+.scar__img{position:relative;aspect-ratio:4/5;overflow:hidden;}
+.scar__img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
+.scar:hover .scar__img img{transform:scale(1.05);}
+.scar__tag{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;background:rgba(10,9,12,.72);backdrop-filter:blur(4px);border:1px solid rgba(217,180,88,.45);color:var(--gold2);font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:.04em;padding:5px 11px;border-radius:999px;}
+.scar__tag svg{width:12px;height:12px;}
+.scar__cap{padding:15px 16px 17px;text-align:left;color:#d8d1c4;font-size:13.5px;line-height:1.45;}
+.scar__cap b{color:#fff;font-weight:600;}
+@media(max-width:760px){.scarrow{grid-template-columns:1fr;max-width:380px;margin-left:auto;margin-right:auto;}}
 /* ===== PARA QUEM ===== */
 .forwho{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px;}
 .forwho__col{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 28px;}
@@ -494,10 +508,22 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <h2 class="sec-title">Cicatrizados reais, <span class="gold">sem fantasia</span></h2>
     <div class="meandro"></div>
     <p class="sec-sub">Quando o Shadow é bem executado, a cicatrização mostra: degradê limpo, bordas suaves e cor estável. Isso não é sorte. É um método.</p>
-    <div class="gallery" style="grid-template-columns:repeat(3,1fr);">
-      <img src="/lp/shadow-pro/f1.webp" alt="Cicatrizado real" loading="lazy">
-      <img src="/lp/shadow-pro/r2.webp" alt="Cicatrizado real" loading="lazy">
-      <img src="/lp/shadow-pro/f3.webp" alt="Cicatrizado real" loading="lazy">
+    <div class="scarrow">
+      <figure class="scar">
+        <div class="scar__img"><img src="/lp/shadow-pro/f1.webp" alt="Cicatrizado real" loading="lazy"></div>
+        <span class="scar__tag"><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Cicatrizado real</span>
+        <figcaption class="scar__cap"><b>Degradê limpo</b> — transição suave da base ao topo, sem marcação.</figcaption>
+      </figure>
+      <figure class="scar">
+        <div class="scar__img"><img src="/lp/shadow-pro/r2.webp" alt="Cicatrizado real" loading="lazy"></div>
+        <span class="scar__tag"><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Cicatrizado real</span>
+        <figcaption class="scar__cap"><b>Cor estável</b> — pigmento fixado sem virar tons indesejados.</figcaption>
+      </figure>
+      <figure class="scar">
+        <div class="scar__img"><img src="/lp/shadow-pro/f3.webp" alt="Cicatrizado real" loading="lazy"></div>
+        <span class="scar__tag"><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Cicatrizado real</span>
+        <figcaption class="scar__cap"><b>Bordas suaves</b> — acabamento uniforme que valoriza o olhar.</figcaption>
+      </figure>
     </div>
     <div style="margin-top:32px;"><a class="cta" href="#oferta">Quero dominar esse padrão</a></div>
   </div>
