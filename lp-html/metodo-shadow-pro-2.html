@@ -360,14 +360,12 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .bio__sign .role{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);}
 .bio__cap{position:absolute;right:22px;bottom:20px;z-index:3;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);background:rgba(10,9,12,.5);backdrop-filter:blur(4px);border:1px solid rgba(217,180,88,.35);border-radius:999px;padding:6px 12px;}
 /* ===== CERT ===== */
-.cert{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,4vw,54px);align-items:center;}
-.cert__card{aspect-ratio:1.4/1;border-radius:16px;border:1px solid var(--line);background:linear-gradient(140deg,#171320,#1e1828);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;box-shadow:0 26px 60px rgba(0,0,0,.5);}
-.cert__card::before{content:"";position:absolute;inset:14px;border:1px solid rgba(217,180,88,.35);border-radius:10px;pointer-events:none;}
-.cert__seal{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold2),var(--gold3));display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 8px 24px rgba(184,147,63,.5);}
-.cert__seal svg{width:32px;height:32px;fill:#1a1206;}
-.cert__card .k{color:var(--gold);font-size:11px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:8px;}
-.cert__card .n{font-family:'Cormorant Garamond',serif;font-size:26px;color:#fff;font-weight:700;}
-.cert__card .s{color:var(--muted);font-size:12.5px;margin-top:8px;}
+.cert{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,4vw,58px);align-items:center;}
+.cert__ph{position:relative;justify-self:center;perspective:1400px;}
+.cert__ph::before{content:"";position:absolute;inset:-14% -12%;background:radial-gradient(closest-side,rgba(217,180,88,.34),transparent 72%);filter:blur(40px);z-index:0;}
+.cert__ph img{position:relative;z-index:1;display:block;width:100%;max-width:560px;border-radius:12px;transform:rotate(-2.4deg);box-shadow:0 40px 90px rgba(0,0,0,.62),0 0 0 1px rgba(217,180,88,.28),0 0 0 10px rgba(255,255,255,.02);transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+.cert__ph:hover img{transform:rotate(0deg) scale(1.02);}
+.cert__ph .ribbon{position:absolute;z-index:2;right:-6px;top:14px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#1a1206;background:linear-gradient(135deg,var(--gold2),var(--gold));padding:8px 14px;border-radius:999px;box-shadow:0 10px 26px rgba(184,147,63,.5);transform:rotate(-2.4deg);}
 /* ===== RESULTS GALLERY ===== */
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px;}
 .gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:1px solid var(--line2);transition:transform .4s;}
@@ -474,7 +472,10 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   .bio__creds{justify-content:center;}
   .bio__sign{justify-content:center;}
   .bio__cap{display:none;}
-  .cert{grid-template-columns:1fr;}
+  .cert{grid-template-columns:1fr;gap:34px;}
+  .cert__ph{order:-1;}
+  .cert__ph img{transform:rotate(-1.4deg);max-width:100%;}
+  .cert__ph .ribbon{transform:rotate(-1.4deg);}
   .guar{grid-template-columns:1fr;text-align:center;justify-items:center;}
   .gallery{grid-template-columns:repeat(2,1fr);}
   .pillar{flex-direction:row;}
@@ -723,12 +724,10 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 <!-- ===== CERTIFICADO ===== -->
 <section class="sec">
   <div class="wrap cert">
-    <div class="cert__card">
-      <div class="cert__seal"><svg viewBox="0 0 24 24"><path d="M12 1l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 20l-5.8 3.4 1.1-6.5L2.6 8.8l6.5-.9L12 1z"/></svg></div>
-      <div class="k">Certificado de Conclusão</div>
-      <div class="n">Shadow PRO</div>
-      <div class="s">James Olaya · Educação, Técnica e Arte</div>
-    </div>
+    <figure class="cert__ph">
+      <span class="ribbon">Certificado oficial</span>
+      <img src="/lp/shadow-pro/certificado.webp" alt="Certificado Jay Academy — assinado por James Olaya">
+    </figure>
     <div>
       <span class="eyebrow">Autoridade validada</span>
       <h2 class="sec-title">Receba seu certificado e valide seu <span class="gold">novo padrão de execução</span></h2>
