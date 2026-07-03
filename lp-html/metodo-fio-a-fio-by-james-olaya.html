@@ -1799,15 +1799,13 @@ no  <span style="color: #F666A9";>Fio a Fio Realista</span>?</h2>				</div>
 .cm-mob{display:none;}
 @media(max-width:760px){
   .cm-hide-mobile{display:none!important;}
-  .cm-mob{display:block;background:linear-gradient(180deg,#070509 0%,#140f1e 55%,#070509 100%);padding:34px 18px 40px;font-family:'Poppins',system-ui,sans-serif;}
-  .cm-mob__grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:8px;max-width:420px;margin:0 auto;}
-  .cm-mob__grid img{width:100%;height:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid rgba(192,132,252,.18);display:block;}
-  .cm-mob__grid .cm-mob__tall{grid-row:span 2;aspect-ratio:auto;height:100%;}
-  .cm-mob__txt{max-width:420px;margin:22px auto 0;text-align:center;}
-  .cm-mob__eyebrow{display:inline-block;color:#d6b6ff;font-size:11.5px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;margin-bottom:12px;}
-  .cm-mob__h{margin:0;color:#fff;font-weight:800;font-size:clamp(23px,7vw,30px);line-height:1.12;letter-spacing:-.01em;}
-  .cm-mob__h b{font-weight:800;background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .cm-mob__p{margin:12px 0 0;color:#cfc7de;font-size:14.5px;line-height:1.5;font-weight:500;}
+  .cm-mob{display:block;background:linear-gradient(180deg,#070509 0%,#140f1e 55%,#070509 100%);padding:30px 16px 36px;font-family:'Poppins',system-ui,sans-serif;}
+  .cm-mob__grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-width:440px;margin:0 auto;}
+  .cm-cell{aspect-ratio:1;border-radius:14px;overflow:hidden;}
+  img.cm-cell{width:100%;height:100%;object-fit:cover;display:block;border:1px solid rgba(192,132,252,.18);}
+  .cm-cell--txt{display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;border:1px solid rgba(192,132,252,.28);background:linear-gradient(155deg,#241a3a,#150f24);}
+  .cm-cell--txt p{margin:0;color:#fff;font-weight:800;font-size:clamp(15px,4.7vw,20px);line-height:1.18;letter-spacing:-.01em;}
+  .cm-cell--txt b{background:linear-gradient(92deg,#f5a8e0,#c084fc 55%,#a855f7);-webkit-background-clip:text;background-clip:text;color:transparent;}
 }
 </style>
 <section data-particle_enable="false" data-particle-mobile-disabled="false" class="elementor-section elementor-top-section elementor-element elementor-element-9ea75f1 elementor-section-full_width elementor-section-height-default elementor-section-height-default" data-id="9ea75f1" data-element_type="section" data-settings="{&quot;jet_parallax_layout_list&quot;:[]}">
@@ -1819,14 +1817,10 @@ no  <span style="color: #F666A9";>Fio a Fio Realista</span>?</h2>				</div>
 <!-- banner mobile (texto real, legivel) — substitui a imagem queimada so no mobile -->
 <div class="cm-mob">
   <div class="cm-mob__grid">
-    <img src="/lp/fio-a-fio-realista/cm-model.webp" alt="" loading="lazy" class="cm-mob__tall">
-    <img src="/lp/fio-a-fio-realista/cm-proc.webp" alt="" loading="lazy">
-    <img src="/lp/fio-a-fio-realista/cm-group.webp" alt="" loading="lazy">
-  </div>
-  <div class="cm-mob__txt">
-    <span class="cm-mob__eyebrow">Fio a Fio Realista</span>
-    <h3 class="cm-mob__h">Conquiste seu <b>espaço no mercado</b></h3>
-    <p class="cm-mob__p">Aprenda a técnica que coloca você entre as profissionais mais requisitadas.</p>
+    <img class="cm-cell" src="/lp/fio-a-fio-realista/cm-model.webp" alt="" loading="lazy">
+    <div class="cm-cell cm-cell--txt"><p>Conquiste seu <b>espaço no mercado</b></p></div>
+    <div class="cm-cell cm-cell--txt"><p>Aprenda a técnica <b>Fio a Fio Realista</b></p></div>
+    <img class="cm-cell" src="/lp/fio-a-fio-realista/cm-group.webp" alt="" loading="lazy">
   </div>
 </div>															</div>
 					</div>
