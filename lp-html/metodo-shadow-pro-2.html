@@ -256,16 +256,30 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .checklist .chk svg{width:15px;height:15px;}
 @media(max-width:640px){.checklist{grid-template-columns:1fr;gap:11px;}.checklist li{padding:15px 15px;}}
 /* ===== CICATRIZADOS (cards com prova) ===== */
-.scarrow{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px;}
-.scar{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--card);box-shadow:0 22px 44px rgba(0,0,0,.5);}
-.scar__img{position:relative;aspect-ratio:4/5;overflow:hidden;}
-.scar__img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s;}
-.scar:hover .scar__img img{transform:scale(1.05);}
-.scar__tag{position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;background:rgba(10,9,12,.72);backdrop-filter:blur(4px);border:1px solid rgba(217,180,88,.45);color:var(--gold2);font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:.04em;padding:5px 11px;border-radius:999px;}
-.scar__tag svg{width:12px;height:12px;}
-.scar__cap{padding:15px 16px 17px;text-align:left;color:#d8d1c4;font-size:13.5px;line-height:1.45;}
-.scar__cap b{color:#fff;font-weight:600;}
-@media(max-width:760px){.scarrow{grid-template-columns:1fr;max-width:380px;margin-left:auto;margin-right:auto;}}
+/* ===== CICATRIZADOS — prova sob lente (herói + medalhões ampliados) ===== */
+.proofz{position:relative;max-width:960px;margin:52px auto 0;}
+.proofz__hero{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(217,180,88,.28);box-shadow:0 34px 84px rgba(0,0,0,.62);aspect-ratio:16/10;}
+.proofz__hero img{width:100%;height:100%;object-fit:cover;display:block;}
+.proofz__hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 120% at 50% 40%,transparent 55%,rgba(10,9,12,.45)),linear-gradient(180deg,transparent 58%,rgba(10,9,12,.7));}
+.proofz__stamp{position:absolute;top:16px;right:16px;z-index:3;display:inline-flex;align-items:center;gap:8px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold2);background:rgba(10,9,12,.55);backdrop-filter:blur(4px);border:1px solid rgba(217,180,88,.4);border-radius:999px;padding:7px 13px;}
+.proofz__stamp::before{content:"";width:7px;height:7px;border-radius:50%;background:#e0563f;box-shadow:0 0 9px #e0563f;}
+.proofz__meta{position:absolute;left:18px;bottom:16px;z-index:3;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11.5px;letter-spacing:.08em;color:#ece0c8;text-shadow:0 2px 10px rgba(0,0,0,.85);}
+.proofz__row{display:flex;justify-content:center;gap:clamp(18px,5vw,60px);margin-top:-58px;position:relative;z-index:4;padding:0 10px;}
+.proofz__lens{display:flex;flex-direction:column;align-items:center;gap:11px;text-align:center;flex:0 0 auto;width:clamp(124px,20vw,176px);}
+.proofz__coin{position:relative;width:clamp(100px,15vw,134px);height:clamp(100px,15vw,134px);border-radius:50%;overflow:hidden;border:3px solid #0a090c;box-shadow:0 0 0 2px var(--gold),0 20px 44px rgba(0,0,0,.62);background:#15121c;transition:transform .4s cubic-bezier(.2,.8,.2,1);}
+.proofz__lens:hover .proofz__coin{transform:translateY(-5px) scale(1.04);}
+.proofz__coin img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.4);}
+.proofz__coin::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 2px 12px rgba(255,255,255,.14),inset 0 -8px 20px rgba(0,0,0,.4);pointer-events:none;}
+.proofz__lens .lbl{display:inline-flex;align-items:center;gap:7px;color:var(--gold2);font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;}
+.proofz__lens .lbl i{font-style:normal;font-family:ui-monospace,monospace;color:var(--gold);opacity:.7;}
+.proofz__lens p{margin:0;color:#c9c1b4;font-size:12.8px;line-height:1.45;}
+@media(max-width:760px){
+  .proofz__hero{aspect-ratio:4/5;}
+  .proofz__meta{display:none;}
+  .proofz__row{flex-wrap:wrap;gap:26px 14px;margin-top:-46px;}
+  .proofz__lens{width:calc(33.333% - 10px);}
+  .proofz__lens p{font-size:11.5px;}
+}
 /* ===== PARA QUEM ===== */
 .forwho{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px;}
 .forwho__col{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 28px;}
@@ -860,22 +874,29 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <h2 class="sec-title">Cicatrizados reais, <span class="gold">sem fantasia</span></h2>
     <div class="meandro"></div>
     <p class="sec-sub">Quando o Shadow é bem executado, a cicatrização mostra: degradê limpo, bordas suaves e cor estável. Isso não é sorte. É um método.</p>
-    <div class="scarrow">
-      <figure class="scar">
-        <div class="scar__img"><img src="/lp/shadow-pro/f1.webp" alt="Cicatrizado real" loading="lazy"></div>
-        <span class="scar__tag"><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Cicatrizado real</span>
-        <figcaption class="scar__cap"><b>Degradê limpo</b> — transição suave da base ao topo, sem marcação.</figcaption>
-      </figure>
-      <figure class="scar">
-        <div class="scar__img"><img src="/lp/shadow-pro/r2.webp" alt="Cicatrizado real" loading="lazy"></div>
-        <span class="scar__tag"><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Cicatrizado real</span>
-        <figcaption class="scar__cap"><b>Cor estável</b> — pigmento fixado sem virar tons indesejados.</figcaption>
-      </figure>
-      <figure class="scar">
-        <div class="scar__img"><img src="/lp/shadow-pro/f3.webp" alt="Cicatrizado real" loading="lazy"></div>
-        <span class="scar__tag"><svg viewBox="0 0 24 24" fill="none" stroke="#f2d38a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Cicatrizado real</span>
-        <figcaption class="scar__cap"><b>Bordas suaves</b> — acabamento uniforme que valoriza o olhar.</figcaption>
-      </figure>
+    <div class="proofz">
+      <div class="proofz__hero">
+        <img src="/lp/shadow-pro/s4.webp" alt="Cicatrizado real Shadow PRO" loading="lazy" style="object-position:center 38%;">
+        <span class="proofz__stamp">Sem filtro · RAW</span>
+        <span class="proofz__meta">Cicatrizado real · 30 dias · sem edição</span>
+      </div>
+      <div class="proofz__row">
+        <div class="proofz__lens">
+          <div class="proofz__coin"><img src="/lp/shadow-pro/s3.webp" alt="Detalhe do degradê" loading="lazy"></div>
+          <span class="lbl"><i>01</i> Degradê limpo</span>
+          <p>Transição suave da base ao topo, sem marcação.</p>
+        </div>
+        <div class="proofz__lens">
+          <div class="proofz__coin"><img src="/lp/shadow-pro/s2.webp" alt="Detalhe da cor" loading="lazy"></div>
+          <span class="lbl"><i>02</i> Cor estável</span>
+          <p>Pigmento fixado sem virar tons indesejados.</p>
+        </div>
+        <div class="proofz__lens">
+          <div class="proofz__coin"><img src="/lp/shadow-pro/s1.webp" alt="Detalhe das bordas" loading="lazy"></div>
+          <span class="lbl"><i>03</i> Bordas suaves</span>
+          <p>Acabamento uniforme que valoriza o olhar.</p>
+        </div>
+      </div>
     </div>
     <div style="margin-top:32px;"><a class="cta" href="#oferta">Quero dominar esse padrão</a></div>
   </div>
