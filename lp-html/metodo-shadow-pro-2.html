@@ -339,12 +339,15 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 }
 /* ===== BIO ===== */
 .bio{position:relative;overflow:hidden;background:linear-gradient(180deg,#0a090c 0%,transparent 13%,transparent 87%,#0a090c 100%),radial-gradient(110% 100% at 82% 20%,#241a10,#0d0a10 55%,#0a090c);}
-.bio__in{display:grid;grid-template-columns:1fr .82fr;gap:clamp(30px,5vw,64px);align-items:center;}
+.bio__in{display:grid;grid-template-columns:1fr .9fr;gap:clamp(30px,5vw,70px);align-items:center;}
 .bio__txt p{color:#d8d1c4;font-size:clamp(15px,1.7vw,18px);line-height:1.6;margin-bottom:16px;}
-.bio__txt p.big{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2.4vw,28px);color:#fff;font-style:italic;line-height:1.35;}
+.bio__txt .kicker{display:block;color:var(--muted);font-size:clamp(14px,1.5vw,16px);margin-bottom:12px;}
+.bio__txt p.big{font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.6vw,30px);color:#fff;font-style:italic;line-height:1.32;position:relative;padding-left:22px;}
+.bio__txt p.big::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--gold2),transparent);}
 .bio__ph{position:relative;justify-self:center;}
-.bio__ph::before{content:"";position:absolute;inset:-8% -6%;border-radius:22px;background:radial-gradient(closest-side,rgba(217,180,88,.28),transparent 72%);filter:blur(30px);}
-.bio__ph img{position:relative;border-radius:18px;width:100%;max-width:360px;box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 0 1px var(--line);}
+.bio__ph::before{content:"";position:absolute;inset:-10% -8%;border-radius:24px;background:radial-gradient(closest-side,rgba(217,180,88,.32),transparent 72%);filter:blur(34px);}
+.bio__ph img{position:relative;border-radius:16px;width:100%;max-width:470px;box-shadow:0 34px 80px rgba(0,0,0,.62),0 0 0 1px rgba(217,180,88,.18);}
+.bio__ph figcaption{position:absolute;left:16px;bottom:14px;z-index:2;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);background:rgba(10,9,12,.5);backdrop-filter:blur(4px);border:1px solid rgba(217,180,88,.35);border-radius:999px;padding:6px 12px;}
 /* ===== CERT ===== */
 .cert{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(28px,4vw,54px);align-items:center;}
 .cert__card{aspect-ratio:1.4/1;border-radius:16px;border:1px solid var(--line);background:linear-gradient(140deg,#171320,#1e1828);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;box-shadow:0 26px 60px rgba(0,0,0,.5);}
@@ -680,12 +683,15 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   <div class="wrap bio__in">
     <div class="bio__txt">
       <span class="eyebrow">Seu professor</span>
-      <h2 class="sec-title" style="margin-bottom:20px;">Aprenda com quem <span class="gold">elevou o padrão</span> do mercado</h2>
-      <p>O ponto aqui é simples:</p>
+      <h2 class="sec-title" style="margin-bottom:18px;">Aprenda com quem <span class="gold">elevou o padrão</span> do mercado</h2>
+      <span class="kicker">O ponto aqui é simples:</span>
       <p class="big">Quando você domina degradê, saturação e acabamento, você para de depender de sorte e passa a entregar um padrão que faz a cliente pensar: "É esse resultado que eu quero."</p>
-      <div style="margin-top:24px;"><a class="cta" href="#oferta">Quero aprender com o James</a></div>
+      <div style="margin-top:26px;"><a class="cta" href="#oferta">Quero aprender com o James</a></div>
     </div>
-    <div class="bio__ph"><img src="/lp/shadow-pro/james.webp" alt="James Olaya"></div>
+    <figure class="bio__ph">
+      <img src="/lp/shadow-pro/james-dx.webp" alt="James Olaya — o shadow que emerge da técnica">
+      <figcaption>James Olaya · o shadow é técnica</figcaption>
+    </figure>
   </div>
 </section>
 
