@@ -371,13 +371,21 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:1px solid var(--line2);transition:transform .4s;}
 .gallery img:hover{transform:scale(1.03);}
 /* carrossel de resultados */
-.carousel{position:relative;margin-top:42px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
-.carousel__track{display:flex;gap:16px;width:max-content;animation:carscroll 42s linear infinite;}
-.carousel:hover .carousel__track{animation-play-state:paused;}
-.carousel__track figure{position:relative;flex:0 0 auto;width:clamp(210px,24vw,290px);margin:0;}
-.carousel__track img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:16px;border:1px solid var(--line);box-shadow:0 18px 44px rgba(0,0,0,.55);}
-.carousel__track figure::after{content:"Aluna Shadow PRO";position:absolute;left:12px;bottom:12px;right:12px;color:#fff;font-size:12px;font-weight:600;letter-spacing:.02em;text-shadow:0 2px 8px rgba(0,0,0,.7);background:linear-gradient(0deg,rgba(0,0,0,.55),transparent);padding:22px 8px 6px;border-radius:0 0 16px 16px;}
-@keyframes carscroll{from{transform:translateX(0);}to{transform:translateX(calc(-50% - 8px));}}
+.carousel{position:relative;margin-top:42px;}
+.carousel__stage{position:relative;}
+.carousel__track{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;cursor:pointer;padding:6px 4px;}
+.carousel__track::-webkit-scrollbar{display:none;}
+.carousel__track figure{position:relative;flex:0 0 auto;margin:0;width:clamp(212px,23vw,290px);aspect-ratio:1;border-radius:16px;overflow:hidden;border:1px solid rgba(217,180,88,.18);box-shadow:0 18px 42px rgba(0,0,0,.5);background:#15121c;}
+.carousel__track img{width:100%;height:100%;object-fit:cover;display:block;}
+.carousel__track figure::after{content:"Aluna Shadow PRO";position:absolute;left:0;right:0;bottom:0;color:#fff;font-size:12px;font-weight:600;letter-spacing:.02em;text-shadow:0 2px 8px rgba(0,0,0,.7);background:linear-gradient(0deg,rgba(0,0,0,.62),transparent);padding:28px 14px 12px;}
+.carousel__fade{position:absolute;top:0;bottom:0;width:clamp(44px,9vw,120px);z-index:3;pointer-events:none;}
+.carousel__fade--l{left:0;background:linear-gradient(90deg,var(--bg2),transparent);}
+.carousel__fade--r{right:0;background:linear-gradient(270deg,var(--bg2),transparent);}
+.carousel__arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:46px;height:46px;border-radius:50%;background:rgba(16,12,10,.74);border:1px solid rgba(217,180,88,.32);color:var(--gold2);cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:background .2s,color .2s,transform .2s;}
+.carousel__arrow:hover{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1206;border-color:transparent;}
+.carousel__arrow:active{transform:translateY(-50%) scale(.92);}
+.carousel__arrow--l{left:8px;}
+.carousel__arrow--r{right:8px;}
 .pills{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:26px 0 0;}
 .pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 20px;color:#e6dfd2;font-size:14px;font-weight:500;display:flex;align-items:center;gap:9px;}
 .pill svg{width:16px;height:16px;}
@@ -745,24 +753,55 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <h2 class="sec-title">Resultados reais de alunas que <span class="gold">aplicaram o método</span></h2>
     <div class="meandro"></div>
     <p class="sec-sub">Quando a técnica é clara, o resultado aparece — e a confiança muda junto.</p>
-    <div class="carousel"><div class="carousel__track">
-      <figure><img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r4.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r1.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r4.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna" loading="lazy"></figure>
-      <figure><img src="/lp/shadow-pro/r1.webp" alt="Resultado aluna" loading="lazy"></figure>
+    <div class="carousel"><div class="carousel__stage">
+      <div class="carousel__fade carousel__fade--l"></div>
+      <div class="carousel__fade carousel__fade--r"></div>
+      <button class="carousel__arrow carousel__arrow--l" id="carPrev" type="button" aria-label="Anterior"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="carousel__arrow carousel__arrow--r" id="carNext" type="button" aria-label="Próximo"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="carousel__track" id="carTrack" title="Clique para pausar">
+        <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/s2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/s3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/s1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/s4.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/s2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/s3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/s1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/s4.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
+      </div>
     </div></div>
+    <script>
+    (function(){
+      var track=document.getElementById('carTrack'); if(!track) return;
+      var raf=null, paused=false, arrowAnim=false, speed=0.6;
+      function tick(){
+        if(!arrowAnim){
+          var half=track.scrollWidth/2;
+          if(half>0 && track.scrollLeft>=half) track.scrollLeft-=half;
+          track.scrollLeft+=speed;
+        }
+        raf=requestAnimationFrame(tick);
+      }
+      function start(){ if(raf===null) raf=requestAnimationFrame(tick); }
+      function stop(){ if(raf!==null){ cancelAnimationFrame(raf); raf=null; } }
+      track.addEventListener('click',function(){ paused=!paused; track.title=paused?'Clique para continuar':'Clique para pausar'; if(paused) stop(); else start(); });
+      function nudge(e,dx){ e.stopPropagation(); arrowAnim=true; track.scrollBy({left:dx,behavior:'smooth'}); setTimeout(function(){arrowAnim=false;},600); }
+      document.getElementById('carPrev').addEventListener('click',function(e){ nudge(e,-340); });
+      document.getElementById('carNext').addEventListener('click',function(e){ nudge(e,340); });
+      start();
+    })();
+    </script>
     <div class="pills">
       <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Menos medo de errar</span>
       <span class="pill"><svg viewBox="0 0 24 24" fill="none" stroke="#d9b458" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>Mais consistência e acabamento</span>
