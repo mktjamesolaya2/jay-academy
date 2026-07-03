@@ -2,7 +2,30 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-02 — Lips Sense COMPLETA + Fio a Fio mobile + **Shadow PRO recriada e turbinada**
+> **Última atualização**: 2026-07-03 — **Shadow PRO: redesign premium dobra-a-dobra CONCLUÍDO** (James: "acho que terminamos o shadow, o resto está bom")
+
+---
+
+## 🆕 Sessão 2026-07-03 — Método Shadow PRO: redesign premium dobra-a-dobra (CONCLUÍDO)
+
+Continuação do overhaul. James pediu, seção por seção, "algo muito visual/forte/diferente", rejeitando layouts genéricos e repetição ("tudo igual"). Todas as dobras abaixo foram reformuladas com composições distintas entre si (evitar o "tudo dark+gold+serif+centralizado"). Arquivo: [lp-html/metodo-shadow-pro-2.html](../lp-html/metodo-shadow-pro-2.html).
+
+**Dobras reformuladas (esta sessão + anteriores da mesma rodada):**
+- **Prova** → faixa editorial full-bleed (macro sangrando + máscara + brilhos dourados).
+- **Diagnóstico** → números-fantasma vermelhos + tag "✕ Erro comum" + fórmula.
+- **Técnica** → retrato emoldurado com halo + lista "Na tentativa → Na decisão".
+- **4 Pilares** → fachada de templo (colunas + entablamento "O cicatrizado bonito").
+- **Blueprint** ("Tudo o que você precisa") → ficha técnica com grid, crosshairs e leader lines.
+- **Para quem** → split diagonal (clip-path) é/não é pra você.
+- **Bio ("Seu professor")** → **capa editorial**: retrato dupla-exposição (Higgsfield nano_banana_pro — rosto real do James + degradê de shadow dourado fundido no peito, `james-dx.webp`) sangrando pela direita + texto/creds/**assinatura** à esquerda.
+- **Certificado** → substituído placeholder pelo **certificado real** ([certificado.webp](../public/lp/shadow-pro/certificado.webp)) emoldurado (inclinação, brilho, selo "Certificado oficial", hover endireita). ⚠️ o cert diz "BASIC MAGIC SHADOW", não "Shadow PRO" — James avisado, pode querer trocar depois.
+- **Resultados** → carrossel **igual ao "resultados reais" do fio a fio** (marquee auto-scroll + setas + fade + clique-pausa), adaptado ao dourado. Removidos prints ruins (r1 marca-d'água VOGUE, r3 grupo banco-de-imagem, r4 rosto pesado). Imagens limpas: f1-f3, r2/r5/r6 + **4 novas do acervo Magic Shadow** ([s1-s4.webp](../public/lp/shadow-pro/)).
+- **Cicatrizados ("sem fantasia")** → **"prova sob lente"**: foto-herói + carimbo "Sem filtro · RAW" + 3 **medalhões circulares ampliados** (lupa) Degradê/Cor/Bordas. Trocou grid de 3 cards; imagens s4 (herói) + s3/s2/s1.
+- **Emendas pretas entre dobras** aplicadas em TODAS (flat `--bg2` e radiais `.tecnica/.bio/.offer`), desktop + mobile.
+
+**Assets novos:** `james-dx.webp` (dupla-exposição Higgsfield), `certificado.webp`, `s1-s4.webp` (macros shadow do acervo magicshadow). Todos em [public/lp/shadow-pro/](../public/lp/shadow-pro/).
+
+**Workflow/lições reforçadas:** render local isolando a `<section>` (head+section num doc) via chrome headless + sharp pra conferir desktop (1360) e mobile (470) antes de push; `git add` arquivo-por-arquivo verificando `--cached --stat` (regra anti-"não subiu"); Higgsfield double-exposure ficou MUITO melhor que composição sharp manual (essa era sutil demais).
 
 ---
 
