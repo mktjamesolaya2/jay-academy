@@ -43,7 +43,7 @@ export default async function DashboardPage() {
       loadLps(),
       listSaved(),
       getCurrentUser(),
-      readActivityLog(15),
+      readActivityLog(200),
       getNotifications(),
       listGroups(),
       getAssignments(),
@@ -61,25 +61,55 @@ export default async function DashboardPage() {
   // Apenas admin e senior veem o feed de atividade e deploys
   const showAdminFeeds = userCanEdit;
 
-  // Recentes = editados nos últimos 3 dias (LP ou WP)
+  // Recentes = editados nos últimos 3 dias (LP ou WP).
+  // Fonte da verdade: o activity log (toda edição é logada), com fallback nos
+  // timestamps do próprio registro. Antes filtrava só por lastEditedAt/fetchedAt,
+  // que não são carimbados em várias edições (ex.: editar página WP) → vivia vazio.
   const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
   const now = Date.now();
   const isRecent = (iso?: string): boolean =>
     !!iso && now - new Date(iso).getTime() <= THREE_DAYS_MS;
+  const EDIT_KINDS = new Set<string>([
+    "wp.copy", "wp.publish", "wp.unpublish", "wp.categorize", "wp.edit",
+    "lp.create", "lp.update", "lp.duplicate", "lp.restore",
+  ]);
+  const normTarget = (s?: string): string => (s ?? "").trim().toLowerCase();
+  const lastEditByTarget = new Map<string, string>();
+  for (const a of activity) {
+    if (!EDIT_KINDS.has(a.kind)) continue;
+    const k = normTarget(a.target);
+    if (!k) continue;
+    const prev = lastEditByTarget.get(k);
+    if (!prev || a.at > prev) lastEditByTarget.set(k, a.at);
+  }
+  const latestIso = (...vals: (string | undefined)[]): string | undefined =>
+    (vals.filter(Boolean).sort().at(-1) as string | undefined);
+  const lpEditedAt = (lp: (typeof activePages)[number]): string | undefined =>
+    latestIso(
+      lp.lastEditedAt,
+      lastEditByTarget.get(normTarget(lp.name)),
+      lastEditByTarget.get(normTarget(lp.slug))
+    );
+  const wpEditedAt = (wp: (typeof categorizedWp)[number]): string | undefined =>
+    latestIso(
+      wp.fetchedAt,
+      wp.publishedAt,
+      wp.localizedAt,
+      wp.relocatedAt,
+      lastEditByTarget.get(normTarget(wp.title)),
+      lastEditByTarget.get(normTarget(wp.slug)),
+      lastEditByTarget.get(normTarget(wp.publicSlug))
+    );
   const recentLps = activePages
-    .filter((lp) => isRecent(lp.lastEditedAt))
-    .sort(
-      (a, b) =>
-        new Date(b.lastEditedAt ?? 0).getTime() -
-        new Date(a.lastEditedAt ?? 0).getTime()
-    );
+    .map((lp) => ({ lp, at: lpEditedAt(lp) }))
+    .filter((x) => isRecent(x.at))
+    .sort((a, b) => (b.at! > a.at! ? 1 : -1))
+    .map((x) => ({ ...x.lp, lastEditedAt: x.at }));
   const recentWp = categorizedWp
-    .filter((wp) => isRecent(wp.fetchedAt))
-    .sort(
-      (a, b) =>
-        new Date(b.fetchedAt ?? 0).getTime() -
-        new Date(a.fetchedAt ?? 0).getTime()
-    );
+    .map((wp) => ({ wp, at: wpEditedAt(wp) }))
+    .filter((x) => isRecent(x.at))
+    .sort((a, b) => (b.at! > a.at! ? 1 : -1))
+    .map((x) => ({ ...x.wp, fetchedAt: x.at! }));
   const totalRecent = recentLps.length + recentWp.length;
 
   // Rascunhos = LPs com status draft (não trashed)
@@ -218,7 +248,7 @@ export default async function DashboardPage() {
             {/* Right Sidebar — só admin/senior */}
             {showAdminFeeds && (
               <aside className="hidden lg:block w-80 shrink-0 border-l border-[#1f1f1f] p-5 space-y-5">
-                <ActivityFeed entries={activity} />
+                <ActivityFeed entries={activity.slice(0, 15)} />
                 <DeploysFeed />
               </aside>
             )}

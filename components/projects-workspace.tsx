@@ -70,11 +70,17 @@ export function ProjectsWorkspace({
   const [menuKey, setMenuKey] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
+  // Só conta atribuições de projetos que ainda existem — projetos excluídos
+  // deixam a atribuição órfã no store e inflavam a contagem (ex.: "6" com 5 reais).
+  const validKeys = useMemo(() => new Set(projects.map((p) => p.key)), [projects]);
   const countByGroup = useMemo(() => {
     const m: Record<string, number> = {};
-    for (const gs of Object.values(assign)) for (const g of gs) m[g] = (m[g] || 0) + 1;
+    for (const [key, gs] of Object.entries(assign)) {
+      if (!validKeys.has(key)) continue;
+      for (const g of gs) m[g] = (m[g] || 0) + 1;
+    }
     return m;
-  }, [assign]);
+  }, [assign, validKeys]);
 
   const visible = useMemo(() => {
     const ql = q.trim().toLowerCase();
