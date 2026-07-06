@@ -215,10 +215,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 /* ===== NanoFios: nova Hero (Higgsfield) ===== */
 .elementor-13601 .elementor-element-d278069{display:none!important;}
 .elementor-13601 .elementor-element-d9b1a0f{position:relative!important;}
-.nf-herobg{position:absolute!important;inset:0!important;z-index:0!important;background-image:linear-gradient(0deg,#080309 0%,rgba(8,3,9,0) 55%),url('/lp/basic-nanofios/hero-bg.webp')!important;background-size:cover!important;background-position:center right!important;background-repeat:no-repeat!important;pointer-events:none;}
+.nf-herobg{position:absolute!important;inset:0!important;z-index:0!important;background-image:linear-gradient(0deg,#080309 0%,rgba(8,3,9,0) 55%),url('/lp/basic-nanofios/hero-bg.webp')!important;background-size:cover!important;background-position:right 20%!important;background-repeat:no-repeat!important;pointer-events:none;}
 .elementor-13601 .elementor-element-d9b1a0f > .e-con-inner{position:relative!important;z-index:2!important;}
 .nf-logo{position:absolute!important;z-index:6!important;right:29%;top:50%;transform:translateY(-50%);width:17%;max-width:255px;filter:drop-shadow(0 6px 22px rgba(0,0,0,.6));pointer-events:none;}
-.elementor-13601 .elementor-element-d9b1a0f .elementor-motion-effects-layer{background-image:linear-gradient(0deg,#080309 0%,rgba(8,3,9,0) 55%),url('/lp/basic-nanofios/hero-bg.webp')!important;background-size:cover!important;background-position:center right!important;}
+.elementor-13601 .elementor-element-d9b1a0f .elementor-motion-effects-layer{background-image:linear-gradient(0deg,#080309 0%,rgba(8,3,9,0) 55%),url('/lp/basic-nanofios/hero-bg.webp')!important;background-size:cover!important;background-position:right 20%!important;}
 @media(max-width:767px){
   .elementor-13601 .elementor-element-d9b1a0f{display:flex!important;flex-direction:column!important;min-height:0!important;padding:0!important;background:#160b16!important;}
   .nf-herobg{position:relative!important;inset:auto!important;order:-1!important;width:100%!important;aspect-ratio:896/1200!important;background-image:url('/lp/basic-nanofios/hero-bg-mobile.webp')!important;background-size:cover!important;background-position:center top!important;}
@@ -288,7 +288,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 @media(max-width:600px){
   .elementor-13601 .elementor-element-e485fcc .swiper-slide img{outline-offset:-7px!important;}
 }
-</style><style id="nf-cf">
+</style><style id="nf-faixa">
+/* ===== Faixa (marquee) como band full-width no topo da hero (desktop) ===== */
+@media(min-width:768px){
+.elementor-13601 .elementor-element-62eac45{
+  left:0!important;right:0!important;width:100%!important;max-width:none!important;margin:0!important;top:0!important;
+  min-height:48px!important;overflow:hidden!important;z-index:8!important;
+  background:linear-gradient(90deg,#100309,#33122b 50%,#100309)!important;
+  border-top:1px solid rgba(230,198,132,.45)!important;
+  border-bottom:1px solid rgba(230,198,132,.45)!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.5)!important;
+  display:flex!important;align-items:center!important;
+}
+.elementor-13601 .elementor-element-e0d56f9{top:auto!important;bottom:auto!important;}
+.elementor-13601 .elementor-element-e0d56f9 *{color:#ecc98c!important;}
+}
+</style>
+<style id="nf-cf">
 /* ===== Coverflow 3D (Resultados) ===== */
 .elementor-13601 .elementor-element-e485fcc{display:none!important;}
 .nfcf-sec{position:relative;z-index:2;overflow:hidden;margin:0 auto;width:100%;align-self:stretch;}
