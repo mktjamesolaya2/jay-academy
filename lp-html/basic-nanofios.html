@@ -207,16 +207,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <style id="nf-seams">
 /* emenda entre dobras: fade escuro ATRAS do conteudo (nunca na frente de texto/imagem) */
 .elementor-13601 > .elementor-element.e-parent{position:relative;}
-/* conteudo acima da emenda; camadas de fundo (nf-herobg / motion-effects) ficam abaixo */
 .elementor-13601 > .elementor-element.e-parent > *:not(.nf-herobg):not(.elementor-motion-effects-container){position:relative;z-index:2;}
-.elementor-13601 > .elementor-element.e-parent::after{content:"";position:absolute;left:0;right:0;bottom:0;height:160px;z-index:1;pointer-events:none;background:linear-gradient(0deg,#080309,transparent);}
-.elementor-13601 > .elementor-element.e-parent:not(.elementor-element-d9b1a0f):not(.elementor-element-3aa3f22)::before{content:"";position:absolute;left:0;right:0;top:0;height:160px;z-index:1;pointer-events:none;background:linear-gradient(180deg,#080309,transparent);}
+.elementor-13601 > .elementor-element.e-parent:not(.elementor-element-d9b1a0f):not(.elementor-element-3aa3f22)::after{content:"";position:absolute;left:0;right:0;bottom:0;height:210px;z-index:1;pointer-events:none;background:linear-gradient(0deg,#080309,transparent);}
+.elementor-13601 > .elementor-element.e-parent:not(.elementor-element-d9b1a0f):not(.elementor-element-3aa3f22)::before{content:"";position:absolute;left:0;right:0;top:0;height:210px;z-index:1;pointer-events:none;background:linear-gradient(180deg,#080309,transparent);}
 </style>
 <style id="nf-hero-override">
 /* ===== NanoFios: nova Hero (Higgsfield) ===== */
 .elementor-13601 .elementor-element-d278069{display:none!important;}
 .elementor-13601 .elementor-element-d9b1a0f{position:relative!important;}
-.nf-herobg{position:absolute!important;inset:0!important;z-index:0!important;background:url('/lp/basic-nanofios/hero-bg.webp') center right/cover no-repeat!important;pointer-events:none;}
+.nf-herobg{position:absolute!important;inset:0!important;z-index:0!important;background-image:linear-gradient(0deg,#080309 0%,rgba(8,3,9,0) 38%),url('/lp/basic-nanofios/hero-bg.webp')!important;background-size:cover!important;background-position:center right!important;background-repeat:no-repeat!important;pointer-events:none;}
 .elementor-13601 .elementor-element-d9b1a0f > .e-con-inner{position:relative!important;z-index:2!important;}
 .nf-logo{position:absolute!important;z-index:6!important;right:29%;top:50%;transform:translateY(-50%);width:17%;max-width:255px;filter:drop-shadow(0 6px 22px rgba(0,0,0,.6));pointer-events:none;}
 .elementor-13601 .elementor-element-d9b1a0f .elementor-motion-effects-layer{background-image:url('/lp/basic-nanofios/hero-bg.webp')!important;background-size:cover!important;background-position:center right!important;}
