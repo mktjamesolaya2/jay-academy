@@ -411,7 +411,7 @@ body {
 .section-pitch__media {
   width: 100%;
   max-width: 720px;
-  margin: 0 auto;
+  margin: clamp(-170px, -13vh, -60px) auto 0;  /* puxa o vídeo pra cima */
   padding: 0 5%;
   display: block;
   line-height: 0;
@@ -463,7 +463,8 @@ body {
 /* ===== SEÇÃO 3 — Benefícios (fundo claro) ===== */
 .section-benefits {
   background: #FFFFFF;
-  padding: clamp(64px, 10vh, 120px) 0;
+  /* respiro de cima igual ao gap título→imagem; embaixo apertado até a dobra escura */
+  padding: clamp(32px, 6vh, 56px) 0 clamp(28px, 4.5vh, 48px);
   color: #1A1A1A;
 }
 
@@ -627,6 +628,14 @@ body {
   text-align: center;
   font-family: "Poppins", sans-serif;
   color: #000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* respiro entre a pergunta e o CTA (desktop + mobile) */
+.benefits-bridge .benefits-cta {
+  margin-top: clamp(20px, 3vh, 32px);
 }
 
 .benefits-bridge__lead {
@@ -654,17 +663,18 @@ body {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   text-decoration: none;
-  color: #FFFFFF;
-  background: #A89464;            /* cáqui dourado mais quente, mesmo tom da referência */
-  border: none;
+  color: #F5F5F5;
+  background: linear-gradient(180deg, #8F6B2E 0%, #6B4E1F 100%);  /* mesmo dourado dos outros CTAs */
+  border: 1px solid #D6B36A;
   border-radius: 999px;
-  transition: background 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 0 24px rgba(214, 179, 106, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
   cursor: pointer;
 }
 
 .benefits-cta:hover {
-  background: #9A8654;
   transform: translateY(-1px);
+  box-shadow: 0 0 32px rgba(214, 179, 106, 0.28);
 }
 
 /* ===== HERO SECUNDÁRIO ===== */
@@ -1375,10 +1385,10 @@ body {
 
 /* ===== CTA — pill dourada, mesmo estilo do .pitch-cta do hero ===== */
 .russia-cta {
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 4;
   align-self: end;
-  justify-self: end;
+  justify-self: start;
   display: inline-block;
   padding: 1em 2.6em;
   font-family: "Poppins", sans-serif;
@@ -1991,6 +2001,18 @@ body {
     grid-template-columns: 1fr;
     gap: clamp(2.5rem, 5vw, 4rem);
   }
+  /* Título sobrepõe o topo da imagem: mata o vão + fica por cima via z-index */
+  .risco-header {
+    margin-bottom: 0;
+    position: relative;
+    z-index: 3;
+  }
+  /* Imagem sobe pra dentro do título (topo dela já é mascarado/escuro) */
+  .risco-image {
+    margin-top: clamp(-96px, -20vw, -56px);
+    position: relative;
+    z-index: 1;
+  }
   .risco-image img {
     max-width: 360px;
     margin: 0 auto;
@@ -2007,6 +2029,14 @@ body {
 
 /* ===== RUSSIA — fixes mobile ===== */
 @media (max-width: 720px) {
+  /* Centraliza o BLOCO inteiro do headline (não só o texto interno) */
+  .russia-headline {
+    align-items: center;
+    text-align: center;
+  }
+  .russia-headline__main {
+    align-items: center;
+  }
   /* Subtítulo principal: tirar nowrap (causava overflow horizontal) */
   .russia-subtitle {
     white-space: normal;
@@ -2032,27 +2062,42 @@ body {
     grid-auto-flow: row;
     row-gap: clamp(0.85rem, 2.5vw, 1.2rem);
     column-gap: 0;
-    align-items: start;
+    align-items: center;
+    justify-items: center;
     justify-content: center;
-    padding-left: clamp(2rem, 8vw, 4rem);
+    padding-left: 0;
   }
   .russia-domain__list li {
-    justify-content: flex-start;
+    justify-content: center;
   }
   /* Nome dos itens pode quebrar se for muito longo */
   .russia-domain__name {
     white-space: normal;
     font-size: clamp(1rem, 3.8vw, 1.2rem);
   }
-  /* Quote — reseta translateX e justify-self do desktop */
+  /* Quote — reseta translateX e justify-self do desktop, agora centralizada */
   .russia-quote {
     transform: none;
-    justify-self: stretch;
+    justify-self: center;
     max-width: 100%;
     margin: clamp(1.5rem, 3vw, 2rem) auto 0;
-    padding: 0.5rem 1rem 0.5rem 1.5rem;
-    font-size: clamp(0.85rem, 3.2vw, 1rem);
+    padding: 1.2rem 1.5rem 0.5rem;
+    font-size: clamp(0.82rem, 3vw, 0.98rem);
     line-height: 1.55;
+    text-align: center;
+    border-left: 0;
+  }
+  /* Aspas centralizadas acima do texto */
+  .russia-quote__mark {
+    position: static;
+    transform: none;
+    width: 100%;
+    margin: 0 auto 0.2rem;
+    text-align: center;
+  }
+  /* CTA centralizado no mobile */
+  .russia-cta {
+    justify-self: center;
   }
   /* Menina escondida no mobile pra não competir com os mapas */
   .russia-portrait {
@@ -2083,6 +2128,12 @@ body {
     font-size: clamp(0.85rem, 3vw, 1rem);
     max-width: 100%;
     padding: 0 1rem;
+    text-align: center;
+  }
+  /* Filete decorativo centralizado (no desktop fica à esquerda) */
+  .russia-subtitle--small::before {
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
@@ -2764,27 +2815,28 @@ body {
     order: 1;
     max-width: 100%;
     padding: clamp(3rem, 8vw, 4rem) clamp(1.5rem, 4vw, 2rem);
-    min-height: 60vh;
+    min-height: 68vh;
     background:
       linear-gradient(
         to bottom,
         transparent 0%,
-        transparent 55%,
-        rgba(0, 0, 0, 0.85) 88%,
+        transparent 58%,
+        rgba(0, 0, 0, 0.82) 90%,
         rgba(0, 0, 0, 1) 100%
       ),
+      /* overlay mais leve → a imagem aparece mais */
       linear-gradient(
         to right,
-        rgba(0, 0, 0, 0.96) 0%,
-        rgba(0, 0, 0, 0.82) 45%,
-        rgba(0, 0, 0, 0.54) 100%
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(0, 0, 0, 0.5) 45%,
+        rgba(0, 0, 0, 0.28) 100%
       ),
       url("assets/case_sonia.jpeg") right center / cover no-repeat;
     background-color: #050505;
     color: #F5F0E0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: flex-end;   /* desce o "O PESO VISUAL" pro rodapé da imagem */
     gap: clamp(1.5rem, 3vw, 2.5rem);
   }
   .diptico-light {
@@ -2809,8 +2861,10 @@ body {
     align-items: center;
     text-align: center;
     font-size: clamp(0.85rem, 3.4vw, 1.1rem);
-    padding: clamp(1.25rem, 4vw, 2rem) 1rem 0;
-    margin-bottom: clamp(0.5rem, 2vw, 0.9rem);
+    /* bloco preto atrás do header (era cream/branco) */
+    background: #050505;
+    padding: clamp(1.4rem, 5vw, 2.2rem) 1rem clamp(1.1rem, 3.5vw, 1.6rem);
+    margin-bottom: 0;
   }
   .diptico-labels__era,
   .diptico-labels__mkt { white-space: normal; text-align: center; }
@@ -4028,31 +4082,40 @@ body {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
     background-image: none !important;
-    padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 4vw, 1.75rem) clamp(26vh, 30vh, 32vh);
-    min-height: 100vh;
-    display: block;
+    /* padding-bottom = altura da imagem, em unidades de LARGURA (estáveis em qualquer altura de tela) */
+    padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 4vw, 1.75rem) clamp(230px, 60vw, 340px);
+    min-height: 0 !important;
+    display: block !important;
     overflow: hidden;
     position: relative;
   }
-  /* Imagem ancorada no fundo da section, fixed height, com fade branco no topo */
+  /* Imagem: banda no rodapé com a MESMA altura do padding-bottom (não invade o texto);
+     gradiente radial arredondado dissolve o topo em arco */
   .section-final::after {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 30vh;
+    height: clamp(230px, 60vw, 340px);
     background:
-      linear-gradient(
-        to bottom,
-        #FFFFFF 0%,
-        rgba(255, 255, 255, 0.9) 20%,
-        rgba(255, 255, 255, 0.4) 45%,
-        rgba(255, 255, 255, 0) 70%
+      radial-gradient(
+        ellipse 155% 100% at 50% 128%,
+        rgba(255, 255, 255, 0) 48%,
+        rgba(255, 255, 255, 0.5) 66%,
+        rgba(255, 255, 255, 0.9) 80%,
+        #FFFFFF 92%
       ),
-      url("assets/final-bw.jpg") center center / cover no-repeat;
+      url("assets/final-bw.jpg") center 32% / cover no-repeat;
     z-index: 0;
     pointer-events: none;
+  }
+  /* Botão desce (px) pra assentar na divisão gradiente/branco, sobre a imagem */
+  .final-cta-block {
+    margin-top: clamp(1.75rem, 4.5vw, 2.5rem) !important;
+    margin-bottom: clamp(-96px, -20vw, -64px) !important;
+    position: relative;
+    z-index: 3;
   }
   /* Headline: mantém os <br> do desktop pras 4 quebras editoriais */
   /* Conteúdo sempre acima da imagem */
@@ -4140,35 +4203,29 @@ body {
     text-wrap: wrap !important;
   }
 
-  /* CTA block: posicionada absolute pra ficar ACIMA da imagem (no espaço branco) */
+  /* CTA block: no fluxo normal, logo abaixo do texto (fecha o vão), sobre a imagem */
   .final-cta-block {
-    position: absolute !important;
-    bottom: 35vh !important;
-    left: 1rem !important;
-    right: 1rem !important;
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
     top: auto !important;
     transform: none !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    margin: clamp(1.5rem, 4vw, 2.25rem) auto 0 !important;
     gap: clamp(0.5rem, 1.5vw, 0.85rem) !important;
     max-width: none !important;
-    width: auto !important;
+    width: 100% !important;
     z-index: 3 !important;
   }
   .final-cta-phrase {
-    text-align: left !important;
+    text-align: center !important;
     max-width: none !important;
     font-size: clamp(1.05rem, 4vw, 1.3rem) !important;
     line-height: 1.35 !important;
-    flex: 1 1 auto !important;
+    flex: 0 0 auto !important;
     min-width: 0 !important;
     width: 100% !important;
     text-wrap: wrap !important;
-  }
-  /* Phrase alinha à esquerda dentro do bloco vertical */
-  .final-cta-block {
-    align-items: flex-start !important;
   }
   /* Mantém o <br> ATIVO pra forçar "geração" na linha de baixo */
   .final-cta-phrase br {
@@ -4217,8 +4274,9 @@ body {
 @media (max-width: 720px) {
   /* Section ocupa tela inteira no mobile, conteúdo ancorado ao topo */
   .section-faq {
-    min-height: 100vh;
-    padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 4vw, 1.75rem) clamp(2.5rem, 6vw, 4rem);
+    /* sem 100vh: seção encolhe até o conteúdo + respiro curto, corta o vazio das plumas */
+    min-height: auto;
+    padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 4vw, 1.75rem) clamp(1.75rem, 5vw, 2.75rem);
     display: flex;
     align-items: flex-start;
   }
@@ -4556,4 +4614,40 @@ body {
     padding: 1.1em 2em;
     letter-spacing: 0.12em;
   }
+}
+
+/* ===== CTA genérico das dobras (aponta pro CTA final) ===== */
+.dobra-cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+  position: relative;
+  z-index: 5;
+}
+.dobra-cta {
+  display: inline-block;
+  padding: 1em 2.6em;
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(0.85rem, 1vw, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #F5F5F5;
+  background: linear-gradient(180deg, #8F6B2E 0%, #6B4E1F 100%);
+  border: 1px solid #D6B36A;
+  border-radius: 999px;
+  box-shadow: 0 0 24px rgba(214, 179, 106, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.dobra-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 32px rgba(214, 179, 106, 0.3);
+}
+
+/* CTA da relevância: alinhado à esquerda dentro do stack */
+.dobra-cta-wrap--relevancia {
+  justify-content: flex-start;
+  margin-top: clamp(0.5rem, 2vw, 1rem);
 }
