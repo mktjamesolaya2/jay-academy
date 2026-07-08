@@ -673,6 +673,57 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .nfw-cta:hover{transform:translateY(-2px);}
 .nfw-cta svg{width:22px;height:22px;fill:#fff;flex:none;}
 .nfw-note{margin-top:16px;font-size:12.5px;color:#a98ba3;}
+</style><style id="nf-tighten">
+/* ===== Aperta o espaçamento entre TODAS as dobras (desktop + mobile) ===== */
+.nfqz-sec,.nfm-sec,.nfb-sec,.nfmq-sec,.nfbn-sec,.nfa-sec,.nfo-sec,.nfg-sec,.nff-sec,.nfw-sec{
+  padding-top:clamp(14px,1.9vw,24px)!important;
+  padding-bottom:clamp(14px,1.9vw,24px)!important;
+}
+.nfcf-sec{padding-top:clamp(8px,1.2vw,16px)!important;padding-bottom:clamp(8px,1.2vw,16px)!important;}
+/* Cada dobra (opaca) sobe 3px e cobre a costura de anti-aliasing rosa entre as dobras */
+.nfcf-sec,.nfqz-sec,.nfm-sec,.nfb-sec,.nfmq-sec,.nfbn-sec,.nfa-sec,.nfo-sec,.nfg-sec,.nff-sec,.nfw-sec{
+  margin-top:-3px!important;position:relative;
+}
+
+/* ===== Gradiente VISÍVEL (magenta da marca) que NASCE do zero na borda e brilha pra dentro
+   (0% transparente na costura -> pico dentro da dobra -> some) — assim não vira linha ===== */
+.nfcf-sec::before,.nfqz-sec::before,.nfm-sec::before,.nfb-sec::before,.nfmq-sec::before,.nfbn-sec::before,.nfa-sec::before,.nfo-sec::before,.nfg-sec::before,.nff-sec::before,.nfw-sec::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:clamp(90px,12vw,150px)!important;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(190,28,104,0) 0%,rgba(190,28,104,.26) 40%,rgba(8,3,9,0) 100%)!important;
+}
+.nfcf-sec::after,.nfqz-sec::after,.nfm-sec::after,.nfb-sec::after,.nfmq-sec::after,.nfbn-sec::after,.nfa-sec::after,.nfo-sec::after,.nfg-sec::after,.nff-sec::after,.nfw-sec::after{
+  content:"";position:absolute;bottom:0;left:0;right:0;height:clamp(90px,12vw,150px)!important;z-index:1;pointer-events:none;
+  background:linear-gradient(0deg,rgba(190,28,104,0) 0%,rgba(190,28,104,.26) 40%,rgba(8,3,9,0) 100%)!important;
+}
+
+/* ===== Última dobra (WhatsApp) + fim do FAQ: um único rosa contínuo do topo até embaixo, sem vale escuro ===== */
+.nfw-sec::before,.nfw-sec::after{display:none!important;}
+.nfw-sec{
+  background-color:#070308!important;
+  background-image:linear-gradient(180deg,rgba(190,28,104,.24) 0%,rgba(140,22,92,.13) 34%,rgba(60,12,44,.05) 66%,#070308 100%)!important;
+}
+/* o rosa do fim do FAQ encosta no rosa do WhatsApp (pink na borda de baixo em vez de fade pra 0) */
+.nff-sec::after{
+  background:linear-gradient(0deg,rgba(190,28,104,.24) 0%,rgba(160,24,100,.12) 48%,rgba(8,3,9,0) 100%)!important;
+  height:clamp(120px,16vw,220px)!important;
+}
+
+/* ===== Dobra da GARANTIA: glow rosa estava forte/assimétrico na esquerda -> centralizado e mais suave ===== */
+.nfg-sec{
+  background-image:radial-gradient(85% 75% at 50% 34%,rgba(120,20,80,.16) 0%,#0d0710 56%,#080309 86%)!important;
+}
+
+/* ===== Remove as linhas/hairlines entre dobras ===== */
+.nfqz-hair{display:none!important;}
+.elementor-13601 > .e-con.e-parent,.elementor-13601 > .elementor-element.e-parent,
+.elementor-13601 .e-con-inner,.elementor-13601 .e-child{border:0!important;}
+/* CAUSA RAIZ do vão + linha rosa: o .e-con-inner (boxed do Elementor) tem ~50px de padding
+   vertical extra e deixa o banner de fundo do container vazar num vão entre as seções.
+   Zerando o padding vertical dele, a seção (opaca) cobre o container inteiro → sem vão, sem linha. */
+.elementor-13601 > .e-con.e-parent:not(.elementor-element-d9b1a0f) > .e-con-inner{padding:0!important;}
+/* mata o banner de fundo leftover do WP nos containers das seções (vazava nas beiras/costuras).
+   O hero (d9b1a0f) não usa bg de container — a imagem dele é um filho .nf-herobg — então fica de fora. */
+.elementor-13601 > .e-con.e-parent:not(.elementor-element-d9b1a0f){background-image:none!important;background-color:#070308!important;}
 </style></head>
 <body class="wp-singular page-template page-template-elementor_canvas page page-id-13601 wp-embed-responsive wp-theme-hello-elementor theme-default elementor-default elementor-template-canvas elementor-kit-9532 elementor-page elementor-page-13601">
 	<!-- Google Tag Manager (noscript) -->
