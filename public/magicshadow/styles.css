@@ -3326,7 +3326,7 @@ body {
   .section-relevancia {
     aspect-ratio: auto;
     min-height: auto;
-    padding-bottom: clamp(2rem, 6vw, 3rem);
+    padding-bottom: clamp(3.5rem, 11vw, 6rem);  /* estende a dobra + respiro abaixo do fechamento */
   }
   /* Stack e fechamento no FLUXO (relative p/ manter z-index acima do vídeo absolute) */
   .relevancia-stack {
