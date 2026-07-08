@@ -4082,40 +4082,33 @@ body {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
     background-image: none !important;
-    /* padding-bottom = altura da imagem, em unidades de LARGURA (estáveis em qualquer altura de tela) */
-    padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 1.75rem) clamp(230px, 60vw, 340px);
+    /* padding normal — nada de banda de imagem via vh (era o que bugava/cortava) */
+    padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 1.75rem) clamp(2.5rem, 7vw, 4rem);
     min-height: 0 !important;
     display: block !important;
-    overflow: hidden;
+    overflow: visible;
     position: relative;
   }
-  /* Imagem: banda no rodapé com a MESMA altura do padding-bottom (não invade o texto);
-     gradiente radial arredondado dissolve o topo em arco */
+  /* Desliga a imagem de fundo antiga (::after) que sobrepunha e cortava o texto */
   .section-final::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: clamp(230px, 60vw, 340px);
-    background:
-      radial-gradient(
-        ellipse 155% 100% at 50% 128%,
-        rgba(255, 255, 255, 0) 48%,
-        rgba(255, 255, 255, 0.5) 66%,
-        rgba(255, 255, 255, 0.9) 80%,
-        #FFFFFF 92%
-      ),
-      url("assets/final-bw.jpg") center 32% / cover no-repeat;
-    z-index: 0;
-    pointer-events: none;
+    display: none !important;
   }
-  /* Botão desce (px) pra assentar na divisão gradiente/branco, sobre a imagem */
+  /* Banner de imagem CONTIDO (formato fixo, cantos arredondados) — não buga */
+  .final-photo {
+    display: block !important;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    margin-top: clamp(1.75rem, 5vw, 2.75rem);
+    border-radius: 16px;
+    background: url("assets/final-bw.jpg") center 30% / cover no-repeat;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+  }
+  /* CTA logo ABAIXO da imagem, centralizado, sem sobreposição */
   .final-cta-block {
-    margin-top: clamp(1.75rem, 4.5vw, 2.5rem) !important;
-    margin-bottom: clamp(-96px, -20vw, -64px) !important;
+    margin-top: clamp(1.5rem, 4.5vw, 2.25rem) !important;
+    margin-bottom: 0 !important;
     position: relative;
-    z-index: 3;
+    z-index: 2;
   }
   /* Headline: mantém os <br> do desktop pras 4 quebras editoriais */
   /* Conteúdo sempre acima da imagem */
@@ -4651,3 +4644,6 @@ body {
   justify-content: flex-start;
   margin-top: clamp(0.5rem, 2vw, 1rem);
 }
+
+/* Banner de imagem da dobra final — só no mobile (desktop tem tratamento próprio) */
+.final-photo { display: none; }
