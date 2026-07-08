@@ -4125,29 +4125,28 @@ body {
     width: 100% !important;
     margin: 0 !important;
     text-align: left !important;
-    align-items: stretch !important;
+    align-items: center !important;
+    text-align: center !important;
     gap: clamp(0.5rem, 1.6vw, 0.8rem) !important;
   }
 
-  /* Kicker: normal no topo, à esquerda, traço dourado VISÍVEL */
+  /* Kicker: CENTRALIZADO (traço decorativo escondido pra centralizar limpo) */
   .final-kicker {
     position: static;
     top: auto;
     left: auto;
-    text-align: left;
-    margin: 0 0 clamp(0.5rem, 1.4vw, 0.75rem) clamp(2.75rem, 7vw, 3rem);
+    text-align: center;
+    margin: 0 auto clamp(0.5rem, 1.4vw, 0.75rem);
     font-size: clamp(0.62rem, 2.4vw, 0.75rem);
     letter-spacing: 0.28em;
   }
   .final-kicker::before {
-    display: block;
-    left: clamp(-2.5rem, -6vw, -2.75rem);
-    width: clamp(1.75rem, 5vw, 2.25rem);
+    display: none;
   }
 
-  /* Headline: ESQUERDA — tamanho legível, deixa o <br> guiar as quebras */
+  /* Headline: CENTRALIZADA */
   .final-headline {
-    text-align: left !important;
+    text-align: center !important;
     font-size: clamp(1.5rem, 6vw, 1.9rem) !important;
     max-width: 100% !important;
     width: 100% !important;
@@ -4155,19 +4154,20 @@ body {
     white-space: normal !important;
   }
 
-  /* Signature "by JAMES OLAYA": ALINHADA À DIREITA com traço discreto */
+  /* Signature "by JAMES OLAYA": CENTRALIZADA */
   .final-signature {
-    align-self: flex-end;
-    padding-left: clamp(2.5rem, 8vw, 3.5rem);
-    margin: 0;
+    align-self: center;
+    justify-content: center;
+    padding-left: 0;
+    margin: 0 auto;
   }
   .final-signature::before {
-    width: clamp(1.75rem, 6vw, 2.5rem);
+    display: none;
   }
 
-  /* Subtitle: ESQUERDA — tamanho legível, menor que headline mas maior que copy */
+  /* Subtitle: CENTRALIZADO */
   .final-subtitle {
-    text-align: left !important;
+    text-align: center !important;
     margin-top: clamp(0.4rem, 1.2vw, 0.65rem) !important;
     font-size: clamp(0.95rem, 3.5vw, 1.1rem) !important;
     max-width: 100% !important;
@@ -4180,17 +4180,17 @@ body {
     display: none;
   }
 
-  /* Copy: full-width ESQUERDA — fonte pra fluir em ~3 linhas naturalmente */
+  /* Copy: CENTRALIZADO */
   .final-copy {
     align-self: stretch;
     margin-left: 0;
     margin-top: clamp(0.3rem, 1vw, 0.55rem) !important;
     max-width: 100%;
     width: 100%;
-    text-align: left;
+    text-align: center;
   }
   .final-copy p {
-    text-align: left !important;
+    text-align: center !important;
     font-size: clamp(0.85rem, 3vw, 0.95rem) !important;
     line-height: 1.55 !important;
     text-wrap: wrap !important;
