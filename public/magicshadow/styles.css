@@ -4714,8 +4714,8 @@ body {
   justify-content: center;                /* card centralizado (desktop) */
   align-items: center;
   min-height: clamp(360px, 46vw, 520px);
-  /* Desktop: só a imagem P&B, sem gradiente preto em volta */
-  background: url("assets/final-bw.jpg") center 28% / cover no-repeat;
+  /* Desktop: sem imagem de fundo atrás do card (o card flutua sozinho) */
+  background: transparent;
 }
 .final-form-card {
   width: min(100%, 380px);
