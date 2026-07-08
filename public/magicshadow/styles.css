@@ -4711,14 +4711,14 @@ body {
   overflow: hidden;
   padding: clamp(1.25rem, 5vw, 2.25rem);
   display: flex;
-  justify-content: center;                /* card centralizado (desktop) */
+  justify-content: flex-start;            /* card encostado à esquerda da zona (mais pro centro) */
   align-items: center;
   min-height: clamp(360px, 46vw, 520px);
   /* Desktop: sem imagem de fundo atrás do card (o card flutua sozinho) */
   background: transparent;
 }
 .final-form-card {
-  width: min(100%, 380px);
+  width: min(100%, 460px);
   background: linear-gradient(180deg, #1b140d, #120d08);
   border: 1px solid rgba(214,179,106,0.5);
   border-radius: 16px;
