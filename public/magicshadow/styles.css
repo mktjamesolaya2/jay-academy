@@ -1313,13 +1313,8 @@ body {
   transition: color 0.3s ease;
 }
 .russia-domain__list li::before {
-  content: "";
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 1px;
-  flex: 0 0 auto;
+  content: none;
+  display: none;
 }
 .russia-domain__list li:hover .russia-domain__name {
   color: #FFFFFF;
