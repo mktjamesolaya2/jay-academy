@@ -9,6 +9,7 @@ import { loadBuilderPage } from "@/lib/page-builder-store";
 import { renderBuilderPageHtml } from "@/lib/builder-html-render";
 import { loadEditedEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
+import { withGoogleTag } from "@/lib/google-tag";
 
 function escapeHtml(s: string): string {
   return s
@@ -209,9 +210,9 @@ function applySeo(html: string, c: WpPageContent): string {
   return out;
 }
 
-/** Resposta HTML com o beacon de visita injetado + headers de cache. */
+/** Resposta HTML com o GTM + o beacon de visita injetado + headers de cache. */
 function htmlResponse(html: string, slug: string): NextResponse {
-  const withTracker = html.replace(
+  const withTracker = withGoogleTag(html).replace(
     /<\/body>/i,
     `${buildTracker(slug)}\n</body>`
   );
