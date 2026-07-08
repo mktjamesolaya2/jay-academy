@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;1,400&family=Source+Sans+3:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260708-final2" />
+  <link rel="stylesheet" href="styles.css?v=20260708-form2" />
   <style>
     /* Mobile-only override pra forçar cor sólida nas faixas do closing — bypassa cache do styles.css */
     @media (max-width: 900px) {
@@ -733,16 +733,24 @@
 
     </div>
 
-    <div class="final-cta-block">
-      <p class="final-cta-phrase">
-        Quero entrar para a <em>nova</em><br><em>geração</em> do shadow premium
-      </p>
-      <span class="final-cta-arrow" aria-hidden="true"></span>
-      <a class="final-cta" href="https://jayacademy.com.br/acao-mshadow1/" role="button">Ver mais</a>
+    <!-- Formulário nativo (envia pro webhook do Clint) sobre a imagem P&B -->
+    <div class="final-form-zone">
+      <div class="final-form-card">
+        <p class="ff-kicker">Cadastre-se</p>
+        <p class="ff-title">Quero entrar para a <b>nova geração</b> do shadow premium</p>
+        <form class="ff-form" id="clintForm" novalidate>
+          <input class="ff-field" type="text" name="nome" placeholder="Nome" autocomplete="name" required>
+          <input class="ff-field" type="tel" name="whatsapp" placeholder="WhatsApp com DDD" autocomplete="tel" inputmode="tel" required>
+          <input class="ff-field" type="email" name="email" placeholder="E-mail" autocomplete="email" required>
+          <button class="ff-btn" type="submit">Quero minha vaga</button>
+          <p class="ff-err" role="alert" hidden></p>
+        </form>
+        <div class="ff-success" hidden>
+          <p class="ff-success__t">Recebido! ✅</p>
+          <p class="ff-success__s">Nossa equipe já vai te chamar no WhatsApp. Fica de olho nas mensagens 🧡</p>
+        </div>
+      </div>
     </div>
-
-    <!-- Banner de imagem contido (mobile) — formato fixo, não buga -->
-    <div class="final-photo" role="img" aria-label="A nova geração Magic Shadow"></div>
   </section>
 
   <script>
@@ -784,6 +792,38 @@
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         if (history && history.replaceState) history.replaceState(null, '', '#final');
       }, false);
+    })();
+  </script>
+
+  <script>
+    // Formulário nativo -> webhook do Clint (campos: name / email / telefone)
+    (function clintForm() {
+      var f = document.getElementById('clintForm');
+      if (!f) return;
+      var WEBHOOK = 'https://functions-api.clint.digital/endpoints/integration/webhook/90497bba-3452-4278-b961-0cdbecf1803e';
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var nome = f.nome.value.trim(), tel = f.whatsapp.value.trim(), email = f.email.value.trim();
+        var err = f.querySelector('.ff-err');
+        var emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+        var telOk = tel.replace(/\D/g, '').length >= 10;
+        if (!nome) { err.textContent = 'Preencha seu nome.'; err.hidden = false; return; }
+        if (!telOk) { err.textContent = 'WhatsApp inválido (coloque com DDD).'; err.hidden = false; return; }
+        if (!emailOk) { err.textContent = 'E-mail inválido.'; err.hidden = false; return; }
+        err.hidden = true;
+        var btn = f.querySelector('.ff-btn');
+        btn.disabled = true; btn.textContent = 'Enviando...';
+        fetch(WEBHOOK, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body: JSON.stringify({ name: nome, email: email, telefone: tel, origin: 'magicshadow-lp' })
+        }).catch(function () {}).finally(function () {
+          f.style.display = 'none';
+          var ok = f.parentNode.querySelector('.ff-success');
+          if (ok) ok.hidden = false;
+        });
+      });
     })();
   </script>
 

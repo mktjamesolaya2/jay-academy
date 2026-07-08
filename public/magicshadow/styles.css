@@ -4697,3 +4697,84 @@ body {
 @media (max-width: 720px) {
   .br-mobile { display: inline; }
 }
+
+/* ===== Formulário nativo (Clint) na dobra final ===== */
+.final-form-zone {
+  position: relative;
+  margin-top: clamp(1.5rem, 5vw, 2.5rem);
+  border-radius: 18px;
+  overflow: hidden;
+  padding: clamp(1.25rem, 5vw, 2.25rem);
+  display: flex;
+  justify-content: flex-end;              /* card à direita (desktop) */
+  align-items: center;
+  min-height: clamp(360px, 46vw, 520px);
+  background:
+    linear-gradient(110deg, rgba(8,6,10,0.9) 0%, rgba(8,6,10,0.6) 52%, rgba(8,6,10,0.32) 100%),
+    url("assets/final-bw.jpg") center 28% / cover no-repeat;
+}
+.final-form-card {
+  width: min(100%, 380px);
+  background: linear-gradient(180deg, #1b140d, #120d08);
+  border: 1px solid rgba(214,179,106,0.5);
+  border-radius: 16px;
+  padding: clamp(1.25rem, 4.5vw, 1.9rem);
+  box-shadow: 0 26px 64px rgba(0,0,0,0.5);
+}
+.ff-kicker {
+  margin: 0 0 0.55rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700; font-size: 0.72rem;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  color: #D6B36A; text-align: center;
+}
+.ff-title {
+  margin: 0 0 1.15rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600; font-size: clamp(1rem, 3.6vw, 1.22rem);
+  line-height: 1.3; color: #fff; text-align: center;
+}
+.ff-title b { color: #E8C97A; font-weight: 700; }
+.ff-form { display: flex; flex-direction: column; gap: 0.6rem; }
+.ff-field {
+  width: 100%; padding: 0.9em 1em;
+  border-radius: 10px; border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06); color: #fff;
+  font-family: "Poppins", sans-serif; font-size: 0.95rem;
+  transition: border-color .2s, background .2s;
+}
+.ff-field::placeholder { color: rgba(255,255,255,0.5); }
+.ff-field:focus { outline: none; border-color: #D6B36A; background: rgba(255,255,255,0.1); }
+.ff-btn {
+  margin-top: 0.4rem; padding: 1em; cursor: pointer;
+  border: 1px solid #D6B36A; border-radius: 12px;
+  font-family: "Poppins", sans-serif; font-weight: 700; font-size: 0.95rem;
+  letter-spacing: 0.06em; text-transform: uppercase; color: #fff;
+  background: linear-gradient(180deg, #8F6B2E 0%, #6B4E1F 100%);
+  box-shadow: 0 0 24px rgba(214,179,106,0.2);
+  transition: transform .15s ease;
+}
+.ff-btn:hover { transform: translateY(-1px); }
+.ff-btn:disabled { opacity: .6; cursor: default; transform: none; }
+.ff-err { margin: 0.25rem 0 0; font-family: "Poppins", sans-serif; font-size: 0.82rem; color: #ff9a9a; text-align: center; }
+.ff-success { text-align: center; }
+.ff-success__t { margin: 0 0 0.5rem; font-family: "Poppins", sans-serif; font-weight: 700; font-size: 1.3rem; color: #E8C97A; }
+.ff-success__s { margin: 0; font-family: "Poppins", sans-serif; font-size: 0.9rem; line-height: 1.5; color: #efe0ea; }
+@media (max-width: 720px) {
+  /* Section NUNCA corta no mobile (a regra base desktop é overflow:hidden e vence sem !important) */
+  .section-final { overflow: visible !important; }
+  /* Zone como bloco: cresce com o card, nunca clipa embaixo. Mais respiro no fim. */
+  .final-form-zone {
+    display: block !important;
+    min-height: 0 !important;
+    overflow: hidden;                 /* só arredonda os cantos da imagem de fundo */
+    padding: clamp(1.5rem, 6vw, 2.25rem) clamp(1rem, 4vw, 1.5rem) clamp(2.5rem, 9vw, 3.5rem) !important;
+    margin-bottom: clamp(1rem, 4vw, 1.75rem);
+    background-position: center 32%;
+  }
+  .final-form-card {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
