@@ -3341,7 +3341,7 @@ body {
     right: auto;
     bottom: auto;
     left: auto;
-    margin: clamp(1.5rem, 5vw, 2.25rem) auto 0;  /* espaço entre o CTA e o texto */
+    margin: clamp(3rem, 9vw, 5rem) auto 0;  /* baixa o texto (mais espaço entre CTA e fechamento) */
     max-width: 100%;
     padding: 0 clamp(1.5rem, 6vw, 2.5rem);
     border-left: 0;
@@ -4106,8 +4106,8 @@ body {
     background: #FFFFFF !important;
     background-color: #FFFFFF !important;
     background-image: none !important;
-    /* padding-top bem menor (menos branco acima do texto) */
-    padding: clamp(0.5rem, 2vw, 1rem) clamp(1.25rem, 4vw, 1.75rem) clamp(2.5rem, 7vw, 4rem);
+    /* padding-top: um espacinho só acima do texto — !important pq a regra base desktop vem depois e venceria */
+    padding: clamp(1.5rem, 4.5vw, 2.5rem) clamp(1.25rem, 4vw, 1.75rem) clamp(2.5rem, 7vw, 4rem) !important;
     min-height: 0 !important;
     display: block !important;
     overflow: visible;
@@ -4154,16 +4154,16 @@ body {
     gap: clamp(0.5rem, 1.6vw, 0.8rem) !important;
   }
 
-  /* Kicker: CENTRALIZADO (traço decorativo escondido pra centralizar limpo) */
+  /* Kicker: CENTRALIZADO — static !important pq a base desktop é absolute e venceria (sobrepunha o título) */
   .final-kicker {
-    position: static;
-    top: auto;
-    left: auto;
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
     text-align: center;
     margin: 0 auto clamp(0.5rem, 1.4vw, 0.75rem);
     font-size: clamp(0.62rem, 2.4vw, 0.75rem);
     letter-spacing: 0.28em;
-    text-indent: -0.28em;  /* puxa pra esquerda (compensa o espaço final do letter-spacing pro outro lado) */
+    transform: translate(0, -7px);  /* horizontal centralizado + sobe um pouquinho */
   }
   .final-kicker::before {
     display: none;
