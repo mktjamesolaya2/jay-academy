@@ -3321,10 +3321,39 @@ body {
    Vídeo (16:9 landscape) preenche via object-fit cover, recortando as laterais.
    100dvh segue a barra de endereço; 100vh é fallback. */
 @media (max-width: 720px) {
+  /* Seção encolhe até o conteúdo — nada de 100vh (era o que jogava o fechamento
+     lá pra baixo). O vídeo preenche o fundo via inset:0 + object-fit cover. */
   .section-relevancia {
     aspect-ratio: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: auto;
+    padding-bottom: clamp(2rem, 6vw, 3rem);
+  }
+  /* Stack e fechamento no FLUXO (relative p/ manter z-index acima do vídeo absolute) */
+  .relevancia-stack {
+    position: relative;
+    z-index: 2;
+    max-width: 100%;
+    padding: clamp(1.75rem, 6vw, 2.75rem) clamp(1.5rem, 5vw, 2rem) 0;
+  }
+  .relevancia-closer {
+    position: relative;
+    z-index: 2;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    margin: clamp(1.5rem, 5vw, 2.25rem) auto 0;  /* espaço entre o CTA e o texto */
+    max-width: 100%;
+    padding: 0 clamp(1.5rem, 6vw, 2.5rem);
+    border-left: 0;
+    text-align: center;
+  }
+  .relevancia-closer__lead,
+  .relevancia-closer__main {
+    text-align: center;
+  }
+  /* CTA da relevância centralizado no mobile (pra bater com o fechamento) */
+  .dobra-cta-wrap--relevancia {
+    justify-content: center;
   }
 }
 
@@ -4134,6 +4163,7 @@ body {
     margin: 0 auto clamp(0.5rem, 1.4vw, 0.75rem);
     font-size: clamp(0.62rem, 2.4vw, 0.75rem);
     letter-spacing: 0.28em;
+    text-indent: 0.28em;  /* compensa o espaço final do letter-spacing → centraliza de verdade */
   }
   .final-kicker::before {
     display: none;
@@ -4262,11 +4292,15 @@ body {
 @media (max-width: 720px) {
   /* Section ocupa tela inteira no mobile, conteúdo ancorado ao topo */
   .section-faq {
-    /* sem 100vh: seção encolhe até o conteúdo + respiro curto, corta o vazio das plumas */
+    /* sem 100vh: seção encolhe até o conteúdo; corta logo após o botão */
     min-height: auto;
-    padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 4vw, 1.75rem) clamp(1.75rem, 5vw, 2.75rem);
+    padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 4vw, 1.75rem) clamp(0.75rem, 2.5vw, 1.25rem);
     display: flex;
     align-items: flex-start;
+  }
+  /* Botão de CTA do FAQ sobe (menos respiro acima dele) */
+  .section-faq .dobra-cta-wrap {
+    margin-top: clamp(1.1rem, 3.5vw, 1.75rem);
   }
   .section-faq__inner {
     width: 100%;
