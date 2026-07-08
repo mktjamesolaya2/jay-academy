@@ -733,9 +733,6 @@
 
     </div>
 
-    <!-- Banner de imagem contido (mobile) — formato fixo, não buga -->
-    <div class="final-photo" role="img" aria-label="A nova geração Magic Shadow"></div>
-
     <div class="final-cta-block">
       <p class="final-cta-phrase">
         Quero entrar para a <em>nova</em><br><em>geração</em> do shadow premium
@@ -743,6 +740,9 @@
       <span class="final-cta-arrow" aria-hidden="true"></span>
       <a class="final-cta" href="https://pay.hotmart.com/E98531587I?checkoutMode=10&off=k2warcrt" role="button">Ver mais</a>
     </div>
+
+    <!-- Banner de imagem contido (mobile) — formato fixo, não buga -->
+    <div class="final-photo" role="img" aria-label="A nova geração Magic Shadow"></div>
   </section>
 
   <script>
@@ -767,6 +767,23 @@
       };
       document.addEventListener('touchstart', unlock, true);
       document.addEventListener('click', unlock, true);
+    })();
+  </script>
+
+  <script>
+    // Corrige o bug dos CTAs que apontam pro #final: com <base href="/magicshadow/">
+    // o href="#final" vira URL absoluta e RECARREGA a página. Aqui interceptamos
+    // e rolamos suave pro alvo, sem navegar.
+    (function smoothToFinal() {
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest('a[href$="#final"]');
+        if (!a) return;
+        var target = document.getElementById('final');
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (history && history.replaceState) history.replaceState(null, '', '#final');
+      }, false);
     })();
   </script>
 
