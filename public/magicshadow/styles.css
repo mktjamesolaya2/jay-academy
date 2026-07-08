@@ -4718,7 +4718,8 @@ body {
   background: transparent;
 }
 .final-form-card {
-  width: min(100%, 460px);
+  width: min(100%, 540px);
+  margin-left: clamp(-4rem, -6vw, -1.5rem);  /* puxa o card mais pra esquerda */
   background: linear-gradient(180deg, #1b140d, #120d08);
   border: 1px solid rgba(214,179,106,0.5);
   border-radius: 16px;
