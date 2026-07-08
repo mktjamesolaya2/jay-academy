@@ -276,6 +276,11 @@ body {
   pointer-events: none;
   text-align: center;
 }
+/* Reabilita o clique só no CTA da hero (o container é pointer-events:none) */
+.hero-content .dobra-cta-wrap,
+.hero-content .dobra-cta {
+  pointer-events: auto;
+}
 
 /* "by JAMES OLAYA" — alinhado à direita, acima do título */
 .hero-byline {
@@ -4706,12 +4711,11 @@ body {
   overflow: hidden;
   padding: clamp(1.25rem, 5vw, 2.25rem);
   display: flex;
-  justify-content: flex-end;              /* card à direita (desktop) */
+  justify-content: center;                /* card centralizado (desktop) */
   align-items: center;
   min-height: clamp(360px, 46vw, 520px);
-  background:
-    linear-gradient(110deg, rgba(8,6,10,0.9) 0%, rgba(8,6,10,0.6) 52%, rgba(8,6,10,0.32) 100%),
-    url("assets/final-bw.jpg") center 28% / cover no-repeat;
+  /* Desktop: só a imagem P&B, sem gradiente preto em volta */
+  background: url("assets/final-bw.jpg") center 28% / cover no-repeat;
 }
 .final-form-card {
   width: min(100%, 380px);
@@ -4770,7 +4774,10 @@ body {
     overflow: hidden;                 /* só arredonda os cantos da imagem de fundo */
     padding: clamp(1.5rem, 6vw, 2.25rem) clamp(1rem, 4vw, 1.5rem) clamp(2.5rem, 9vw, 3.5rem) !important;
     margin-bottom: clamp(1rem, 4vw, 1.75rem);
-    background-position: center 32%;
+    /* Mobile mantém o gradiente escuro por cima da imagem (contraste do card full-width) */
+    background:
+      linear-gradient(180deg, rgba(8,6,10,0.72) 0%, rgba(8,6,10,0.5) 100%),
+      url("assets/final-bw.jpg") center 32% / cover no-repeat;
   }
   .final-form-card {
     width: 100%;
