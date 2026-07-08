@@ -4647,3 +4647,24 @@ body {
 
 /* Banner de imagem da dobra final — só no mobile (desktop tem tratamento próprio) */
 .final-photo { display: none; }
+
+/* Evita palavras viúvas (palavra sozinha na última linha) nos textos corridos */
+.pitch-lead,
+.pitch-sub,
+.final-subtitle,
+.final-copy p,
+.benefits-bridge__question,
+.proofs-body,
+.dominar-subtitle,
+.russia-subtitle--small,
+.relevancia-closer__main,
+.risco-lead,
+.diptico-light__lead {
+  text-wrap: pretty;
+}
+
+/* Quebra de linha só no mobile (ex.: "ideais" | "buscam hoje?") */
+.br-mobile { display: none; }
+@media (max-width: 720px) {
+  .br-mobile { display: inline; }
+}
