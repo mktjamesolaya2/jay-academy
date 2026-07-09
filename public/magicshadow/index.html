@@ -801,6 +801,19 @@
       var f = document.getElementById('clintForm');
       if (!f) return;
       var WEBHOOK = 'https://functions-api.clint.digital/endpoints/integration/webhook/90497bba-3452-4278-b961-0cdbecf1803e';
+      // Limitador/máscara do WhatsApp: só números, com DDD, no máximo 11 dígitos → (XX) XXXXX-XXXX
+      var tel = f.whatsapp;
+      if (tel) {
+        tel.setAttribute('maxlength', '16');
+        tel.setAttribute('inputmode', 'numeric');
+        tel.addEventListener('input', function () {
+          var d = tel.value.replace(/\D/g, '').slice(0, 11);
+          var out = d;
+          if (d.length > 2 && d.length <= 7) out = '(' + d.slice(0, 2) + ') ' + d.slice(2);
+          else if (d.length > 7) out = '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+          tel.value = out;
+        });
+      }
       f.addEventListener('submit', function (e) {
         e.preventDefault();
         var nome = f.nome.value.trim(), tel = f.whatsapp.value.trim(), email = f.email.value.trim();
