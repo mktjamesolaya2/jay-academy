@@ -820,7 +820,12 @@
           body: JSON.stringify({ name: nome, email: email, telefone: tel, origin: 'magicshadow-lp' })
         }).catch(function () {}).finally(function () {
           f.style.display = 'none';
-          var ok = f.parentNode.querySelector('.ff-success');
+          var card = f.parentNode;
+          var kicker = card.querySelector('.ff-kicker');
+          var title = card.querySelector('.ff-title');
+          if (kicker) kicker.textContent = 'Cadastro realizado';
+          if (title) title.innerHTML = 'Você está a um passo de fazer parte da <b>nova geração</b> do shadow premium';
+          var ok = card.querySelector('.ff-success');
           if (ok) ok.hidden = false;
         });
       });
