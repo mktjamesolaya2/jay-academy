@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
       // limpa original da LP. Rewrites correm antes do [slug] dinâmico, então
       // não colidem com as páginas WP publicadas.
       { source: "/inmersion-pelo-a-pelo", destination: "/recriadas/inmersion-pelo-a-pelo/index.html" },
+      // Profissão Remove — redesign servido de arquivo estático commitado
+      // (deploya no git push). Rewrite corre antes do [slug] dinâmico (que
+      // serviria a versão antiga do KV), então esta versão tem prioridade.
+      { source: "/curso-online-profissao-remove", destination: "/recriadas/curso-online-profissao-remove/index.html" },
     ];
   },
 };
