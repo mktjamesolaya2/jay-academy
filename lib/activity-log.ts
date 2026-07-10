@@ -9,6 +9,8 @@ export type ActivityKind =
   | "wp.unpublish"
   | "wp.categorize"
   | "wp.edit"
+  | "wp.localize"
+  | "wp.localize.fail"
   | "lp.create"
   | "lp.update"
   | "lp.delete"
@@ -114,6 +116,10 @@ export function describeActivity(entry: ActivityEntry): string {
       return `categorizou "${t}"${entry.details ? ` como ${entry.details}` : ""}`;
     case "wp.edit":
       return `editou "${t}"${entry.details ? ` — ${entry.details}` : ""}`;
+    case "wp.localize":
+      return `otimizou assets${entry.details ? ` — ${entry.details}` : ""}`;
+    case "wp.localize.fail":
+      return `falha ao otimizar "${t}"${entry.details ? ` — ${entry.details}` : ""}`;
     case "lp.create":
       return `criou a LP "${t}"`;
     case "lp.update":

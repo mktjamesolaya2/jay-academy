@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { fetchPageContent } from "@/lib/wp-fetch-page";
 import {
@@ -99,14 +100,35 @@ export async function importByLinksAction(
         : content;
       await saveContent(merged);
 
-      // Baixa imagens/CSS/JS do WP pro storage local na hora da cópia — a página
-      // já nasce independente do WP (não quebra quando ele sair do ar). Não-fatal:
-      // se falhar, a página fica copiada e o backfill conserta depois.
-      try {
-        await localizePage(domain, merged.slug);
-      } catch {
-        // segue mesmo se a localização falhar
-      }
+      // Localização (baixar imagens/CSS/JS do WP pro storage) SAI do caminho
+      // síncrono: baixar 100–350 assets inline estourava o timeout serverless e
+      // era engolido — a página nascia crua (lenta + hero dependente de JS) sem
+      // ninguém saber. Agora roda em background com after() (não trava a resposta)
+      // e, se falhar/localizar 0, fica registrado. A página não-localizada é
+      // marcada como pendente (localizedAt não setado) e o cron
+      // /api/cron/localize conserta depois. O de-lazy no serve já faz a hero
+      // aparecer mesmo antes de localizar.
+      const locDomain = domain;
+      const locSlug = merged.slug;
+      const locTitle = content.title;
+      after(async () => {
+        try {
+          const st = await localizePage(locDomain, locSlug);
+          if (st.total > 0 && st.localized === 0) {
+            await logActivity(
+              "wp.localize.fail",
+              locTitle,
+              `0/${st.total} assets localizados (storage indisponível?)`
+            ).catch(() => {});
+          }
+        } catch (e) {
+          await logActivity(
+            "wp.localize.fail",
+            locTitle,
+            e instanceof Error ? e.message : "erro na localização"
+          ).catch(() => {});
+        }
+      });
 
       let published = false;
       if (autoPublish && !merged.published) {
@@ -124,10 +146,10 @@ export async function importByLinksAction(
         url,
         ok: true,
         message: existing
-          ? `Atualizada: ${content.title}`
+          ? `Atualizada: ${content.title} — reotimizando imagens em 2º plano`
           : published
-          ? `Copiada e PUBLICADA: ${content.title}`
-          : `Copiada: ${content.title}`,
+          ? `Copiada e publicada: ${content.title} — otimizando imagens em 2º plano`
+          : `Copiada: ${content.title} — otimizando imagens em 2º plano`,
       });
     } catch (e) {
       results.push({
