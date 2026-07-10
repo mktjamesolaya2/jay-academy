@@ -53,9 +53,10 @@ export function PublicSlugEditor({
           type="button"
           onClick={() => setEditing(true)}
           title="Trocar a URL"
-          className="opacity-0 group-hover/url:opacity-100 focus:opacity-100 text-neutral-500 hover:text-emerald-300 transition p-0.5"
+          className="inline-flex items-center gap-1 text-[10px] font-medium text-neutral-500 hover:text-emerald-300 transition px-1.5 py-0.5 rounded ring-1 ring-[#262626] hover:ring-emerald-500/30"
         >
-          <Pencil size={11} strokeWidth={2.2} />
+          <Pencil size={10} strokeWidth={2.2} />
+          Trocar URL
         </button>
       </div>
     );
