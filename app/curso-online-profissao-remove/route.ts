@@ -3,16 +3,19 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { withTracking } from "@/lib/meta-tracking";
 
-// Página Método Shadow PRO recriada como LP custom (a original do WordPress foi
-// excluída e não pôde ser copiada). Servida a partir de um arquivo HTML no repo
-// (lp-html/metodo-shadow-pro-2.html). Rota estática tem prioridade sobre o [slug]
-// dinâmico. Edito o arquivo aqui no código e dou push → vai pro ar.
+// Profissão Remove — redesign servido de arquivo estático commitado
+// (deploya no git push). Antes era servido via rewrite direto de
+// public/recriadas/curso-online-profissao-remove/index.html (sem tracking
+// algum); agora passa por este route handler igual às demais LPs custom,
+// pra ganhar GTM/GA4-legado/Pixel/CAPI automaticamente via withTracking().
+// Rota estática tem prioridade sobre o [slug] dinâmico (que serviria a
+// versão antiga do KV).
 
 export const dynamic = "force-static";
 
 export async function GET(req: Request) {
   const raw = await readFile(
-    path.join(process.cwd(), "lp-html", "metodo-shadow-pro-2.html"),
+    path.join(process.cwd(), "lp-html", "curso-online-profissao-remove.html"),
     "utf8"
   );
   const html = await withTracking(raw, {

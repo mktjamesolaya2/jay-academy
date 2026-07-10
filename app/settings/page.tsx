@@ -73,8 +73,13 @@ export default async function SettingsPage() {
               title="Integrações"
               description="APIs externas que alimentam o dashboard"
             >
-              <Row label="GA4" value="Não conectado" muted />
-              <Row label="Meta Pixel" value="Não conectado" muted />
+              <Row label="GA4 (legado, G-N93TQZV050)" value="Instalado nas LPs públicas" />
+              <Row label="Meta Pixel (1841776429524244)" value="Instalado nas LPs públicas" />
+              <Row
+                label="Meta CAPI (servidor)"
+                value={process.env.META_ACCESS_TOKEN ? "Configurado" : "Não configurado"}
+                muted={!process.env.META_ACCESS_TOKEN}
+              />
               <Row label="OpenRouter" value="Configurado no PMU CLASS" />
             </Section>
 

@@ -9,7 +9,7 @@ import { loadBuilderPage } from "@/lib/page-builder-store";
 import { renderBuilderPageHtml } from "@/lib/builder-html-render";
 import { loadEditedEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
-import { withGoogleTag } from "@/lib/google-tag";
+import { withTracking } from "@/lib/meta-tracking";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 
 function escapeHtml(s: string): string {
@@ -23,7 +23,7 @@ function escapeHtml(s: string): string {
 
 type Params = Promise<{ slug: string }>;
 
-export async function GET(_req: Request, { params }: { params: Params }) {
+export async function GET(req: Request, { params }: { params: Params }) {
   const { slug } = await params;
   const decoded = decodeURIComponent(slug);
 
@@ -76,7 +76,7 @@ ${body}
         );
       }
     }
-    return htmlResponse(html, decoded);
+    return await htmlResponse(html, decoded, req);
   }
 
   // ─── WordPress page (legacy / cópia importada) ──────────────────
@@ -149,6 +149,15 @@ ${cleaned}
     html = html.replace(/<\/body>/i, `${interceptor}\n</body>`);
   }
 
+  // withTracking já injeta o listener genérico de Lead (pula forms já
+  // tratados pelo interceptor acima via data-portal-bound="1", então não
+  // duplica o disparo nas páginas com webhook).
+  html = await withTracking(html, {
+    isProductPage: true,
+    eventSourceUrl: req.url,
+    req,
+  });
+
   return new NextResponse(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
@@ -217,13 +226,19 @@ function applySeo(html: string, c: WpPageContent): string {
   return out;
 }
 
-/** Resposta HTML com o GTM + o beacon de visita injetado + headers de cache. */
-function htmlResponse(html: string, slug: string): NextResponse {
-  const withTracker = withGoogleTag(html).replace(
-    /<\/body>/i,
-    `${buildTracker(slug)}\n</body>`
-  );
-  return new NextResponse(withTracker, {
+/** Resposta HTML com o tracking (GTM/GA4/Pixel/CAPI) + o beacon de visita injetado + headers de cache. */
+async function htmlResponse(
+  html: string,
+  slug: string,
+  req: Request
+): Promise<NextResponse> {
+  let out = await withTracking(html, {
+    isProductPage: true,
+    eventSourceUrl: req.url,
+    req,
+  });
+  out = out.replace(/<\/body>/i, `${buildTracker(slug)}\n</body>`);
+  return new NextResponse(out, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control":
@@ -305,6 +320,9 @@ function buildFormInterceptor(publicSlug: string): string {
             else btn.value = originalLabel || "Enviar";
           }
           return;
+        }
+        if (typeof fbq !== "undefined") {
+          fbq("track", "Lead", {}, { eventID: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) });
         }
         if (res && res.redirectUrl) {
           window.location.href = res.redirectUrl;

@@ -3,16 +3,20 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { withTracking } from "@/lib/meta-tracking";
 
-// Página Método Shadow PRO recriada como LP custom (a original do WordPress foi
-// excluída e não pôde ser copiada). Servida a partir de um arquivo HTML no repo
-// (lp-html/metodo-shadow-pro-2.html). Rota estática tem prioridade sobre o [slug]
-// dinâmico. Edito o arquivo aqui no código e dou push → vai pro ar.
+// PMU CLASS — skeleton estático (SPA), conteúdo editável (whatsappLink,
+// hotmartUrl etc.) é puxado em runtime via /api/lp-content/pmuclass. Antes
+// era servido via rewrite direto de public/pmuclass/index.html, sem
+// nenhum tracking (nem GTM, nem GA4, nem Pixel). Agora passa por este route
+// handler igual às demais LPs custom, ganhando GTM/GA4-legado/Pixel/CAPI via
+// withTracking() — o listener de clique de WhatsApp/Hotmart é delegado no
+// document (capture), então cobre os links que a SPA insere dinamicamente
+// depois do load.
 
 export const dynamic = "force-static";
 
 export async function GET(req: Request) {
   const raw = await readFile(
-    path.join(process.cwd(), "lp-html", "metodo-shadow-pro-2.html"),
+    path.join(process.cwd(), "lp-html", "pmuclass.html"),
     "utf8"
   );
   const html = await withTracking(raw, {
