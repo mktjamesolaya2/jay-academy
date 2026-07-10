@@ -10,6 +10,7 @@ import { renderBuilderPageHtml } from "@/lib/builder-html-render";
 import { loadEditedEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
 import { withGoogleTag } from "@/lib/google-tag";
+import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 
 function escapeHtml(s: string): string {
   return s
@@ -90,11 +91,17 @@ ${body}
   }
 
   // Limpa qualquer artefato do editor antes de servir publicamente
-  const cleaned = (content.fullHtml || content.content || "")
+  const rawCleaned = (content.fullHtml || content.content || "")
     .replace(/<script\s+data-editor-script="1">[\s\S]*?<\/script>/g, "")
     .replace(/<div\s+id="__editor_overlay__"[^>]*>[\s\S]*?<\/div>/g, "")
     .replace(/\sdata-editor-id="[^"]*"/g, "")
     .replace(/\scontenteditable="(?:true|false)"/g, "");
+
+  // De-lazy no serve: "assa" as imagens (data-lazy-src → src) e os fundos de
+  // seção do WP Rocket (--wpr-bg → background-image aplicado). Sem isso a página
+  // depende do JS de lazyload do WP Rocket — que atrasa/falha (hero e imagens
+  // sumindo, sobretudo no mobile). Vale pra páginas ainda não localizadas.
+  const cleaned = delazyBackgrounds(delazyHtml(rawCleaned));
 
   const safeTitle = (content.title || "Página").replace(/<[^>]*>/g, "");
 

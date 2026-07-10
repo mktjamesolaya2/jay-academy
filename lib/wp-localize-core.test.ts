@@ -7,6 +7,7 @@ import {
   isWpAssetUrl,
   extractWpAssetUrls,
   delazyHtml,
+  delazyBackgrounds,
   rewriteUrls,
   localizeHtml,
   rewriteCssUrls,
@@ -104,6 +105,29 @@ test("delazyHtml troca placeholder data-URI SVG (com aspas internas) sem corromp
   // a tag continua sendo UMA <img ...> bem-formada (uma abertura, um fechamento)
   assert.equal((out.match(/<img\b/gi) || []).length, 1);
   assert.equal((out.match(/>/g) || []).length, 1);
+});
+
+test("delazyBackgrounds aplica o fundo do WP Rocket (--wpr-bg → background-image)", () => {
+  // A var é definida mas nunca aplicada no CSS (caso real do WP Rocket).
+  const css = `<style>.hero{--wpr-bg-abc123: url('https://jayacademy.com.br/wp-content/uploads/2024/hero.jpg')}</style>`;
+  const out = delazyBackgrounds(css);
+  // A var original continua lá...
+  assert.match(out, /--wpr-bg-abc123:\s*url\('https:\/\/jayacademy\.com\.br\/wp-content\/uploads\/2024\/hero\.jpg'\)/);
+  // ...e agora o background-image é aplicado com a MESMA url (aparece sem JS).
+  assert.match(out, /background-image:url\('https:\/\/jayacademy\.com\.br\/wp-content\/uploads\/2024\/hero\.jpg'\)/);
+});
+
+test("delazyBackgrounds funciona em style inline e sem aspas na url()", () => {
+  const inline = `<section style="--wpr-bg-x: url(https://jayacademy.com.br/a/bg.png); color:red">`;
+  const out = delazyBackgrounds(inline);
+  assert.match(out, /background-image:url\(https:\/\/jayacademy\.com\.br\/a\/bg\.png\)/);
+  // não quebra o resto da style
+  assert.match(out, /color:red/);
+});
+
+test("delazyBackgrounds não faz nada quando não há --wpr-bg", () => {
+  const css = `<style>.x{background-image:url(https://jayacademy.com.br/a.png)}</style>`;
+  assert.equal(delazyBackgrounds(css), css);
 });
 
 test("delazyHtml não inventa src a partir de placeholder data:", () => {

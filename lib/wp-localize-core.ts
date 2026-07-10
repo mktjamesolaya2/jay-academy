@@ -148,6 +148,30 @@ export function stripResponsiveImg(html: string): string {
 }
 
 /**
+ * "De-lazy" dos FUNDOS de seção do WP Rocket (o equivalente do delazyHtml, mas
+ * pra background-image em vez de <img>).
+ *
+ * O WP Rocket tira o `background-image` real do elemento e guarda a URL numa CSS
+ * var `--wpr-bg-<id>: url(...)`, aplicando de volta SÓ via JavaScript no runtime
+ * (`el.style.backgroundImage = 'var(--wpr-bg-<id>)'`). Confirmado nas páginas
+ * copiadas: a var é DEFINIDA mas NUNCA aplicada no CSS (0 `background-image:var`).
+ * Resultado: sem esse JS — ou quando ele falha/atrasa (comum no mobile) — o fundo
+ * da seção (tipicamente a HERO) fica em branco.
+ *
+ * Esta função aplica o fundo direto: pra cada `--wpr-bg-<id>: url(X)`, injeta um
+ * `background-image: url(X)` na MESMA regra/declaração. Como o seletor é o mesmo,
+ * o fundo passa a aparecer sem depender de JS. Funciona tanto em blocos <style>
+ * quanto em `style="..."` inline. Idempotente na prática (rode 1x ao servir).
+ */
+export function delazyBackgrounds(html: string): string {
+  return html.replace(
+    /--wpr-bg-[\w-]+\s*:\s*url\(\s*(['"]?)([^)'"]+)\1\s*\)/gi,
+    (whole, q: string, url: string) =>
+      `${whole};background-image:url(${q}${url}${q})`
+  );
+}
+
+/**
  * Regex de um atributo HTML, ciente das aspas. O valor é capturado INTEIRO
  * respeitando a aspa de abertura (`"[^"]*"` OU `'[^']*'`) — então um valor
  * entre aspas duplas pode conter aspas simples por dentro (e vice-versa). Isso
