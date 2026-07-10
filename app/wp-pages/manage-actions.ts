@@ -12,6 +12,7 @@ import {
   unsetPublished,
   trashContent,
   markPlaced,
+  getPublishedBySlug,
   type PlacementType,
 } from "@/lib/wp-content-storage";
 import { generatePageSummary } from "@/lib/ai-summary";
@@ -165,6 +166,58 @@ export async function renameWpPageAction(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+/**
+ * Troca a URL pública (slug) de uma página — de QUALQUER página copiada, a
+ * qualquer momento. Valida que a URL não está em uso por OUTRA página já
+ * publicada; se estiver, bloqueia com mensagem amigável (não deixa duas LPs na
+ * mesma URL). State-returning pra mostrar erro inline (useActionState).
+ */
+export async function changePublicSlugAction(
+  _prev: { error?: string; ok?: boolean } | undefined,
+  formData: FormData
+): Promise<{ error?: string; ok?: boolean }> {
+  try {
+    await requireAdmin();
+    const domain = formData.get("domain")?.toString() as WpDomain;
+    const slug = formData.get("slug")?.toString() ?? "";
+    const raw = formData.get("publicSlug")?.toString() ?? "";
+    if (!domain || !slug) return { error: "Faltam dados" };
+
+    const newSlug = slugify(raw);
+    if (!newSlug) return { error: "Digite uma URL válida (ex.: minha-lp)." };
+
+    const content = await loadContent(domain, slug);
+    if (!content) return { error: "Página não encontrada" };
+
+    const current = content.publicSlug || content.slug;
+    if (newSlug === current) return { ok: true };
+
+    // Bloqueia se a URL já pertence a OUTRA página publicada.
+    const taken = await getPublishedBySlug(newSlug);
+    if (taken && !(taken.domain === domain && taken.slug === slug)) {
+      return {
+        error: `A URL "/${newSlug}" já está em uso por outra página publicada. Escolha outra.`,
+      };
+    }
+
+    if (content.published) {
+      // setPublished cuida do índice e revalida o conflito.
+      await setPublished(content, newSlug);
+    } else {
+      content.publicSlug = newSlug;
+      await saveContent(content);
+    }
+
+    await logActivity("wp.edit", content.title || slug, `URL → /${newSlug}`);
+    revalidatePath("/wp-pages");
+    revalidatePath(`/p/${newSlug}`);
+    revalidatePath(`/p/${current}`);
+    return { ok: true };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Erro ao trocar a URL" };
+  }
+}
+
 /** Lê o conteúdo da página com IA e salva um resumo inteligente.
    State-returning pra mostrar erro inline (useActionState). */
 export async function generateSummaryAction(
@@ -240,14 +293,21 @@ export async function publishAllAction() {
   const saved = await listSaved();
 
   const justPublished: Array<{ domain: WpDomain; slug: string }> = [];
+  let skipped = 0;
   for (const s of saved) {
     if (s.published) continue;
     const content = await loadContent(s.domain, s.slug);
     if (!content) continue;
     const publicSlug = content.publicSlug || content.slug;
-    await setPublished(content, publicSlug);
-    revalidatePath(`/p/${publicSlug}`);
-    justPublished.push({ domain: s.domain, slug: s.slug });
+    try {
+      await setPublished(content, publicSlug);
+      revalidatePath(`/p/${publicSlug}`);
+      justPublished.push({ domain: s.domain, slug: s.slug });
+    } catch {
+      // URL já em uso por outra página publicada — pula esta, não derruba o
+      // lote inteiro. A pessoa troca a URL dela e publica depois.
+      skipped++;
+    }
   }
 
   // Resumos gerados em paralelo (best-effort) pra não somar latência em série.
@@ -258,7 +318,9 @@ export async function publishAllAction() {
   await logActivity(
     "wp.publish",
     `${justPublished.length} página(s)`,
-    "publicadas em massa"
+    skipped > 0
+      ? `publicadas em massa (${skipped} puladas por URL repetida)`
+      : "publicadas em massa"
   );
   revalidatePath("/wp-pages");
   revalidatePath("/dashboard");

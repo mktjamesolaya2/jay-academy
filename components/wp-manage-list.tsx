@@ -15,7 +15,10 @@ import {
   FolderInput,
   AlertTriangle,
   Zap,
+  Copy,
 } from "lucide-react";
+import { PublicSlugEditor } from "./public-slug-editor";
+import { duplicateWpPageAction } from "@/app/wp-pages/manage-actions";
 import {
   bulkPublishAction,
   bulkUnpublishAction,
@@ -346,21 +349,40 @@ export function WpManageList({
                             <CheckCircle2 size={11} strokeWidth={2.4} />
                             Publicada
                           </span>
-                          <Link
-                            href={`/${publicSlug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-[11px] text-neutral-400 hover:text-white font-mono transition"
-                          >
-                            /{publicSlug}
-                            <ExternalLink size={10} strokeWidth={2} />
-                          </Link>
+                          {canEdit ? (
+                            <PublicSlugEditor
+                              domain={s.domain}
+                              slug={s.slug}
+                              publicSlug={publicSlug}
+                              published
+                            />
+                          ) : (
+                            <Link
+                              href={`/${publicSlug}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 text-[11px] text-neutral-400 hover:text-white font-mono transition"
+                            >
+                              /{publicSlug}
+                              <ExternalLink size={10} strokeWidth={2} />
+                            </Link>
+                          )}
                         </div>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-semibold bg-[#161616] text-neutral-400 ring-1 ring-[#262626]">
-                          <Lock size={11} strokeWidth={2.4} />
-                          Não publicada
-                        </span>
+                        <div className="space-y-1.5">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-semibold bg-[#161616] text-neutral-400 ring-1 ring-[#262626]">
+                            <Lock size={11} strokeWidth={2.4} />
+                            Não publicada
+                          </span>
+                          {canEdit && (
+                            <PublicSlugEditor
+                              domain={s.domain}
+                              slug={s.slug}
+                              publicSlug={publicSlug}
+                              published={false}
+                            />
+                          )}
+                        </div>
                       )}
                     </td>
                     <td className="px-6 py-4 align-top">
@@ -384,6 +406,20 @@ export function WpManageList({
                             <Pencil size={11} strokeWidth={2.4} />
                             Editar
                           </Link>
+                        )}
+                        {canEdit && (
+                          <form action={duplicateWpPageAction}>
+                            <input type="hidden" name="domain" value={s.domain} />
+                            <input type="hidden" name="slug" value={s.slug} />
+                            <button
+                              type="submit"
+                              title="Duplicar como template — cria uma cópia (não publicada) pra você trocar a URL e editar"
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold text-neutral-300 bg-[#161616] ring-1 ring-[#262626] hover:bg-[#222] hover:text-white transition"
+                            >
+                              <Copy size={11} strokeWidth={2.4} />
+                              Duplicar
+                            </button>
+                          </form>
                         )}
                       </div>
                     </td>
