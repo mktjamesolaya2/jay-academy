@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/localize",
-      "schedule": "*/10 * * * *"
+      "schedule": "20 9 * * *"
     }
   ]
 }
