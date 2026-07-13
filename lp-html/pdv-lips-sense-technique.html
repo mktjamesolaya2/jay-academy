@@ -2292,6 +2292,45 @@ var CCFEFCustomData = {"pluginDir":"https:\/\/jayacademy.com.br\/wp-content\/plu
 			}
 		</style>
 
+		<style id="lips-altbg">
+		/* LipSense — variação de fundos full-width: rosa / creme / vermelho suave.
+		   Alterna a monotonia coral. Hero, "professor" (escuro) e footer ficam como estão.
+		   Especificidade (0,4,0) + ordem no fim do CSS → ganha das regras coral por seção. */
+		:root{--lip-rosa:#f6b9c8;--lip-creme:#fdf6ee;--lip-verm:#e56b64;}
+		.elementor-11675 > .e-con.e-parent.elementor-element-2fdcb25{background-color:var(--lip-rosa)!important;background-image:none!important;}
+		.elementor-11675 > .e-con.e-parent.elementor-element-ef7cf9e{background-color:var(--lip-creme)!important;background-image:none!important;}
+		.elementor-11675 > .e-con.e-parent.elementor-element-d0f5981{background-color:var(--lip-verm)!important;background-image:none!important;}
+		.elementor-11675 > .e-con.e-parent.elementor-element-902df8c{background-color:var(--lip-rosa)!important;background-image:none!important;}
+		.elementor-11675 > .e-con.e-parent.elementor-element-ced5d92{background-color:var(--lip-creme)!important;background-image:none!important;}
+		.elementor-11675 > .e-con.e-parent.elementor-element-c771b07{background-color:var(--lip-rosa)!important;background-image:none!important;}
+		.elementor-11675 > .e-con.e-parent.elementor-element-b7e2620{background-color:var(--lip-creme)!important;background-image:none!important;}
+		/* f4f38fd (garantia) NÃO recolorir: a foto do James + selo 30 dias É a imagem de fundo dela */
+		.elementor-11675 > .e-con.e-parent.elementor-element-dec2a5c{background-color:var(--lip-rosa)!important;background-image:none!important;}
+		/* mata as texturas jpg (::before) das seções recolorizadas p/ não sujar a cor nova */
+		.elementor-11675 > .e-parent.elementor-element-2fdcb25::before,
+		.elementor-11675 > .e-parent.elementor-element-ef7cf9e::before,
+		.elementor-11675 > .e-parent.elementor-element-d0f5981::before,
+		.elementor-11675 > .e-parent.elementor-element-902df8c::before,
+		.elementor-11675 > .e-parent.elementor-element-ced5d92::before,
+		.elementor-11675 > .e-parent.elementor-element-c771b07::before,
+		.elementor-11675 > .e-parent.elementor-element-b7e2620::before,
+		.elementor-11675 > .e-parent.elementor-element-dec2a5c::before{background-image:none!important;}
+		/* seções creme: títulos/subtítulos brancos ficam invisíveis → escurece (cards já têm texto escuro próprio) */
+		.elementor-11675 .elementor-element-ef7cf9e .elementor-heading-title,
+		.elementor-11675 .elementor-element-ced5d92 .elementor-heading-title,
+		.elementor-11675 .elementor-element-b7e2620 .elementor-heading-title{color:#4a1820!important;}
+		.elementor-11675 .elementor-element-ef7cf9e .elementor-widget-text-editor,
+		.elementor-11675 .elementor-element-ced5d92 .elementor-widget-text-editor,
+		.elementor-11675 .elementor-element-b7e2620 .elementor-widget-text-editor{color:#5a2028!important;}
+		/* eyebrow + título custom "Cada módulo" eram brancos (p/ coral) → escurece no creme (o <b>resultados</b> já é vinho) */
+		.elementor-11675 .elementor-element-b7e2620 .lipsmod__eye{color:#a85860!important;}
+		.elementor-11675 .elementor-element-b7e2620 .lipsmod__eye::before{background:linear-gradient(90deg,transparent,#a85860)!important;}
+		.elementor-11675 .elementor-element-b7e2620 .lipsmod__eye::after{background:linear-gradient(90deg,#a85860,transparent)!important;}
+		.elementor-11675 .elementor-element-b7e2620 .lipsmod__title{color:#4a1820!important;}
+		/* ef7cf9e: padding-top gigante (100px desktop / 300px mobile) reservava espaço p/ a imagem de fundo removida → vira vão branco. Alinha com as vizinhas. */
+		.elementor-11675 .elementor-element-ef7cf9e > .e-con-inner{padding-top:clamp(40px,6vw,72px)!important;}
+		</style>
+
 		<script type="rocketlazyloadscript" data-rocket-type='text/javascript'>window.addEventListener('DOMContentLoaded', function() {
 
 			jQuery(document).ready(function(){
