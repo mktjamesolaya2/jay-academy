@@ -213,6 +213,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 /* remove a faixa rolante "PRÉ VENDA ✦ OFERTA ESPECIAL" na dobra do próximo passo */
 .elementor-13601 .elementor-element-370078a{display:none!important;}
 </style>
+<style id="nf-altbg">
+/* Fundos alternados preto / rosa / branco (pedido do James) */
+.nfchips{background:#0b0509!important;background-image:none!important;}
+.nfcf-sec{background:#3a1230!important;background-image:none!important;}
+.nfqz-sec{background:#ffffff!important;background-image:none!important;}
+.nfm-sec{background:#0b0509!important;background-image:none!important;}
+.nfb-sec{background:#3a1230!important;background-image:none!important;}
+.nfmq-sec{background:#ffffff!important;background-image:none!important;}
+.nfbn-sec{background:#0b0509!important;background-image:none!important;}
+.nfa-sec{background:#3a1230!important;background-image:none!important;}
+.nfo-sec{background:#ffffff!important;background-image:none!important;}
+.nfg-sec{background:#0b0509!important;background-image:none!important;}
+.nff-sec{background:#3a1230!important;background-image:none!important;}
+.nfw-sec{background:#ffffff!important;background-image:none!important;}
+</style>
+<script id="nf-altbg-text">
+document.addEventListener('DOMContentLoaded',function(){
+  ['nfqz-sec','nfmq-sec','nfo-sec','nfw-sec'].forEach(function(cls){
+    document.querySelectorAll('.'+cls).forEach(function(sec){
+      sec.querySelectorAll('h1,h2,h3,h4,h5,p,span,li,strong,b,em,div').forEach(function(t){
+        if(t.querySelector('img,svg,button,a'))return;
+        t.style.setProperty('color','#241019','important');
+        t.style.setProperty('-webkit-text-fill-color','#241019','important');
+      });
+    });
+  });
+});
+</script>
 <style id="nf-hero-override">
 /* ===== NanoFios: nova Hero (Higgsfield) ===== */
 .elementor-13601 .elementor-element-d278069{display:none!important;}
