@@ -214,43 +214,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .elementor-13601 .elementor-element-370078a{display:none!important;}
 </style>
 <style id="nf-altbg">
-/* Fundos alternados por dobra (preto/rosa/branco), FULL-WIDTH e limpos.
-   Mata seams e brilhos magenta das seções recoloridas (classe .nf-flat). */
+/* ===== Recolor limpo de TODAS as dobras (preto/rosa/branco), sem glow magenta ===== */
+/* 1) mata o glow magenta das bordas em todas as dobras + glows/hairs */
+.elementor-13601 .nfcf-sec::before,.elementor-13601 .nfcf-sec::after,.elementor-13601 .nfqz-sec::before,.elementor-13601 .nfqz-sec::after,.elementor-13601 .nfm-sec::before,.elementor-13601 .nfm-sec::after,.elementor-13601 .nfb-sec::before,.elementor-13601 .nfb-sec::after,.elementor-13601 .nfmq-sec::before,.elementor-13601 .nfmq-sec::after,.elementor-13601 .nfbn-sec::before,.elementor-13601 .nfbn-sec::after,.elementor-13601 .nfa-sec::before,.elementor-13601 .nfa-sec::after,.elementor-13601 .nfo-sec::before,.elementor-13601 .nfo-sec::after,.elementor-13601 .nfg-sec::before,.elementor-13601 .nfg-sec::after,.elementor-13601 .nff-sec::before,.elementor-13601 .nff-sec::after,.elementor-13601 [class*="glow"],.elementor-13601 .nfqz-hair{display:none!important;}
+/* remove as "linhas"/costuras (seams) entre TODAS as dobras */
 .elementor-13601 > .elementor-element.e-parent::before,.elementor-13601 > .elementor-element.e-parent::after{display:none!important;}
-.nf-flat *::before,.nf-flat *::after{background:none!important;}
-.nf-flat [class*="glow"],.nf-flat [class*="veins"]{display:none!important;}
+.elementor-13601 .nfcf-sec,.elementor-13601 .nfqz-sec,.elementor-13601 .nfm-sec,.elementor-13601 .nfb-sec,.elementor-13601 .nfmq-sec,.elementor-13601 .nfbn-sec,.elementor-13601 .nfa-sec,.elementor-13601 .nfo-sec,.elementor-13601 .nfg-sec,.elementor-13601 .nff-sec,.elementor-13601 .nfw-sec{margin-top:0!important;}
+/* 2) zera fundos internos (wrappers) pra cor da dobra aparecer full-width (cards mantidos) */
+.elementor-13601 .nfcf-sec,.elementor-13601 .nfqz-sec,.elementor-13601 .nfqz-wrap,.elementor-13601 .nfm-sec,.elementor-13601 .nfb-sec,.elementor-13601 .nfmq-sec,.elementor-13601 .nfbn-sec,.elementor-13601 .nfa-sec,.elementor-13601 .nfo-sec,.elementor-13601 .nfg-sec,.elementor-13601 .nff-sec,.elementor-13601 .nfw-sec,.elementor-13601 .nfchips{background:transparent!important;background-image:none!important;}
+/* 3) fundo de cada dobra (parent, full-width): preto / rosa / branco */
+.elementor-13601 .elementor-element-b6b4080{background:#0a0a0a!important;}
+.elementor-13601 .elementor-element-3aa3f22{background:#f7d9e6!important;}
+.elementor-13601 .elementor-element-398c63b{background:#0a0a0a!important;}
+.elementor-13601 .elementor-element-f1a0a41{background:#0a0a0a!important;}
+.elementor-13601 .elementor-element-0ac5928{background:#ffffff!important;}
+.elementor-13601 .elementor-element-e24f90f{background:#ffffff!important;}
+.elementor-13601 .elementor-element-3f0b71d{background:#f7d9e6!important;}
+.elementor-13601 .elementor-element-0310a14{background:#0a0a0a!important;}
+.elementor-13601 .elementor-element-03e5e30{background:#ffffff!important;}
+.elementor-13601 .elementor-element-bda4209{background:#f7d9e6!important;}
+.elementor-13601 .elementor-element-60dcf55{background:#ffffff!important;}
+.elementor-13601 .elementor-element-ee8db00{background:#0a0a0a!important;}
+/* 4) texto escuro nas dobras claras (rosa/branco), menos dentro de cards */
+.elementor-13601 :is(.elementor-element-3aa3f22,.elementor-element-0ac5928,.elementor-element-e24f90f,.elementor-element-3f0b71d,.elementor-element-03e5e30,.elementor-element-60dcf55) :is(h1,h2,h3,h4,h5,p,li,span):not([class*="card"] *):not([class*="__in"] *):not([class*="total"] *){color:#2a1420!important;-webkit-text-fill-color:#2a1420!important;}
 </style>
-<script id="nf-altbg-js">
-document.addEventListener('DOMContentLoaded',function(){
-  var HERO='d9b1a0f', colors=['#0a0a0a','#f7d9e6','#ffffff'];
-  var parents=[].slice.call(document.querySelectorAll('.elementor-13601 > .elementor-element.e-parent'));
-  var k=0;
-  parents.forEach(function(sec){
-    if(sec.className.indexOf(HERO)>=0)return; // mantém o hero como está
-    var c=colors[k%3]; k++;
-    sec.classList.add('nf-flat');
-    // deixa transparente qualquer fundo interno (menos cards/botões) pra cor da dobra aparecer de ponta a ponta
-    [].slice.call(sec.querySelectorAll('*')).forEach(function(el){
-      if(el.closest('[class*="card"],[class*="__in"],.elementor-button,[class*="btn"],.nfchip'))return;
-      var cs=getComputedStyle(el);
-      if((cs.backgroundImage&&cs.backgroundImage!=='none')||(cs.backgroundColor&&cs.backgroundColor!=='rgba(0, 0, 0, 0)'&&cs.backgroundColor!=='transparent')){
-        el.style.setProperty('background','transparent','important');
-        el.style.setProperty('background-image','none','important');
-      }
-    });
-    sec.style.setProperty('background',c,'important');
-    sec.style.setProperty('background-image','none','important');
-    if(c!=='#0a0a0a'){ // dobras claras (rosa/branco): texto escuro, menos dentro de cards
-      sec.querySelectorAll('h1,h2,h3,h4,h5,p,span,li,strong,b,em,div,a').forEach(function(t){
-        if(t.closest('[class*="card"],[class*="__in"],.elementor-button,[class*="btn"]'))return;
-        if(t.querySelector('img,svg,button'))return;
-        t.style.setProperty('color','#241019','important');
-        t.style.setProperty('-webkit-text-fill-color','#241019','important');
-      });
-    }
-  });
-});
-</script>
 <style id="nf-hero-override">
 /* ===== NanoFios: nova Hero (Higgsfield) ===== */
 .elementor-13601 .elementor-element-d278069{display:none!important;}
@@ -309,7 +296,7 @@ document.addEventListener('DOMContentLoaded',function(){
 }
 </style><style id="nf-results">
 /* ===== Dobra Resultados Reais ===== */
-.elementor-13601 .elementor-element-b6b4080{background:radial-gradient(120% 82% at 50% 0%,#1a0a18 0%,#0c0510 46%,#080309 100%)!important;}
+.elementor-13601 .elementor-element-b6b4080{background:#0a0a0a!important;}
 #nf-results-head{text-align:center;max-width:840px;margin:0 auto clamp(30px,3.6vw,48px);padding:0 16px;font-family:'Poppins',system-ui,sans-serif;position:relative;z-index:2;}
 .nfr-kick{display:inline-flex;align-items:center;gap:12px;font-size:12.5px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:#e6c684;margin-bottom:18px;}
 .nfr-kick::before,.nfr-kick::after{content:"";width:30px;height:1px;background:linear-gradient(90deg,transparent,#e6c684);}
@@ -764,6 +751,33 @@ document.addEventListener('DOMContentLoaded',function(){
 /* mata o banner de fundo leftover do WP nos containers das seções (vazava nas beiras/costuras).
    O hero (d9b1a0f) não usa bg de container — a imagem dele é um filho .nf-herobg — então fica de fora. */
 .elementor-13601 > .e-con.e-parent:not(.elementor-element-d9b1a0f){background-image:none!important;background-color:#070308!important;}
+/* ===== RECOLOR NanoFios — fundos por dobra (vence a regra global #070308 acima) ===== */
+.elementor-13601 > .e-con.e-parent.elementor-element-b6b4080{background:#0a0a0a!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-3aa3f22{background:#f7d9e6!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-398c63b{background:#0a0a0a!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-f1a0a41{background:#0a0a0a!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-0ac5928{background:#ffffff!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-e24f90f{background:#ffffff!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-3f0b71d{background:#f7d9e6!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-0310a14{background:#0a0a0a!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-03e5e30{background:#ffffff!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-bda4209{background:#0a0a0a!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-60dcf55{background:#ffffff!important;background-image:none!important;}
+.elementor-13601 > .e-con.e-parent.elementor-element-ee8db00{background:#0a0a0a!important;background-image:none!important;}
+/* inner transparente pra cor do parent aparecer full-width (menos hero) */
+.elementor-13601 > .e-con.e-parent:not(.elementor-element-d9b1a0f) > .e-con-inner{background:transparent!important;background-image:none!important;}
+/* texto escuro nas dobras claras (rosa/branco), menos dentro de cards */
+.elementor-13601 :is(.elementor-element-3aa3f22,.elementor-element-0ac5928,.elementor-element-e24f90f,.elementor-element-3f0b71d,.elementor-element-03e5e30,.elementor-element-60dcf55) :is(h1,h2,h3,h4,h5,p,li,span):not([class*="card"] *):not([class*="__in"] *):not([class*="total"] *){color:#2a1420!important;-webkit-text-fill-color:#2a1420!important;}
+/* box "Tudo isso de graça": paleta limpa (escuro sólido + texto original dourado/claro) */
+.elementor-13601 .nfbn-total{background:#1a0e18!important;background-image:none!important;box-shadow:inset 0 0 0 1px rgba(230,198,132,.35)!important;}
+.elementor-13601 .nfbn-total .l{color:#c9a9bf!important;-webkit-text-fill-color:#c9a9bf!important;}
+.elementor-13601 .nfbn-total .n{color:#e6c684!important;-webkit-text-fill-color:#e6c684!important;}
+.elementor-13601 .nfbn-total .x{color:#e7d6e2!important;-webkit-text-fill-color:#e7d6e2!important;}
+.elementor-13601 .nfbn-total .x b{color:#fff!important;-webkit-text-fill-color:#fff!important;}
+/* centraliza texto + botão da certificada (.nfa-rc) */
+.elementor-13601 .nfa-rc{text-align:center!important;}
+.elementor-13601 .nfa-chips{justify-content:center!important;}
+.elementor-13601 .nfa-rc > a,.elementor-13601 .nfa-cta{display:block!important;width:fit-content!important;margin-left:auto!important;margin-right:auto!important;}
 </style></head>
 <body class="wp-singular page-template page-template-elementor_canvas page page-id-13601 wp-embed-responsive wp-theme-hello-elementor theme-default elementor-default elementor-template-canvas elementor-kit-9532 elementor-page elementor-page-13601">
 	<!-- Google Tag Manager (noscript) -->
