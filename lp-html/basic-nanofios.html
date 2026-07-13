@@ -214,30 +214,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .elementor-13601 .elementor-element-370078a{display:none!important;}
 </style>
 <style id="nf-altbg">
-/* Fundos alternados preto / rosa / branco (pedido do James) */
-.nfchips{background:#0b0509!important;background-image:none!important;}
-.nfcf-sec{background:#3a1230!important;background-image:none!important;}
-.nfqz-sec{background:#ffffff!important;background-image:none!important;}
-.nfm-sec{background:#0b0509!important;background-image:none!important;}
-.nfb-sec{background:#3a1230!important;background-image:none!important;}
-.nfmq-sec{background:#ffffff!important;background-image:none!important;}
-.nfbn-sec{background:#0b0509!important;background-image:none!important;}
-.nfa-sec{background:#3a1230!important;background-image:none!important;}
-.nfo-sec{background:#ffffff!important;background-image:none!important;}
-.nfg-sec{background:#0b0509!important;background-image:none!important;}
-.nff-sec{background:#3a1230!important;background-image:none!important;}
-.nfw-sec{background:#ffffff!important;background-image:none!important;}
+/* Fundos alternados por dobra (preto/rosa/branco), FULL-WIDTH e limpos.
+   Mata seams e brilhos magenta das seções recoloridas (classe .nf-flat). */
+.elementor-13601 > .elementor-element.e-parent::before,.elementor-13601 > .elementor-element.e-parent::after{display:none!important;}
+.nf-flat *::before,.nf-flat *::after{background:none!important;}
+.nf-flat [class*="glow"],.nf-flat [class*="veins"]{display:none!important;}
 </style>
-<script id="nf-altbg-text">
+<script id="nf-altbg-js">
 document.addEventListener('DOMContentLoaded',function(){
-  ['nfqz-sec','nfmq-sec','nfo-sec','nfw-sec'].forEach(function(cls){
-    document.querySelectorAll('.'+cls).forEach(function(sec){
-      sec.querySelectorAll('h1,h2,h3,h4,h5,p,span,li,strong,b,em,div').forEach(function(t){
-        if(t.querySelector('img,svg,button,a'))return;
+  var HERO='d9b1a0f', colors=['#0a0a0a','#f7d9e6','#ffffff'];
+  var parents=[].slice.call(document.querySelectorAll('.elementor-13601 > .elementor-element.e-parent'));
+  var k=0;
+  parents.forEach(function(sec){
+    if(sec.className.indexOf(HERO)>=0)return; // mantém o hero como está
+    var c=colors[k%3]; k++;
+    sec.classList.add('nf-flat');
+    // deixa transparente qualquer fundo interno (menos cards/botões) pra cor da dobra aparecer de ponta a ponta
+    [].slice.call(sec.querySelectorAll('*')).forEach(function(el){
+      if(el.closest('[class*="card"],[class*="__in"],.elementor-button,[class*="btn"],.nfchip'))return;
+      var cs=getComputedStyle(el);
+      if((cs.backgroundImage&&cs.backgroundImage!=='none')||(cs.backgroundColor&&cs.backgroundColor!=='rgba(0, 0, 0, 0)'&&cs.backgroundColor!=='transparent')){
+        el.style.setProperty('background','transparent','important');
+        el.style.setProperty('background-image','none','important');
+      }
+    });
+    sec.style.setProperty('background',c,'important');
+    sec.style.setProperty('background-image','none','important');
+    if(c!=='#0a0a0a'){ // dobras claras (rosa/branco): texto escuro, menos dentro de cards
+      sec.querySelectorAll('h1,h2,h3,h4,h5,p,span,li,strong,b,em,div,a').forEach(function(t){
+        if(t.closest('[class*="card"],[class*="__in"],.elementor-button,[class*="btn"]'))return;
+        if(t.querySelector('img,svg,button'))return;
         t.style.setProperty('color','#241019','important');
         t.style.setProperty('-webkit-text-fill-color','#241019','important');
       });
-    });
+    }
   });
 });
 </script>
