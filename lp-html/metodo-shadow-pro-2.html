@@ -42,12 +42,14 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .trust{display:inline-flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:12.5px;font-weight:500;margin-top:18px;}
 .trust b{color:var(--gold2);font-weight:600;}
 /* ===== HERO ===== */
-.hero{position:relative;min-height:min(94vh,800px);display:flex;align-items:center;padding:110px 0 70px;overflow:hidden;background:radial-gradient(120% 90% at 78% 12%,#241a10 0%,#100b12 46%,#0a090c 100%);}
-.hero::after{content:"";position:absolute;inset:0;background:url("/lp/shadow-pro/hero.webp") right center / cover no-repeat;opacity:.5;-webkit-mask-image:linear-gradient(90deg,transparent 8%,#000 60%);mask-image:linear-gradient(90deg,transparent 8%,#000 60%);z-index:0;}
+/* HERO = cena cinematográfica full-bleed (James real + sobrancelha em luz dourada) com texto integrado à esquerda */
+.hero{position:relative;min-height:min(90vh,780px);display:flex;align-items:center;overflow:hidden;background:#0a090c;padding:80px 0;}
+.hero::after{content:"";position:absolute;inset:0;z-index:0;background:url("/lp/shadow-pro/hero-scene.webp") center right / cover no-repeat;}
 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:
-  linear-gradient(180deg, transparent 55%, rgba(10,9,12,.5) 76%, rgba(10,9,12,.9) 90%, #0a090c 96%),
-  linear-gradient(90deg,#0a090c 6%,rgba(10,9,12,.72) 42%,rgba(10,9,12,.2) 72%,transparent);}
-.hero__in{position:relative;z-index:2;max-width:640px;}
+  linear-gradient(90deg,#0a090c 6%,rgba(10,9,12,.9) 30%,rgba(10,9,12,.45) 54%,transparent 76%),
+  linear-gradient(180deg,transparent 72%,rgba(10,9,12,.55));}
+.hero__in{position:relative;z-index:2;max-width:580px;}
+@media(min-width:901px){.hero .wrap{max-width:min(52vw,680px);margin:0;padding-left:clamp(30px,5vw,86px);padding-right:24px;}}
 .hero__logo{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(26px,3vw,36px);letter-spacing:.08em;color:#fff;margin-bottom:26px;}
 .hero__logo b{color:var(--gold2);}
 .hero__logo span{display:block;font-size:11px;letter-spacing:.5em;color:var(--gold);font-family:'Poppins',sans-serif;font-weight:600;margin-top:2px;}
@@ -486,9 +488,13 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .spots svg{width:17px;height:17px;flex:0 0 auto;}
 /* ===== RESPONSIVE ===== */
 @media(max-width:900px){
-  .hero{min-height:auto;padding:96px 0 60px;}
-  .hero::after{opacity:.5;-webkit-mask-image:linear-gradient(180deg,transparent,#000 34%);mask-image:linear-gradient(180deg,transparent,#000 34%);background-position:center 18%;}
-  .hero::before{background:linear-gradient(180deg,rgba(10,9,12,.48),rgba(10,9,12,.82) 58%,rgba(10,9,12,.9));}
+  /* mobile: cena vira banner no topo, texto abaixo (sem texto sobre o James) */
+  .hero{min-height:auto;display:block;padding:0;}
+  .hero::after{height:64vw;max-height:380px;bottom:auto;background-position:82% top;-webkit-mask-image:linear-gradient(180deg,#000 74%,transparent 99%);mask-image:linear-gradient(180deg,#000 74%,transparent 99%);}
+  .hero::before{background:linear-gradient(180deg,transparent 40%,rgba(10,9,12,.7) 66%,#0a090c 82%);}
+  .hero__in{padding:calc(64vw - 46px) 22px 54px;max-width:none;text-align:center;}
+  .hero__list{display:inline-grid;text-align:left;}
+  .hero .trust{justify-content:center;}
   .grid3,.probs{grid-template-columns:1fr;}
   .pillars,.forwho{grid-template-columns:1fr;}
   .bio{min-height:0;padding:0 0 60px;display:block;}
