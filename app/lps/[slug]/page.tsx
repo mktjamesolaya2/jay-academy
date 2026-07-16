@@ -12,6 +12,7 @@ import { Sidebar } from "@/components/sidebar";
 import { statusLabel, statusColors, publicUrlFor } from "@/lib/landing-pages";
 import { getLpFromStore } from "@/lib/lp-store";
 import { isBuilderPage } from "@/lib/page-builder-store";
+import { inferLpSource } from "@/lib/page-catalog";
 import { clsx } from "clsx";
 import { LpActionsMenu } from "@/components/lp-actions-menu";
 import { SiteUrlLink } from "@/components/site-url-link";
@@ -27,6 +28,9 @@ export default async function LpDetailPage({ params }: { params: Params }) {
   const isProduction = process.env.VERCEL_ENV === "production" || !!process.env.VERCEL;
   const hasBuilder = await isBuilderPage(slug);
   const publicUrl = publicUrlFor(lp);
+  // Fonte de conteúdo: campo contentSource com fallback heurístico pra LPs
+  // antigas do KV sem o campo (ver inferLpSource).
+  const source = inferLpSource(lp, hasBuilder ? [slug] : []);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -171,6 +175,8 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     external
                   />
                 )}
+                {/* Atalho de edição derivado da fonte de conteúdo (contentSource),
+                    não mais de slugs hardcoded. */}
                 {lp.slug === "pmuclass" && (
                   <ActionRow
                     icon={Pencil}
@@ -179,7 +185,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     href="/lps/pmuclass/edit-content"
                   />
                 )}
-                {(lp.slug === "magic-shadow" || lp.slug === "laser") && (
+                {source === "embedded-kv" && (
                   <ActionRow
                     icon={Pencil}
                     label="Editar visualmente"
@@ -187,7 +193,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     href={`/lps/${lp.slug}/edit-visual`}
                   />
                 )}
-                {hasBuilder && (
+                {source === "builder" && hasBuilder && (
                   <ActionRow
                     icon={Sparkles}
                     label="Editar com blocos"
@@ -195,13 +201,19 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     href={`/lps/${lp.slug}/build`}
                   />
                 )}
-                {!hasBuilder && !lp.localPath && lp.slug !== "pmuclass" && (
+                {source === "builder" && !hasBuilder && !lp.localPath && (
                   <ActionRow
                     icon={Sparkles}
                     label="Construir com blocos"
                     sub="Cria essa página com Hero, FAQ, CTA, etc."
                     href={`/lps/${lp.slug}/build`}
                   />
+                )}
+                {source === "lp-html" && (
+                  <div className="px-3 py-3 rounded-lg border border-dashed border-[#262626] text-xs text-neutral-500 leading-relaxed">
+                    Página editada <span className="text-violet-300 font-semibold">no repositório</span>{" "}
+                    (lp-html/{lp.slug}.html) — alterações entram no ar via commit + push.
+                  </div>
                 )}
                 {/* Atalhos de dev local — só aparecem se ainda não tem URL pública */}
                 {!publicUrl && !isProduction && lp.devUrl && (

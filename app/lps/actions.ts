@@ -75,6 +75,8 @@ export async function createLpAction(formData: FormData) {
     accent,
     createdAt: now.toISOString().split("T")[0],
     lastEditedAt: now.toISOString(),
+    // LPs criadas no painel são sempre do builder (mesmo sem blocos ainda)
+    contentSource: "builder",
   });
 
   if (useBuilder) {

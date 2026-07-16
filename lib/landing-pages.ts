@@ -59,6 +59,7 @@ export const landingPages: LandingPage[] = [
     domain: "jayacademy.com.br",
     accent: "pink-orange",
     createdAt: "2026-05-27",
+    contentSource: "lp-html",
   },
   {
     slug: "magic-shadow",
@@ -74,6 +75,7 @@ export const landingPages: LandingPage[] = [
     productionUrl: "/magicshadow",
     accent: "gold-black",
     createdAt: "2026-05-27",
+    contentSource: "embedded-kv",
   },
   {
     slug: "laser",
@@ -90,6 +92,7 @@ export const landingPages: LandingPage[] = [
     productionUrl: "/laser",
     accent: "rose",
     createdAt: "2026-05-27",
+    contentSource: "embedded-kv",
   },
   {
     slug: "apresentacao-pmu",
@@ -104,6 +107,7 @@ export const landingPages: LandingPage[] = [
     productionUrl: "/apresentacao-pmu",
     accent: "pink-orange",
     createdAt: "2026-06-02",
+    contentSource: "react",
   },
   // __INSERT_LP_HERE__
 ];

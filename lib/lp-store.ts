@@ -30,6 +30,7 @@ export async function loadLps(): Promise<LandingPage[]> {
         devPort: seed.devPort ?? lp.devPort,
         stack: seed.stack || lp.stack,
         localPath: seed.localPath ?? lp.localPath,
+        contentSource: seed.contentSource ?? lp.contentSource,
       };
     });
     // Adiciona itens do seed que ainda não estão no storage — garante que
