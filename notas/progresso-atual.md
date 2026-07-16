@@ -2,7 +2,24 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-16 — **Saída do Supabase: assets migrados pro repositório (public/wpmirror/)**
+> **Última atualização**: 2026-07-16 — **5 LPs de venda otimizadas no padrão magic-shadow, slugs = WordPress, checkout do Remove corrigido**
+
+---
+
+## 🆕 Sessão 2026-07-16 (parte 2) — 5 LPs otimizadas + slugs espelhando o WordPress
+
+**Contexto:** o portal vai substituir o site WordPress em breve → os slugs precisam ser idênticos aos de jayacademy.com.br e as LPs 100% independentes do WP. A basic-magic-shadow (otimizada em 15/jul) virou o padrão replicado. Commits `d5690ce`…`a6b1998`.
+
+**Aplicado às 4 LPs restantes** (nanofios, fio-a-fio, pdv-lips, curso-remove):
+- **Rotas**: pipeline `delazyBackgrounds(delazyHtml())` + strip `<base>` + viewport (igual a `app/basic-magic-shadow/route.ts:21-34`).
+- **Higiene do HTML**: 56/38/19/0 srcs corrompidos (lixo SVG WP Rocket) limpos; **Pixel FB/fbevents/plusempresas hardcoded REMOVIDOS** (tracking 100% via `withTracking`, dedup Pixel/CAPI correta agora); 3 vídeos por página → `preload="none" data-lazysrc` + snippet IntersectionObserver (`data-bms-lazyvideo`).
+- **Slug fio a fio**: conteúdo agora em **`/fio-a-fio-realista-by-james-olaya`** (slug do WP; arquivo renomeado em lp-html/). `/metodo-fio-a-fio-by-james-olaya` e `/fio-a-fio-realista` → redirect 308.
+- **Profissão Remove — independência do WP**: 282 assets (~30 MB) baixados pra `public/lp/profissao-remove/` (estrutura de path preservada → `url()` relativos dos CSS continuam válidos): wp-content/wp-includes + flagcdn + cloudfront + os 3 mp4 (kiturbanique/kithenna/kitjaycademy). 6 assets que já davam 404 no próprio WP recuperados do SVN oficial do plugin (elementskit) e jsdelivr (intl-tel-input).
+- **⚠️ CHECKOUT CORRIGIDO no Remove**: era `pay.hotmart.com/N98636819X` (produto errado!) → `G106407672I?checkoutMode=10&off=umo46sbb` (lista oficial conferida com o James — os outros 4 já estavam certos).
+
+**QA (local + produção)**: 5 slugs com 0 srcs corrompidos, 0 plusempresas, exatamente 1 `fbq('init')` (o canônico injetado), 0 assets de wp-content/flagcdn/cloudfront remotos, checkout oficial em cada página, 482 assets locais HEAD 200, redirects 308 ok, screenshots desktop+mobile conferidos.
+
+**Mantido de propósito**: metas canonical/og:url/schema apontando pra jayacademy.com.br (o domínio será deste app); as 5 strings de config do Elementor (`elementorFrontendConfig`) que citam wp-content (idênticas à referência, não são assets carregados); os 8 backgrounds do Blob morto em regras CSS mortas (sem impacto visual).
 
 ---
 
