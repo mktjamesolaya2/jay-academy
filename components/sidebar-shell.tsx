@@ -9,6 +9,7 @@ import {
   Link2,
   Globe,
   Layout,
+  LayoutGrid,
   FileText,
   FileStack,
   Image as ImageIcon,
@@ -25,6 +26,7 @@ import { UserMenu } from "./user-menu";
 import type { SessionUser } from "@/lib/auth";
 
 const URL_CHILDREN = [
+  { href: "/paginas", label: "Todas as páginas", icon: LayoutGrid },
   { href: "/websites", label: "Websites", icon: Globe },
   { href: "/lps", label: "Landing Pages", icon: Layout },
   { href: "/forms", label: "Formulários", icon: FileText },
@@ -151,7 +153,7 @@ export function SidebarShell({ user }: { user: SessionUser | null }) {
           <button
             type="button"
             onClick={onUrlsClick}
-            title="URLs"
+            title="Páginas"
             className={clsx(
               "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition",
               collapsed ? "lg:justify-center" : "",
@@ -161,7 +163,7 @@ export function SidebarShell({ user }: { user: SessionUser | null }) {
             )}
           >
             <Link2 size={15} strokeWidth={2} className="shrink-0" />
-            <span className={clsx("flex-1 text-left", hideOnCollapse)}>URLs</span>
+            <span className={clsx("flex-1 text-left", hideOnCollapse)}>Páginas</span>
             <ChevronDown
               size={14}
               strokeWidth={2.2}

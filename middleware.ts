@@ -17,6 +17,7 @@ const ADMIN_PREFIXES = [
   "/lixeira",
   "/lps",
   "/midia",
+  "/paginas",
   "/settings",
   "/sugestoes",
   "/websites",

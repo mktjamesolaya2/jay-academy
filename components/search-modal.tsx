@@ -14,13 +14,14 @@ import {
 } from "lucide-react";
 import { type LandingPage } from "@/lib/landing-pages";
 import { type SavedSummary } from "@/lib/wp-content-storage";
+import { lpHtmlPages } from "@/lib/lp-html-registry";
 
 type Result = {
   id: string;
   title: string;
   subtitle: string;
   href: string;
-  kind: "lp" | "wp";
+  kind: "lp" | "wp" | "static";
   icon: typeof Layout;
 };
 
@@ -59,6 +60,18 @@ export function SearchModal({
         kind: "lp" as const,
         icon: lp.type === "website" ? Globe : Layout,
       })),
+      // LPs servidas de lp-html/ (registro estático em git) — sem detalhe no
+      // painel (exceto as que também têm registro de LP), então abre a página
+      ...lpHtmlPages
+        .filter((p) => !landingPages.find((lp) => lp.slug === p.slug))
+        .map((p) => ({
+          id: `static-${p.slug}`,
+          title: p.title,
+          subtitle: `HTML no repo · /${p.slug}`,
+          href: `/${p.slug}`,
+          kind: "static" as const,
+          icon: FileCode2,
+        })),
       ...savedWp.map((wp) => ({
         id: `wp-${wp.domain}-${wp.slug}`,
         title: wp.title.replace(/<[^>]*>/g, ""),
