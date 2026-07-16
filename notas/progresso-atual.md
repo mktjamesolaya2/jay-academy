@@ -19,6 +19,8 @@ Verificação profunda pré-migração (3 frentes: superfície do app, sitemap d
 - **Cobertura do sitemap**: one-shot `?publishsitemap=1` publicou as **61 páginas** do KV nos slugs originais → **68/68 URLs do site atual respondem 200 na Vercel** (servidas pelo `/p/[slug]` com delazy+tracking; assets delas seguem no Supabase, decisão da parte 1).
 - **SEO/acabamento**: `app/robots.ts`, `app/sitemap.ts` (dinâmico: LPs + `listPublished()`), 404 branded (`not-found.tsx` + `notFoundResponse()` no `/p/[slug]`, já que o catch-all não deixa o not-found.tsx renderizar), `PMU_LINK` relativo.
 
+**QA visual final (passo F, 16/jul):** screenshots das 5 LPs em produção (desktop 1280 + mobile 390) confirmaram tipografia restaurada pós-blobfix (Playfair/Poppins/Montserrat renderizando, não fallback do sistema), heros, carrosséis e CTAs intactos; amostra de 2 páginas KV publicadas (`/pmu-pro`, `/compra-aprovada-obrigado`) renderizando ok com assets do Supabase. **Plano A–F 100% concluído.**
+
 **⚠️ CHECKLIST DA TROCA DE DNS (quando decidir apontar):**
 1. **Pendência consciente: homepage** — a raiz `/` hoje é o lobby do painel admin (decisão do Lucas em 16/jul: resolver antes do apontamento; a página "inicio" do WP existe no KV, basta decidir servir).
 2. Na Vercel (projeto jay-academy): Settings → Domains → adicionar `jayacademy.com.br` (apex) **e** `www.jayacademy.com.br` (redirect www→apex).
