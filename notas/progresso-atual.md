@@ -2,7 +2,27 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-03 — **Shadow PRO: redesign premium dobra-a-dobra CONCLUÍDO** (James: "acho que terminamos o shadow, o resto está bom")
+> **Última atualização**: 2026-07-16 — **Saída do Supabase: assets migrados pro repositório (public/wpmirror/)**
+
+---
+
+## 🆕 Sessão 2026-07-16 — Saída do Supabase (assets locais na Vercel)
+
+**Motivo:** a conta free do Supabase (`brbpjjqigpmxombzbxiu`, mktjamesolaya@gmail.com) estourou a cota de Cached Egress (10 GB/5 GB) e entrou em *grace period* — depois disso o bucket responderia **402** e as 4 LPs de produto quebrariam. Auditoria confirmou: Supabase era **só storage de mídia** (bucket público `media/wpmirror`, espelho de assets do WP), nunca banco/auth/SDK.
+
+**O que foi feito** (commits `a0a0704`, `7ac9aac`, `a6e567d`):
+- **571 assets (~87 MB) baixados** do bucket pra [public/wpmirror/](../public/wpmirror/) — agora servidos como estáticos pela CDN da Vercel (conta no Fast Data Transfer, 34/100 GB — folga).
+- **URLs reescritas** (`https://brbpjjqigpmxombzbxiu.supabase.co/.../wpmirror/` → `/wpmirror/`) nas 4 LPs (`basic-magic-shadow`, `basic-nanofios`, `metodo-fio-a-fio`, `pdv-lips-sense`) + partials `_videos.html`/`_modulos.html` + 1 CSS com URL interna. **0 refs supabase** em lp-html/.
+- **Novo one-shot admin**: `/api/wp-localize?supascan=1` (audita URLs Supabase em TODO o KV) e `?supafix=1` (reescreve prefixo pra /wpmirror/). Mesmo padrão do `?relocate=1`. ⚠️ NÃO usar `?relocate=1` pra isso — ele sobe pro storage atual (que era o próprio Supabase).
+- **Cache das LPs**: `s-maxage` 60→3600 nas 8 rotas de LP (HTML só muda em deploy, que purga a CDN) — corta Function Invocations/Fluid CPU.
+- **QA**: HEAD-check dos 578 assets /wpmirror/ em local e produção + screenshots headless desktop/mobile das 4 LPs. Tudo 200, visual OK.
+
+**Pendências pra fechar o desligamento:**
+1. James/admin abrir `https://jay-academy.vercel.app/api/wp-localize?supascan=1` logado → ver se páginas do KV ainda apontam pro Supabase; se sim, baixar os paths faltantes pra public/wpmirror/ e rodar `?supafix=1`.
+2. Remover as envs `S3_*` no projeto Vercel (apontam pro Supabase; `blobUpload` cai pro fallback Vercel Blob).
+3. Só depois de 1+2: pausar/deletar o projeto Supabase no dashboard. Os arquivos ficam versionados no GitHub como backup.
+
+**Conhecido/aceito:** 8 URLs do **Blob antigo morto** (`hasn2c5edrrndxdo...403`) seguem no HTML de basic-nanofios (3) e pdv-lips-sense (5) — backgrounds em regras CSS mortas/cobertas pelo recolor recente, **sem impacto visual** (screenshots conferidos), quebrados desde a era do Blob bloqueado. Originais não recuperáveis (páginas WP deletadas). Blob Advanced Operations estourado na Vercel (2.2K/2K) reseta no próximo ciclo; nada grava mais no Blob rotineiramente.
 
 ---
 
