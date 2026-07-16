@@ -34,6 +34,12 @@ export type LandingPage = {
     | "rose";
   createdAt: string;
   cover?: string;
+  /**
+   * Fonte de renderização do conteúdo — determina qual editor o painel
+   * oferece. LPs antigas salvas no KV podem não ter o campo; nesses casos
+   * inferLpSource (lib/page-catalog.ts) cai numa heurística de fallback.
+   */
+  contentSource?: "lp-html" | "embedded-kv" | "builder" | "react";
 };
 
 export const landingPages: LandingPage[] = [
