@@ -21,6 +21,25 @@ function escapeHtml(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
+// 404 público com a cara da marca (o catch-all [slug] passa por aqui, então o
+// not-found.tsx do App Router nunca renderiza pra rotas públicas — o handler
+// precisa responder o HTML ele mesmo).
+function notFoundResponse(reason: string): NextResponse {
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex"><title>Página não encontrada — Jay Academy</title>
+<style>body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#0a0a0a;color:#e8e8e8;font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;margin:0;padding:24px;text-align:center}
+.tag{font-size:13px;letter-spacing:4px;color:#c9a24b;margin:0}h1{font-size:42px;font-weight:800;margin:0}p{color:#999;max-width:420px;line-height:1.6;margin:0}
+a{margin-top:8px;padding:12px 28px;border-radius:999px;background:linear-gradient(90deg,#ec4899,#f97316);color:#fff;font-weight:700;text-decoration:none}</style>
+</head><body><p class="tag">JAY ACADEMY</p><h1>404</h1>
+<p>${escapeHtml(reason)} Confira o endereço ou conheça nossos cursos.</p>
+<a href="/fio-a-fio-realista-by-james-olaya">Conhecer os cursos</a></body></html>`;
+  return new NextResponse(html, {
+    status: 404,
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+}
+
 type Params = Promise<{ slug: string }>;
 
 export async function GET(req: Request, { params }: { params: Params }) {
@@ -37,7 +56,7 @@ export async function GET(req: Request, { params }: { params: Params }) {
     if (lp?.status !== "published") {
       const me = await getCurrentUser();
       if (!canEdit(me)) {
-        return new NextResponse("Página não publicada", { status: 404 });
+        return notFoundResponse("Esta página não está mais publicada.");
       }
     }
     const title = lp?.name ?? "Página";
@@ -82,12 +101,12 @@ ${body}
   // ─── WordPress page (legacy / cópia importada) ──────────────────
   const index = await getPublishedBySlug(decoded);
   if (!index) {
-    return new NextResponse("Página não encontrada", { status: 404 });
+    return notFoundResponse("Esta página não existe ou saiu do ar.");
   }
 
   const content = await loadContent(index.domain, index.slug);
   if (!content || !content.published) {
-    return new NextResponse("Página não publicada", { status: 404 });
+    return notFoundResponse("Esta página não está mais publicada.");
   }
 
   // Limpa qualquer artefato do editor antes de servir publicamente

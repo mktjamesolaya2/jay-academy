@@ -2,7 +2,30 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-16 — **5 LPs de venda otimizadas no padrão magic-shadow, slugs = WordPress, checkout do Remove corrigido**
+> **Última atualização**: 2026-07-16 — **Prontidão de migração de domínio: blob morto consertado, forms blindados, 68/68 URLs cobertas**
+
+---
+
+## 🆕 Sessão 2026-07-16 (parte 3) — Prontidão pra troca de domínio (jayacademy.com.br → Vercel)
+
+Verificação profunda pré-migração (3 frentes: superfície do app, sitemap do WP vivo, auditoria runtime das LPs) e correções. Commits `5c318c6`…`342c258` +404 branded.
+
+**Consertado (já estava quebrado em produção!):**
+- **Blob Vercel morto** (`hasn2c5edrrndxdo` → 403): ~440 refs de fontes woff2, ekiticons, flags do campo de telefone e fundos, dentro de 38 CSS do `/wpmirror/` → **99/107 assets recuperados** em [public/wpmirror/blobfix/](../public/wpmirror/blobfix/) (fontes do WP vivo; Playfair da Google Fonts; ekiticons/cross-out do SVN oficial; flags do jsdelivr). 8 fundos irrecuperáveis (não existem em lugar nenhum) tiveram as regras CSS mortas removidas. **0 refs ao blob no repo.** Tipografia/ícones das 4 LPs /wpmirror voltaram.
+
+**Blindado pra migração:**
+- **Forms popup Elementor (15/LP)**: postavam pro `admin-ajax.php` do WP (morreria). Novo [app/api/elementor-form/route.ts](../app/api/elementor-form/route.ts) recebe o POST nativo do Elementor Pro, grava em `form-submissions:wp:<slug>` (painel /forms) e reusa webhook/redirect da página KV gêmea. `ajaxurl` reescrito nas 5 LPs. Testado end-to-end.
+- **Assets runtime dos plugins**: dialog/lightbox/swiper/font-awesome (elementor/-pro) + intl-tel-input (utils.js, bandeiras) espelhados em [public/wp-plugins/](../public/wp-plugins/); `urls.assets`/`pluginDir` reescritos. **0 refs remotas de plugin nas 5 LPs.**
+- **Cobertura do sitemap**: one-shot `?publishsitemap=1` publicou as **61 páginas** do KV nos slugs originais → **68/68 URLs do site atual respondem 200 na Vercel** (servidas pelo `/p/[slug]` com delazy+tracking; assets delas seguem no Supabase, decisão da parte 1).
+- **SEO/acabamento**: `app/robots.ts`, `app/sitemap.ts` (dinâmico: LPs + `listPublished()`), 404 branded (`not-found.tsx` + `notFoundResponse()` no `/p/[slug]`, já que o catch-all não deixa o not-found.tsx renderizar), `PMU_LINK` relativo.
+
+**⚠️ CHECKLIST DA TROCA DE DNS (quando decidir apontar):**
+1. **Pendência consciente: homepage** — a raiz `/` hoje é o lobby do painel admin (decisão do Lucas em 16/jul: resolver antes do apontamento; a página "inicio" do WP existe no KV, basta decidir servir).
+2. Na Vercel (projeto jay-academy): Settings → Domains → adicionar `jayacademy.com.br` (apex) **e** `www.jayacademy.com.br` (redirect www→apex).
+3. No registrador do domínio: apontar A/ALIAS do apex e CNAME do www conforme a Vercel instruir.
+4. Baixar/exportar o que mais importar do WordPress ANTES de desligar o servidor dele (uploads já espelhados; considerar dump do banco por segurança).
+5. Pós-apontamento: rodar o QA (`qa-migration.mjs` + `coverage-check.mjs` no scratchpad da sessão, adaptando a base URL pro domínio) e conferir os redirects 308 dos slugs antigos do fio a fio.
+6. O cron diário (`/api/cron/publish`) e os endpoints one-shot continuam funcionando — nada muda.
 
 ---
 
