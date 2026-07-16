@@ -2,8 +2,10 @@ import Link from "next/link";
 import {
   FileCheck2,
   AlertTriangle,
+  BarChart3,
   ChevronRight,
   ChevronDown,
+  Inbox,
   MoreHorizontal,
   Globe,
   Layout,
@@ -34,21 +36,56 @@ import { canEdit, getCurrentUser } from "@/lib/auth";
 import { readActivityLog } from "@/lib/activity-log";
 import { ActivityFeed, DeploysFeed } from "@/components/admin-feeds";
 import { getNotifications, unreadCount } from "@/lib/notifications";
+import { getAllPageStats } from "@/lib/analytics-store";
+import { listAllSubmissions, listForms } from "@/lib/forms-store";
+import { listBuilderSlugs } from "@/lib/page-builder-store";
+import {
+  assembleCatalog,
+  catalogCounts,
+  sourceColors,
+  sourceLabel,
+  sourceOrder,
+} from "@/lib/page-catalog";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [landingPages, savedWp, me, activity, notifications, groups, assignments] =
-    await Promise.all([
-      loadLps(),
-      listSaved(),
-      getCurrentUser(),
-      readActivityLog(200),
-      getNotifications(),
-      listGroups(),
-      getAssignments(),
-    ]);
+  const [
+    landingPages,
+    savedWp,
+    me,
+    activity,
+    notifications,
+    groups,
+    assignments,
+    builderSlugs,
+    forms,
+    pageStats,
+    leads,
+  ] = await Promise.all([
+    loadLps(),
+    listSaved(),
+    getCurrentUser(),
+    readActivityLog(200),
+    getNotifications(),
+    listGroups(),
+    getAssignments(),
+    listBuilderSlugs(),
+    listForms(),
+    getAllPageStats(),
+    listAllSubmissions(),
+  ]);
   const unread = unreadCount(notifications);
+
+  // Catálogo unificado (reusa as listas já carregadas — sem leitura dupla no KV)
+  const catalog = assembleCatalog({
+    lps: landingPages,
+    saved: savedWp,
+    builderSlugs,
+    forms,
+  });
+  const counts = catalogCounts(catalog);
+  const totalVisits = pageStats.reduce((sum, s) => sum + s.visits, 0);
 
   const activePages = landingPages.filter((lp) => !lp.trashed);
   // "Projetos" = páginas WP categorizadas OU publicadas (as importadas/publicadas
@@ -67,6 +104,19 @@ export default async function DashboardPage() {
   // que não são carimbados em várias edições (ex.: editar página WP) → vivia vazio.
   const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
   const now = Date.now();
+
+  // Deltas REAIS dos últimos 7 dias (substituem o "+ 4 esta semana" fake):
+  // publicações vêm do activity log já carregado; leads das submissões.
+  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+  const within7d = (iso?: string): boolean =>
+    !!iso && now - new Date(iso).getTime() <= SEVEN_DAYS_MS;
+  const publishedLast7d = activity.filter(
+    (a) => (a.kind === "wp.publish" || a.kind === "lp.create") && within7d(a.at)
+  ).length;
+  const leadsLast7d = leads.submissions.filter((s) =>
+    within7d(s.submittedAt)
+  ).length;
+  const recentLeads = leads.submissions.slice(0, 5);
   const isRecent = (iso?: string): boolean =>
     !!iso && now - new Date(iso).getTime() <= THREE_DAYS_MS;
   const EDIT_KINDS = new Set<string>([
@@ -184,22 +234,90 @@ export default async function DashboardPage() {
                 </p>
               </section>
 
-              {/* Stats */}
-              <section className="grid grid-cols-2 gap-4">
+              {/* Stats — números reais do catálogo, analytics e leads */}
+              <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
-                  label="Páginas ativas"
-                  value={totalPages}
-                  delta="+ 4 esta semana"
+                  label="Páginas publicadas"
+                  value={counts.byStatus.published ?? 0}
+                  delta={
+                    publishedLast7d > 0
+                      ? `+ ${publishedLast7d} esta semana`
+                      : "Nenhuma nova esta semana"
+                  }
                   icon={FileCheck2}
                   tint="violet"
+                  href="/paginas"
+                />
+                <StatCard
+                  label="Leads"
+                  value={leads.total}
+                  delta={
+                    leadsLast7d > 0
+                      ? `+ ${leadsLast7d} esta semana`
+                      : "Nenhum novo esta semana"
+                  }
+                  icon={Inbox}
+                  tint="emerald"
+                  href="/forms"
+                />
+                <StatCard
+                  label="Visitas"
+                  value={totalVisits}
+                  delta="Total acumulado"
+                  icon={BarChart3}
+                  tint="sky"
+                  href="/analytics"
                 />
                 <StatCard
                   label="Páginas com erro"
                   value={errorPages}
-                  delta="Ver detalhes"
+                  delta={errorPages > 0 ? "Ver detalhes" : "Tudo certo"}
                   icon={AlertTriangle}
                   tint="rose"
                 />
+              </section>
+
+              {/* Distribuição por tipo de página */}
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold text-white">
+                    Páginas por tipo
+                  </h2>
+                  <Link
+                    href="/paginas"
+                    className="text-xs text-neutral-500 hover:text-white transition inline-flex items-center gap-1"
+                  >
+                    Ver catálogo
+                    <ChevronRight size={12} strokeWidth={2.2} />
+                  </Link>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {sourceOrder.map((s) => {
+                    const n = counts.bySource[s];
+                    if (!n) return null;
+                    const c = sourceColors[s];
+                    return (
+                      <Link
+                        key={s}
+                        href={`/paginas?fonte=${s}`}
+                        className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full ring-1 transition hover:brightness-125 ${c.bg} ${c.text}`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
+                        {sourceLabel[s]} · {n}
+                      </Link>
+                    );
+                  })}
+                  {counts.collisions > 0 && (
+                    <Link
+                      href="/paginas"
+                      className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1.5 rounded-full ring-1 bg-amber-500/10 ring-amber-500/25 text-amber-300"
+                    >
+                      <AlertTriangle size={11} strokeWidth={2.2} />
+                      {counts.collisions}{" "}
+                      {counts.collisions === 1 ? "colisão de slug" : "colisões de slug"}
+                    </Link>
+                  )}
+                </div>
               </section>
 
               {/* Quick Actions */}
@@ -212,6 +330,55 @@ export default async function DashboardPage() {
                   canEdit={userCanEdit}
                 />
               </section>
+
+              {/* Leads recentes — captados pelos forms nativos e das LPs */}
+              {recentLeads.length > 0 && (
+                <section>
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-sm font-semibold text-white">
+                      Leads recentes
+                    </h2>
+                    <Link
+                      href="/forms"
+                      className="text-xs text-neutral-500 hover:text-white transition inline-flex items-center gap-1"
+                    >
+                      Ver todos
+                      <ChevronRight size={12} strokeWidth={2.2} />
+                    </Link>
+                  </div>
+                  <div className="border border-[#1f1f1f] rounded-xl divide-y divide-[#161616] overflow-hidden">
+                    {recentLeads.map((lead) => (
+                      <div
+                        key={lead.id}
+                        className="flex items-center gap-3 px-4 py-3 bg-[#0d0d0d]"
+                      >
+                        <span className="w-8 h-8 rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/25 flex items-center justify-center text-emerald-300 text-xs font-bold shrink-0">
+                          {(lead.name || "?").trim().charAt(0).toUpperCase()}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-white font-semibold truncate">
+                            {lead.name || "Sem nome"}
+                          </p>
+                          <p className="text-[11px] text-neutral-500 truncate">
+                            {lead.email}
+                            {lead.whatsapp ? ` · ${lead.whatsapp}` : ""}
+                          </p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-[11px] text-neutral-400 font-mono truncate max-w-[160px]">
+                            {lead.formId.startsWith("wp:")
+                              ? `/${lead.formId.slice(3)}`
+                              : lead.formId}
+                          </p>
+                          <p className="text-[11px] text-neutral-600">
+                            {relativeTime(lead.submittedAt)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               {/* Recentes */}
               <ProjectsSection
@@ -259,12 +426,27 @@ export default async function DashboardPage() {
   );
 }
 
+const STAT_TINTS = {
+  violet: "bg-violet-500/10 ring-violet-500/25 text-violet-300",
+  emerald: "bg-emerald-500/10 ring-emerald-500/25 text-emerald-300",
+  sky: "bg-sky-500/10 ring-sky-500/25 text-sky-300",
+  rose: "bg-rose-500/10 ring-rose-500/25 text-rose-300",
+} as const;
+
+const STAT_LABEL_TINTS = {
+  violet: "text-violet-300",
+  emerald: "text-emerald-300",
+  sky: "text-sky-300",
+  rose: "text-rose-300",
+} as const;
+
 function StatCard({
   label,
   value,
   delta,
   icon: Icon,
   tint,
+  href,
 }: {
   label: string;
   value: number;
@@ -274,40 +456,40 @@ function StatCard({
     strokeWidth?: number;
     className?: string;
   }>;
-  tint: "violet" | "rose";
+  tint: keyof typeof STAT_TINTS;
+  href?: string;
 }) {
-  const tintClasses =
-    tint === "violet"
-      ? "bg-violet-500/10 ring-violet-500/25 text-violet-300"
-      : "bg-rose-500/10 ring-rose-500/25 text-rose-300";
-  return (
-    <div
-      className={
-        tint === "rose"
-          ? "bg-[#0d0d0d] border border-rose-500/20 rounded-xl p-5"
-          : "bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl p-5"
-      }
-    >
+  const body = (
+    <>
       <div className="flex items-start justify-between mb-3">
-        <p
-          className={
-            tint === "rose"
-              ? "text-xs font-medium text-rose-300"
-              : "text-xs font-medium text-violet-300"
-          }
-        >
+        <p className={`text-xs font-medium ${STAT_LABEL_TINTS[tint]}`}>
           {label}
         </p>
         <span
-          className={`w-9 h-9 rounded-lg ring-1 flex items-center justify-center ${tintClasses}`}
+          className={`w-9 h-9 rounded-lg ring-1 flex items-center justify-center ${STAT_TINTS[tint]}`}
         >
           <Icon size={14} strokeWidth={2} />
         </span>
       </div>
       <p className="text-3xl font-bold text-white tracking-tight">{value}</p>
       <p className="text-xs text-neutral-500 mt-1.5">{delta}</p>
-    </div>
+    </>
   );
+  const boxClass =
+    tint === "rose"
+      ? "bg-[#0d0d0d] border border-rose-500/20 rounded-xl p-5"
+      : "bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl p-5";
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={`${boxClass} block hover:border-neutral-700 transition`}
+      >
+        {body}
+      </Link>
+    );
+  }
+  return <div className={boxClass}>{body}</div>;
 }
 
 function QuickAction({

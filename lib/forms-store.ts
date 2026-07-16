@@ -124,6 +124,27 @@ export async function addSubmission(
   await kvSet(submissionsKey(submission.formId), next);
 }
 
+/**
+ * Todas as submissões de todos os formulários (nativos e dos forms das LPs,
+ * chaves `form-submissions:*` — inclui `form-submissions:wp:<slug>` do
+ * /api/elementor-form), ordenadas da mais nova pra mais antiga.
+ * Usado no dashboard (total de leads + lista de recentes).
+ */
+export async function listAllSubmissions(): Promise<{
+  total: number;
+  submissions: FormSubmission[];
+}> {
+  const keys = await kvKeys("form-submissions:*");
+  const lists = await Promise.all(
+    keys.map((k) => kvGet<FormSubmission[]>(k))
+  );
+  const submissions = lists
+    .filter((l): l is FormSubmission[] => Array.isArray(l))
+    .flat()
+    .sort((a, b) => (b.submittedAt ?? "").localeCompare(a.submittedAt ?? ""));
+  return { total: submissions.length, submissions };
+}
+
 export function slugify(input: string): string {
   return input
     .toLowerCase()
