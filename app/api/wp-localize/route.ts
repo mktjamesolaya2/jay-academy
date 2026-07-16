@@ -453,6 +453,62 @@ export async function GET(req: Request) {
   }
 
   // ── Diagnóstico da biblioteca de mídia ──
+  // ── Lista TODO o bucket S3 (Supabase) server-side: ?supalist=1 ──
+  // Usa as envs S3_* já configuradas. Retorna todas as keys sob wpmirror/ com tamanho,
+  // pra permitir baixar o espelho completo antes do supafix.
+  if (url.searchParams.get("supalist") === "1") {
+    const envv = (n: string) => (process.env[n] || "").trim();
+    const endpoint = envv("S3_ENDPOINT").replace(/\/$/, "");
+    const bucket = envv("S3_BUCKET");
+    if (!endpoint || !bucket) {
+      return NextResponse.json({ ok: false, error: "envs S3_* ausentes" });
+    }
+    const { AwsClient } = await import("aws4fetch");
+    const client = new AwsClient({
+      accessKeyId: envv("S3_ACCESS_KEY_ID"),
+      secretAccessKey: envv("S3_SECRET_ACCESS_KEY"),
+      service: "s3",
+      region: envv("S3_REGION") || "auto",
+    });
+    const files: { key: string; size: number }[] = [];
+    let token = "";
+    for (let page = 0; page < 20; page++) {
+      const qs = new URLSearchParams({
+        "list-type": "2",
+        prefix: "wpmirror/",
+        "max-keys": "1000",
+      });
+      if (token) qs.set("continuation-token", token);
+      const res = await client.fetch(`${endpoint}/${bucket}?${qs}`, {
+        method: "GET",
+      });
+      if (!res.ok) {
+        return NextResponse.json({
+          ok: false,
+          error: `list falhou: ${res.status} ${await res.text()}`,
+        });
+      }
+      const xml = await res.text();
+      for (const m of xml.matchAll(
+        /<Key>([^<]+)<\/Key>(?:[\s\S]*?)<Size>(\d+)<\/Size>/g
+      )) {
+        files.push({ key: m[1], size: parseInt(m[2], 10) });
+      }
+      const next = xml.match(
+        /<NextContinuationToken>([^<]+)<\/NextContinuationToken>/
+      );
+      if (!next || !/<IsTruncated>true<\/IsTruncated>/.test(xml)) break;
+      token = next[1];
+    }
+    const totalBytes = files.reduce((a, f) => a + f.size, 0);
+    return NextResponse.json({
+      ok: true,
+      totalFiles: files.length,
+      totalMB: Math.round(totalBytes / 1024 / 102.4) / 10,
+      files,
+    });
+  }
+
   // ── Auditoria/correção de URLs Supabase no KV (migração wpmirror → /wpmirror local) ──
   //   ?supascan=1 → relatório: quais chaves do KV ainda apontam pro Supabase
   //   ?supafix=1  → reescreve o prefixo Supabase pra /wpmirror/ (assets já no repo)
