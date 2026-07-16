@@ -2,7 +2,26 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-16 — **Prontidão de migração de domínio: blob morto consertado, forms blindados, 68/68 URLs cobertas**
+> **Última atualização**: 2026-07-16 — **Dashboard com dados reais + catálogo unificado de tipos de página (/paginas)**
+
+---
+
+## 🆕 Sessão 2026-07-16 (parte 4) — Dashboard melhorado + catálogo de tipos de página
+
+O portal tinha 6 padrões de página pública sem visão unificada — e as **8 LPs de venda de `lp-html/` (o trabalho diário) eram invisíveis no painel**. Commits `50eec20`…`391f60a`.
+
+**Taxonomia unificada (sem novo store — agregação em memória):**
+- [lib/lp-html-registry.ts](../lib/lp-html-registry.ts): registro versionado das 8 LPs de `lp-html/` + 2 redirects 308. **Regra: criou/removeu route handler de lp-html → atualiza o registro** (o teste `lib/page-catalog.test.ts` FALHA se dessincronizar).
+- [lib/page-catalog.ts](../lib/page-catalog.ts) (+ `page-catalog-core.ts` puro/testável): `buildPageCatalog()` agrega LPs do painel + WP + builder + forms + registro. Fontes: `lp-html | embedded-kv | builder | wp-mirror | react | redirect`. Detecta **colisão de slug entre camadas** (handler dedicado sombreia catch-all silenciosamente — agora aparece com alerta).
+- Campo `contentSource` em `LandingPage` substitui os slugs hardcoded que decidiam o editor em `/lps/[slug]` (fallback heurístico pra registros antigos do KV).
+
+**Painel:**
+- **Nova tela `/paginas`** ("Todas as páginas"): tabela com fonte/categoria/status, chips de filtro com contagens, busca, ações abrir/editar/gerenciar, alerta de colisão. Sidebar: grupo "URLs" → "Páginas". Busca ⌘K acha as LPs de lp-html.
+- **Dashboard**: 4 StatCards reais (Publicadas com delta real do activity log — **fim do "+ 4 esta semana" fake** —, Leads com delta 7d, Visitas do analytics-store, Erros), seção "Leads recentes" (novo `listAllSubmissions` em forms-store cobre `form-submissions:*` incl. `wp:<slug>`), seção "Páginas por tipo" com chips → /paginas.
+- **/lps**: seção "LPs do repositório" (cards read-only das 7 de venda, com visitas/leads).
+- **/settings**: fim dos "planejado" falsos — mostra auth própria, storage ativo por env, deploy real.
+
+**Verificado:** 11 testes verdes; typecheck limpo; todas as telas admin 200 (QA local com sessão dev via proxy); rotas públicas smoke 200 inalteradas. **Legado:** `public/recriadas/inmersion-pelo-a-pelo` está EM USO (o HTML referencia esses assets — não remover); todos os `public/lp/*` referenciados.
 
 ---
 
