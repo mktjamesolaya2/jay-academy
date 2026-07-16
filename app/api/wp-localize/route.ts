@@ -509,6 +509,122 @@ export async function GET(req: Request) {
     });
   }
 
+  // ── Limpeza de órfãos no bucket S3: ?supaclean=1 (dry-run) / &confirm=1 (deleta) ──
+  // Deleta APENAS objetos wpmirror/ que nenhum valor do KV referencia.
+  if (url.searchParams.get("supaclean") === "1") {
+    const confirm = url.searchParams.get("confirm") === "1";
+    const envv = (n: string) => (process.env[n] || "").trim();
+    const endpoint = envv("S3_ENDPOINT").replace(/\/$/, "");
+    const bucket = envv("S3_BUCKET");
+    if (!endpoint || !bucket) {
+      return NextResponse.json({ ok: false, error: "envs S3_* ausentes" });
+    }
+    const { AwsClient } = await import("aws4fetch");
+    const client = new AwsClient({
+      accessKeyId: envv("S3_ACCESS_KEY_ID"),
+      secretAccessKey: envv("S3_SECRET_ACCESS_KEY"),
+      service: "s3",
+      region: envv("S3_REGION") || "auto",
+    });
+    const dec = (s: string) => {
+      try {
+        return decodeURIComponent(s);
+      } catch {
+        return s;
+      }
+    };
+
+    // 1. Conjunto de paths referenciados em TODO o KV (forma decodificada)
+    const referenced = new Set<string>();
+    const PATH_RE = /wpmirror\/([^\s"'<>)\\,?#&]+)/g;
+    for (const key of await kvKeys("*")) {
+      try {
+        const value = await kvGet<unknown>(key);
+        if (value == null) continue;
+        const asStr = JSON.stringify(value);
+        if (!asStr.includes("brbpjjqigpmxombzbxiu")) continue;
+        for (const m of asStr.replace(/\\/g, "").matchAll(PATH_RE)) {
+          referenced.add(dec(m[1]));
+        }
+      } catch {
+        // chave ilegível: por segurança, aborta (não arrisca deletar algo referenciado)
+        return NextResponse.json({ ok: false, error: `kvGet falhou em ${key}` });
+      }
+    }
+
+    // 2. Lista o bucket e separa os órfãos
+    const orphans: { key: string; size: number }[] = [];
+    let token = "";
+    for (let pageN = 0; pageN < 20; pageN++) {
+      const qs = new URLSearchParams({
+        "list-type": "2",
+        prefix: "wpmirror/",
+        "max-keys": "1000",
+      });
+      if (token) qs.set("continuation-token", token);
+      const res = await client.fetch(`${endpoint}/${bucket}?${qs}`, {
+        method: "GET",
+      });
+      if (!res.ok) {
+        return NextResponse.json({ ok: false, error: `list: ${res.status}` });
+      }
+      const xml = await res.text();
+      for (const m of xml.matchAll(
+        /<Key>([^<]+)<\/Key>(?:[\s\S]*?)<Size>(\d+)<\/Size>/g
+      )) {
+        const rel = dec(m[1].replace(/^wpmirror\//, ""));
+        if (!referenced.has(rel)) {
+          orphans.push({ key: m[1], size: parseInt(m[2], 10) });
+        }
+      }
+      const next = xml.match(
+        /<NextContinuationToken>([^<]+)<\/NextContinuationToken>/
+      );
+      if (!next || !/<IsTruncated>true<\/IsTruncated>/.test(xml)) break;
+      token = next[1];
+    }
+    const orphanMB =
+      Math.round(orphans.reduce((a, f) => a + f.size, 0) / 1024 / 102.4) / 10;
+
+    if (!confirm) {
+      return NextResponse.json({
+        ok: true,
+        mode: "dry-run (use &confirm=1 pra deletar)",
+        referenced: referenced.size,
+        orphans: orphans.length,
+        orphanMB,
+        sample: orphans.slice(0, 20).map((o) => o.key),
+      });
+    }
+
+    // 3. Deleta com pool de 20
+    let deleted = 0;
+    const failures: string[] = [];
+    const queue = [...orphans];
+    async function delWorker() {
+      while (queue.length) {
+        const o = queue.shift();
+        if (!o) break;
+        const objUrl = `${endpoint}/${bucket}/${o.key
+          .split("/")
+          .map((s) => encodeURIComponent(dec(s)))
+          .join("/")}`;
+        const res = await client.fetch(objUrl, { method: "DELETE" });
+        if (res.ok || res.status === 404) deleted++;
+        else failures.push(`${res.status} ${o.key}`);
+      }
+    }
+    await Promise.all(Array.from({ length: 20 }, delWorker));
+    return NextResponse.json({
+      ok: true,
+      mode: "confirm",
+      deleted,
+      failed: failures.length,
+      failures: failures.slice(0, 10),
+      freedMB: orphanMB,
+    });
+  }
+
   // ── Auditoria/correção de URLs Supabase no KV (migração wpmirror → /wpmirror local) ──
   //   ?supascan=1 → relatório: quais chaves do KV ainda apontam pro Supabase
   //   ?supafix=1  → reescreve o prefixo Supabase pra /wpmirror/ (assets já no repo)
