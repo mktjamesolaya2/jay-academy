@@ -58,15 +58,50 @@ export default async function SettingsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-5xl">
             <Section title="Domínio" description="O portal vai viver em jayacademy.com.br">
               <Row label="Domínio principal" value="jayacademy.com.br" muted />
-              <Row label="Status DNS" value="Não configurado" muted />
+              <Row
+                label="Status DNS"
+                value="Aguardando apontamento (checklist em notas/)"
+                muted
+              />
+              <Row label="URL atual" value="jay-academy.vercel.app" />
             </Section>
 
             <Section
               title="Autenticação"
               description="Quem pode acessar o painel admin"
             >
-              <Row label="Provider" value="Clerk (planejado)" muted />
-              <Row label="Bypass dev" value="Ativo" />
+              <Row label="Provider" value="Própria — JWT (jose) + bcrypt" />
+              <Row label="Papéis" value="senior · admin · viewer" />
+              <Row
+                label="AUTH_SECRET"
+                value={process.env.AUTH_SECRET ? "Configurado" : "Padrão de dev (trocar!)"}
+                muted={!process.env.AUTH_SECRET}
+              />
+            </Section>
+
+            <Section
+              title="Armazenamento"
+              description="Onde os dados e arquivos do portal vivem"
+            >
+              <Row
+                label="KV (páginas, forms, leads)"
+                value={
+                  process.env.KV_REST_API_URL
+                    ? "Vercel KV"
+                    : "Arquivo local (data/) — modo dev"
+                }
+                muted={!process.env.KV_REST_API_URL}
+              />
+              <Row
+                label="Upload de arquivos"
+                value={
+                  process.env.S3_ENDPOINT || process.env.R2_ACCOUNT_ID
+                    ? "S3-compatível (Supabase Storage)"
+                    : process.env.BLOB_READ_WRITE_TOKEN
+                      ? "Vercel Blob"
+                      : "public/uploads local — modo dev"
+                }
+              />
             </Section>
 
             <Section
@@ -83,10 +118,13 @@ export default async function SettingsPage() {
               <Row label="OpenRouter" value="Configurado no PMU CLASS" />
             </Section>
 
-            <Section title="Deploy" description="Quando estiver pronto, via Vercel">
-              <Row label="Plataforma" value="Vercel (planejado)" muted />
-              <Row label="Estratégia" value="Path-based + rewrites" />
-              <Row label="Estado" value="Não deployado" muted />
+            <Section title="Deploy" description="Automático a cada push na main">
+              <Row label="Plataforma" value="Vercel (projeto jay-academy)" />
+              <Row label="Gatilho" value="Push na branch main (GitHub)" />
+              <Row
+                label="Cron"
+                value="Publicação agendada diária às 9h (/api/cron/publish)"
+              />
             </Section>
 
             {isSenior && (
