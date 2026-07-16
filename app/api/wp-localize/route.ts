@@ -19,7 +19,7 @@ import {
 } from "@/lib/wp-localize";
 import { listMedia } from "@/lib/media-store";
 import { listPages } from "@/lib/media-pages-store";
-import { blobUpload } from "@/lib/storage";
+import { blobUpload, kvGet, kvKeys, kvSet } from "@/lib/storage";
 
 // Backfill de localização: baixa os assets do WP das páginas já copiadas.
 // Abra ESTE link no navegador (logado como admin):
@@ -453,6 +453,79 @@ export async function GET(req: Request) {
   }
 
   // ── Diagnóstico da biblioteca de mídia ──
+  // ── Auditoria/correção de URLs Supabase no KV (migração wpmirror → /wpmirror local) ──
+  //   ?supascan=1 → relatório: quais chaves do KV ainda apontam pro Supabase
+  //   ?supafix=1  → reescreve o prefixo Supabase pra /wpmirror/ (assets já no repo)
+  if (
+    url.searchParams.get("supascan") === "1" ||
+    url.searchParams.get("supafix") === "1"
+  ) {
+    const fix = url.searchParams.get("supafix") === "1";
+    const SUPA_HOST = "brbpjjqigpmxombzbxiu";
+    // Prefixo cru e variante com \/ (HTML com JSON embutido)
+    const RAW_RE =
+      /https:\/\/brbpjjqigpmxombzbxiu\.supabase\.co\/storage\/v1\/object\/public\/media\/wpmirror\//g;
+    const ESC_RE =
+      /https:\\\/\\\/brbpjjqigpmxombzbxiu\.supabase\.co\\\/storage\\\/v1\\\/object\\\/public\\\/media\\\/wpmirror\\\//g;
+    const PATH_RE =
+      /wpmirror\/([^\s"'<>)\\,?#&]+)/g;
+
+    function walk(value: unknown, onString: (s: string) => string): unknown {
+      if (typeof value === "string") return onString(value);
+      if (Array.isArray(value)) return value.map((v) => walk(v, onString));
+      if (value && typeof value === "object") {
+        const out: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(value)) out[k] = walk(v, onString);
+        return out;
+      }
+      return value;
+    }
+
+    const keys = await kvKeys("*");
+    const hits: { key: string; count: number }[] = [];
+    const distinctPaths = new Set<string>();
+    let fixedKeys = 0;
+    let totalReplaced = 0;
+
+    for (const key of keys) {
+      try {
+        const value = await kvGet<unknown>(key);
+        if (value == null) continue;
+        const asStr = JSON.stringify(value);
+        if (!asStr.includes(SUPA_HOST)) continue;
+        let count = 0;
+        for (const m of asStr.replace(/\\/g, "").matchAll(PATH_RE)) {
+          distinctPaths.add(m[1]);
+          count++;
+        }
+        hits.push({ key, count });
+        if (fix) {
+          const rewritten = walk(value, (s) => {
+            const next = s
+              .replace(RAW_RE, "/wpmirror/")
+              .replace(ESC_RE, "\\/wpmirror\\/");
+            if (next !== s) totalReplaced++;
+            return next;
+          });
+          await kvSet(key, rewritten);
+          fixedKeys++;
+        }
+      } catch (e) {
+        console.error(`[supascan] falha na chave ${key}:`, e);
+        hits.push({ key, count: -1 });
+      }
+    }
+
+    return NextResponse.json({
+      mode: fix ? "supafix" : "supascan",
+      totalKeys: keys.length,
+      keysWithSupabase: hits.length,
+      hits,
+      distinctPaths: [...distinctPaths].sort(),
+      ...(fix ? { fixedKeys, stringsReplaced: totalReplaced } : {}),
+    });
+  }
+
   if (url.searchParams.get("mediastats") === "1") {
     const [media, pages] = [await listMedia(), await listPages()];
     const byHost: Record<string, number> = {};
