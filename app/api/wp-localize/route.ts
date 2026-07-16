@@ -453,6 +453,56 @@ export async function GET(req: Request) {
   }
 
   // ── Diagnóstico da biblioteca de mídia ──
+  // ── Publica em massa os slugs do sitemap do WordPress: ?publishsitemap=1 ──
+  // Pré-migração de domínio: garante que TODAS as URLs públicas do site atual
+  // respondam neste app nos slugs originais (servidas pelo pipeline /p/[slug]).
+  // Idempotente: pula já publicados e reporta conflitos sem sobrescrever.
+  if (url.searchParams.get("publishsitemap") === "1") {
+    const SITEMAP_SLUGS = [
+      "acao-contato-suporte","acao-jayremove-campanha-ciafol-apagar","acao-jayremove-campanha-ciafol-avaliar",
+      "acao-jayremove-campanha-ciafol-infinita","acao-jayremove-campanha-ciafol-triade","acao-lips-sense-campanha-bofu",
+      "acao-lips-sense-campanha-ciafol-cuidados","acao-lips-sense-campanha-ciafol-desenho","acao-lips-sense-campanha-ciafol-estrutura",
+      "acao-lips-sense-campanha-ciafol-fumante","acao-lips-sense-campanha-ciafol-melanina","acao-lips-sense-campanha-ciafol-neutraliza",
+      "acao-lips-sense-campanha-ciafol-risco","acao-lips-sense-campanha-mofu","acao-lips-sense-campanha-st-beauty",
+      "acao-lips-sense-campanha-stories","acao-lips-sense-campanha-tofu","acao-mshadow","acao-mshadow1",
+      "beautyempreenda","cadastro-palestra","campanha-vogue","campremove","ciafol-luz","ciafol-reparo",
+      "compra-aprovada-obrigado","condicao-especial-eventos","contato-inmersion","contato-instagram","contato-instagram-ia",
+      "curso-online-basic-magic-shadow-by-james-olaya","curso-online-basic-magic-shadow-by-james-olaya-promo",
+      "fio-a-fio-realista-by-james-olaya-up","fio-a-fio-realista-by-james-olaya-up-v2","jamesflix-remove",
+      "lips-sense-avancado-micropigmentacao-labial-estrategica","lips-sense-avancado-micropigmentacao-labial-estrategica-2",
+      "lp-lips-sense-technic-v1","lp-lips-sense-technic-v1b","magic-shadow-by-james-olaya","magic-shadow-by-james-olaya-up",
+      "magic-shadow-by-james-olaya-v2","magic-shadow-ciafol-bordas","magic-shadow-ciafol-escolhas","magic-shadow-ciafol-naturals",
+      "masterclass-prime-lips-by-james-olaya","obrigado-lips-sense-technic","pdv-lips-sense-technique-v2",
+      "pmu-class-super-oferta","pmu-pro","remove_ad_b","remove_ad_m","remove_fd_b","remove_fd_m","remove_st_b",
+      "remove_st_m","remove_st_t","stbrows","stnano","up-fio-a-fio-magic-shadow","up-pmuclass-1",
+    ];
+    const report = { published: [] as string[], alreadyPublished: [] as string[], noContent: [] as string[], conflicts: [] as string[] };
+    for (const slug of SITEMAP_SLUGS) {
+      try {
+        const existing = await getPublishedBySlug(slug);
+        const content = await loadContent("main", slug);
+        if (!content) { report.noContent.push(slug); continue; }
+        if (existing) {
+          if (existing.domain === "main" && existing.slug === slug) report.alreadyPublished.push(slug);
+          else report.conflicts.push(`${slug} -> ${existing.domain}:${existing.slug}`);
+          continue;
+        }
+        await setPublished(content, slug);
+        report.published.push(slug);
+      } catch (e) {
+        report.conflicts.push(`${slug}: ${e instanceof Error ? e.message : "erro"}`);
+      }
+    }
+    return NextResponse.json({
+      total: SITEMAP_SLUGS.length,
+      published: report.published.length,
+      alreadyPublished: report.alreadyPublished.length,
+      noContent: report.noContent,
+      conflicts: report.conflicts,
+      publishedSlugs: report.published,
+    });
+  }
+
   // ── Lista TODO o bucket S3 (Supabase) server-side: ?supalist=1 ──
   // Usa as envs S3_* já configuradas. Retorna todas as keys sob wpmirror/ com tamanho,
   // pra permitir baixar o espelho completo antes do supafix.

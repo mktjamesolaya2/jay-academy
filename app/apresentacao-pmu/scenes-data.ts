@@ -13,7 +13,7 @@ export type ChatGPTSuggestion = {
   rationale?: string;
 };
 
-export const PMU_LINK = "https://jay-academy.vercel.app/pmuclass";
+export const PMU_LINK = "/pmuclass"; // relativo: funciona no vercel.app e no domínio final
 
 export const CHATGPT_SUGGESTIONS: Record<string, ChatGPTSuggestion[]> = {
   vitrine: [
