@@ -2,7 +2,34 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-16 — **Desempenho + diagramação: LPs mais leves (−33MB webp), serving unificado, painel mais rápido/responsivo**
+> **Última atualização**: 2026-07-17 — **Backlog de segurança/leads/tracking CORRIGIDO (6 blocos): P0 fechados, CAPI dedup, caixa de leads**
+
+---
+
+## 🆕 Sessão 2026-07-17 (parte 6) — Correção do backlog: segurança P0, tracking CAPI, caixa de leads
+
+Os itens que a revisão geral (parte 5) mandou pro backlog foram **corrigidos**. Commits `5d385db`…`9bf3bb6` (6 blocos). Decisão: cadastro público → só o senior cria contas.
+
+**🔒 Segurança P0 (`5d385db`):**
+- `lib/auth-secret.ts`: segredo do JWT compartilhado; **fail-fast** se rodar na Vercel sem `AUTH_SECRET` (antes: fallback público forjável em auth.ts + middleware).
+- **Senha do senior fora do fonte** (`@Suporte123` removido) → env **`SENIOR_PASSWORD`** (setada na Vercel pelo Lucas). Sem ela em produção, login por senha do senior desabilitado.
+- **Cadastro público REMOVIDO** (`app/cadastro`, `signUpAction`, `signUp`): qualquer um criava viewer com acesso ao painel. Agora `adminCreateUser` + form em `/settings/users` (só senior cria).
+
+**🛡️ Hardening de endpoints (`1af523d`):**
+- `lib/rate-limit{,-core}.ts`: limiter por IP via KV (`kvIncr`+expire, sem dep externa; no-op no dev) + helpers testados (3 testes).
+- Rate-limit + cap de payload em `elementor-form`, `wp-form-submit`, `track`, `chat-pmu`, `meta-capi`.
+- **`/api/meta-capi` blindado**: allowlist de eventName + same-origin + rate-limit (fecha envenenamento de conversão).
+- `elementor-form`: catch loga (não perde lead silenciosamente). `wp-localize` destrutivos (supaclean/supafix) exigem header `x-portal-op: confirm` (anti-CSRF).
+
+**📊 CAPI por-visita (`ed2531b`):** `buildPixelInitScript` gera o eventId **no browser** (era fixo no build → Meta deduplicava todos num único PageView nas 8 LPs estáticas). O CAPI agora é disparado pelo cliente via `/api/meta-capi` com o mesmo id → dedup correta, página segue cacheável. Removido o CAPI server-side.
+
+**📥 Caixa de leads (`5c5522e`):** nova tela **`/leads`** — inbox de todos os leads (`form-submissions:*`) com origem por página, filtro, busca, **export CSV** e status de webhook. **Webhook por LP estática** (`lib/lp-form-config`, lido pelo elementor-form) configurável na própria tela — antes só existia se a LP tivesse gêmea no KV. Item na sidebar.
+
+**🔐 Headers + env (`9bf3bb6`):** `next.config` com nosniff/Referrer-Policy/HSTS global + X-Frame-Options só no admin (sem CSP estrita p/ não quebrar Pixel/GTM/Hotmart). `.env.example` documenta AUTH_SECRET/SENIOR_PASSWORD/CRON_SECRET.
+
+**⚙️ Envs a garantir na Vercel:** `AUTH_SECRET` (já existia), `SENIOR_PASSWORD` (setada nesta sessão). Recomendado setar `CRON_SECRET` (hoje os crons ficam abertos sem ela).
+
+**Ainda no backlog (não-P0):** otimizar mídia dos SPAs (magicshadow 170MB/pmuclass/laser — refs em bundles hasheados); backup automático + export externo; homepage `/` (segue lobby admin — bloqueador conhecido pré-DNS).
 
 ---
 
