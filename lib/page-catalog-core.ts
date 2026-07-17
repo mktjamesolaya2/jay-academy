@@ -93,7 +93,7 @@ export const sourceLabel: Record<PageSource, string> = {
   "lp-html": "HTML no repo",
   "embedded-kv": "HTML editável",
   builder: "Builder",
-  "wp-mirror": "Cópia WordPress",
+  "wp-mirror": "Página migrada",
   react: "Página do portal",
   redirect: "Redirect",
 };

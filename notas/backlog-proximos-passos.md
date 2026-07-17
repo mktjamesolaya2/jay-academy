@@ -51,7 +51,7 @@ James decidiu atacar 3 features em ordem:
 
 ### Outros caminhos guardados (não atacar agora)
 - Polimento visual — varrer rotas e refinar consistência
-- Recopiar 17 páginas WP antigas sem `fullHtml`
+- ~~Recopiar 17 páginas WP antigas sem `fullHtml`~~ **SUPERADO (17/07/2026)**: cobertura re-validada contra o sitemap do WP (68/68 na Vercel) nas sessões de 16/07; a UI de importação foi removida — usar `?wpcheck=1` como verificação
 - Deploy real em `jayacademy.com.br`
 
 ---
@@ -65,7 +65,7 @@ James decidiu atacar 3 features em ordem:
   - `/pmuclass/*` → deploy PMU CLASS
   - `/magicshadow/*` → deploy Magic Shadow 3
   - `/laser/*` → deploy Jayo Laser
-- **Decidir**: destino do WordPress atual (backup em `wp.`? redirects 301? morre?)
+- **Decidir**: destino do WordPress atual (backup em `wp.`? redirects 301? morre?) → **DECIDIDO (17/07/2026): morre** após backup (dump do banco + uploads) e `?wpcheck=1` retornando `ok:true` — ver checklist na sessão parte 7 do `progresso-atual.md`
 - **Decidir**: migrar `data/` JSON local pra Vercel KV / Postgres / Supabase
 
 ### 2. Analytics
@@ -73,10 +73,8 @@ James decidiu atacar 3 features em ordem:
 - Decidir: por sub-projeto ou global no portal?
 - Exibir métricas básicas no card de cada LP (visits, leads, conversão)
 
-### 3. Recopiar páginas WP antigas
-- 17 das 18 páginas em `data/wp-content/` podem ter sido baixadas antes do fix do `fullHtml`
-- **Ação**: `/wordpress` → "Copiar agora" → "Recopiar todas (sobrescreve)"
-- **Verificar antes**: rodar diff numa página pra confirmar que `fullHtml` tá vazio nas antigas
+### 3. ~~Recopiar páginas WP antigas~~ SUPERADO (17/07/2026)
+- O diretório `data/wp-content/` não existe mais; o conteúdo vive no KV de produção e a cobertura foi re-validada contra o sitemap do WP (68/68). A UI de importação (`/wordpress`) foi removida — verificação atual: `/api/wp-localize?wpcheck=1`
 
 ### 4. Sistema de notificações in-app (toast)
 - Hoje: ações concluídas via redirect+revalidate, sem feedback visual claro

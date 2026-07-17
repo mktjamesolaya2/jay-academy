@@ -2,7 +2,35 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-17 — **Backlog de segurança/leads/tracking CORRIGIDO (6 blocos): P0 fechados, CAPI dedup, caixa de leads**
+> **Última atualização**: 2026-07-17 — **Preparação final pro desligamento do WordPress: importação removida do painel, verificador `?wpcheck=1`, últimas refs de asset do WP espelhadas**
+
+---
+
+## 🆕 Sessão 2026-07-17 (parte 7) — Preparação final pro desligamento do WordPress
+
+Pergunta do usuário: "por que ainda existe a separação 'Páginas WP' no painel se a migração já aconteceu?" **Resposta da auditoria: a migração das PÁGINAS está completa** (95 copiadas no KV, 61 publicadas, 68/68 URLs do sitemap respondendo na Vercel). O rótulo `wp-mirror` não é resto de migração — é o mecanismo de serving/edição dessas páginas. O que ainda falava com o WP ao vivo era só a seção "Importar do WordPress" do painel. Limpeza feita:
+
+**🧹 Painel:**
+- **Seção "Importar do WordPress" REMOVIDA** de `/wp-pages` (e com ela `fetchAllWpPages` no render). Deletados os componentes órfãos: `import-by-link`, `wp-triage-tables`, `wp-page-row`, `copy-now-button`. `/wordpress` agora redireciona pra `/wp-pages` (sem âncora). Libs de import/localize (`lib/wp-api`, `wp-fetch-page`, `wp-localize*`, `import-actions`) mantidas — o pipeline de localização ainda as usa.
+- **Rótulos renomeados**: "Cópia WordPress" → **"Página migrada"** (`lib/page-catalog-core.ts`, badge + chips em `/paginas`); card mostra "Migrada do WordPress"; título do painel: "Páginas migradas".
+
+**✅ Verificador pré-desligamento (`/api/wp-localize?wpcheck=1`, admin, somente leitura):**
+JSON com: total/ativas/publicadas, páginas **sem `localizedAt`**, páginas com falhas de download de asset, e páginas cujo HTML servido ainda referencia `wp-content`/`wp-includes` do domínio legado. `ok: true` = pode desligar o WP. (Rodar de novo sempre que importar/editar algo.)
+
+**🖼️ Últimas refs de asset apontando pro servidor WP (fora do KV):**
+- `lp-html/fio-a-fio-realista-by-james-olaya.html`: bandeiras do gtranslate espelhadas em `public/wp-plugins/gtranslate/flags/svg/` (refs `//jayacademy.com.br/...` reescritas). Restam só strings de config escapadas do Elementor (inofensivas, não carregam nada).
+- **Bundle do PMU CLASS** (`public/pmuclass/assets/index-BNudAzTv.js`): tinha ~27 imagens de runtime servidas pelo WP (galerias + og). **Todas espelhadas** em `public/pmuclass/wp-uploads/{main,lp}/...` (5MB) e o bundle reescrito pra paths locais. ⚠️ Se o PMU CLASS for rebuildado a partir do fonte (outro repo), reaplicar essa troca de prefixo (`https://(lp.)jayacademy.com.br/wp-content/uploads/` → `/pmuclass/wp-uploads/{main,lp}/`).
+
+**⚖️ Decisões do usuário nesta sessão:**
+- **Homepage `/`: MANTER como está** (lobby admin) — deixou de ser bloqueador; é decisão consciente.
+- Painel: manter gestão separada das páginas migradas; só a importação sai.
+
+**📋 Checklist pra desligar o WordPress (ações do usuário):**
+1. Abrir `/api/wp-localize?wpcheck=1` logado como admin → precisa retornar `ok: true`.
+2. **Backup do WP antes de desligar**: dump do banco + pasta `wp-content/uploads` (não há cópia local das origens no repo).
+3. Confirmar envs na Vercel: `AUTH_SECRET`, `SENIOR_PASSWORD`, `KV_*`, storage; recomendado `CRON_SECRET`.
+4. Trocar o DNS de `jayacademy.com.br` / `lp.jayacademy.com.br` pra Vercel (checklist da sessão de 16/07 parte 3).
+5. Só então desligar o servidor WordPress.
 
 ---
 

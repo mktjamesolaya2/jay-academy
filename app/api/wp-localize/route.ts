@@ -19,7 +19,8 @@ import {
 } from "@/lib/wp-localize";
 import { listMedia } from "@/lib/media-store";
 import { listPages } from "@/lib/media-pages-store";
-import { blobUpload, kvGet, kvKeys, kvSet } from "@/lib/storage";
+import { blobUpload, kvGet, kvKeys, kvMget, kvSet } from "@/lib/storage";
+import type { WpPageContent } from "@/lib/wp-content-storage";
 
 // Backfill de localização: baixa os assets do WP das páginas já copiadas.
 // Abra ESTE link no navegador (logado como admin):
@@ -84,6 +85,99 @@ export async function GET(req: Request) {
       },
       { status: 403 }
     );
+  }
+
+  // ── Verificação pré-desligamento do WP: ?wpcheck=1 (JSON, somente leitura) ──
+  // Confere se TODAS as páginas copiadas estão independentes do servidor WP:
+  // (a) localizedAt preenchido e (b) nenhum asset wp-content/wp-includes do
+  // domínio legado sobrando no HTML servido. ok=true → pode desligar o WP.
+  if (url.searchParams.get("wpcheck") === "1") {
+    const WP_ASSET_RE =
+      /(?:https?:)?\/\/(?:lp\.)?jayacademy\.com\.br\/wp-(?:content|includes)\//g;
+    const keys = await kvKeys("wp:content:*");
+    const semLocalizacao: Array<{
+      domain: string;
+      slug: string;
+      published: boolean;
+      publicSlug?: string;
+    }> = [];
+    const comFalhas: Array<{
+      domain: string;
+      slug: string;
+      failed: number;
+      total: number;
+    }> = [];
+    const comAssetsWp: Array<{
+      domain: string;
+      slug: string;
+      published: boolean;
+      refs: number;
+      amostra: string[];
+    }> = [];
+    let total = 0;
+    let lixeira = 0;
+    let publicadas = 0;
+    // Lotes pequenos: cada valor traz o fullHtml inteiro da página.
+    const LOTE = 8;
+    for (let i = 0; i < keys.length; i += LOTE) {
+      const contents = await kvMget<WpPageContent>(keys.slice(i, i + LOTE));
+      for (const c of contents) {
+        if (!c) continue;
+        total++;
+        if (c.trashed) {
+          lixeira++;
+          continue;
+        }
+        if (c.published) publicadas++;
+        if (!c.localizedAt) {
+          semLocalizacao.push({
+            domain: c.domain,
+            slug: c.slug,
+            published: !!c.published,
+            publicSlug: c.publicSlug,
+          });
+        }
+        if ((c.localizeStats?.failed ?? 0) > 0) {
+          comFalhas.push({
+            domain: c.domain,
+            slug: c.slug,
+            failed: c.localizeStats!.failed,
+            total: c.localizeStats!.total,
+          });
+        }
+        // Cobre também URLs escapadas (\/) dentro de JSON embutido no HTML.
+        const html = `${c.fullHtml || ""}\n${c.content || ""}`.replace(
+          /\\\//g,
+          "/"
+        );
+        const matches = html.match(WP_ASSET_RE) || [];
+        if (matches.length > 0) {
+          comAssetsWp.push({
+            domain: c.domain,
+            slug: c.slug,
+            published: !!c.published,
+            refs: matches.length,
+            amostra: [...new Set(matches)].slice(0, 3),
+          });
+        }
+      }
+    }
+    const ok =
+      semLocalizacao.length === 0 &&
+      comAssetsWp.filter((p) => p.published).length === 0;
+    return NextResponse.json({
+      ok,
+      veredito: ok
+        ? "Pode desligar o WordPress: todas as páginas são independentes do servidor WP."
+        : "AINDA NÃO desligue o WordPress: resolva os itens abaixo antes.",
+      total,
+      lixeira,
+      ativas: total - lixeira,
+      publicadas,
+      semLocalizacao,
+      comFalhas,
+      comAssetsWp,
+    });
   }
 
   // ── Teste de upload no storage (confirma config do Supabase/S3) ──

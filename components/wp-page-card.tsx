@@ -38,7 +38,7 @@ export function WpPageCard({ page }: { page: WpCardData }) {
         </div>
 
         <p className="text-xs text-neutral-500 leading-relaxed">
-          Copiada do WordPress · {page.domain === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br"}
+          Migrada do WordPress · {page.domain === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br"}
         </p>
 
         <div className="mt-4 flex items-center gap-2 flex-wrap">
