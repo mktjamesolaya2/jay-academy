@@ -3,6 +3,7 @@ import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
+import { getLpFormConfig } from "@/lib/lp-form-config";
 
 // Substituto local do admin-ajax.php do WordPress para os formulários Elementor Pro
 // embutidos nas LPs estáticas (lp-html/). O ajaxurl dos HTMLs aponta pra cá; o JS do
@@ -78,16 +79,19 @@ export async function POST(req: Request) {
       slug = p.replace(/^\/+|\/+$/g, "").split("/")[0] || "lp";
     } catch {}
 
-    // Webhook/redirect da página gêmea no KV (se publicada e configurada no painel)
+    // Webhook/redirect: config explícita por LP (lp-form-config) tem prioridade;
+    // senão cai na página gêmea no KV (se publicada e configurada no painel).
     let webhookStatus: FormSubmission["webhookStatus"] = "skipped";
     let webhookError: string | undefined;
     let redirectUrl: string | null = null;
     const index = await getPublishedBySlug(slug).catch(() => null);
     const content = index ? await loadContent(index.domain, index.slug).catch(() => null) : null;
-    if (content?.formRedirectUrl) redirectUrl = content.formRedirectUrl;
-    if (content?.formWebhookUrl) {
+    const lpCfg = await getLpFormConfig(slug).catch(() => null);
+    const webhookUrl = lpCfg?.formWebhookUrl || content?.formWebhookUrl;
+    redirectUrl = lpCfg?.formRedirectUrl || content?.formRedirectUrl || null;
+    if (webhookUrl) {
       try {
-        const r = await fetch(content.formWebhookUrl, {
+        const r = await fetch(webhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -96,7 +100,7 @@ export async function POST(req: Request) {
             phone: whatsapp,
             whatsapp,
             submitted_at: new Date().toISOString(),
-            form_name: form.get("form_id")?.toString() || content.title,
+            form_name: form.get("form_id")?.toString() || content?.title || slug,
             form_slug: slug,
             source: "jayacademy.portal.lp-elementor",
             raw: fields,

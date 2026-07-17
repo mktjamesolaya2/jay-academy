@@ -10,6 +10,7 @@ import {
   Globe,
   Layout,
   LayoutGrid,
+  Inbox,
   FileText,
   FileStack,
   Image as ImageIcon,
@@ -196,6 +197,15 @@ export function SidebarShell({ user }: { user: SessionUser | null }) {
             </div>
           )}
 
+          <NavItem
+            href="/leads"
+            label="Leads"
+            icon={Inbox}
+            active={isActive("/leads")}
+            hideLabel={hideOnCollapse}
+            center={collapsed}
+            onNavigate={closeMobile}
+          />
           <NavItem
             href="/midia"
             label="Biblioteca de mídia"

@@ -14,6 +14,7 @@ const ADMIN_PREFIXES = [
   "/dashboard",
   "/analytics",
   "/forms",
+  "/leads",
   "/lixeira",
   "/lps",
   "/midia",
