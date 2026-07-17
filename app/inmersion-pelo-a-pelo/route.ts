@@ -1,30 +1,10 @@
-import { NextResponse } from "next/server";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { withTracking } from "@/lib/meta-tracking";
+import { serveLp } from "@/lib/serve-lp";
 
-// LP reconstruída, servida de arquivo estático commitado. Antes era servida
-// via rewrite direto de public/recriadas/inmersion-pelo-a-pelo/index.html
-// (sem tracking algum); agora passa por este route handler igual às demais
-// LPs custom, pra ganhar GTM/GA4-legado/Pixel/CAPI automaticamente via
-// withTracking(). Rota estática tem prioridade sobre o [slug] dinâmico.
-
+// Inmersión Pelo a Pelo — LP reconstruída, servida de lp-html/ como está (sem
+// de-lazy) + tracking canônico via serveLp(). Rota estática tem prioridade
+// sobre o [slug] dinâmico.
 export const dynamic = "force-static";
 
-export async function GET(req: Request) {
-  const raw = await readFile(
-    path.join(process.cwd(), "lp-html", "inmersion-pelo-a-pelo.html"),
-    "utf8"
-  );
-  const html = await withTracking(raw, {
-    isProductPage: true,
-    eventSourceUrl: req.url,
-    req,
-  });
-  return new NextResponse(html, {
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400",
-    },
-  });
+export function GET(req: Request) {
+  return serveLp(req, { file: "inmersion-pelo-a-pelo.html" });
 }

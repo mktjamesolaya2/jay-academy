@@ -1,23 +1,10 @@
-import { NextResponse } from "next/server";
-import { resolveEmbeddedHtml } from "@/lib/embedded-html-store";
-import { withTracking } from "@/lib/meta-tracking";
+import { serveLp } from "@/lib/serve-lp";
 
+// Magic Shadow — HTML editável no KV (via /lps/magic-shadow/edit-visual) +
+// tracking canônico via serveLp(). Cache curto (60s) pra edições aparecerem
+// rápido — antes era no-store, que forçava KV + CAPI em série a cada visita.
 export const dynamic = "force-dynamic";
 
-export async function GET(req: Request) {
-  const raw = await resolveEmbeddedHtml("magicshadow");
-  if (!raw) {
-    return new NextResponse("Página não encontrada", { status: 404 });
-  }
-  const html = await withTracking(raw, {
-    isProductPage: true,
-    eventSourceUrl: req.url,
-    req,
-  });
-  return new NextResponse(html, {
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-store, no-cache, must-revalidate",
-    },
-  });
+export function GET(req: Request) {
+  return serveLp(req, { embedded: "magicshadow" });
 }
