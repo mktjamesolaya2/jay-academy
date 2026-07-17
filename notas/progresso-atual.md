@@ -2,7 +2,33 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-16 — **Dashboard com dados reais + catálogo unificado de tipos de página (/paginas)**
+> **Última atualização**: 2026-07-16 — **Desempenho + diagramação: LPs mais leves (−33MB webp), serving unificado, painel mais rápido/responsivo**
+
+---
+
+## 🆕 Sessão 2026-07-16 (parte 5) — Desempenho + diagramação (revisão geral)
+
+Revisão geral do projeto (3 auditorias: segurança, código/perf, produto/UX) → o usuário priorizou **desempenho + diagramação**. Commits `9c4a165`…`7590c8e` (6 blocos).
+
+**Desempenho:**
+- **Poda de deploy**: `public/hf-src/` (10MB, 0 refs) removido + 6 arquivos órfãos (`lib/discover-lps.ts`, `components/{topbar,wp-saved-card,collapsible-section,detected-folder-card}.tsx`, `page-builder/public-renderer.tsx`) + `.vercelignore` (notas/ fora do deploy).
+- **Serving unificado** ([lib/serve-lp.ts](../lib/serve-lp.ts)): os 10 route handlers de LP (~250 linhas duplicadas) viram stubs de 3 linhas. HTML de disco cacheado em memória. **Cache-Control racional**: disco (muda em deploy) = `s-maxage=3600`; KV editável (magicshadow/laser) = `s-maxage=60`. Fim do `no-store` do magicshadow e do `15s` do laser. Paridade byte-a-byte confirmada.
+- **CAPI não-bloqueante**: `sendMetaCapiEvent` via `after()` em vez de `await` — some do TTFB o round-trip ao Facebook.
+- **Beacon de visita** nas 8 LPs de lp-html (antes: 0 visitas no painel) — `buildVisitBeacon` client-side injetado pelo serveLp; registra em `/api/track`. **Agora as LPs aparecem no analytics.**
+- **Mídia → webp**: 11 imagens pesadas (heros/provas de lips-sense, profissao-remove, wpmirror) via sharp q82: **34.1MB → 1.2MB (−96%, −33MB no deploy)**. Refs atualizadas (incl. escapadas), originais removidos, paridade visual confirmada por screenshot nas 4 LPs.
+- **Painel N+1**: `kvMget` (batch) em [lib/wp-content-storage.ts](../lib/wp-content-storage.ts) → `listSaved/listPublished/listTrashed` fazem **1 kvKeys + 1 kvMget** em vez de 1+~70 kvGet por render.
+
+**Diagramação:**
+- `wp-triage-tables`: era a única tabela com `overflow-hidden` (clipava no mobile) → `overflow-x-auto`. `min-w-0` em 11 telas do painel. Confirmado via CDP a 390px: **`bodyOverflow=false` em todas** as telas.
+
+**⚠️ FORA DE ESCOPO desta sessão (registrado no backlog — ver `backlog-proximos-passos.md`):** correções de **segurança P0** e **caixa de leads** que a auditoria achou. Os itens críticos:
+- 🔴 **Senha do senior hardcoded** (`@Suporte123` em [lib/auth.ts:47](../lib/auth.ts)) — mover pra env/KV.
+- 🔴 **AUTH_SECRET com fallback público** — se produção subir sem a env, JWT forjável como senior. Fazer **fail-fast** no boot.
+- 🔴 **/cadastro público** cria viewer que vê dashboard/analytics/volume de leads — fechar (convite/aprovação).
+- 🟠 **CAPI em página `force-static`**: eventId fixado no build → Meta deduplica TODOS os visitantes num único PageView. As 8 LPs de venda reportam ~1 PageView. **Corrigir com eventId por-visita client-side + CAPI via beacon** (mesma infra do /api/track).
+- 🟠 `/api/meta-capi` aberto (envenenamento de conversão); sem rate-limit nos forms públicos; GETs destrutivos (supaclean) via cookie = CSRF.
+- 🟡 **Caixa de leads das LPs**: os leads de `form-submissions:wp:*` não têm tela em `/forms` (só contagem + "recentes" no dashboard). Falta inbox filtrável + export CSV + webhook por LP estática.
+- SPAs (magicshadow 170MB/pmuclass/laser) com mídia pesada não otimizada — refs em bundles hasheados, exige cuidado.
 
 ---
 
