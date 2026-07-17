@@ -2,7 +2,7 @@ import "server-only";
 import { NextResponse } from "next/server";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { withTracking } from "@/lib/meta-tracking";
+import { withTracking, buildVisitBeacon } from "@/lib/meta-tracking";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 import { resolveEmbeddedHtml } from "@/lib/embedded-html-store";
 
@@ -74,14 +74,17 @@ export async function serveLp(
   let raw: string | null;
   let delazy = false;
   let cacheControl: string;
+  let slug: string;
 
   if ("embedded" in opts) {
     raw = await resolveEmbeddedHtml(opts.embedded);
     cacheControl = EMBEDDED_CACHE_CONTROL;
+    slug = opts.embedded;
   } else {
     raw = await readLpFile(opts.file);
     delazy = opts.delazy ?? false;
     cacheControl = DISK_CACHE_CONTROL;
+    slug = opts.file.replace(/\.html$/i, "");
   }
 
   if (!raw) {
@@ -89,11 +92,18 @@ export async function serveLp(
   }
 
   const prepared = delazy ? delazyPipeline(raw) : raw;
-  const html = await withTracking(prepared, {
+  let html = await withTracking(prepared, {
     isProductPage: true,
     eventSourceUrl: req.url,
     req,
   });
+  // Beacon de visita interna (client-side) — faz a LP aparecer no analytics
+  // do painel mesmo cacheada estática na borda. Append se não houver </body>
+  // (ex: laser é um shell de SPA sem tag de fechamento).
+  const beacon = buildVisitBeacon(slug);
+  html = /<\/body>/i.test(html)
+    ? html.replace(/<\/body>/i, `${beacon}\n</body>`)
+    : html + beacon;
 
   return new NextResponse(html, {
     headers: {

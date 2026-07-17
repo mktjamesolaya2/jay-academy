@@ -13,6 +13,7 @@
 // imperfeita até esses HTMLs serem editados manualmente pra remover o script
 // antigo (fora de escopo desta migração).
 
+import { after } from "next/server";
 import { withGoogleTag } from "@/lib/google-tag";
 import { sendMetaCapiEvent } from "@/lib/meta-capi";
 
@@ -157,14 +158,46 @@ export async function withMetaPixelBootstrap(
     out = injectBody(out, buildLeadPixelListener());
   }
 
-  await sendMetaCapiEvent({
+  // CAPI fora do caminho da resposta: after() mantém a função viva até o fetch
+  // ao Graph do Facebook terminar, sem somar a latência dele ao TTFB da página
+  // (antes era `await`, que travava a resposta nas rotas dinâmicas). Fallback
+  // pra promessa solta se after() não estiver disponível no contexto.
+  const capi = sendMetaCapiEvent({
     eventName: "PageView",
     eventId,
     eventSourceUrl: opts.eventSourceUrl,
     req: opts.req,
   });
+  try {
+    after(capi);
+  } catch {
+    void capi.catch(() => {});
+  }
 
   return out;
+}
+
+/**
+ * Beacon leve que registra a visita interna (1x por carregamento) no /api/track
+ * — client-side, então funciona mesmo com a página cacheada estática na borda.
+ * Mesmo script usado pelo /p/[slug]; aqui exportado pra que as LPs de lp-html/
+ * (servidas por serveLp) também apareçam no analytics do painel (antes: 0
+ * visitas). Usa origin absoluto pra furar qualquer <base href> remanescente.
+ */
+export function buildVisitBeacon(slug: string): string {
+  return `<script data-portal-track="1">
+(function(){
+  try {
+    var u = new URLSearchParams(window.location.search).get('utm_source') || '';
+    fetch(window.location.origin + '/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: ${JSON.stringify(slug)}, referrer: document.referrer || '', utm: u }),
+      keepalive: true
+    }).catch(function(){});
+  } catch (e) {}
+})();
+</script>`;
 }
 
 /** Composição única: GTM do portal + GA4 legado + verificação de domínio + Pixel/CAPI. */
