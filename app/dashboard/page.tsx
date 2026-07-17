@@ -92,7 +92,6 @@ export default async function DashboardPage() {
   // aparecem aqui mesmo sem categoria). As de triagem (sem categoria e não
   // publicadas) ficam só em Páginas WP.
   const categorizedWp = savedWp.filter((wp) => wp.placed || wp.published);
-  const totalPages = activePages.length + savedWp.length;
   const errorPages = activePages.filter((lp) => lp.status === "error").length;
   const userCanEdit = canEdit(me);
   // Apenas admin e senior veem o feed de atividade e deploys

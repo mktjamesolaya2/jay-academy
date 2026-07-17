@@ -105,16 +105,50 @@ async function loadAllContents(): Promise<WpPageContent[]> {
   return contents.filter((c): c is WpPageContent => c !== null);
 }
 
-export async function listPublished(): Promise<WpPageContent[]> {
-  return (await loadAllContents()).filter((c) => !!c.published);
-}
-
 function keyFor(domain: WpDomain, slug: string): string {
   return `wp:content:${domain}:${slug}`;
 }
 
+// ── Índice leve de resumos ──────────────────────────────────────────────────
+// As listagens do painel (listSaved/listPublished/listTrashed) só precisam de
+// título/status/slug/datas — NÃO do fullHtml (~250KB/página). Carregar o
+// conteúdo completo de ~96 páginas só pra listar dava ~24MB por render e
+// estourava o limite do KV. Mantemos um resumo minúsculo por página numa chave
+// própria `wp:summary:<domain>:<slug>` (valores pequenos, leitura barata e sem
+// corrida em ações em lote). `saveContent` grava o resumo; `deleteContent`
+// remove. Enquanto o índice não existir (1ª vez após deploy), cai no fallback
+// correto (leitura em lotes do conteúdo). Rebuild explícito via rebuildSummaryIndex.
+function summaryKey(domain: WpDomain, slug: string): string {
+  return `wp:summary:${domain}:${slug}`;
+}
+
+async function loadSummaries(): Promise<SavedSummary[]> {
+  const keys = await kvKeys("wp:summary:*");
+  if (keys.length > 0) {
+    const vals = await kvMget<SavedSummary>(keys);
+    return vals.filter((s): s is SavedSummary => s !== null);
+  }
+  // Índice ainda não construído → fallback correto (não escreve durante render).
+  return (await loadAllContents()).map(summarize);
+}
+
+/** Reconstrói o índice de resumos a partir do conteúdo completo (em lotes). */
+export async function rebuildSummaryIndex(): Promise<number> {
+  const contents = await loadAllContents();
+  for (const c of contents) {
+    await kvSet(summaryKey(c.domain, c.slug), summarize(c));
+  }
+  return contents.length;
+}
+
+export async function listPublished(): Promise<SavedSummary[]> {
+  return (await loadSummaries()).filter((s) => !!s.published);
+}
+
 export async function saveContent(c: WpPageContent): Promise<void> {
   await kvSet(keyFor(c.domain, c.slug), c);
+  // Mantém o índice leve em dia (choke point de escrita de toda mutação).
+  await kvSet(summaryKey(c.domain, c.slug), summarize(c));
 }
 
 export async function loadContent(
@@ -129,11 +163,13 @@ export async function deleteContent(
   slug: string
 ): Promise<void> {
   await kvDel(keyFor(domain, slug));
+  await kvDel(summaryKey(domain, slug));
 }
 
 export async function deleteAllContent(): Promise<void> {
   const keys = await kvKeys("wp:content:*");
-  await Promise.all(keys.map((k) => kvDel(k)));
+  const summaryKeys = await kvKeys("wp:summary:*");
+  await Promise.all([...keys, ...summaryKeys].map((k) => kvDel(k)));
 }
 
 export async function markPlaced(
@@ -190,21 +226,15 @@ function summarize(c: WpPageContent): SavedSummary {
 }
 
 export async function listSaved(): Promise<SavedSummary[]> {
-  const valid = await loadAllContents();
-  return valid
-    .filter((c) => !c.trashed)
-    .map(summarize)
+  return (await loadSummaries())
+    .filter((s) => !s.trashed)
     .sort((a, b) => b.fetchedAt.localeCompare(a.fetchedAt));
 }
 
 export async function listTrashed(): Promise<SavedSummary[]> {
-  const valid = await loadAllContents();
-  return valid
-    .filter((c) => c.trashed)
-    .map(summarize)
-    .sort((a, b) =>
-      (b.trashedAt ?? "").localeCompare(a.trashedAt ?? "")
-    );
+  return (await loadSummaries())
+    .filter((s) => s.trashed)
+    .sort((a, b) => (b.trashedAt ?? "").localeCompare(a.trashedAt ?? ""));
 }
 
 /** Soft delete — marca como trashed em vez de remover. */

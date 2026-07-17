@@ -112,7 +112,9 @@ export async function kvKeys(pattern: string): Promise<string[]> {
     try {
       const { kv } = await import("@vercel/kv");
       return await kv.keys(pattern);
-    } catch {
+    } catch (e) {
+      // Não mascarar falha de KV como "nenhuma chave" — logar antes do fallback.
+      console.error(`[storage] kvKeys("${pattern}") falhou:`, e);
       return [];
     }
   }
@@ -148,18 +150,29 @@ export async function kvIncr(key: string, windowSec: number): Promise<number> {
 }
 
 /**
- * Lê várias chaves de uma vez. No Vercel KV vira UM comando (kv.mget) em vez
- * de N kvGet individuais — corta o N+1 das listagens do painel (ex: listSaved
- * fazia 1 kvKeys + ~70 kvGet por render de tela). No fallback local mantém o
- * map (arquivos separados), mas em paralelo.
+ * Lê várias chaves de uma vez. No Vercel KV vira `kv.mget` — mas EM LOTES: um
+ * único mget sobre dezenas de valores grandes (ex: páginas WP com fullHtml de
+ * ~250KB) estoura o limite de resposta do Upstash e lança, o que antes virava
+ * "tudo null" silencioso e sumia com as páginas no painel. Fatiar em lotes
+ * mantém cada resposta abaixo do teto. No fallback local lê em paralelo.
  */
+const MGET_BATCH = 10;
+
 export async function kvMget<T>(keys: string[]): Promise<(T | null)[]> {
   if (keys.length === 0) return [];
   if (HAS_KV) {
     try {
       const { kv } = await import("@vercel/kv");
-      return await kv.mget<T[]>(...keys);
-    } catch {
+      const out: (T | null)[] = [];
+      for (let i = 0; i < keys.length; i += MGET_BATCH) {
+        const batch = keys.slice(i, i + MGET_BATCH);
+        const values = await kv.mget<T[]>(...batch);
+        out.push(...values);
+      }
+      return out;
+    } catch (e) {
+      // Não mascarar falha de KV como "0 páginas" — logar antes do fallback.
+      console.error(`[storage] kvMget de ${keys.length} chaves falhou:`, e);
       return keys.map(() => null);
     }
   }

@@ -95,8 +95,8 @@ export default async function PaginasPage({
                 Todas as páginas
               </h1>
               <p className="text-sm text-neutral-500 mt-1">
-                {counts.total} páginas públicas em {Object.keys(counts.bySource).length}{" "}
-                tipos
+                {counts.total} páginas · {counts.byStatus.published ?? 0} publicadas
+                {" "}em {Object.keys(counts.bySource).length} tipos
                 {counts.collisions > 0 && (
                   <span className="text-amber-300">
                     {" "}

@@ -7,6 +7,7 @@ import {
   setPublished,
   unsetPublished,
   getPublishedBySlug,
+  rebuildSummaryIndex,
   type WpDomain,
 } from "@/lib/wp-content-storage";
 import { fetchPageContent } from "@/lib/wp-fetch-page";
@@ -219,6 +220,25 @@ export async function GET(req: Request) {
       nota:
         "soRefsDeConfig = páginas que citam o domínio WP só em config do Elementor " +
         "(urls.assets/ajaxurl/uploadUrl/lottie) — o browser não faz request disso; é inerte.",
+    });
+  }
+
+  // ── Reconstrói o índice leve de resumos: ?rebuildindex=1 ──
+  // As listagens do painel leem `wp:summary:*` (resumo minúsculo por página) em
+  // vez de carregar o fullHtml de ~96 páginas (~24MB, que estourava o KV e
+  // sumia com as páginas). Este one-shot lê o conteúdo completo em lotes e
+  // (re)grava todos os resumos. Rodar UMA vez após o deploy pra popular o índice
+  // (depois disso `saveContent` o mantém em dia sozinho). Somente leitura→escrita
+  // de resumos; não toca no conteúdo das páginas.
+  if (url.searchParams.get("rebuildindex") === "1") {
+    const n = await rebuildSummaryIndex();
+    revalidatePath("/paginas");
+    revalidatePath("/wp-pages");
+    revalidatePath("/dashboard");
+    return NextResponse.json({
+      ok: true,
+      indexado: n,
+      mensagem: `Índice de resumos reconstruído com ${n} páginas. As listagens do painel agora leem o índice leve.`,
     });
   }
 
