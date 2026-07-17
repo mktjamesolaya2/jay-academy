@@ -75,7 +75,9 @@ export async function GET(req: Request) {
   const isDestructive =
     (url.searchParams.get("supaclean") === "1" &&
       url.searchParams.get("confirm") === "1") ||
-    url.searchParams.get("supafix") === "1";
+    url.searchParams.get("supafix") === "1" ||
+    (url.searchParams.get("fixwpflags") === "1" &&
+      url.searchParams.get("confirm") === "1");
   if (isDestructive && req.headers.get("x-portal-op") !== "confirm") {
     return NextResponse.json(
       {
@@ -217,6 +219,66 @@ export async function GET(req: Request) {
       nota:
         "soRefsDeConfig = páginas que citam o domínio WP só em config do Elementor " +
         "(urls.assets/ajaxurl/uploadUrl/lottie) — o browser não faz request disso; é inerte.",
+    });
+  }
+
+  // ── Espelha as bandeiras do gtranslate no KV: ?fixwpflags=1 ──
+  // As bandeiras do widget gtranslate (`.../wp-content/plugins/gtranslate/
+  // flags/svg/*.svg`) ficaram apontando pro servidor WP em várias páginas
+  // copiadas (o localizador só pega imagens de conteúdo, não assets de plugin
+  // protocol-relative). Os SVGs já estão espelhados em
+  // public/wp-plugins/gtranslate/. Este one-shot reescreve as refs no KV pra
+  // /wp-plugins/gtranslate/ — tirando essas páginas da lista de bloqueadores
+  // do desligamento do WP. Dry-run por padrão; &confirm=1 grava (exige header
+  // anti-CSRF x-portal-op: confirm).
+  if (url.searchParams.get("fixwpflags") === "1") {
+    const confirm = url.searchParams.get("confirm") === "1";
+    // Casa a forma crua (//dom/wp-content/...) e a escapada (\/\/dom\/...).
+    const RAW_RE =
+      /(https?:)?\/\/(?:lp\.)?jayacademy\.com\.br\/wp-content\/plugins\/gtranslate\//g;
+    const ESC_RE =
+      /(https?:)?\\\/\\\/(?:lp\.)?jayacademy\.com\.br\\\/wp-content\\\/plugins\\\/gtranslate\\\//g;
+
+    function walk(value: unknown, onString: (s: string) => string): unknown {
+      if (typeof value === "string") return onString(value);
+      if (Array.isArray(value)) return value.map((v) => walk(v, onString));
+      if (value && typeof value === "object") {
+        const out: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(value)) out[k] = walk(v, onString);
+        return out;
+      }
+      return value;
+    }
+
+    const keys = await kvKeys("wp:content:*");
+    const hits: Array<{ key: string; count: number }> = [];
+    let fixedKeys = 0;
+    let stringsReplaced = 0;
+    for (const key of keys) {
+      const value = await kvGet<unknown>(key);
+      if (value == null) continue;
+      const asStr = JSON.stringify(value);
+      const count =
+        (asStr.match(RAW_RE)?.length ?? 0) + (asStr.match(ESC_RE)?.length ?? 0);
+      if (count === 0) continue;
+      hits.push({ key, count });
+      if (confirm) {
+        const rewritten = walk(value, (s) => {
+          const next = s
+            .replace(RAW_RE, "/wp-plugins/gtranslate/")
+            .replace(ESC_RE, "\\/wp-plugins\\/gtranslate\\/");
+          if (next !== s) stringsReplaced++;
+          return next;
+        });
+        await kvSet(key, rewritten);
+        fixedKeys++;
+      }
+    }
+    return NextResponse.json({
+      mode: confirm ? "confirm (gravou)" : "dry-run (use &confirm=1 + header x-portal-op:confirm)",
+      keysComFlags: hits.length,
+      hits,
+      ...(confirm ? { fixedKeys, stringsReplaced } : {}),
     });
   }
 
