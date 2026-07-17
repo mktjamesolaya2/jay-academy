@@ -8,6 +8,7 @@ import {
   demoteUserAction,
   deleteUserAction,
 } from "./actions";
+import { CreateUserForm } from "@/components/create-user-form";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +68,7 @@ export default async function UsersPage() {
         </header>
 
         <section className="px-5 py-6 lg:px-10 lg:py-8">
+          <CreateUserForm />
           <div className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-2xl overflow-hidden">
             <div className="grid grid-cols-[1.5fr_1fr_120px_220px] gap-3 px-5 py-2.5 text-[10px] uppercase tracking-[0.12em] text-neutral-600 font-semibold border-b border-[#1f1f1f]">
               <div>Usuário</div>
@@ -179,10 +181,9 @@ export default async function UsersPage() {
           </div>
 
           <p className="text-[11px] text-neutral-500 mt-4 leading-relaxed">
-            Cadastros novos entram como{" "}
-            <span className="text-neutral-300 font-medium">Visualizador</span>{" "}
-            por padrão e ficam sem permissão pra editar. Promova quando confiar
-            no usuário.
+            Não há cadastro público — só o senior cria contas (acima).
+            Visualizadores não conseguem editar nada; promova a admin quando
+            confiar no usuário.
           </p>
         </section>
       </main>

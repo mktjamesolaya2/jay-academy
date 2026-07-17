@@ -22,7 +22,6 @@ export default function robots(): MetadataRoute.Robots {
           "/wordpress",
           "/wp-pages",
           "/login",
-          "/cadastro",
         ],
       },
     ],

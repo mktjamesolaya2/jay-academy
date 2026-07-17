@@ -2,7 +2,6 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
-import Link from "next/link";
 import { Eye, EyeOff, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { loginAction } from "./actions";
 
@@ -96,13 +95,8 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
       <SubmitButton />
 
       <p className="text-center text-xs text-neutral-500 pt-2 border-t border-[#1f1f1f]">
-        Não tem uma conta?{" "}
-        <Link
-          href="/cadastro"
-          className="text-white font-semibold hover:underline"
-        >
-          Criar conta
-        </Link>
+        Acesso restrito à equipe. Precisa de uma conta? Fale com o
+        administrador do projeto.
       </p>
     </form>
   );

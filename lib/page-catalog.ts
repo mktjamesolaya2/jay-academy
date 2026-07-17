@@ -151,16 +151,7 @@ function wpLayer(saved: SavedSummary[]): CatalogEntry[] {
 }
 
 /** Rotas React públicas do portal que não estão em nenhum store. */
-const NATIVE_PAGES: CatalogEntry[] = [
-  {
-    slug: "cadastro",
-    title: "Cadastro no portal",
-    url: "/cadastro",
-    source: "react",
-    category: "institucional",
-    status: "published",
-  },
-];
+const NATIVE_PAGES: CatalogEntry[] = [];
 
 export type CatalogSources = {
   lps: LandingPage[];

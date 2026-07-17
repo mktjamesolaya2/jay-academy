@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { kvGet, kvSet } from "./storage";
+import { AUTH_SECRET } from "./auth-secret";
 
 export type UserRole = "senior" | "admin" | "viewer";
 
@@ -22,9 +23,7 @@ export type SessionUser = {
   role: UserRole;
 };
 
-const SECRET = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "jayacademy-dev-secret-change-in-production-please"
-);
+const SECRET = AUTH_SECRET;
 const COOKIE_NAME = "jay_session";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 dias
 const USERS_KEY = "users:all";
@@ -42,9 +41,27 @@ const HARDCODED_SENIOR: User = {
   createdAt: "2026-05-28T00:00:00.000Z",
 };
 
+const IS_PROD =
+  process.env.NODE_ENV === "production" || !!process.env.VERCEL;
+
+// Senha do senior vem de SENIOR_PASSWORD (env) — NUNCA mais hardcoded no fonte.
+// Em produção sem a env, o login por senha do senior fica DESABILITADO (hash de
+// um valor aleatório impossível de adivinhar). Em dev cai num default marcado.
 async function getSeniorHash(): Promise<string> {
   if (!HARDCODED_SENIOR.passwordHash) {
-    HARDCODED_SENIOR.passwordHash = await bcrypt.hash("@Suporte123", 10);
+    const pw =
+      process.env.SENIOR_PASSWORD || (IS_PROD ? null : "dev-senior-pass");
+    if (!pw) {
+      console.warn(
+        "[auth] SENIOR_PASSWORD não definida em produção — login por senha do senior desabilitado."
+      );
+      HARDCODED_SENIOR.passwordHash = await bcrypt.hash(
+        crypto.randomUUID() + crypto.randomUUID(),
+        10
+      );
+    } else {
+      HARDCODED_SENIOR.passwordHash = await bcrypt.hash(pw, 10);
+    }
   }
   return HARDCODED_SENIOR.passwordHash;
 }
@@ -233,16 +250,25 @@ export async function signIn(
   return { ok: true, user: sessionUser };
 }
 
-export async function signUp(
+/**
+ * Cria um usuário. SÓ o senior chama (o cadastro público foi removido — antes
+ * qualquer um na internet criava uma conta viewer com acesso ao painel).
+ * Não faz auto-login: o senior cria a conta, a pessoa loga depois.
+ */
+export async function adminCreateUser(
   name: string,
   email: string,
-  password: string
-): Promise<{ ok: true; user: SessionUser } | { ok: false; error: string }> {
+  password: string,
+  role: "admin" | "viewer"
+): Promise<{ ok: boolean; error?: string }> {
+  await requireSenior();
   if (!name.trim()) return { ok: false, error: "Nome é obrigatório" };
   if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
     return { ok: false, error: "Email inválido" };
   if (password.length < 6)
     return { ok: false, error: "Senha precisa ter no mínimo 6 caracteres" };
+  if (role !== "admin" && role !== "viewer")
+    return { ok: false, error: "Papel inválido" };
 
   const users = await readUsers();
   if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
@@ -250,35 +276,16 @@ export async function signUp(
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  const newUser: User = {
+  users.push({
     id: "user-" + Math.random().toString(36).slice(2, 10),
     email,
     name,
-    role: "viewer",
+    role,
     passwordHash,
     createdAt: new Date().toISOString(),
-  };
-  users.push(newUser);
-  await writeUsers(users);
-
-  const sessionUser: SessionUser = {
-    id: newUser.id,
-    email: newUser.email,
-    name: newUser.name,
-    role: newUser.role,
-  };
-
-  const token = await createToken(sessionUser);
-  const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: COOKIE_MAX_AGE,
-    path: "/",
   });
-
-  return { ok: true, user: sessionUser };
+  await writeUsers(users);
+  return { ok: true };
 }
 
 export async function signOut(): Promise<void> {
