@@ -39,7 +39,8 @@ function matchSaved(row: SavedRow, q: string): boolean {
 function DecisionTable({ rows }: { rows: TriageRow[] }) {
   return (
     <div className="bg-[#0f0f0f] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-[560px]">
         <thead>
           <tr className="text-left text-[10px] uppercase tracking-[0.14em] text-neutral-500 font-semibold bg-[#0d0d0d] border-b border-[#1f1f1f]">
             <th className="px-6 py-3">Página</th>
@@ -58,6 +59,7 @@ function DecisionTable({ rows }: { rows: TriageRow[] }) {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
@@ -128,7 +130,8 @@ export function WpTriageTables({
               — clique pra ver a lista
             </span>
           </summary>
-          <table className="w-full text-sm border-t border-[#1f1f1f]">
+          <div className="overflow-x-auto border-t border-[#1f1f1f]">
+          <table className="w-full text-sm min-w-[560px]">
             <thead>
               <tr className="text-left text-[10px] uppercase tracking-[0.14em] text-neutral-500 font-semibold bg-[#0d0d0d] border-b border-[#1f1f1f]">
                 <th className="px-6 py-3">Página</th>
@@ -162,6 +165,7 @@ export function WpTriageTables({
               ))}
             </tbody>
           </table>
+          </div>
         </details>
       )}
 

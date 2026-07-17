@@ -110,7 +110,7 @@ export default async function WpPagesHub() {
     <div className="flex min-h-screen bg-[#0a0a0a]">
       <Sidebar />
 
-      <main className="flex-1 overflow-x-hidden">
+      <main className="flex-1 min-w-0 overflow-x-hidden">
         {/* Header */}
         <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-6 lg:px-10 lg:pt-8 lg:pb-7">
           <Link
