@@ -1,0 +1,9 @@
+# Arquivos que NÃO são lidos em runtime nem no build — fora do deploy.
+# NÃO adicionar aqui: public/{wp-plugins,wpmirror,lp,recriadas,magicshadow,
+# pmuclass,laser,apresentacao-pmu}, lp-html/ nem data/ — todos servidos/lidos.
+
+# Base de conhecimento do projeto (documentação, não código)
+notas/
+
+# Artefato de build do TS (regenerado; já ignorado no git)
+*.tsbuildinfo

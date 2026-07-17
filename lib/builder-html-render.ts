@@ -15,9 +15,8 @@ import {
 /**
  * Renderer HTML puro pra rota pública /p/[slug].
  * Next 16 bloqueia react-dom/server dentro de route handlers, então o
- * renderer público é template literal TS. O renderer React em
- * components/page-builder/public-renderer.tsx é usado APENAS no preview
- * do editor (Client Component).
+ * renderer público é template literal TS. O preview do editor usa o
+ * renderer React editável (components/page-builder/editable-renderer.tsx).
  *
  * Saída: string HTML pronta pra inserir como body.
  */
