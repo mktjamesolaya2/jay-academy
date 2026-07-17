@@ -282,6 +282,113 @@ export async function GET(req: Request) {
     });
   }
 
+  // ── Espelha vídeos do WP pro storage: ?fixlipsvideos=1 (auto-avança) ──
+  // O localizador só baixa imagem/CSS/JS — vídeos (.mp4 etc.) ficaram
+  // apontando pro servidor WP em <video><source src>. Este one-shot varre TODAS
+  // as páginas do KV, acha os vídeos servidos do domínio legado, baixa 1 por
+  // request (teto de 60s) pro storage via blobUpload, guarda o mapa em
+  // `wpvideo:migrated` (resumível/idempotente) e, quando todos migram, reescreve
+  // as URLs no KV das páginas afetadas. Não é destrutivo pros assets do WP.
+  if (url.searchParams.get("fixlipsvideos") === "1") {
+    const VIDEO_RE =
+      /(?:src|data-(?:lazy-)?src)\s*=\s*["']?((?:https?:)?\/\/(?:lp\.)?jayacademy\.com\.br\/wp-content\/uploads\/[^"'\s>\\]+\.(?:mp4|webm|mov|m4v))/gi;
+    const norm = (s: string) => s.replace(/\\\//g, "/");
+    const absolutize = (u: string) => (u.startsWith("//") ? "https:" + u : u);
+
+    // 1. Carrega todo o KV de conteúdo uma vez (batch).
+    const keys = await kvKeys("wp:content:*");
+    const all: WpPageContent[] = [];
+    for (let i = 0; i < keys.length; i += 8) {
+      const batch = await kvMget<WpPageContent>(keys.slice(i, i + 8));
+      for (const c of batch) if (c) all.push(c);
+    }
+
+    // 2. Descobre os vídeos únicos (forma normalizada + absoluta).
+    const videos = new Set<string>();
+    for (const c of all) {
+      const html = norm(`${c.fullHtml || ""}\n${c.content || ""}`);
+      for (const m of html.matchAll(VIDEO_RE)) videos.add(absolutize(m[1]));
+    }
+
+    // 3. Mapa de migração já feita.
+    const MAP_KEY = "wpvideo:migrated";
+    const map = (await kvGet<Record<string, string>>(MAP_KEY)) || {};
+    const pending = [...videos].filter((v) => !map[v]);
+
+    // 4. Ainda há vídeo pra baixar → processa UM e auto-avança.
+    if (pending.length > 0) {
+      const target = pending[0];
+      const done = videos.size - pending.length;
+      try {
+        const res = await fetch(target);
+        if (!res.ok) throw new Error(`download ${res.status}`);
+        const buf = Buffer.from(await res.arrayBuffer());
+        const ct = res.headers.get("content-type") || "video/mp4";
+        const name = target.split("/").pop() || "video.mp4";
+        const { url: newUrl } = await blobUpload(`wpvideo/${name}`, buf, ct);
+        map[target] = newUrl;
+        await kvSet(MAP_KEY, map);
+      } catch (e) {
+        return page(
+          `<h1>Erro ao migrar vídeo</h1>
+           <p class="muted">${target}<br>${e instanceof Error ? e.message : "?"}</p>
+           <p class="muted">Recarregue pra tentar o próximo.</p>`
+        );
+      }
+      const doneAfter = done + 1;
+      const pct = Math.round((doneAfter / videos.size) * 100);
+      return page(
+        `<h1>Migrando vídeos pro storage…</h1>
+         <div class="big">${doneAfter}/${videos.size}</div>
+         <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+         <p class="muted">Baixando do WordPress e subindo pro storage.
+         Esta tela se atualiza sozinha até terminar.</p>`,
+        true
+      );
+    }
+
+    // 5. Todos baixados → reescreve as URLs no KV das páginas afetadas.
+    let pagesRewritten = 0;
+    const rewrittenSlugs: string[] = [];
+    for (const c of all) {
+      let fullHtml = c.fullHtml || "";
+      let content = c.content || "";
+      let changed = false;
+      for (const [orig, dest] of Object.entries(map)) {
+        // Cobre forma absoluta, protocol-relative e escapada (\/).
+        const variants = [
+          orig,
+          orig.replace(/^https?:/, ""),
+          orig.replace(/\//g, "\\/"),
+          orig.replace(/^https?:/, "").replace(/\//g, "\\/"),
+        ];
+        for (const v of variants) {
+          if (fullHtml.includes(v)) {
+            fullHtml = fullHtml.split(v).join(dest);
+            changed = true;
+          }
+          if (content.includes(v)) {
+            content = content.split(v).join(dest);
+            changed = true;
+          }
+        }
+      }
+      if (changed) {
+        await saveContent({ ...c, fullHtml, content });
+        if (c.publicSlug) revalidatePath(`/${c.publicSlug}`);
+        pagesRewritten++;
+        rewrittenSlugs.push(`${c.domain}:${c.slug}`);
+      }
+    }
+    return page(
+      `<h1>✅ Vídeos migrados pro storage</h1>
+       <div class="big">${videos.size}/${videos.size}</div>
+       <p class="muted">${videos.size} vídeo(s) no storage, ${pagesRewritten} página(s)
+       reescrita(s): ${rewrittenSlugs.join(", ") || "nenhuma pendente"}.
+       Rode <code>?wpcheck=1</code> pra confirmar.</p>`
+    );
+  }
+
   // ── Teste de upload no storage (confirma config do Supabase/S3) ──
   if (url.searchParams.get("testupload") === "1") {
     try {
