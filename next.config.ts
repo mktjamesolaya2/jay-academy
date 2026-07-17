@@ -15,6 +15,29 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "15mb",
     },
   },
+  async headers() {
+    // Headers de segurança globais. NÃO uso CSP estrita — as LPs embutem
+    // scripts de terceiros (Meta Pixel, GTM, Hotmart) e uma CSP apertada
+    // quebraria o tracking. Estes são seguros pra todas as rotas.
+    const base = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      {
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload",
+      },
+    ];
+    return [
+      // Painel admin: bloqueia enquadramento (clickjacking). As LPs públicas
+      // NÃO recebem X-Frame-Options — podem ser legitimamente embutidas.
+      {
+        source:
+          "/:path(dashboard|analytics|forms|leads|lixeira|lps|midia|paginas|settings|sugestoes|websites|wordpress|wp-pages)/:rest*",
+        headers: [...base, { key: "X-Frame-Options", value: "SAMEORIGIN" }],
+      },
+      { source: "/:path*", headers: base },
+    ];
+  },
 };
 
 export default nextConfig;
