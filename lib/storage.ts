@@ -128,6 +128,26 @@ export async function kvKeys(pattern: string): Promise<string[]> {
   }
 }
 
+/**
+ * Lê várias chaves de uma vez. No Vercel KV vira UM comando (kv.mget) em vez
+ * de N kvGet individuais — corta o N+1 das listagens do painel (ex: listSaved
+ * fazia 1 kvKeys + ~70 kvGet por render de tela). No fallback local mantém o
+ * map (arquivos separados), mas em paralelo.
+ */
+export async function kvMget<T>(keys: string[]): Promise<(T | null)[]> {
+  if (keys.length === 0) return [];
+  if (HAS_KV) {
+    try {
+      const { kv } = await import("@vercel/kv");
+      return await kv.mget<T[]>(...keys);
+    } catch {
+      return keys.map(() => null);
+    }
+  }
+  // Fallback filesystem: sem mget nativo, lê em paralelo.
+  return Promise.all(keys.map((k) => kvGet<T>(k)));
+}
+
 function kvKeyToFile(key: string): string {
   // Converte "wp:content:main:slug" → "wp_content_main_slug"
   return key.replace(/:/g, "_");

@@ -1,5 +1,5 @@
 import "server-only";
-import { kvDel, kvGet, kvKeys, kvSet } from "./storage";
+import { kvDel, kvGet, kvKeys, kvMget, kvSet } from "./storage";
 import type { WpPageContent as BaseWpPageContent } from "./wp-fetch-page";
 import type { WpDomain } from "./wp-api";
 export type { WpDomain };
@@ -94,10 +94,19 @@ export async function unsetPublished(content: WpPageContent): Promise<void> {
   await saveContent(content);
 }
 
-export async function listPublished(): Promise<WpPageContent[]> {
+/**
+ * Carrega TODOS os conteúdos wp:content de uma vez: 1 kvKeys + 1 kvMget (batch)
+ * em vez do antigo 1 + N kvGet. Corta ~70 comandos de KV por render das telas
+ * do painel (listSaved/listPublished/listTrashed filtram desta mesma lista).
+ */
+async function loadAllContents(): Promise<WpPageContent[]> {
   const keys = await kvKeys("wp:content:*");
-  const contents = await Promise.all(keys.map((k) => kvGet<WpPageContent>(k)));
-  return contents.filter((c): c is WpPageContent => c !== null && !!c.published);
+  const contents = await kvMget<WpPageContent>(keys);
+  return contents.filter((c): c is WpPageContent => c !== null);
+}
+
+export async function listPublished(): Promise<WpPageContent[]> {
+  return (await loadAllContents()).filter((c) => !!c.published);
 }
 
 function keyFor(domain: WpDomain, slug: string): string {
@@ -181,11 +190,7 @@ function summarize(c: WpPageContent): SavedSummary {
 }
 
 export async function listSaved(): Promise<SavedSummary[]> {
-  const keys = await kvKeys("wp:content:*");
-  const contents = await Promise.all(
-    keys.map((k) => kvGet<WpPageContent>(k))
-  );
-  const valid = contents.filter((c): c is WpPageContent => c !== null);
+  const valid = await loadAllContents();
   return valid
     .filter((c) => !c.trashed)
     .map(summarize)
@@ -193,11 +198,7 @@ export async function listSaved(): Promise<SavedSummary[]> {
 }
 
 export async function listTrashed(): Promise<SavedSummary[]> {
-  const keys = await kvKeys("wp:content:*");
-  const contents = await Promise.all(
-    keys.map((k) => kvGet<WpPageContent>(k))
-  );
-  const valid = contents.filter((c): c is WpPageContent => c !== null);
+  const valid = await loadAllContents();
   return valid
     .filter((c) => c.trashed)
     .map(summarize)
