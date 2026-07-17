@@ -40,3 +40,6 @@ public/uploads/
 *.tsbuildinfo
 
 .vercel
+
+# Backup local dos vídeos lips-sense (handoff pro host externo — NÃO commitar)
+videos-lips-sense-backup/
