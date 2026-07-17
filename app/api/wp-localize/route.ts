@@ -290,15 +290,109 @@ export async function GET(req: Request) {
   //   ?fixlipsvideos=1            → descobre os vídeos (scan) e diz o que falta
   //   ?fixlipsvideos=1&one=<url>  → baixa 1 vídeo e sobe pro storage (sem scan)
   //   ?fixlipsvideos=1&rewrite=1  → reescreve as URLs no KV (sem download)
+  //   ?fixlipsvideos=1&remove=1   → remove do KV a <section> que contém os vídeos
   // Mapa em `wpvideo:migrated` (resumível/idempotente). Não toca nos assets do WP.
   if (url.searchParams.get("fixlipsvideos") === "1") {
     const MAP_KEY = "wpvideo:migrated";
     const one = url.searchParams.get("one");
     const doRewrite = url.searchParams.get("rewrite") === "1";
+    const doRemove = url.searchParams.get("remove") === "1";
     const VIDEO_RE =
       /(?:src|data-(?:lazy-)?src)\s*=\s*["']?((?:https?:)?\/\/(?:lp\.)?jayacademy\.com\.br\/wp-content\/uploads\/[^"'\s>\\]+\.(?:mp4|webm|mov|m4v))/gi;
     const norm = (s: string) => s.replace(/\\\//g, "/");
     const absolutize = (u: string) => (u.startsWith("//") ? "https:" + u : u);
+
+    // ── Fase REMOVE: tira do KV a <section> inteira que contém vídeos do WP ──
+    // Decisão do usuário (17/07): não hospedar os 4 vídeos lips-sense (YouTube
+    // bloqueou por música autoral) — remover da página. Nas 2 páginas os vídeos
+    // vivem numa <section id="videos"> dedicada (só heading "Veja na Prática" +
+    // cards). Remove QUALQUER <section> cujo corpo contenha uma URL de vídeo do
+    // WP (robusto às 2 estruturas: ls-videos e lv-reels). Fallback: se sobrar
+    // algum <video> solto, remove o elemento.
+    if (doRemove) {
+      // Remove as <section>…</section> de nível superior que contêm alguma needle.
+      const removeSections = (html: string, has: (body: string) => boolean) => {
+        const re = /<section\b[^>]*>|<\/section>/gi;
+        const spans: Array<[number, number]> = [];
+        let depth = 0;
+        let start = -1;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(html))) {
+          if (m[0][1] === "/") {
+            depth--;
+            if (depth === 0 && start >= 0) {
+              spans.push([start, re.lastIndex]);
+              start = -1;
+            }
+            if (depth < 0) depth = 0;
+          } else {
+            if (depth === 0) start = m.index;
+            depth++;
+          }
+        }
+        let out = html;
+        let removed = 0;
+        for (let i = spans.length - 1; i >= 0; i--) {
+          const [s, e] = spans[i];
+          if (has(out.slice(s, e))) {
+            out = out.slice(0, s) + out.slice(e);
+            removed++;
+          }
+        }
+        return { out, removed };
+      };
+      // Regex NÃO-global pro .test() (global é stateful e daria falso negativo).
+      const VIDEO_TEST =
+        /(?:src|data-(?:lazy-)?src)\s*=\s*["']?(?:https?:)?\/\/(?:lp\.)?jayacademy\.com\.br\/wp-content\/uploads\/[^"'\s>\\]+\.(?:mp4|webm|mov|m4v)/i;
+      const hasWpVideo = (s: string) => VIDEO_TEST.test(s);
+      const keys = await kvKeys("wp:content:*");
+      const affected: string[] = [];
+      let sectionsRemoved = 0;
+      let videosRemoved = 0;
+      for (let i = 0; i < keys.length; i += 8) {
+        const batch = await kvMget<WpPageContent>(keys.slice(i, i + 8));
+        for (const c of batch) {
+          if (!c) continue;
+          let fullHtml = c.fullHtml || "";
+          let content = c.content || "";
+          if (!hasWpVideo(`${fullHtml}\n${content}`)) continue;
+          let changed = false;
+          for (const field of ["fullHtml", "content"] as const) {
+            let html = field === "fullHtml" ? fullHtml : content;
+            const r = removeSections(html, hasWpVideo);
+            html = r.out;
+            if (r.removed) {
+              sectionsRemoved += r.removed;
+              changed = true;
+            }
+            // Fallback: qualquer <video> remanescente apontando pro WP.
+            const before = html;
+            html = html.replace(
+              /<video\b[^>]*(?:https?:)?\/\/(?:lp\.)?jayacademy\.com\.br\/wp-content\/uploads\/[^>]*>(?:\s*<\/video>)?/gi,
+              () => {
+                videosRemoved++;
+                return "";
+              }
+            );
+            if (html !== before) changed = true;
+            if (field === "fullHtml") fullHtml = html;
+            else content = html;
+          }
+          if (changed) {
+            await saveContent({ ...c, fullHtml, content });
+            if (c.publicSlug) revalidatePath(`/${c.publicSlug}`);
+            affected.push(`${c.domain}:${c.slug}`);
+          }
+        }
+      }
+      return NextResponse.json({
+        ok: true,
+        acao: "removidas as seções/elementos de vídeo do WP",
+        paginasAfetadas: affected,
+        sectionsRemoved,
+        videosRemoved,
+      });
+    }
 
     // ── Fase DOWNLOAD: baixa 1 vídeo específico (sem escanear o KV) ──
     if (one) {
