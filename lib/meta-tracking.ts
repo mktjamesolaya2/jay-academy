@@ -13,9 +13,7 @@
 // imperfeita até esses HTMLs serem editados manualmente pra remover o script
 // antigo (fora de escopo desta migração).
 
-import { after } from "next/server";
 import { withGoogleTag } from "@/lib/google-tag";
-import { sendMetaCapiEvent } from "@/lib/meta-capi";
 
 export const META_PIXEL_ID = "1841776429524244";
 export const GA4_LEGACY_ID = "G-N93TQZV050";
@@ -31,10 +29,6 @@ function injectBody(html: string, tag: string): string {
   return /<\/body>/i.test(html)
     ? html.replace(/<\/body>/i, `${tag}\n</body>`)
     : html + tag;
-}
-
-function uuid(): string {
-  return crypto.randomUUID();
 }
 
 /** Injeta o gtag.js do GA4 legado (G-N93TQZV050) se ainda não presente. */
@@ -57,10 +51,15 @@ export function withFbDomainVerification(html: string): string {
   );
 }
 
-function buildPixelInitScript(eventId: string, isProductPage: boolean): string {
+function buildPixelInitScript(isProductPage: boolean): string {
   const viewContent = isProductPage
     ? `fbq('track','ViewContent',{},{eventID:window.__metaEventId+'-vc'});`
     : "";
+  // eventId gerado NO BROWSER, por visita (crypto.randomUUID) — antes era fixado
+  // no build, então em página force-static TODO visitante mandava o MESMO id e o
+  // Meta deduplicava tudo num único PageView. Agora cada visita tem id único, e
+  // o CAPI (servidor) é disparado pelo próprio cliente com o MESMO id → dedup
+  // correta entre pixel do browser e CAPI, mantendo a página 100% cacheável.
   return `<!-- Meta Pixel -->
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -68,10 +67,18 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
 n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 document,'script','https://connect.facebook.net/en_US/fbevents.js');
-window.__metaEventId = ${JSON.stringify(eventId)};
+window.__metaEventId = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now())+Math.random();
 fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView', {}, { eventID: window.__metaEventId });
 ${viewContent}
+try {
+  fetch(window.location.origin + '/api/meta-capi', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eventName: 'PageView', eventId: window.__metaEventId, eventSourceUrl: window.location.href }),
+    keepalive: true
+  }).catch(function(){});
+} catch (e) {}
 </script>
 <noscript><img height="1" width="1" style="display:none" alt=""
   src="https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1" /></noscript>
@@ -142,12 +149,15 @@ export async function withMetaPixelBootstrap(
   html: string,
   opts: { isProductPage: boolean; eventSourceUrl: string; req?: Request }
 ): Promise<string> {
-  const eventId = uuid();
   let out = html;
 
   const hasPixel = out.includes(META_PIXEL_ID);
   if (!hasPixel) {
-    out = injectHead(out, buildPixelInitScript(eventId, opts.isProductPage));
+    // O bootstrap gera o eventId no browser e dispara o CAPI PageView pelo
+    // próprio cliente (com o mesmo id) — ver buildPixelInitScript. Não há mais
+    // CAPI no servidor aqui: em página force-static o eventId de build era
+    // idêntico pra todos, colapsando a deduplicação.
+    out = injectHead(out, buildPixelInitScript(opts.isProductPage));
   }
 
   if (!out.includes('data-portal-pixel-listeners="1"')) {
@@ -156,22 +166,6 @@ export async function withMetaPixelBootstrap(
 
   if (!out.includes('data-portal-lead-listener="1"')) {
     out = injectBody(out, buildLeadPixelListener());
-  }
-
-  // CAPI fora do caminho da resposta: after() mantém a função viva até o fetch
-  // ao Graph do Facebook terminar, sem somar a latência dele ao TTFB da página
-  // (antes era `await`, que travava a resposta nas rotas dinâmicas). Fallback
-  // pra promessa solta se after() não estiver disponível no contexto.
-  const capi = sendMetaCapiEvent({
-    eventName: "PageView",
-    eventId,
-    eventSourceUrl: opts.eventSourceUrl,
-    req: opts.req,
-  });
-  try {
-    after(capi);
-  } catch {
-    void capi.catch(() => {});
   }
 
   return out;
