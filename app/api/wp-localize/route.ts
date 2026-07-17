@@ -282,43 +282,34 @@ export async function GET(req: Request) {
     });
   }
 
-  // ── Espelha vídeos do WP pro storage: ?fixlipsvideos=1 (auto-avança) ──
-  // O localizador só baixa imagem/CSS/JS — vídeos (.mp4 etc.) ficaram
-  // apontando pro servidor WP em <video><source src>. Este one-shot varre TODAS
-  // as páginas do KV, acha os vídeos servidos do domínio legado, baixa 1 por
-  // request (teto de 60s) pro storage via blobUpload, guarda o mapa em
-  // `wpvideo:migrated` (resumível/idempotente) e, quando todos migram, reescreve
-  // as URLs no KV das páginas afetadas. Não é destrutivo pros assets do WP.
+  // ── Espelha vídeos do WP pro storage: ?fixlipsvideos=1 ──
+  // O localizador só baixa imagem/CSS/JS — vídeos (.mp4 etc.) ficaram apontando
+  // pro servidor WP em <video><source src>. No plano Hobby a função tem teto de
+  // 60s, então cada fase pesada (scan do KV, download de ~80MB, reescrita) roda
+  // numa invocação separada pra não estourar o tempo:
+  //   ?fixlipsvideos=1            → descobre os vídeos (scan) e diz o que falta
+  //   ?fixlipsvideos=1&one=<url>  → baixa 1 vídeo e sobe pro storage (sem scan)
+  //   ?fixlipsvideos=1&rewrite=1  → reescreve as URLs no KV (sem download)
+  // Mapa em `wpvideo:migrated` (resumível/idempotente). Não toca nos assets do WP.
   if (url.searchParams.get("fixlipsvideos") === "1") {
+    const MAP_KEY = "wpvideo:migrated";
+    const one = url.searchParams.get("one");
+    const doRewrite = url.searchParams.get("rewrite") === "1";
     const VIDEO_RE =
       /(?:src|data-(?:lazy-)?src)\s*=\s*["']?((?:https?:)?\/\/(?:lp\.)?jayacademy\.com\.br\/wp-content\/uploads\/[^"'\s>\\]+\.(?:mp4|webm|mov|m4v))/gi;
     const norm = (s: string) => s.replace(/\\\//g, "/");
     const absolutize = (u: string) => (u.startsWith("//") ? "https:" + u : u);
 
-    // 1. Carrega todo o KV de conteúdo uma vez (batch).
-    const keys = await kvKeys("wp:content:*");
-    const all: WpPageContent[] = [];
-    for (let i = 0; i < keys.length; i += 8) {
-      const batch = await kvMget<WpPageContent>(keys.slice(i, i + 8));
-      for (const c of batch) if (c) all.push(c);
-    }
-
-    // 2. Descobre os vídeos únicos (forma normalizada + absoluta).
-    const videos = new Set<string>();
-    for (const c of all) {
-      const html = norm(`${c.fullHtml || ""}\n${c.content || ""}`);
-      for (const m of html.matchAll(VIDEO_RE)) videos.add(absolutize(m[1]));
-    }
-
-    // 3. Mapa de migração já feita.
-    const MAP_KEY = "wpvideo:migrated";
-    const map = (await kvGet<Record<string, string>>(MAP_KEY)) || {};
-    const pending = [...videos].filter((v) => !map[v]);
-
-    // 4. Ainda há vídeo pra baixar → processa UM e auto-avança.
-    if (pending.length > 0) {
-      const target = pending[0];
-      const done = videos.size - pending.length;
+    // ── Fase DOWNLOAD: baixa 1 vídeo específico (sem escanear o KV) ──
+    if (one) {
+      const target = absolutize(norm(one));
+      if (!/^https:\/\/(?:lp\.)?jayacademy\.com\.br\/wp-content\/uploads\//.test(target)) {
+        return NextResponse.json({ ok: false, error: "url fora do domínio WP permitido" });
+      }
+      const map = (await kvGet<Record<string, string>>(MAP_KEY)) || {};
+      if (map[target]) {
+        return NextResponse.json({ ok: true, already: true, url: map[target] });
+      }
       try {
         const res = await fetch(target);
         if (!res.ok) throw new Error(`download ${res.status}`);
@@ -328,65 +319,92 @@ export async function GET(req: Request) {
         const { url: newUrl } = await blobUpload(`wpvideo/${name}`, buf, ct);
         map[target] = newUrl;
         await kvSet(MAP_KEY, map);
+        return NextResponse.json({ ok: true, from: target, to: newUrl, bytes: buf.length });
       } catch (e) {
-        return page(
-          `<h1>Erro ao migrar vídeo</h1>
-           <p class="muted">${target}<br>${e instanceof Error ? e.message : "?"}</p>
-           <p class="muted">Recarregue pra tentar o próximo.</p>`
-        );
+        return NextResponse.json({
+          ok: false,
+          from: target,
+          error: e instanceof Error ? e.message : "erro",
+        });
       }
-      const doneAfter = done + 1;
-      const pct = Math.round((doneAfter / videos.size) * 100);
-      return page(
-        `<h1>Migrando vídeos pro storage…</h1>
-         <div class="big">${doneAfter}/${videos.size}</div>
-         <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
-         <p class="muted">Baixando do WordPress e subindo pro storage.
-         Esta tela se atualiza sozinha até terminar.</p>`,
-        true
-      );
     }
 
-    // 5. Todos baixados → reescreve as URLs no KV das páginas afetadas.
-    let pagesRewritten = 0;
-    const rewrittenSlugs: string[] = [];
+    // Scan do KV (compartilhado por descobrir e reescrever).
+    const keys = await kvKeys("wp:content:*");
+    const all: WpPageContent[] = [];
+    for (let i = 0; i < keys.length; i += 8) {
+      const batch = await kvMget<WpPageContent>(keys.slice(i, i + 8));
+      for (const c of batch) if (c) all.push(c);
+    }
+    const videos = new Set<string>();
     for (const c of all) {
-      let fullHtml = c.fullHtml || "";
-      let content = c.content || "";
-      let changed = false;
-      for (const [orig, dest] of Object.entries(map)) {
-        // Cobre forma absoluta, protocol-relative e escapada (\/).
-        const variants = [
-          orig,
-          orig.replace(/^https?:/, ""),
-          orig.replace(/\//g, "\\/"),
-          orig.replace(/^https?:/, "").replace(/\//g, "\\/"),
-        ];
-        for (const v of variants) {
-          if (fullHtml.includes(v)) {
-            fullHtml = fullHtml.split(v).join(dest);
-            changed = true;
-          }
-          if (content.includes(v)) {
-            content = content.split(v).join(dest);
-            changed = true;
+      const html = norm(`${c.fullHtml || ""}\n${c.content || ""}`);
+      for (const m of html.matchAll(VIDEO_RE)) videos.add(absolutize(m[1]));
+    }
+    const map = (await kvGet<Record<string, string>>(MAP_KEY)) || {};
+
+    // ── Fase REWRITE: troca as URLs no KV (todos já baixados) ──
+    if (doRewrite) {
+      const faltando = [...videos].filter((v) => !map[v]);
+      if (faltando.length > 0) {
+        return NextResponse.json({
+          ok: false,
+          error: "ainda há vídeos não baixados — rode &one=<url> neles antes",
+          faltando,
+        });
+      }
+      let pagesRewritten = 0;
+      const rewrittenSlugs: string[] = [];
+      for (const c of all) {
+        let fullHtml = c.fullHtml || "";
+        let content = c.content || "";
+        let changed = false;
+        for (const [orig, dest] of Object.entries(map)) {
+          // Cobre forma absoluta, protocol-relative e escapada (\/).
+          const variants = [
+            orig,
+            orig.replace(/^https?:/, ""),
+            orig.replace(/\//g, "\\/"),
+            orig.replace(/^https?:/, "").replace(/\//g, "\\/"),
+          ];
+          for (const v of variants) {
+            if (fullHtml.includes(v)) {
+              fullHtml = fullHtml.split(v).join(dest);
+              changed = true;
+            }
+            if (content.includes(v)) {
+              content = content.split(v).join(dest);
+              changed = true;
+            }
           }
         }
+        if (changed) {
+          await saveContent({ ...c, fullHtml, content });
+          if (c.publicSlug) revalidatePath(`/${c.publicSlug}`);
+          pagesRewritten++;
+          rewrittenSlugs.push(`${c.domain}:${c.slug}`);
+        }
       }
-      if (changed) {
-        await saveContent({ ...c, fullHtml, content });
-        if (c.publicSlug) revalidatePath(`/${c.publicSlug}`);
-        pagesRewritten++;
-        rewrittenSlugs.push(`${c.domain}:${c.slug}`);
-      }
+      return NextResponse.json({
+        ok: true,
+        videos: videos.size,
+        pagesRewritten,
+        rewrittenSlugs,
+      });
     }
-    return page(
-      `<h1>✅ Vídeos migrados pro storage</h1>
-       <div class="big">${videos.size}/${videos.size}</div>
-       <p class="muted">${videos.size} vídeo(s) no storage, ${pagesRewritten} página(s)
-       reescrita(s): ${rewrittenSlugs.join(", ") || "nenhuma pendente"}.
-       Rode <code>?wpcheck=1</code> pra confirmar.</p>`
-    );
+
+    // ── Fase DESCOBRIR (default): lista o que há e o que falta baixar ──
+    const pending = [...videos].filter((v) => !map[v]);
+    const migrados = [...videos].filter((v) => map[v]);
+    return NextResponse.json({
+      total: videos.size,
+      pendentes: pending,
+      migrados,
+      proximoPasso:
+        pending.length > 0
+          ? "baixe cada pendente com ?fixlipsvideos=1&one=<url>, depois ?fixlipsvideos=1&rewrite=1"
+          : "todos baixados — rode ?fixlipsvideos=1&rewrite=1",
+    });
   }
 
   // ── Teste de upload no storage (confirma config do Supabase/S3) ──
