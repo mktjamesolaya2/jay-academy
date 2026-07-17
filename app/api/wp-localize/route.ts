@@ -88,12 +88,24 @@ export async function GET(req: Request) {
   }
 
   // ── Verificação pré-desligamento do WP: ?wpcheck=1 (JSON, somente leitura) ──
-  // Confere se TODAS as páginas copiadas estão independentes do servidor WP:
-  // (a) localizedAt preenchido e (b) nenhum asset wp-content/wp-includes do
-  // domínio legado sobrando no HTML servido. ok=true → pode desligar o WP.
+  // Confere se as páginas copiadas são independentes do servidor WP legado.
+  // O que REALMENTE quebra ao desligar o WP é um asset que o browser carrega
+  // sozinho apontando pro domínio antigo: src=, url() no CSS, srcset, <link
+  // href> e og:image. Strings de config (elementorFrontendConfig.urls.*,
+  // ajaxurl, uploadUrl) referenciam o domínio mas NÃO viram request — o JS só
+  // as lê. Por isso separamos "assets carregados" (risco) de "refs de config"
+  // (inerte), e o veredito olha só assets carregados em páginas PUBLICADAS.
   if (url.searchParams.get("wpcheck") === "1") {
-    const WP_ASSET_RE =
-      /(?:https?:)?\/\/(?:lp\.)?jayacademy\.com\.br\/wp-(?:content|includes)\//g;
+    const WP_HOST = "(?:https?:)?\\/\\/(?:lp\\.)?jayacademy\\.com\\.br\\/wp-(?:content|includes)\\/";
+    // Posições de carregamento automático pelo browser (quebram visualmente).
+    const LOADED_RE = new RegExp(
+      `(?:src|srcset|href|data-(?:lazy-)?src|data-bg)\\s*=\\s*["']?${WP_HOST}` +
+        `|url\\(\\s*["']?${WP_HOST}` +
+        `|content\\s*=\\s*["']${WP_HOST}`,
+      "g"
+    );
+    // Qualquer referência ao domínio legado (inclui config inerte).
+    const ANY_RE = new RegExp(WP_HOST, "g");
     const keys = await kvKeys("wp:content:*");
     const semLocalizacao: Array<{
       domain: string;
@@ -107,12 +119,21 @@ export async function GET(req: Request) {
       failed: number;
       total: number;
     }> = [];
+    // Risco real: asset carregado apontando pro WP.
     const comAssetsWp: Array<{
       domain: string;
       slug: string;
       published: boolean;
+      publicSlug?: string;
       refs: number;
       amostra: string[];
+    }> = [];
+    // Inerte: só refs de config (nenhum asset carregado). Informativo.
+    const soConfig: Array<{
+      domain: string;
+      slug: string;
+      published: boolean;
+      refs: number;
     }> = [];
     let total = 0;
     let lixeira = 0;
@@ -150,33 +171,52 @@ export async function GET(req: Request) {
           /\\\//g,
           "/"
         );
-        const matches = html.match(WP_ASSET_RE) || [];
-        if (matches.length > 0) {
+        const loaded = html.match(LOADED_RE) || [];
+        if (loaded.length > 0) {
           comAssetsWp.push({
             domain: c.domain,
             slug: c.slug,
             published: !!c.published,
-            refs: matches.length,
-            amostra: [...new Set(matches)].slice(0, 3),
+            publicSlug: c.publicSlug,
+            refs: loaded.length,
+            amostra: [...new Set(loaded)].slice(0, 4),
           });
+        } else {
+          const anyRef = (html.match(ANY_RE) || []).length;
+          if (anyRef > 0) {
+            soConfig.push({
+              domain: c.domain,
+              slug: c.slug,
+              published: !!c.published,
+              refs: anyRef,
+            });
+          }
         }
       }
     }
-    const ok =
-      semLocalizacao.length === 0 &&
-      comAssetsWp.filter((p) => p.published).length === 0;
+    // Só páginas PUBLICADAS com asset carregado bloqueiam o desligamento —
+    // rascunhos não são servidos ao público.
+    const bloqueadores = comAssetsWp.filter((p) => p.published);
+    const ok = bloqueadores.length === 0;
     return NextResponse.json({
       ok,
       veredito: ok
-        ? "Pode desligar o WordPress: todas as páginas são independentes do servidor WP."
-        : "AINDA NÃO desligue o WordPress: resolva os itens abaixo antes.",
+        ? "Pode desligar o WordPress: nenhuma página publicada carrega asset do servidor WP."
+        : `AINDA NÃO: ${bloqueadores.length} página(s) publicada(s) carregam asset do WP — rode a localização nelas antes.`,
       total,
       lixeira,
       ativas: total - lixeira,
       publicadas,
+      // Bloqueadores reais (asset carregado numa página publicada):
+      bloqueadores,
+      // Informativo (não bloqueia o desligamento):
       semLocalizacao,
+      assetsEmRascunhos: comAssetsWp.filter((p) => !p.published),
       comFalhas,
-      comAssetsWp,
+      soRefsDeConfig: soConfig.length,
+      nota:
+        "soRefsDeConfig = páginas que citam o domínio WP só em config do Elementor " +
+        "(urls.assets/ajaxurl/uploadUrl/lottie) — o browser não faz request disso; é inerte.",
     });
   }
 
