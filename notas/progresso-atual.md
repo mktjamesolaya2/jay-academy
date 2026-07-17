@@ -2,7 +2,25 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-17 — **Preparação final pro desligamento do WordPress: importação removida do painel, verificador `?wpcheck=1`, últimas refs de asset do WP espelhadas**
+> **Última atualização**: 2026-07-17 — **Fix da contagem de páginas no dashboard (KV mget estourava e zerava as migradas) + índice leve de resumos**
+
+---
+
+## 🆕 Sessão 2026-07-17 (parte 8) — Contagem de páginas no dashboard + índice leve
+
+**Bug reportado:** dashboard mostrava só **12 páginas** em `/paginas` e **0** em `/wp-pages`, escondendo as ~82 páginas migradas (o KV tinha 96/70 publicadas, confirmado por `?wpcheck=1`).
+
+**Causa raiz:** `loadAllContents()` (lib/wp-content-storage.ts) fazia **um único `kvMget` de todas as ~96 chaves**; cada valor carrega o `fullHtml` (~250KB) → ~24MB de resposta que **estoura o limite do Vercel KV (Upstash) e lança**. O `catch` de `kvMget` em `lib/storage.ts` **mascarava como "tudo null"** → `listSaved/listPublished` retornavam `[]` → o catálogo perdia todas as `wp-mirror`. As 3 telas quebravam juntas. O `?wpcheck=1` só funcionava porque lê em lotes de 8.
+
+**Correções (commit `602540d`, deploy como dono):**
+- `lib/storage.ts`: `kvMget` lê em **lotes de 10**; `catch` de `kvMget`/`kvKeys` agora **loga** em vez de mascarar silenciosamente.
+- `lib/wp-content-storage.ts`: **índice leve** `wp:summary:<domain>:<slug>` (resumo `SavedSummary` sem `fullHtml`). `saveContent` grava o resumo, `deleteContent` remove. `listSaved/listPublished/listTrashed` leem o índice (1 `kvGet` pequeno) em vez de ~24MB. Fallback correto (leitura em lotes) enquanto o índice não existir. `rebuildSummaryIndex()` reconstrói. (`listPublished` agora retorna `SavedSummary[]` — só o sitemap usava, e só de `publicSlug`/`slug`.)
+- `/api/wp-localize?rebuildindex=1`: popula o índice uma vez após deploy (rodado → **96 indexadas**).
+- Dashboard: removido número morto `totalPages`; StatCard "Páginas publicadas" já usa `counts.byStatus.published`. `/paginas`: rótulo "X páginas · Y publicadas em N tipos".
+
+**Resultado em produção:** `/paginas` = 93 páginas · **75 publicadas** · chip "Página migrada · 81"; dashboard "Páginas publicadas" = **75** (bate com /paginas); `/wp-pages` = Total **91** / Publicadas **70**. Contagem de "publicadas" única e consistente. (75 catálogo vs 70 migradas: ~7 migradas têm slug shadowado por LP do repo — o catálogo conta a que está de fato no ar.)
+
+**Escopo NÃO feito (usuário adiou):** paginação das listas longas, gestão unificada em /paginas, resolver colisões de slug.
 
 ---
 
