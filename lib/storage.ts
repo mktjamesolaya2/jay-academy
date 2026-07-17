@@ -129,6 +129,25 @@ export async function kvKeys(pattern: string): Promise<string[]> {
 }
 
 /**
+ * Contador atômico com TTL — base do rate-limit (lib/rate-limit.ts). Incrementa
+ * a chave e, na primeira vez, define expiração da janela. No fallback local
+ * (sem KV) retorna sempre 1 (limiter no-op — dev não tem tráfego pra limitar).
+ */
+export async function kvIncr(key: string, windowSec: number): Promise<number> {
+  if (HAS_KV) {
+    try {
+      const { kv } = await import("@vercel/kv");
+      const n = await kv.incr(key);
+      if (n === 1) await kv.expire(key, windowSec);
+      return n;
+    } catch {
+      return 1; // falha do KV não pode derrubar o endpoint — não limita
+    }
+  }
+  return 1;
+}
+
+/**
  * Lê várias chaves de uma vez. No Vercel KV vira UM comando (kv.mget) em vez
  * de N kvGet individuais — corta o N+1 das listagens do painel (ex: listSaved
  * fazia 1 kvKeys + ~70 kvGet por render de tela). No fallback local mantém o

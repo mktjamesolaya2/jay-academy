@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
+import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 
 // Substituto local do admin-ajax.php do WordPress para os formulários Elementor Pro
 // embutidos nas LPs estáticas (lp-html/). O ajaxurl dos HTMLs aponta pra cá; o JS do
@@ -26,6 +27,16 @@ function pick(fields: Record<string, string>, keys: string[]): string {
 }
 
 export async function POST(req: Request) {
+  // Anti-abuso: cap de tamanho + rate-limit por IP (leads legítimos são poucos).
+  if (payloadTooLarge(req, 64 * 1024)) {
+    return NextResponse.json(
+      { success: false, data: { message: "Envio muito grande." } },
+      { status: 413 }
+    );
+  }
+  if (!(await rateLimit("elementor-form", req, 15, 60)).ok) {
+    return tooManyRequests() as NextResponse;
+  }
   try {
     const form = await req.formData().catch(() => null);
     if (!form) {
@@ -126,6 +137,9 @@ export async function POST(req: Request) {
       },
     });
   } catch (e) {
+    // NÃO engolir silenciosamente: um lead que falha em gravar tem que aparecer
+    // nos logs da Vercel (antes sumia sem rastro).
+    console.error("[elementor-form] falha ao processar lead:", e);
     return NextResponse.json(
       { success: false, data: { message: e instanceof Error ? e.message : "Erro interno" } },
       { status: 500 }

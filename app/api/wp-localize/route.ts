@@ -66,6 +66,26 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url);
 
+  // Anti-CSRF pras operações DESTRUTIVAS (apagam/reescrevem dados): exigem o
+  // header custom `x-portal-op: confirm`. Um <img>/form malicioso com o cookie
+  // do admin NÃO consegue setar header custom cross-origin (e navegar a URL
+  // direto no browser também não), então isso mata o CSRF nessas ações. Rodar
+  // via fetch: fetch(url, { headers: { 'x-portal-op': 'confirm' } }).
+  const isDestructive =
+    (url.searchParams.get("supaclean") === "1" &&
+      url.searchParams.get("confirm") === "1") ||
+    url.searchParams.get("supafix") === "1";
+  if (isDestructive && req.headers.get("x-portal-op") !== "confirm") {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "Operação destrutiva exige o header 'x-portal-op: confirm' (anti-CSRF). Rode via fetch, não pela barra de URL.",
+      },
+      { status: 403 }
+    );
+  }
+
   // ── Teste de upload no storage (confirma config do Supabase/S3) ──
   if (url.searchParams.get("testupload") === "1") {
     try {

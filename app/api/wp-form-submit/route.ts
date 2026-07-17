@@ -5,6 +5,7 @@ import {
   addSubmission,
   type FormSubmission,
 } from "@/lib/forms-store";
+import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 
 type Incoming = {
   publicSlug: string;
@@ -31,6 +32,12 @@ function isEmail(s: string): boolean {
 }
 
 export async function POST(req: Request) {
+  if (payloadTooLarge(req, 64 * 1024)) {
+    return NextResponse.json({ error: "Envio muito grande." }, { status: 413 });
+  }
+  if (!(await rateLimit("wp-form-submit", req, 15, 60)).ok) {
+    return tooManyRequests() as NextResponse;
+  }
   try {
     const body = (await req.json().catch(() => ({}))) as Partial<Incoming>;
     const publicSlug = body.publicSlug?.toString() || "";

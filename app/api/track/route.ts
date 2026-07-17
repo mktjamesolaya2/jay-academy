@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { recordVisit } from "@/lib/analytics-store";
+import { rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 function cap(s: string): string {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
@@ -40,6 +41,10 @@ function classifySource(referrer: string, utm: string, host: string): string {
 
 export async function POST(req: Request) {
   try {
+    // Beacon de visita — permissivo, mas trava flood óbvio por IP.
+    if (!(await rateLimit("track", req, 60, 60)).ok) {
+      return tooManyRequests() as NextResponse;
+    }
     const body = (await req.json().catch(() => ({}))) as {
       slug?: string;
       referrer?: string;

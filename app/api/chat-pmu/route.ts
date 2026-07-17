@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const APP_URL = process.env.APP_URL || "https://jay-academy.vercel.app";
@@ -24,6 +25,13 @@ type ChatBody = {
 
 export async function POST(req: Request) {
   try {
+    // Anti-abuso de custo (chave OpenRouter): cap de tamanho + rate-limit por IP.
+    if (payloadTooLarge(req, 128 * 1024)) {
+      return NextResponse.json({ error: "Payload muito grande." }, { status: 413 });
+    }
+    if (!(await rateLimit("chat-pmu", req, 20, 60)).ok) {
+      return tooManyRequests() as NextResponse;
+    }
     if (!OPENROUTER_API_KEY) {
       return NextResponse.json(
         {
