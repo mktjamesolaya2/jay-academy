@@ -31,6 +31,15 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // Cópia fiel da v1 reconstruída em vanilla; roda em paralelo até virar a oficial.
+    slug: "basic-magic-shadow-v2",
+    title: "Basic Magic Shadow (v2)",
+    htmlFile: "lp-html/basic-magic-shadow-v2.html",
+    assetsDir: "public/lp/basic-magic-shadow-v2",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     slug: "basic-nanofios",
     title: "Basic Nano Fios",
     htmlFile: "lp-html/basic-nanofios.html",
