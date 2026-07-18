@@ -68,6 +68,16 @@
 
 *,*::before,*::after{box-sizing:border-box;}
 html,body{width:100%;overflow-x:hidden;}
+html{scroll-behavior:smooth;}
+
+/* Foco de teclado visível. Só aparece na navegação por teclado (:focus-visible),
+   então o visual no mouse continua idêntico ao da página original. */
+:focus-visible{outline:3px solid #FFBE00;outline-offset:2px;}
+#VALOR:focus{outline:none;}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .carrossel__trilha{transition:none;}
+}
 body{
   margin:0;background:#000;color:#fff;
   font-family:'Sen',Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;
@@ -278,7 +288,14 @@ ul{list-style:none;}
 .carrossel__nav--prev{left:0;}
 .carrossel__nav--next{right:0;}
 .carrossel__dots{display:flex;gap:8px;justify-content:center;margin-top:14px;}
-.carrossel__dot{width:8px;height:8px;border-radius:50%;border:0;padding:0;cursor:pointer;background:var(--bullet-off);}
+/* 8px visuais (idêntico ao original) num alvo de toque de 24px: o padding é
+   transparente e as margens negativas anulam sua contribuição no layout, para
+   a altura do bloco continuar sendo 8px. */
+.carrossel__dot{
+  width:8px;height:8px;border-radius:50%;border:0;cursor:pointer;
+  padding:8px;margin:-8px;background:var(--bullet-off);
+  background-clip:content-box;box-sizing:content-box;
+}
 .carrossel__dot[aria-current="true"]{background:var(--borda-midia);}
 .carrossel--cobre .carrossel__dot{background:#58382A;}
 .carrossel--cobre .carrossel__dot[aria-current="true"]{background:var(--cobre);}
@@ -423,6 +440,11 @@ ul{list-style:none;}
 }
 .contador__num{display:block;font-family:'Sen',sans-serif;font-size:70px;font-weight:400;color:#fff;line-height:1;}
 .contador__lab{display:block;font-family:'Sen',sans-serif;font-weight:400;color:#fff;}
+/* mensagem que substitui os dígitos quando o prazo zera — mesma caixa, só texto */
+.contador__encerrado{
+  font-family:'Sen',sans-serif;font-size:24px;font-weight:700;line-height:1.2em;
+  letter-spacing:.04em;color:var(--urgencia);text-align:center;
+}
 @media(max-width:1024px){
   .urgencia-txt{width:100%;text-align:center;font-size:24px;}
 }
@@ -490,31 +512,6 @@ ul{list-style:none;}
 #whatsapp .videos{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:100%;}
 #whatsapp .videos video{width:calc(33.333% - 7px);border-radius:var(--radius-midia);}
 @media(max-width:767px){ #whatsapp .videos video{width:100%;} }
-
-/* ====================== POPUPS ====================== */
-dialog.popup{
-  width:min(560px,92vw);border:0;border-radius:var(--radius-midia);padding:0;
-  background:#fff;color:#000;
-}
-dialog.popup::backdrop{background:rgba(0,0,0,.7);}
-.popup__in{padding:30px;display:flex;flex-direction:column;gap:14px;}
-.popup__tit{font-family:'Amethysta',serif;font-size:24px;font-weight:600;line-height:1.2;color:#000;text-align:center;}
-.popup__sub{font-family:'Sen',sans-serif;font-size:16px;line-height:1.3;color:#333;text-align:center;}
-.popup__forma{width:100%;}
-.popup form{display:flex;flex-direction:column;gap:10px;}
-.popup input[type=text],.popup input[type=email],.popup input[type=tel]{
-  width:100%;padding:14px 12px;font-family:'Sen',sans-serif;font-size:16px;
-  border:1px solid #ccc;border-radius:var(--radius-btn);background:#fff;color:#000;
-}
-.popup .btn{width:100%;font-size:16px;padding:18px 10px;}
-.popup__nota{font-family:'Sen',sans-serif;font-size:13px;color:#666;text-align:center;}
-.popup__fechar{
-  position:absolute;top:8px;right:12px;background:none;border:0;
-  font-size:28px;line-height:1;color:#666;cursor:pointer;
-}
-.popup__msg{font-family:'Sen',sans-serif;font-size:15px;text-align:center;min-height:20px;}
-.popup__msg[data-ok="1"]{color:#0a7a12;}
-.popup__msg[data-ok="0"]{color:#b00;}
 </style>
 </head>
 <body>
@@ -543,12 +540,12 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
     <h2 class="w tit tit--marrom tit--centro" style="--mb:20px;">TRANSFORME SUAS CLIENTES EM VERDADEIRAS DEUSAS DO OLIMPO COM O BASIC MAGIC SHADOW</h2>
     <div class="w carrossel" data-por-vista="3">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-1.jpg" alt="Resultado Basic Magic Shadow 1" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-2.jpg" alt="Resultado Basic Magic Shadow 2" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-3.jpg" alt="Resultado Basic Magic Shadow 3" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-4.jpg" alt="Resultado Basic Magic Shadow 4" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-5.jpg" alt="Resultado Basic Magic Shadow 5" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-6.jpg" alt="Resultado Basic Magic Shadow 6" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-1.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 1" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-2.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 2" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-3.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 3" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-4.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 4" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-5.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 5" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-6.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 6" loading="lazy"></div>
       </div></div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
@@ -580,9 +577,9 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">VEJA OS DEPOIMENTOS DE ALGUMAS DAS <span class="destaque">MINHAS ALUNAS</span>:</h2>
     <div class="w carrossel" data-por-vista="5" data-por-vista-tablet="3" data-por-vista-mobile="1">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
-        <div class="carrossel__slide"><button class="video-facade ratio-vertical" data-yt="0XRQAa4j3co" aria-label="Depoimento Ingrid Lima"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-vertical" data-yt="kiKaf2hl8RI" aria-label="Depoimento Flavia Giovaneli"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-vertical" data-yt="ixzdnzWHzTY" aria-label="Depoimento Ju Souza"></button></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-vertical" data-yt="0XRQAa4j3co" aria-label="Depoimento Ingrid Lima" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-vertical" data-yt="kiKaf2hl8RI" aria-label="Depoimento Flavia Giovaneli" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-vertical" data-yt="ixzdnzWHzTY" aria-label="Depoimento Ju Souza" role="button" tabindex="0"></div></div>
       </div></div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
@@ -598,42 +595,42 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
     <h2 class="w tit tit--marrom tit--centro" style="--mb:20px;width:100%;">NESSE CURSO ONLINE VOCÊ IRÁ APRENDER:</h2>
     <div class="w grade-modulos">
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/12a-dobra-Foto-2.jpg" alt="Introdução à carreira" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/12a-dobra-Foto-2.jpg" width="800" height="800" alt="Introdução à carreira" loading="lazy">
         <h3 class="card__tit">Introdução à carreira</h3>
         <p class="card__desc">Se você está começando na Micropigmentação esse módulo é obrigatório para você, e se você já trabalha, aconselho a assistir, porque muita gente começa errado e não consegue encontrar o caminho para o sucesso.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-3.jpg" alt="Higiene, Bio Segurança e Vigilância Sanitária" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-3.jpg" width="800" height="800" alt="Higiene, Bio Segurança e Vigilância Sanitária" loading="lazy">
         <h3 class="card__tit">Higiene, Bio Segurança e Vigilância Sanitária</h3>
         <p class="card__desc">Tudo que você precisa saber para trabalhar de forma correta, e ninguém melhor para ensinar isso do que eu, que tenho formação em Bio Medicina e especialização em Patologias Clínicas.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-5.jpg" alt="Pele" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-5.jpg" width="800" height="800" alt="Pele" loading="lazy">
         <h3 class="card__tit">Pele</h3>
         <p class="card__desc">Tudo que você precisa entender e dominar, sobre o maior órgão do nosso corpo, a final você precisa entender e dominar esse assunto, pois a pele de suas clientes, será a tela para a suas obras de artes.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-6.jpg" alt="Prática - Os primeiros passos para se tornar uma artista" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-6.jpg" width="800" height="800" alt="Prática - Os primeiros passos para se tornar uma artista" loading="lazy">
         <h3 class="card__tit">Prática - Os primeiros passos para se tornar uma artista</h3>
         <p class="card__desc">Um verdadeiro passo a passo, para você dominar os segredos da Shadow, nesse módulo irei te ensinar os fundamentos para te tornar uma verdadeira artista e te capacitar para começar a treinar.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow.jpg" alt="Colorimetria aplicada a técnica" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow.jpg" width="800" height="800" alt="Colorimetria aplicada a técnica" loading="lazy">
         <h3 class="card__tit">Colorimetria aplicada a técnica</h3>
         <p class="card__desc">Nada de grego aqui, nesse módulo irei falar o português simples, vou te ensinar a colorimetria da forma mais simples que você possa ver em sua vida, para que você saiba quais cores usar em cada tipo de pele. Até uma criança de 10 anos aprenderia com essa aula.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-4.jpg" alt="Treinos Práticos" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-4.jpg" width="800" height="800" alt="Treinos Práticos" loading="lazy">
         <h3 class="card__tit">Treinos Práticos</h3>
         <p class="card__desc">Aqui você começa a desenvolver sua habilidade artística, e mesmo que não tenha nenhum dom, nenhuma experiência, e mesmo que não saiba desenhar, com essas aulas você estará pronta, para começar a desenvolver suas primeiras obras de artes.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-1.jpg" alt="Prática em EVA e Frutas" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-1.jpg" width="800" height="800" alt="Prática em EVA e Frutas" loading="lazy">
         <h3 class="card__tit">Prática em EVA e Frutas</h3>
         <p class="card__desc">Esse módulo você irá criar suas primeiras obras de artes, e ao concluir esse módulo você terá a certeza de que se tornou uma artista, dominando os fundamentos de uma das técnicas mais desejadas do mundo, a Shadow.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/12a-dobra-Foto-3.jpg" alt="Prática em Modelo" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/12a-dobra-Foto-3.jpg" width="800" height="800" alt="Prática em Modelo" loading="lazy">
         <h3 class="card__tit">Prática em Modelo</h3>
         <p class="card__desc">Chegou a hora de você fazer a sua primeira modelo, ao chegar aqui, você já estará 100% pronta, já vai ter desenvolvido todas as habilidades necessárias. Nesse módulo, você só vai provar para si mesma que já sabe fazer a Shadow das Deusas!</p>
       </article>
@@ -667,9 +664,9 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
     <h2 class="w tit tit--marrom tit--centro" style="--mb:20px;">VEJA OS PROCEDIMENTOS FEITOS POR ALGUMAS DAS MINHAS ALUNAS:</h2>
     <div class="w carrossel" data-por-vista="3">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem1pro.jpg" alt="Procedimento de aluna 1" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem2pro.jpg" alt="Procedimento de aluna 2" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem3pro.jpg" alt="Procedimento de aluna 3" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem1pro.jpg" width="700" height="625" alt="Procedimento de aluna 1" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem2pro.jpg" width="700" height="625" alt="Procedimento de aluna 2" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem3pro.jpg" width="700" height="625" alt="Procedimento de aluna 3" loading="lazy"></div>
       </div></div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
@@ -684,28 +681,28 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
   <div class="sec__in sec__in--gap10" style="align-items:center;">
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">FAZENDO SUA INSCRIÇÃO HOJE, VOCÊ GANHARÁ DE PRESENTE :</h2>
     <article class="w card card--bonus">
-      <div class="card__img"><img src="/lp/basic-magic-shadow-v2/1-ebook-1-1.png" alt="Ebook Pigmentologia e Colorimetria" loading="lazy"></div>
+      <div class="card__img"><img src="/lp/basic-magic-shadow-v2/1-ebook-1-1.png" width="500" height="500" alt="Ebook Pigmentologia e Colorimetria" loading="lazy"></div>
       <div>
         <h3 class="card__tit">1 Ebook – Pigmentologia e Colorimetria o guia final</h3>
         <p class="card__desc">Tudo que você precisa para dominar de vez esse assunto e nunca mais ter dúvidas sobre pigmentos e cores.</p>
       </div>
     </article>
     <article class="w card card--bonus">
-      <div class="card__img"><img src="/lp/basic-magic-shadow-v2/2-design-sobrancelha-1-1.png" alt="Curso de Designer em Sobrancelhas com Visagismo" loading="lazy"></div>
+      <div class="card__img"><img src="/lp/basic-magic-shadow-v2/2-design-sobrancelha-1-1.png" width="500" height="500" alt="Curso de Designer em Sobrancelhas com Visagismo" loading="lazy"></div>
       <div>
         <h3 class="card__tit">2 – Curso de Designer em Sobrancelhas com Visagismo</h3>
         <p class="card__desc">Nunca mais você terá dúvidas de Designer, vai aprender a fazer um designer artístico, único e exclusivo para cada cliente, após esse curso, você vai enxergar os rostos das suas clientes como uma tela de obra de arte.</p>
       </div>
     </article>
     <article class="w card card--bonus">
-      <div class="card__img"><img src="/lp/basic-magic-shadow-v2/3-Key-Acesso-1-1-Photoroom-1.png" alt="Acesso vitalício ao Curso" loading="lazy"></div>
+      <div class="card__img"><img src="/lp/basic-magic-shadow-v2/3-Key-Acesso-1-1-Photoroom-1.png" width="500" height="500" alt="Acesso vitalício ao Curso" loading="lazy"></div>
       <div>
         <h3 class="card__tit">3 – Acesso vitalício ao Curso</h3>
         <p class="card__desc">Enquanto a Jay Academy Online existir, você terá acesso a esse curso.</p>
       </div>
     </article>
     <article class="w card card--bonus">
-      <div class="card__img"><img src="/lp/basic-magic-shadow-v2/4-Atualizacoes-1-1-Photoroom-1.png" alt="Atualizações do conteúdo" loading="lazy"></div>
+      <div class="card__img"><img src="/lp/basic-magic-shadow-v2/4-Atualizacoes-1-1-Photoroom-1.png" width="500" height="500" alt="Atualizações do conteúdo" loading="lazy"></div>
       <div>
         <h3 class="card__tit">4 – Atualizações do conteúdo</h3>
         <p class="card__desc">Você terá direito sem nenhum custo as atualizações que porventura forem surgindo nesse curso, sem ter que pagar nada a mais por isso.</p>
@@ -721,12 +718,12 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">SEJA CERTIFICADA PELA MAIOR E MAIS CONSAGRADA ACADEMIA DE MICROPIGMENTAÇÃO DO BRASIL!</h2>
     <div class="w carrossel carrossel--cobre" data-por-vista="3">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem9pro.jpg" alt="Certificação Jay Academy 1" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem8pro.jpg" alt="Certificação Jay Academy 2" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem7pro.jpg" alt="Certificação Jay Academy 3" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem4pro.jpg" alt="Certificação Jay Academy 4" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem5pro.jpg" alt="Certificação Jay Academy 5" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem6pro.jpg" alt="Certificação Jay Academy 6" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem9pro.jpg" width="700" height="625" alt="Certificação Jay Academy 1" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem8pro.jpg" width="700" height="625" alt="Certificação Jay Academy 2" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem7pro.jpg" width="700" height="625" alt="Certificação Jay Academy 3" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem4pro.jpg" width="700" height="625" alt="Certificação Jay Academy 4" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem5pro.jpg" width="700" height="625" alt="Certificação Jay Academy 5" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem6pro.jpg" width="700" height="625" alt="Certificação Jay Academy 6" loading="lazy"></div>
       </div></div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
@@ -737,7 +734,7 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
 </section>
 
 <!-- ============================ 11 · OFERTA ============================ -->
-<section class="sec" id="VALOR">
+<section class="sec" id="VALOR" tabindex="-1">
   <div class="sec__in">
     <div class="cartao-branco">
       <h2 class="w tit tit--preto tit--centro" style="--mb:20px;">COMPRANDO AGORA VOCÊ LEVA:</h2>
@@ -768,7 +765,7 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
 <!-- ============================ 12 · GARANTIA ============================ -->
 <section class="sec borda-grad borda-grad--topo" id="garantia">
   <div class="sec__in">
-    <div class="selo"><img src="/lp/basic-magic-shadow-v2/100024311.png" alt="Garantia incondicional de 7 dias" loading="lazy"></div>
+    <div class="selo"><img src="/lp/basic-magic-shadow-v2/100024311.png" width="350" height="350" alt="Garantia incondicional de 7 dias" loading="lazy"></div>
     <div class="vidro">
       <h2 class="w tit-garantia">Garantia incondicional de 7 dias!</h2>
       <div class="w divisor"><span></span></div>
@@ -785,14 +782,14 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">ASSISTA GRATUITAMENTE ALGUMAS DAS MINHAS AULAS:</h2>
     <div class="w carrossel" data-por-vista="5" data-por-vista-tablet="3" data-por-vista-mobile="1">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
-        <div class="carrossel__slide"><button class="video-facade ratio-wide" data-yt="jdsbKshTMI0" aria-label="Aula 01"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-wide" data-yt="_C2jCl8rF00" aria-label="Aula 02"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-wide" data-yt="wwNDV6yTUg4" aria-label="Aula 03"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-wide" data-yt="zZgoPRHzXvk" aria-label="Aula 04"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-wide" data-yt="wwNDV6yTUg4" aria-label="Aula 05"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-wide" data-yt="UerQ2N2-ovA" aria-label="Aula 06"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-wide" data-yt="Tdyi3D9WuHg" aria-label="Aula 07"></button></div>
-        <div class="carrossel__slide"><button class="video-facade ratio-wide" data-yt="_C2jCl8rF00" aria-label="Aula 08"></button></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="jdsbKshTMI0" aria-label="Aula 01" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="_C2jCl8rF00" aria-label="Aula 02" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="wwNDV6yTUg4" aria-label="Aula 03" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="zZgoPRHzXvk" aria-label="Aula 04" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="wwNDV6yTUg4" aria-label="Aula 05" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="UerQ2N2-ovA" aria-label="Aula 06" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="Tdyi3D9WuHg" aria-label="Aula 07" role="button" tabindex="0"></div></div>
+        <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="_C2jCl8rF00" aria-label="Aula 08" role="button" tabindex="0"></div></div>
       </div></div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
@@ -810,13 +807,13 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
       <p class="w chamada">“Ai James, não sei se vou conseguir aprender!” Então leia as dúvidas frequentes, e se não for o suficiente para tirar suas dúvidas, chama meu time no WhatsApp que elas irão te ajudar.</p>
       <h3 class="w tit-faq">Dúvidas frequentes:</h3>
       <div class="w acordeao">
-        <details><summary><span>Esse curso serve para quem nunca trabalhou com Micropigmentação?</span><span class="ico-acc"></span></summary><div class="resposta">Sim, esse curso foi desenvolvido pensando em você que nunca trabalhou na área, de modo que nele terá toda a base necessária para você começar do absoluto zero.</div></details>
-        <details><summary><span>Esse curso serve para quem já trabalha com Micropigmentação?</span><span class="ico-acc"></span></summary><div class="resposta">Sim! Se você trabalha com micropigmentação e faz Shadow, com toda certeza ao concluir esse curso e colocar em prática o que irá aprender, sua Técnica em Shadow irá mudar e evoluir a um nível em que você estará a frente de no mínimo 90% das Micropigmentadoras do Brasil.</div></details>
-        <details><summary><span>Terei direito a Certificado?</span><span class="ico-acc"></span></summary><div class="resposta">Sim! Ao concluir o curso você será certificada pela Maior e Mais consagrada Academia de Micropigmentação do Brasil, a Jay Academy.</div></details>
-        <details><summary><span>Terei direito a Suporte?</span><span class="ico-acc"></span></summary><div class="resposta">Sim! Temos uma plataforma de estudo exclusiva a PMU Class, lá dentro você terá direito a um suporte exclusivo, onde poderá tirar todas as suas dúvidas referentes aos conteúdos do curso.</div></details>
-        <details><summary><span>Quanto tempo terei de acesso ao Curso?</span><span class="ico-acc"></span></summary><div class="resposta">Esse Curso tem acesso vitalício, enquanto a Jay Academy online existir, você terá direito a esse treinamento, além disso, terá direito também as atualizações que esse treinamento for recebendo ao longo do tempo, sem ter que pagar nada a mais por isso.</div></details>
-        <details><summary><span>Quais são as formas de pagamento?</span><span class="ico-acc"></span></summary><div class="resposta">Você pode pagar avista no Cartão de Crédito, Pix, ou boleto bancário tendo o desconto e pagando apenas R$ 297,00 ou parcelar no cartão de crédito em até 12x de R$ 29,70</div></details>
-        <details><summary><span>Posso pagar com dois cartões de Crédito?</span><span class="ico-acc"></span></summary><div class="resposta">Sim, você pode somar o limite de dois cartões e pagar uma parte em cada um.</div></details>
+        <details name="faq"><summary><span>Esse curso serve para quem nunca trabalhou com Micropigmentação?</span><span class="ico-acc"></span></summary><div class="resposta">Sim, esse curso foi desenvolvido pensando em você que nunca trabalhou na área, de modo que nele terá toda a base necessária para você começar do absoluto zero.</div></details>
+        <details name="faq"><summary><span>Esse curso serve para quem já trabalha com Micropigmentação?</span><span class="ico-acc"></span></summary><div class="resposta">Sim! Se você trabalha com micropigmentação e faz Shadow, com toda certeza ao concluir esse curso e colocar em prática o que irá aprender, sua Técnica em Shadow irá mudar e evoluir a um nível em que você estará a frente de no mínimo 90% das Micropigmentadoras do Brasil.</div></details>
+        <details name="faq"><summary><span>Terei direito a Certificado?</span><span class="ico-acc"></span></summary><div class="resposta">Sim! Ao concluir o curso você será certificada pela Maior e Mais consagrada Academia de Micropigmentação do Brasil, a Jay Academy.</div></details>
+        <details name="faq"><summary><span>Terei direito a Suporte?</span><span class="ico-acc"></span></summary><div class="resposta">Sim! Temos uma plataforma de estudo exclusiva a PMU Class, lá dentro você terá direito a um suporte exclusivo, onde poderá tirar todas as suas dúvidas referentes aos conteúdos do curso.</div></details>
+        <details name="faq"><summary><span>Quanto tempo terei de acesso ao Curso?</span><span class="ico-acc"></span></summary><div class="resposta">Esse Curso tem acesso vitalício, enquanto a Jay Academy online existir, você terá direito a esse treinamento, além disso, terá direito também as atualizações que esse treinamento for recebendo ao longo do tempo, sem ter que pagar nada a mais por isso.</div></details>
+        <details name="faq"><summary><span>Quais são as formas de pagamento?</span><span class="ico-acc"></span></summary><div class="resposta">Você pode pagar avista no Cartão de Crédito, Pix, ou boleto bancário tendo o desconto e pagando apenas R$ 297,00 ou parcelar no cartão de crédito em até 12x de R$ 29,70</div></details>
+        <details name="faq"><summary><span>Posso pagar com dois cartões de Crédito?</span><span class="ico-acc"></span></summary><div class="resposta">Sim, você pode somar o limite de dois cartões e pagar uma parte em cada um.</div></details>
       </div>
       <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">QUERO MINHA VAGA AGORA!</a></div>
     </div>
@@ -831,48 +828,21 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
       <a class="btn btn--wpp" href="https://api.whatsapp.com/send?phone=5519993202072&amp;text=Preciso%20de%20ajuda%20com%20o%20Basic%20Magic%20Shadow" rel="noopener">FALE CONOSCO NO WHATSAPP</a>
     </div>
     <div class="videos">
-      <video src="/wpmirror/9d54ac0f4f71-kiturbanique-95b6769c5c.mp4" autoplay muted loop playsinline controls controlslist="nodownload" preload="none"></video>
-      <video src="/wpmirror/006295bf875e-kithenna-e50e88e745.mp4" autoplay muted loop playsinline controls controlslist="nodownload" preload="none"></video>
-      <video src="/wpmirror/1fc5a3ec7e3b-kitjaycademy-b32daaa395.mp4" autoplay muted loop playsinline controls controlslist="nodownload" preload="none"></video>
+      <video src="/wpmirror/9d54ac0f4f71-kiturbanique-95b6769c5c.mp4" controls playsinline preload="metadata" controlslist="nodownload" aria-label="Kit Urbanique"></video>
+      <video src="/wpmirror/006295bf875e-kithenna-e50e88e745.mp4" controls playsinline preload="metadata" controlslist="nodownload" aria-label="Kit Henna"></video>
+      <video src="/wpmirror/1fc5a3ec7e3b-kitjaycademy-b32daaa395.mp4" controls playsinline preload="metadata" controlslist="nodownload" aria-label="Kit Jay Academy"></video>
     </div>
   </div>
 </section>
 
-<!-- ============================ POPUPS DE INSCRIÇÃO ============================ -->
-<dialog class="popup" id="popup-vip">
-  <button class="popup__fechar" type="button" data-fechar aria-label="Fechar">&times;</button>
-  <div class="popup__in">
-    <h2 class="popup__tit">Preencha o Formulário abaixo e participe gratuitamente:</h2>
-    <form data-form="lips_sense">
-      <input type="text" name="nome" placeholder="Digite o seu Nome" required>
-      <input type="email" name="email" placeholder="Digite o seu melhor E-mail" required>
-      <input type="tel" name="whatsapp" placeholder="Digite o seu DDD + WhatsApp" required>
-      <button class="btn" type="submit">QUERO ME INSCREVER AGORA</button>
-    </form>
-    <p class="popup__msg" data-msg></p>
-    <p class="popup__nota">Aguarde a página de confirmação carregar!</p>
-  </div>
-</dialog>
-
-<dialog class="popup" id="popup-inscricao">
-  <button class="popup__fechar" type="button" data-fechar aria-label="Fechar">&times;</button>
-  <div class="popup__in">
-    <img class="popup__forma" src="/lp/basic-magic-shadow-v2/forma.png" alt="" aria-hidden="true">
-    <h2 class="popup__tit">VAMOS INICIAR SUA INSCRIÇÃO</h2>
-    <p class="popup__sub">Após preencher o formulário você será direcionado para o pagamento de seu curso com uma condição especial</p>
-    <form data-form="inscricao">
-      <input type="text" name="nome" placeholder="Nome" required>
-      <input type="tel" name="celular" placeholder="Whatsapp" required>
-      <input type="email" name="email" placeholder="E-mail" required>
-      <button class="btn" type="submit">COMPRAR AGORA MEU CURSO</button>
-    </form>
-    <p class="popup__msg" data-msg></p>
-  </div>
-</dialog>
 
 <script>
 (function(){
   "use strict";
+
+  // quem pediu menos movimento no sistema não deve receber autoplay de carrossel
+  var MOV_REDUZIDO = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- ícones SVG (mesmos da página original) ---------- */
   var ICONES = {
@@ -952,6 +922,14 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
       var n = porVista();
       var passo = 100 / n;
       trilha.style.transform = 'translateX(calc(-' + (indice * passo) + '% - ' + (indice * GAP) + 'px))';
+      // Tirar os slides ocultos do tab order não é só acessibilidade: focar um
+      // botão fora de vista faz o navegador dar scrollLeft no viewport, o que
+      // dessincroniza o translateX e quebra o carrossel até o próximo resize.
+      slides.forEach(function (s, i) {
+        var visivel = i >= indice && i < indice + n;
+        s.setAttribute('aria-hidden', visivel ? 'false' : 'true');
+        if (visivel) s.removeAttribute('inert'); else s.setAttribute('inert', '');
+      });
       if (dots) {
         Array.prototype.forEach.call(dots.children, function (d, i) {
           d.setAttribute('aria-current', i === indice ? 'true' : 'false');
@@ -968,7 +946,7 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'carrossel__dot';
-        b.setAttribute('aria-label', 'Ir para o slide ' + (i + 1));
+        b.setAttribute('aria-label', 'Posição ' + (i + 1) + ' de ' + total);
         (function (idx) { b.addEventListener('click', function () { indice = idx; aplica(); reinicia(); }); })(i);
         dots.appendChild(b);
       }
@@ -981,41 +959,223 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
       aplica();
     }
 
-    function reinicia() { para(); comeca(); }
-    function comeca() { if (paginas() > 1) timer = setInterval(function () { anda(1); }, 5000); }
+    // O autoplay só roda quando NENHUM destes bloqueios está ativo. O bloqueio de
+    // vídeo é o que atende o pedido central: o carrossel não pode arrastar um
+    // depoimento para fora da tela enquanto ele está sendo assistido.
+    var bloqueios = { video: 0, ponteiro: false, foco: false, foraDaTela: false, arrastando: false };
+    function travado() {
+      return bloqueios.video > 0 || bloqueios.ponteiro || bloqueios.foco ||
+             bloqueios.foraDaTela || bloqueios.arrastando || MOV_REDUZIDO;
+    }
+    function comeca() {
+      para();
+      if (paginas() > 1 && !travado()) timer = setInterval(function () { anda(1); }, 5000);
+    }
     function para() { if (timer) { clearInterval(timer); timer = null; } }
+    function reinicia() { comeca(); }
+
+    // consumido pelo registro de mídia (ver `midia` mais abaixo)
+    raiz._midiaIniciou = function () { bloqueios.video++; para(); };
+    raiz._midiaParou = function () { bloqueios.video = Math.max(0, bloqueios.video - 1); comeca(); };
 
     if (prev) prev.addEventListener('click', function () { anda(-1); reinicia(); });
     if (next) next.addEventListener('click', function () { anda(1); reinicia(); });
-    raiz.addEventListener('mouseenter', para);
-    raiz.addEventListener('mouseleave', comeca);
+
+    raiz.addEventListener('mouseenter', function () { bloqueios.ponteiro = true; para(); });
+    raiz.addEventListener('mouseleave', function () { bloqueios.ponteiro = false; comeca(); });
+    // Só o foco de TECLADO trava o carrossel. Um clique de mouse também dispara
+    // focusin (no facade de vídeo, por exemplo) e travaria o autoplay para
+    // sempre, já que o foco permanece ali depois do clique.
+    raiz.addEventListener('focusin', function (ev) {
+      var porTeclado = ev.target && ev.target.matches && ev.target.matches(':focus-visible');
+      if (!porTeclado) return;
+      bloqueios.foco = true; para();
+    });
+    raiz.addEventListener('focusout', function () {
+      if (!raiz.contains(document.activeElement)) { bloqueios.foco = false; comeca(); }
+    });
+
+    // teclado: setas navegam quando o carrossel tem foco
+    raiz.addEventListener('keydown', function (ev) {
+      if (ev.key === 'ArrowLeft') { anda(-1); reinicia(); ev.preventDefault(); }
+      else if (ev.key === 'ArrowRight') { anda(1); reinicia(); ev.preventDefault(); }
+    });
+
+    // arrastar / deslizar (o primeiro gesto que todo mundo tenta no celular)
+    var x0 = null, arrastou = false;
+    raiz.addEventListener('pointerdown', function (ev) {
+      if (ev.target.closest('.carrossel__nav, .carrossel__dot, .video-facade')) return;
+      x0 = ev.clientX; arrastou = false;
+      bloqueios.arrastando = true; para();
+    });
+    raiz.addEventListener('pointermove', function (ev) {
+      if (x0 === null) return;
+      var d = ev.clientX - x0;
+      if (Math.abs(d) > 40 && !arrastou) {
+        arrastou = true;
+        anda(d < 0 ? 1 : -1);
+      }
+    });
+    function soltaPonteiro() {
+      if (x0 === null) return;
+      x0 = null; bloqueios.arrastando = false; comeca();
+    }
+    raiz.addEventListener('pointerup', soltaPonteiro);
+    raiz.addEventListener('pointercancel', soltaPonteiro);
+    raiz.addEventListener('pointerleave', soltaPonteiro);
+
+    // não gastar ciclos (nem mover conteúdo invisível) fora do viewport
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (ents) {
+        bloqueios.foraDaTela = !ents[0].isIntersecting;
+        if (bloqueios.foraDaTela) para(); else comeca();
+      }, { threshold: 0.15 }).observe(raiz);
+    }
+
+    var viewport = raiz.querySelector('.carrossel__viewport');
+    if (viewport) viewport.setAttribute('aria-live', 'polite');
+    raiz.setAttribute('role', 'group');
+    raiz.setAttribute('aria-roledescription', 'carrossel');
 
     layout();
-    window.addEventListener('resize', layout);
+    window.addEventListener('resize', agendaLayout(layout));
     comeca();
   }
+
+  // um resize dispara 5 carrosséis; sem debounce cada um reconstrói todos os dots
+  function agendaLayout(fn) {
+    var t = null;
+    return function () { clearTimeout(t); t = setTimeout(fn, 150); };
+  }
+
   document.querySelectorAll('.carrossel').forEach(iniciaCarrossel);
 
-  /* ---------- vídeos do YouTube: só carrega o iframe no clique ---------- */
-  document.querySelectorAll('.video-facade').forEach(function (btn) {
-    var id = btn.getAttribute('data-yt');
-    if (!id) return;
-    var thumb = new Image();
-    thumb.src = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
-    thumb.alt = btn.getAttribute('aria-label') || '';
-    thumb.loading = 'lazy';
-    btn.appendChild(thumb);
-    btn.addEventListener('click', function () {
-      var f = document.createElement('iframe');
-      f.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
-      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-      f.allowFullscreen = true;
-      f.title = btn.getAttribute('aria-label') || 'Vídeo';
-      btn.innerHTML = '';
-      btn.classList.add('carregado');
-      btn.style.cursor = 'default';
-      btn.appendChild(f);
-    }, { once: true });
+  /* =======================================================================
+     REGISTRO DE MÍDIA
+     Um único ponto que sabe o que está tocando na página. Serve a dois fins:
+     (1) nunca deixar dois áudios sobrepostos — ao iniciar uma mídia, a anterior
+         pausa; (2) avisar o carrossel que contém aquela mídia para ele travar o
+         autoplay enquanto o vídeo roda.
+     ======================================================================= */
+  var midia = (function () {
+    var atual = null;
+
+    function carrosselDe(el) {
+      return el && el.closest ? el.closest('.carrossel') : null;
+    }
+
+    return {
+      iniciou: function (item) {
+        if (atual && atual !== item && atual.pausar) atual.pausar();
+        atual = item;
+        var c = carrosselDe(item.el);
+        if (c && c._midiaIniciou && !item.travouCarrossel) {
+          item.travouCarrossel = true;
+          c._midiaIniciou();
+        }
+      },
+      parou: function (item) {
+        if (atual === item) atual = null;
+        var c = carrosselDe(item.el);
+        if (c && c._midiaParou && item.travouCarrossel) {
+          item.travouCarrossel = false;
+          c._midiaParou();
+        }
+      }
+    };
+  })();
+
+  /* ---------- YouTube: facade que só carrega o player no clique ----------
+     Usa a IFrame API oficial (carregada sob demanda, no primeiro clique) porque
+     é o único jeito confiável de saber se o vídeo está tocando ou pausado —
+     requisito para travar o carrossel. Até o primeiro clique a página segue sem
+     nenhuma dependência externa. */
+  (function () {
+    var facades = Array.prototype.slice.call(document.querySelectorAll('.video-facade'));
+    if (!facades.length) return;
+
+    var apiPronta = null; // Promise, criada só no primeiro clique
+
+    function carregaApi() {
+      if (apiPronta) return apiPronta;
+      apiPronta = new Promise(function (resolve) {
+        if (window.YT && window.YT.Player) return resolve(window.YT);
+        var anterior = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function () {
+          if (typeof anterior === 'function') anterior();
+          resolve(window.YT);
+        };
+        var s = document.createElement('script');
+        s.src = 'https://www.youtube.com/iframe_api';
+        s.async = true;
+        document.head.appendChild(s);
+      });
+      return apiPronta;
+    }
+
+    facades.forEach(function (facade) {
+      var id = facade.getAttribute('data-yt');
+      if (!id) return;
+      var rotulo = facade.getAttribute('aria-label') || 'Vídeo';
+
+      var thumb = new Image();
+      thumb.src = 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg';
+      thumb.alt = rotulo;
+      thumb.loading = 'lazy';
+      // vídeo removido/privado devolve a miniatura cinza 120x90 do YouTube:
+      // não deixar um placeholder morto clicável
+      thumb.addEventListener('load', function () {
+        if (thumb.naturalWidth <= 120) {
+          facade.setAttribute('aria-disabled', 'true');
+          facade.style.cursor = 'not-allowed';
+        }
+      });
+      facade.appendChild(thumb);
+
+      var item = { el: facade, player: null, travouCarrossel: false, pausar: function () {} };
+
+      function abre() {
+        if (facade.dataset.carregado === '1' || facade.getAttribute('aria-disabled') === 'true') return;
+        facade.dataset.carregado = '1';
+        facade.style.cursor = 'default';
+
+        var alvo = document.createElement('div');
+        facade.innerHTML = '';
+        facade.appendChild(alvo);
+
+        carregaApi().then(function (YT) {
+          item.player = new YT.Player(alvo, {
+            videoId: id,
+            playerVars: { autoplay: 1, rel: 0, playsinline: 1 },
+            events: {
+              onReady: function (ev) { ev.target.playVideo(); },
+              onStateChange: function (ev) {
+                if (ev.data === YT.PlayerState.PLAYING) midia.iniciou(item);
+                else if (ev.data === YT.PlayerState.PAUSED || ev.data === YT.PlayerState.ENDED) midia.parou(item);
+              }
+            }
+          });
+          item.pausar = function () {
+            try { item.player && item.player.pauseVideo && item.player.pauseVideo(); } catch (e) {}
+          };
+          var f = item.player.getIframe && item.player.getIframe();
+          if (f) f.title = rotulo;
+        });
+      }
+
+      facade.addEventListener('click', abre);
+      facade.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') { ev.preventDefault(); abre(); }
+      });
+    });
+  })();
+
+  /* ---------- vídeos MP4: entram no mesmo registro ---------- */
+  document.querySelectorAll('#whatsapp video').forEach(function (v) {
+    var item = { el: v, pausar: function () { try { v.pause(); } catch (e) {} } };
+    v.addEventListener('play', function () { midia.iniciou(item); });
+    v.addEventListener('pause', function () { midia.parou(item); });
+    v.addEventListener('ended', function () { midia.parou(item); });
   });
 
   /* ---------- contador regressivo (evergreen de 15 min, por visitante) ---------- */
@@ -1038,76 +1198,63 @@ dialog.popup::backdrop{background:rgba(0,0,0,.7);}
       return t;
     }
 
+    if (!elMin || !elSeg) return;
+
     var fim = prazo();
+    var relogio = null;
+
+    // Ao zerar, parar de vez e trocar o texto. Um "00:00" piscando eternamente
+    // ao lado do botão de compra denuncia a escassez como falsa justo no
+    // momento da decisão. A caixa, a borda e as medidas continuam as mesmas.
+    function encerra() {
+      if (relogio) { clearInterval(relogio); relogio = null; }
+      caixa.innerHTML = '';
+      var aviso = document.createElement('p');
+      aviso.className = 'contador__encerrado';
+      aviso.setAttribute('role', 'status');
+      aviso.textContent = 'Última chance — oferta encerrando';
+      caixa.appendChild(aviso);
+    }
+
     function tick() {
       var resta = Math.max(0, fim - Date.now());
+      if (resta <= 0) { encerra(); return; }
       var min = Math.floor(resta / 60000);
       var seg = Math.floor((resta % 60000) / 1000);
       elMin.textContent = String(min).padStart(2, '0');
       elSeg.textContent = String(seg).padStart(2, '0');
     }
+
     tick();
-    setInterval(tick, 1000);
+    if (relogio === null && fim > Date.now()) relogio = setInterval(tick, 1000);
   })();
 
-  /* ---------- formulários dos popups → /api/elementor-form ---------- */
-  function utms() {
-    var q = new URLSearchParams(location.search);
-    var out = {};
-    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function (k) {
-      out[k] = q.get(k) || '';
+  /* ---------- FAQ: só um item aberto por vez, como no original ---------- */
+  (function () {
+    var itens = Array.prototype.slice.call(document.querySelectorAll('#faq .acordeao details'));
+    if (!itens.length) return;
+    // navegadores modernos resolvem sozinhos pelo atributo `name`; este handler
+    // é o fallback para os que ainda não suportam acordeão nativo
+    var suportaName = 'name' in document.createElement('details');
+    if (suportaName) return;
+    itens.forEach(function (d) {
+      d.addEventListener('toggle', function () {
+        if (!d.open) return;
+        itens.forEach(function (o) { if (o !== d) o.open = false; });
+      });
     });
-    return out;
-  }
+  })();
 
-  document.querySelectorAll('.popup form').forEach(function (form) {
-    form.addEventListener('submit', function (ev) {
-      ev.preventDefault();
-      var caixa = form.closest('.popup__in');
-      var msg = caixa ? caixa.querySelector('[data-msg]') : null;
-      var botao = form.querySelector('button[type=submit]');
-      var rotulo = botao ? botao.textContent : '';
-      if (botao) { botao.disabled = true; botao.textContent = 'Enviando…'; }
-
-      var dados = new FormData();
-      dados.append('action', 'elementor_pro_forms_send_form');
-      dados.append('form_id', form.getAttribute('data-form') || 'bms-v2');
-      dados.append('referer', location.href);
-      new FormData(form).forEach(function (v, k) { dados.append('form_fields[' + k + ']', v); });
-      var u = utms();
-      Object.keys(u).forEach(function (k) { dados.append('form_fields[' + k + ']', u[k]); });
-
-      fetch('/api/elementor-form', { method: 'POST', body: dados })
-        .then(function (r) { return r.json(); })
-        .then(function (r) {
-          var ok = !!(r && r.success);
-          if (msg) {
-            msg.textContent = (r && r.data && r.data.message) || (ok ? 'Recebido!' : 'Não foi possível enviar.');
-            msg.setAttribute('data-ok', ok ? '1' : '0');
-          }
-          if (ok) {
-            form.reset();
-            var destino = r.data && r.data.redirect_url;
-            if (destino) location.href = destino;
-          }
-        })
-        .catch(function () {
-          if (msg) { msg.textContent = 'Falha de conexão. Tente novamente.'; msg.setAttribute('data-ok', '0'); }
-        })
-        .finally(function () {
-          if (botao) { botao.disabled = false; botao.textContent = rotulo; }
-        });
+  /* ---------- âncoras #VALOR: leva o foco junto com o scroll ---------- */
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      var alvo = document.querySelector(a.getAttribute('href'));
+      if (!alvo) return;
+      // sem isso o viewport vai, mas o foco fica para trás: o próximo Tab
+      // devolve o usuário ao meio da página
+      setTimeout(function () { alvo.focus({ preventScroll: true }); }, MOV_REDUZIDO ? 0 : 450);
     });
   });
-
-  /* popups são abertos por código (o original não tem gatilho automático) */
-  document.querySelectorAll('.popup [data-fechar]').forEach(function (b) {
-    b.addEventListener('click', function () { b.closest('dialog').close(); });
-  });
-  window.abrirPopup = function (id) {
-    var d = document.getElementById(id);
-    if (d && typeof d.showModal === 'function') d.showModal();
-  };
 })();
 </script>
 </body>
