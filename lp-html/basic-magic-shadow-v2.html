@@ -61,6 +61,11 @@
   --radius-midia:10px;
   --radius-btn:5px;
   --content:1200px;
+  /* caixa única dos CTAs — a variação de largura entre eles era o principal
+     problema de diagramação da página */
+  --btn-larg:460px;
+  --btn-larg-destaque:460px;
+  --btn-alt:62px;
   /* --kit-widget-spacing do Elementor: computa 0px na página real (verificado no
      navegador), então o espaçamento entre widgets é só o valor explícito de --mb. */
   --ws:0px;
@@ -74,10 +79,14 @@ html{scroll-behavior:smooth;}
    então o visual no mouse continua idêntico ao da página original. */
 :focus-visible{outline:3px solid #FFBE00;outline-offset:2px;}
 #VALOR:focus{outline:none;}
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto;}
-  .carrossel__trilha{transition:none;}
-}
+/* Entrada sutil: fade + subida de 20px, uma vez por elemento. A classe `.entra`
+   é aplicada por JS — o CSS base nunca esconde nada, então se o JS falhar o
+   conteúdo continua visível. */
+.entra{opacity:0;transform:translateY(20px);}
+.entra.visivel{opacity:1;transform:none;transition:opacity .5s ease-out, transform .5s ease-out;}
+
+/* a guarda de prefers-reduced-motion fica no FIM desta folha, senão as regras
+   de animação declaradas depois dela vencem na cascata */
 body{
   margin:0;background:#000;color:#fff;
   font-family:'Sen',Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;
@@ -132,7 +141,7 @@ ul{list-style:none;}
 }
 @media(min-width:768px){ .vidro{width:48%;} }
 @media(max-width:1024px){ .vidro{padding:50px 20px;} }
-@media(max-width:767px){ .vidro{width:100%;padding:10px;} }
+@media(max-width:767px){ .vidro{width:100%;padding:20px;} }
 
 /* cartão branco (oferta e FAQ) */
 .cartao-branco{
@@ -178,51 +187,69 @@ ul{list-style:none;}
 }
 @media(max-width:767px){ .divisor{padding-block:6px;} }
 
-/* ====================== BOTÕES ====================== */
+/* ====================== BOTÕES ======================
+   Sistema único: TODO CTA tem a mesma altura e a mesma largura. Antes cada
+   botão era medido pelo próprio texto (362→560px, 54% de variação) porque
+   `.btn` era inline-block sem limite de largura e havia dois modificadores
+   concorrentes (--justify vs --centro) que nem padronizavam entre si. */
 @keyframes textura{0%{background-position:0 0}100%{background-position:100% 0}}
-.btn-wrap{width:100%;margin:20px 0 calc(var(--ws) + 0px);}
-.btn-wrap:last-child{--ws:0px;}
-.btn-wrap--centro{text-align:center;}
-@media(max-width:767px){
-  .btn-wrap{width:auto;margin-inline:20px;}
+
+.btn-wrap{
+  width:100%;margin:20px 0 calc(var(--ws) + 0px);
+  display:flex;justify-content:center;
 }
+.btn-wrap:last-child{--ws:0px;}
+
 .btn{
-  display:inline-block;text-align:center;text-decoration:none;cursor:pointer;
+  /* largura fixa da família: todos os CTAs ocupam a mesma caixa */
+  display:flex;align-items:center;justify-content:center;
+  width:100%;max-width:var(--btn-larg);min-height:var(--btn-alt);
+  text-align:center;text-decoration:none;cursor:pointer;
   font-family:'Amethysta',serif;font-weight:600;font-size:16px;line-height:1.2;
   color:#000;background-color:var(--cta-bg);
   background-image:linear-gradient(45deg,#FFFBD7,#FDE46D,#FFFBD7,#FDE46D);
   background-size:400% 200%;
   border:1px solid var(--cta-borda);border-radius:var(--radius-btn);
   box-shadow:0 0 33px 0 var(--cta-glow);
-  padding:20px 60px;
+  padding:12px 28px;
   animation:textura 3.4s cubic-bezier(.2,.5,.9,.6) 2s infinite;
-  transition:background 1.6s cubic-bezier(.55,.1,.47,.94);
+  transition:background 1.6s cubic-bezier(.55,.1,.47,.94),
+             transform .18s ease, box-shadow .18s ease;
 }
-.btn-wrap--justify .btn{display:block;width:100%;}
-@media(max-width:767px){
-  .btn{padding:20px 10px;}
-  .btn-wrap--centro .btn{display:block;width:100%;}
-}
-/* CTA de compra (verde) */
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 40px 0 var(--cta-glow);}
+.btn:active{transform:translateY(0);box-shadow:0 0 20px 0 var(--cta-glow);}
+
+/* CTA de compra (verde). O extremo claro do gradiente foi escurecido de
+   #00B40D para #02800E: o branco sobre #00B40D dava 2,79:1 (mínimo 4,5:1) e,
+   como o gradiente anima, o texto oscilava entre legível e ilegível. */
 .btn--comprar{
-  color:#fff;background-color:transparent;
-  background-image:linear-gradient(45deg,#00B40D,#006908,#00B40D,#006908);
+  color:#fff;background-color:#02800E;
+  background-image:linear-gradient(45deg,#02800E,#006908,#02800E,#006908);
   background-size:400% 200%;
   border:2px solid var(--verde-borda);
   box-shadow:0 0 16px 0 rgba(32,31,28,.27);
-  padding:20px 40px;
+  max-width:var(--btn-larg-destaque);
+  font-size:18px;
 }
-.btn-comprar-wrap{width:80%;margin:20px 0 calc(var(--ws) + 0px);}
-.btn-comprar-wrap .btn{display:block;width:100%;}
-@media(max-width:1024px){ .btn-comprar-wrap{width:45%;} }
-@media(max-width:767px){ .btn-comprar-wrap{width:auto;margin-inline:10px;} }
-/* botão do WhatsApp */
+.btn--comprar:hover{box-shadow:0 6px 26px 0 rgba(2,128,14,.45);}
+.btn--comprar:active{box-shadow:0 0 16px 0 rgba(32,31,28,.27);}
+.btn-comprar-wrap{width:100%;margin:20px 0 calc(var(--ws) + 0px);display:flex;justify-content:center;}
+
+/* WhatsApp: mesma altura dos demais (antes tinha padding 40px e ficava 65% mais alto) */
 .btn--wpp{
   color:#fff;background-color:var(--wpp);background-image:none;
   border:1px solid var(--wpp-borda);box-shadow:none;animation:none;
-  padding:40px 60px;
 }
-@media(max-width:767px){ .btn--wpp{padding:40px 10px;} }
+.btn--wpp:hover{background-color:#0a9a02;box-shadow:0 6px 22px rgba(7,129,0,.45);}
+
+@media(max-width:1024px){
+  .btn{font-size:15px;padding:12px 20px;}
+}
+@media(max-width:767px){
+  .btn-wrap,.btn-comprar-wrap{width:auto;align-self:stretch;margin-inline:0;}
+  .btn{font-size:14px;padding:12px 14px;letter-spacing:-.01em;}
+  .btn--comprar{font-size:16px;}
+}
 
 /* ====================== 01 · HERO ====================== */
 #hero{
@@ -235,13 +262,13 @@ ul{list-style:none;}
 #hero .tit,#hero .sub{text-align:left;width:100%;}
 @media(max-width:767px){
   #hero{
-    padding:230px 10px 20px;
+    padding:200px 20px 32px;
     background-image:url('/lp/basic-magic-shadow-v2/MOBILE-CO-BASIC-MAGIC-SHADOW.jpg');
     background-position:top center;background-size:contain;
   }
   #hero .logo{text-align:center;--mb:0px;}
   #hero .logo img{width:50%;margin-inline:auto;}
-  #hero .tit{font-size:20px;text-align:center;}
+  #hero .tit{font-size:27px;text-align:center;}
   #hero .sub{text-align:center;}
 }
 
@@ -253,7 +280,7 @@ ul{list-style:none;}
 #apta .sec__in{align-items:flex-start;}
 @media(max-width:767px){
   #apta{
-    padding:230px 10px 20px;
+    padding:200px 20px 32px;
     background-image:url('/lp/basic-magic-shadow-v2/MOBILE-COBMS-FUNDO.jpg');
     background-position:top center;background-size:contain;
   }
@@ -287,13 +314,13 @@ ul{list-style:none;}
 }
 .carrossel__nav--prev{left:0;}
 .carrossel__nav--next{right:0;}
-.carrossel__dots{display:flex;gap:8px;justify-content:center;margin-top:14px;}
+.carrossel__dots{display:flex;gap:12px;justify-content:center;margin-top:14px;}
 /* 8px visuais (idêntico ao original) num alvo de toque de 24px: o padding é
    transparente e as margens negativas anulam sua contribuição no layout, para
    a altura do bloco continuar sendo 8px. */
 .carrossel__dot{
   width:8px;height:8px;border-radius:50%;border:0;cursor:pointer;
-  padding:8px;margin:-8px;background:var(--bullet-off);
+  padding:18px;margin:-18px;background:var(--bullet-off);
   background-clip:content-box;box-sizing:content-box;
 }
 .carrossel__dot[aria-current="true"]{background:var(--borda-midia);}
@@ -310,12 +337,20 @@ ul{list-style:none;}
 .video-facade::after{
   content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:68px;height:48px;border-radius:12px;background:rgba(0,0,0,.65);
+  pointer-events:none;transition:background .25s,transform .25s;
 }
 .video-facade::before{
   content:'';position:absolute;left:50%;top:50%;z-index:2;
-  transform:translate(-30%,-50%);
+  transform:translate(-30%,-50%);pointer-events:none;
   border-style:solid;border-width:11px 0 11px 19px;border-color:transparent transparent transparent #fff;
 }
+.video-facade:hover::after{background:rgba(190,97,39,.9);transform:translate(-50%,-50%) scale(1.08);}
+/* Depois que o player carrega, o play falso PRECISA sumir: ele ficava desenhado
+   por cima do vídeo e, por ser pseudo-elemento do container, cobria o controle
+   de pause do YouTube. */
+.video-facade[data-carregado="1"]::before,
+.video-facade[data-carregado="1"]::after{content:none;}
+.video-facade[data-carregado="1"]{cursor:default;}
 .video-facade iframe{width:100%;height:100%;border:0;display:block;}
 .ratio-vertical{aspect-ratio:.5625;}
 .ratio-wide{aspect-ratio:1.77777;}
@@ -335,31 +370,45 @@ ul{list-style:none;}
 }
 
 /* ====================== 06/09 · CARDS ====================== */
-.grade-modulos{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:10px;width:100%;}
+/* Grade 4×2: com 3 colunas os 8 módulos deixavam 2 órfãos na última linha,
+   com ~197px de vazio nas laterais. Grid (em vez de flex-wrap) também iguala a
+   altura dos cards linha a linha. */
+.grade-modulos{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%;align-items:stretch;
+}
 .card{
   background:#fff;border-radius:var(--radius-midia);padding:20px;
   box-shadow:0 2px 5px 0 rgba(0,0,0,.19);
 }
-.card--modulo{width:32%;}
+.card--modulo{display:flex;flex-direction:column;}
 .card--modulo img{width:100%;border-radius:5px;margin-bottom:.9em;}
 .card__tit{
-  font-family:'Amethysta',serif;font-size:22px;font-weight:600;line-height:1.3em;
+  font-family:'Amethysta',serif;font-size:20px;font-weight:600;line-height:1.3em;
   color:var(--card-titulo);margin-bottom:.6em;
 }
-.card__desc{font-family:'Sen',sans-serif;font-size:20px;font-weight:400;line-height:1.3em;color:var(--card-desc);}
+.card__desc{font-family:'Sen',sans-serif;font-size:16px;font-weight:400;line-height:1.4em;color:var(--card-desc);}
 @media(max-width:1024px){
+  .grade-modulos{grid-template-columns:repeat(2,1fr);}
   .card__tit{font-size:20px;}
-  .card__desc{font-size:18px;}
+  .card__desc{font-size:16px;}
 }
 @media(max-width:767px){
-  .card--modulo{width:100%;padding:10px 10px 20px;}
+  .grade-modulos{grid-template-columns:1fr;gap:12px;}
+  .card--modulo{padding:12px 12px 20px;}
 }
 /* bônus: imagem à esquerda, texto à direita, alinhados ao centro */
-.card--bonus{display:flex;align-items:center;width:60%;}
-.card--bonus .card__img{flex:0 0 50%;width:50%;margin-right:3.3em;}
+.card--bonus{display:flex;align-items:center;gap:24px;width:60%;}
+.card--bonus .card__img{flex:0 0 34%;width:34%;}
 .card--bonus .card__img img{width:100%;border-radius:5px;}
+.card--bonus .card__txt{flex:1 1 auto;}
 @media(max-width:1024px){ .card--bonus{width:100%;} }
-@media(max-width:767px){ .card--bonus{padding:10px 10px 20px;} }
+/* No mobile a imagem em 50% + 3.3em de margem deixava só 119px para o texto:
+   os títulos quebravam em 5 linhas de ~10 caracteres. Agora empilha. */
+@media(max-width:767px){
+  .card--bonus{flex-direction:column;align-items:stretch;gap:14px;padding:12px 12px 20px;}
+  .card--bonus .card__img{flex:0 0 auto;width:100%;}
+  .card--bonus .card__img img{max-width:220px;margin-inline:auto;}
+}
 
 /* ====================== 07 · PROFESSOR ====================== */
 #professor{background-image:url('/lp/basic-magic-shadow-v2/DESKTOP-James-Olaya-Basic.jpg');border-top:2px solid #DF706C;}
@@ -380,7 +429,7 @@ ul{list-style:none;}
 }
 @media(max-width:767px){
   #professor{
-    padding:300px 10px 20px;
+    padding:270px 20px 32px;
     background-image:url('/lp/basic-magic-shadow-v2/MOBILE-James-Olaya-Basic.jpg');
     background-position:top center;background-size:contain;
   }
@@ -449,7 +498,7 @@ ul{list-style:none;}
   .urgencia-txt{width:100%;text-align:center;font-size:24px;}
 }
 @media(max-width:767px){
-  .caixa-urgencia{padding:20px 10px;}
+  .caixa-urgencia{padding:20px;}
   .urgencia-txt{width:100%;text-align:center;font-size:24px;}
   .contador{width:100%;max-width:65%;margin-inline:auto;}
   .contador__item{padding:20px 30px;min-width:0;}
@@ -473,7 +522,7 @@ ul{list-style:none;}
   #garantia .txt-garantia{font-size:14px;margin:10px 0 calc(var(--ws) + 0px);}
 }
 @media(max-width:767px){
-  #garantia{padding:20px 10px;}
+  #garantia{padding:20px;}
   #garantia .tit-garantia{font-size:36px;text-align:center;}
   #garantia .txt-garantia{font-size:18px;text-align:center;margin:0;}
 }
@@ -484,7 +533,7 @@ ul{list-style:none;}
 #faq .chamada{font-family:'Sen',sans-serif;font-size:20px;font-weight:400;line-height:1.2em;color:var(--marrom);text-align:center;text-wrap:balance;}
 #faq .tit-faq{font-family:'Amethysta',serif;font-size:58px;font-weight:600;line-height:1.1em;letter-spacing:.04em;color:#000;text-align:center;}
 @media(max-width:1024px){ #faq .chamada{font-size:14px;} #faq .tit-faq{font-size:26px;} }
-@media(max-width:767px){ #faq{padding:20px 10px;} #faq .chamada{font-size:18px;} #faq .tit-faq{font-size:43px;margin:20px 0 calc(var(--ws) + 10px);} }
+@media(max-width:767px){ #faq{padding:20px;} #faq .chamada{font-size:18px;} #faq .tit-faq{font-size:43px;margin:20px 0 calc(var(--ws) + 10px);} }
 
 .acordeao{width:100%;}
 .acordeao details{border-bottom:1px solid rgba(0,0,0,.12);}
@@ -509,9 +558,19 @@ ul{list-style:none;}
 
 /* ====================== 15 · WHATSAPP ====================== */
 #whatsapp .sec__in{align-items:center;gap:10px;}
-#whatsapp .videos{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:100%;}
-#whatsapp .videos video{width:calc(33.333% - 7px);border-radius:var(--radius-midia);}
-@media(max-width:767px){ #whatsapp .videos video{width:100%;} }
+
+/* ============ MOVIMENTO REDUZIDO (precisa ser a última regra) ============ */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .btn:hover,.btn:active{transform:none;}
+  .entra,.entra.visivel{opacity:1;transform:none;}
+}
 </style>
 </head>
 <body>
@@ -524,7 +583,7 @@ ul{list-style:none;}
       <h1 class="w tit tit--claro">IMORTALIZE SUA TÉCNICA, <span class="destaque">ESTEJA A FRENTE DE 90%</span> DAS MORTAIS MICROPIGMENTADORAS DO BRASIL!</h1>
       <div class="w divisor"><span></span></div>
       <p class="w sub">Se você fatura menos de 20 mil reais por mês, você precisa do Curso Basic Magic Shadow! Chega de Desculpas! Se existia algo que te impedia… Agora você não terá mais desculpas com o Curso Basic Magic Shadow que de básico não tem absolutamente nada.</p>
-      <div class="btn-wrap btn-wrap--justify"><a class="btn" href="#VALOR">EU QUERO</a></div>
+      <div class="btn-wrap"><a class="btn" href="#VALOR">EU QUERO</a></div>
     </div>
   </div>
 </section>
@@ -551,7 +610,7 @@ ul{list-style:none;}
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
       <div class="carrossel__dots"></div>
     </div>
-    <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">ACABARAM MINHAS DESCULPAS</a></div>
+    <div class="btn-wrap"><a class="btn" href="#VALOR">ACABARAM MINHAS DESCULPAS</a></div>
   </div>
 </section>
 
@@ -566,7 +625,7 @@ ul{list-style:none;}
         <li><span class="ico" data-ico="agulha"></span><span class="txt">Se você trabalha com micropigmentação e não sabe fazer a Shadow das Deusas do Olimpo! Sim! É para você.</span></li>
         <li><span class="ico" data-ico="agulha"></span><span class="txt">Se você não trabalha com micropigmentação, e gostaria de já começar na frente de mais de 90% das micropigmentadoras da atualidade! Sim! É para você.</span></li>
       </ul>
-      <div class="btn-wrap btn-wrap--justify"><a class="btn" href="#VALOR">ONDE EU PASSO O CARTÃO?</a></div>
+      <div class="btn-wrap"><a class="btn" href="#VALOR">ONDE EU PASSO O CARTÃO?</a></div>
     </div>
   </div>
 </section>
@@ -585,7 +644,7 @@ ul{list-style:none;}
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
       <div class="carrossel__dots"></div>
     </div>
-    <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">QUERO SER A PRÓXIMA A TER SUCESSO!</a></div>
+    <div class="btn-wrap"><a class="btn" href="#VALOR">QUERO SER A PRÓXIMA A TER SUCESSO!</a></div>
   </div>
 </section>
 
@@ -635,7 +694,7 @@ ul{list-style:none;}
         <p class="card__desc">Chegou a hora de você fazer a sua primeira modelo, ao chegar aqui, você já estará 100% pronta, já vai ter desenvolvido todas as habilidades necessárias. Nesse módulo, você só vai provar para si mesma que já sabe fazer a Shadow das Deusas!</p>
       </article>
     </div>
-    <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">ESTOU DISPOSTA A PAGAR AGORA!</a></div>
+    <div class="btn-wrap"><a class="btn" href="#VALOR">ESTOU DISPOSTA A PAGAR AGORA!</a></div>
   </div>
 </section>
 
@@ -653,7 +712,7 @@ ul{list-style:none;}
       Coordenador Científico de eventos de Micropigmentação.
       <br><br>
       <b>CEO do Instituto James Olaya Beauty and Academy com mais de 10 mil alunos em mais de 70 países.</b></p>
-      <div class="btn-wrap btn-wrap--justify"><a class="btn" href="#VALOR">EU QUEROOOOOOOOOOOOOO!</a></div>
+      <div class="btn-wrap"><a class="btn" href="#VALOR">EU QUEROOOOOOOOOOOOOO!</a></div>
     </div>
   </div>
 </section>
@@ -672,7 +731,7 @@ ul{list-style:none;}
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
       <div class="carrossel__dots"></div>
     </div>
-    <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">QUERO APRENDER ISSO PELO AMOR DE DEUS</a></div>
+    <div class="btn-wrap"><a class="btn" href="#VALOR">QUERO APRENDER ISSO PELO AMOR DE DEUS</a></div>
   </div>
 </section>
 
@@ -682,33 +741,33 @@ ul{list-style:none;}
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">FAZENDO SUA INSCRIÇÃO HOJE, VOCÊ GANHARÁ DE PRESENTE :</h2>
     <article class="w card card--bonus">
       <div class="card__img"><img src="/lp/basic-magic-shadow-v2/1-ebook-1-1.png" width="500" height="500" alt="Ebook Pigmentologia e Colorimetria" loading="lazy"></div>
-      <div>
+      <div class="card__txt">
         <h3 class="card__tit">1 Ebook – Pigmentologia e Colorimetria o guia final</h3>
         <p class="card__desc">Tudo que você precisa para dominar de vez esse assunto e nunca mais ter dúvidas sobre pigmentos e cores.</p>
       </div>
     </article>
     <article class="w card card--bonus">
       <div class="card__img"><img src="/lp/basic-magic-shadow-v2/2-design-sobrancelha-1-1.png" width="500" height="500" alt="Curso de Designer em Sobrancelhas com Visagismo" loading="lazy"></div>
-      <div>
+      <div class="card__txt">
         <h3 class="card__tit">2 – Curso de Designer em Sobrancelhas com Visagismo</h3>
         <p class="card__desc">Nunca mais você terá dúvidas de Designer, vai aprender a fazer um designer artístico, único e exclusivo para cada cliente, após esse curso, você vai enxergar os rostos das suas clientes como uma tela de obra de arte.</p>
       </div>
     </article>
     <article class="w card card--bonus">
       <div class="card__img"><img src="/lp/basic-magic-shadow-v2/3-Key-Acesso-1-1-Photoroom-1.png" width="500" height="500" alt="Acesso vitalício ao Curso" loading="lazy"></div>
-      <div>
+      <div class="card__txt">
         <h3 class="card__tit">3 – Acesso vitalício ao Curso</h3>
         <p class="card__desc">Enquanto a Jay Academy Online existir, você terá acesso a esse curso.</p>
       </div>
     </article>
     <article class="w card card--bonus">
       <div class="card__img"><img src="/lp/basic-magic-shadow-v2/4-Atualizacoes-1-1-Photoroom-1.png" width="500" height="500" alt="Atualizações do conteúdo" loading="lazy"></div>
-      <div>
+      <div class="card__txt">
         <h3 class="card__tit">4 – Atualizações do conteúdo</h3>
         <p class="card__desc">Você terá direito sem nenhum custo as atualizações que porventura forem surgindo nesse curso, sem ter que pagar nada a mais por isso.</p>
       </div>
     </article>
-    <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">ACABARAM MINHAS DESCULPAS</a></div>
+    <div class="btn-wrap"><a class="btn" href="#VALOR">ACABARAM MINHAS DESCULPAS</a></div>
   </div>
 </section>
 
@@ -729,7 +788,7 @@ ul{list-style:none;}
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
       <div class="carrossel__dots"></div>
     </div>
-    <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">PELO AMOR DE DEUS! ONDE EU PASSO O CARTÃO?</a></div>
+    <div class="btn-wrap"><a class="btn" href="#VALOR">PELO AMOR DE DEUS! ONDE EU PASSO O CARTÃO?</a></div>
   </div>
 </section>
 
@@ -795,7 +854,7 @@ ul{list-style:none;}
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
       <div class="carrossel__dots"></div>
     </div>
-    <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">ACHO QUE VOU INFARTAR! ONDE EU PAGO?</a></div>
+    <div class="btn-wrap"><a class="btn" href="#VALOR">ACHO QUE VOU INFARTAR! ONDE EU PAGO?</a></div>
   </div>
 </section>
 
@@ -815,7 +874,7 @@ ul{list-style:none;}
         <details name="faq"><summary><span>Quais são as formas de pagamento?</span><span class="ico-acc"></span></summary><div class="resposta">Você pode pagar avista no Cartão de Crédito, Pix, ou boleto bancário tendo o desconto e pagando apenas R$ 297,00 ou parcelar no cartão de crédito em até 12x de R$ 29,70</div></details>
         <details name="faq"><summary><span>Posso pagar com dois cartões de Crédito?</span><span class="ico-acc"></span></summary><div class="resposta">Sim, você pode somar o limite de dois cartões e pagar uma parte em cada um.</div></details>
       </div>
-      <div class="btn-wrap btn-wrap--centro"><a class="btn" href="#VALOR">QUERO MINHA VAGA AGORA!</a></div>
+      <div class="btn-wrap"><a class="btn" href="#VALOR">QUERO MINHA VAGA AGORA!</a></div>
     </div>
   </div>
 </section>
@@ -824,13 +883,8 @@ ul{list-style:none;}
 <section class="sec borda-grad" id="whatsapp">
   <div class="sec__in">
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">AINDA ESTÁ EM DÚVIDA, NÃO É?</h2>
-    <div class="btn-wrap btn-wrap--centro">
-      <a class="btn btn--wpp" href="https://api.whatsapp.com/send?phone=5519993202072&amp;text=Preciso%20de%20ajuda%20com%20o%20Basic%20Magic%20Shadow" rel="noopener">FALE CONOSCO NO WHATSAPP</a>
-    </div>
-    <div class="videos">
-      <video src="/wpmirror/9d54ac0f4f71-kiturbanique-95b6769c5c.mp4" controls playsinline preload="metadata" controlslist="nodownload" aria-label="Kit Urbanique"></video>
-      <video src="/wpmirror/006295bf875e-kithenna-e50e88e745.mp4" controls playsinline preload="metadata" controlslist="nodownload" aria-label="Kit Henna"></video>
-      <video src="/wpmirror/1fc5a3ec7e3b-kitjaycademy-b32daaa395.mp4" controls playsinline preload="metadata" controlslist="nodownload" aria-label="Kit Jay Academy"></video>
+    <div class="btn-wrap">
+      <a class="btn btn--wpp" href="https://wa.me/5519971634567?text=Oi!%20Quero%20conhecer%20o%20curso%20Basic%20Magic%20Shadow.%20Vim%20pela%20p%C3%A1gina%20do%20curso." rel="noopener">FALE CONOSCO NO WHATSAPP</a>
     </div>
   </div>
 </section>
@@ -1227,6 +1281,66 @@ ul{list-style:none;}
 
     tick();
     if (relogio === null && fim > Date.now()) relogio = setInterval(tick, 1000);
+  })();
+
+  /* ---------- entrada dos elementos ao aparecer na tela ---------- */
+  (function () {
+    if (MOV_REDUZIDO || !('IntersectionObserver' in window)) return;
+
+    var alvos = [];
+    document.querySelectorAll('.sec').forEach(function (sec) {
+      // títulos, blocos de texto, mídia e cartões — nunca o body inteiro
+      sec.querySelectorAll(
+        '.tit, .sub, .tit-professor, .tit-garantia, .tit-faq, .chamada,' +
+        '.card, .carrossel, .lista-check, .lista-oferta, .btn-wrap, .btn-comprar-wrap,' +
+        '.preco-de, .preco-caixa, .preco-vista, .caixa-urgencia, .acordeao, .selo, .divisor'
+      ).forEach(function (el) {
+        if (el.closest('.carrossel__slide')) return; // slides já têm o próprio movimento
+        alvos.push(el);
+      });
+    });
+    if (!alvos.length) return;
+
+    alvos.forEach(function (el) { el.classList.add('entra'); });
+
+    function revela(el, comAtraso) {
+      if (el.classList.contains('visivel')) return;
+      if (comAtraso) {
+        // escalonamento leve entre irmãos da mesma grade
+        var i = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+        el.style.transitionDelay = Math.min(i, 5) * 60 + 'ms';
+      }
+      el.classList.add('visivel');
+    }
+
+    // threshold 0: basta 1px entrar na tela. Com um threshold maior, uma rolagem
+    // rápida podia atravessar o elemento sem disparar e ele ficava invisível.
+    var obs = new IntersectionObserver(function (ents) {
+      ents.forEach(function (ent) {
+        if (!ent.isIntersecting) return;
+        revela(ent.target, true);
+        obs.unobserve(ent.target);
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
+
+    alvos.forEach(function (el) { obs.observe(el); });
+
+    // Rede de segurança: qualquer elemento que já esteja na tela ou que tenha
+    // ficado para trás (rolagem rápida, âncora, restauração de scroll) aparece
+    // sem depender do observer. Conteúdo nunca pode ficar invisível.
+    function varreAtrasados() {
+      alvos.forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight) revela(el, false);
+      });
+    }
+    requestAnimationFrame(varreAtrasados);
+    window.addEventListener('load', varreAtrasados);
+    var tScroll = null;
+    window.addEventListener('scroll', function () {
+      clearTimeout(tScroll);
+      tScroll = setTimeout(varreAtrasados, 200);
+    }, { passive: true });
   })();
 
   /* ---------- FAQ: só um item aberto por vez, como no original ---------- */
