@@ -268,7 +268,11 @@ ul{list-style:none;}
   }
   #hero .logo{text-align:center;--mb:0px;}
   #hero .logo img{width:50%;margin-inline:auto;}
-  #hero .tit{font-size:27px;text-align:center;}
+  /* "MICROPIGMENTADORAS" é uma palavra única de 346px a 27px+letter-spacing e
+     não cabe na coluna de 306px do cartão — transbordava e era recortada. A
+     23px com letter-spacing normal ela cabe (~283px, com folga). overflow-wrap
+     fica como rede de segurança para nunca mais recortar palavra. */
+  #hero .tit{font-size:23px;letter-spacing:normal;text-align:center;overflow-wrap:break-word;}
   #hero .sub{text-align:center;}
 }
 
@@ -441,7 +445,7 @@ ul{list-style:none;}
 }
 @media(max-width:767px){
   #professor{
-    padding:270px 20px 32px;
+    padding:200px 20px 32px;
     background-image:url('/lp/basic-magic-shadow-v2/MOBILE-James-Olaya-Basic.jpg');
     background-position:top center;background-size:contain;
   }
@@ -513,7 +517,10 @@ ul{list-style:none;}
   .caixa-urgencia{padding:20px;}
   .urgencia-txt{width:100%;text-align:center;font-size:24px;}
   .contador{width:100%;max-width:65%;margin-inline:auto;}
-  .contador__item{padding:20px 30px;min-width:0;}
+  /* flex:1 nos dois itens: sem base definida a caixa colapsava a 11px e os
+     dígitos/rótulos transbordavam a própria caixa. Agora cada item ocupa metade
+     da linha e os filhos (display:block) preenchem a caixa. */
+  .contador__item{flex:1 1 0;padding:20px 10px;min-width:0;}
   .contador__num{font-size:46px;}
   .contador__lab{font-size:10px;}
 }
