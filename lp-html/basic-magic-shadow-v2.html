@@ -314,6 +314,10 @@ ul{list-style:none;}
 }
 .carrossel__nav--prev{left:0;}
 .carrossel__nav--next{right:0;}
+/* Ao abrir um vídeo, as setas (que ficam a left/right:0 no meio da altura)
+   cobrem os controles do player e roubam o toque no mobile. Somem para liberar
+   a área do vídeo — a navegação segue por swipe, bolinhas e teclado. */
+.carrossel.tem-video-aberto .carrossel__nav{opacity:0;pointer-events:none;visibility:hidden;}
 .carrossel__dots{display:flex;gap:6px;justify-content:center;margin-top:10px;}
 /* 8px visuais num alvo de toque de 44px: o padding é transparente e as margens
    negativas anulam sua contribuição no layout, para o bloco continuar com 8px
@@ -323,7 +327,11 @@ ul{list-style:none;}
    bolinha passa a pintar os 44px inteiros (era o bug da bolinha gigante). */
 .carrossel__dot{
   width:8px;height:8px;border-radius:50%;border:0;cursor:pointer;
-  padding:18px;margin:-18px;background-color:var(--bullet-off);
+  /* 8px visuais, alvo de toque de 32px. A margem negativa recolhe parte do
+     padding no layout, mas com folga menor que o padding — assim os alvos NÃO se
+     sobrepõem (antes -18px sobre padding 18px fazia o toque na bolinha cair na
+     vizinha) e cada centro fica livre para o toque. */
+  padding:12px;margin:-8px;background-color:var(--bullet-off);
   background-clip:content-box;box-sizing:content-box;
   transition:background-color .25s ease;
 }
@@ -1020,9 +1028,9 @@ ul{list-style:none;}
     // O autoplay só roda quando NENHUM destes bloqueios está ativo. O bloqueio de
     // vídeo é o que atende o pedido central: o carrossel não pode arrastar um
     // depoimento para fora da tela enquanto ele está sendo assistido.
-    var bloqueios = { video: 0, ponteiro: false, foco: false, foraDaTela: false, arrastando: false };
+    var bloqueios = { videoAberto: false, ponteiro: false, foco: false, foraDaTela: false, arrastando: false };
     function travado() {
-      return bloqueios.video > 0 || bloqueios.ponteiro || bloqueios.foco ||
+      return bloqueios.videoAberto || bloqueios.ponteiro || bloqueios.foco ||
              bloqueios.foraDaTela || bloqueios.arrastando || MOV_REDUZIDO;
     }
     function comeca() {
@@ -1032,9 +1040,16 @@ ul{list-style:none;}
     function para() { if (timer) { clearInterval(timer); timer = null; } }
     function reinicia() { comeca(); }
 
-    // consumido pelo registro de mídia (ver `midia` mais abaixo)
-    raiz._midiaIniciou = function () { bloqueios.video++; para(); };
-    raiz._midiaParou = function () { bloqueios.video = Math.max(0, bloqueios.video - 1); comeca(); };
+    // Consumido pelo registro de mídia. Ao abrir um vídeo neste carrossel o
+    // autoplay é desligado DE VEZ (até recarregar): quem pausa para assistir não
+    // quer o slide sendo levado embora 5s depois. `_midiaParou` é intencionalmente
+    // um no-op — a navegação manual (swipe, setas, bolinhas) segue funcionando.
+    raiz._videoAberto = function () {
+      bloqueios.videoAberto = true;
+      raiz.classList.add('tem-video-aberto'); // esconde as setas (ver CSS)
+      para();
+    };
+    raiz._midiaParou = function () {};
 
     if (prev) prev.addEventListener('click', function () { anda(-1); reinicia(); });
     if (next) next.addEventListener('click', function () { anda(1); reinicia(); });
@@ -1133,21 +1148,19 @@ ul{list-style:none;}
 
     return {
       iniciou: function (item) {
+        // um vídeo por vez: pausa o anterior, para não haver dois áudios juntos
         if (atual && atual !== item && atual.pausar) atual.pausar();
         atual = item;
-        var c = carrosselDe(item.el);
-        if (c && c._midiaIniciou && !item.travouCarrossel) {
-          item.travouCarrossel = true;
-          c._midiaIniciou();
-        }
       },
       parou: function (item) {
         if (atual === item) atual = null;
-        var c = carrosselDe(item.el);
-        if (c && c._midiaParou && item.travouCarrossel) {
-          item.travouCarrossel = false;
-          c._midiaParou();
-        }
+      },
+      // Desliga o autoplay do carrossel DE VEZ ao abrir um vídeo nele. Chamado no
+      // clique do facade (não no play), para as setas sumirem e o carrossel parar
+      // antes mesmo do player carregar.
+      videoAberto: function (el) {
+        var c = carrosselDe(el);
+        if (c && c._videoAberto) c._videoAberto();
       }
     };
   })();
@@ -1199,12 +1212,14 @@ ul{list-style:none;}
       });
       facade.appendChild(thumb);
 
-      var item = { el: facade, player: null, travouCarrossel: false, pausar: function () {} };
+      var item = { el: facade, player: null, pausar: function () {} };
 
       function abre() {
         if (facade.dataset.carregado === '1' || facade.getAttribute('aria-disabled') === 'true') return;
         facade.dataset.carregado = '1';
         facade.style.cursor = 'default';
+        // desliga o autoplay deste carrossel e some com as setas já no clique
+        midia.videoAberto(facade);
 
         var alvo = document.createElement('div');
         facade.innerHTML = '';
