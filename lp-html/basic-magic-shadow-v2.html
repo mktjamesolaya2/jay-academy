@@ -314,18 +314,22 @@ ul{list-style:none;}
 }
 .carrossel__nav--prev{left:0;}
 .carrossel__nav--next{right:0;}
-.carrossel__dots{display:flex;gap:12px;justify-content:center;margin-top:14px;}
-/* 8px visuais (idêntico ao original) num alvo de toque de 24px: o padding é
-   transparente e as margens negativas anulam sua contribuição no layout, para
-   a altura do bloco continuar sendo 8px. */
+.carrossel__dots{display:flex;gap:6px;justify-content:center;margin-top:10px;}
+/* 8px visuais num alvo de toque de 44px: o padding é transparente e as margens
+   negativas anulam sua contribuição no layout, para o bloco continuar com 8px
+   de altura.
+   ATENÇÃO: os estados abaixo usam `background-color`, NUNCA o shorthand
+   `background` — o shorthand reseta `background-clip` para border-box e a
+   bolinha passa a pintar os 44px inteiros (era o bug da bolinha gigante). */
 .carrossel__dot{
   width:8px;height:8px;border-radius:50%;border:0;cursor:pointer;
-  padding:18px;margin:-18px;background:var(--bullet-off);
+  padding:18px;margin:-18px;background-color:var(--bullet-off);
   background-clip:content-box;box-sizing:content-box;
+  transition:background-color .25s ease;
 }
-.carrossel__dot[aria-current="true"]{background:var(--borda-midia);}
-.carrossel--cobre .carrossel__dot{background:#58382A;}
-.carrossel--cobre .carrossel__dot[aria-current="true"]{background:var(--cobre);}
+.carrossel__dot[aria-current="true"]{background-color:var(--borda-midia);}
+.carrossel--cobre .carrossel__dot{background-color:#58382A;}
+.carrossel--cobre .carrossel__dot[aria-current="true"]{background-color:var(--cobre);}
 
 /* vídeos dentro do carrossel */
 .video-facade{
@@ -597,7 +601,7 @@ ul{list-style:none;}
 <section class="sec sec--bege">
   <div class="sec__in" style="align-items:center;">
     <h2 class="w tit tit--marrom tit--centro" style="--mb:20px;">TRANSFORME SUAS CLIENTES EM VERDADEIRAS DEUSAS DO OLIMPO COM O BASIC MAGIC SHADOW</h2>
-    <div class="w carrossel" data-por-vista="3">
+    <div class="w carrossel" data-por-vista="3" data-por-vista-mobile="2">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-1.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 1" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-2.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 2" loading="lazy"></div>
@@ -721,7 +725,7 @@ ul{list-style:none;}
 <section class="sec sec--bege">
   <div class="sec__in" style="align-items:center;">
     <h2 class="w tit tit--marrom tit--centro" style="--mb:20px;">VEJA OS PROCEDIMENTOS FEITOS POR ALGUMAS DAS MINHAS ALUNAS:</h2>
-    <div class="w carrossel" data-por-vista="3">
+    <div class="w carrossel" data-por-vista="3" data-por-vista-mobile="2">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem1pro.jpg" width="700" height="625" alt="Procedimento de aluna 1" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem2pro.jpg" width="700" height="625" alt="Procedimento de aluna 2" loading="lazy"></div>
@@ -775,7 +779,7 @@ ul{list-style:none;}
 <section class="sec borda-grad">
   <div class="sec__in sec__in--gap10" style="align-items:center;">
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">SEJA CERTIFICADA PELA MAIOR E MAIS CONSAGRADA ACADEMIA DE MICROPIGMENTAÇÃO DO BRASIL!</h2>
-    <div class="w carrossel carrossel--cobre" data-por-vista="3">
+    <div class="w carrossel carrossel--cobre" data-por-vista="3" data-por-vista-mobile="2">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem9pro.jpg" width="700" height="625" alt="Certificação Jay Academy 1" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem8pro.jpg" width="700" height="625" alt="Certificação Jay Academy 2" loading="lazy"></div>
@@ -1035,8 +1039,17 @@ ul{list-style:none;}
     if (prev) prev.addEventListener('click', function () { anda(-1); reinicia(); });
     if (next) next.addEventListener('click', function () { anda(1); reinicia(); });
 
-    raiz.addEventListener('mouseenter', function () { bloqueios.ponteiro = true; para(); });
-    raiz.addEventListener('mouseleave', function () { bloqueios.ponteiro = false; comeca(); });
+    // Pausa por hover SÓ vale para mouse de verdade. Navegadores móveis emulam
+    // `mouseenter` no toque e nunca disparam `mouseleave` — o autoplay travava
+    // permanentemente no primeiro toque, que é o sintoma relatado.
+    raiz.addEventListener('pointerenter', function (ev) {
+      if (ev.pointerType !== 'mouse') return;
+      bloqueios.ponteiro = true; para();
+    });
+    raiz.addEventListener('pointerleave', function (ev) {
+      if (ev.pointerType !== 'mouse') return;
+      bloqueios.ponteiro = false; comeca();
+    });
     // Só o foco de TECLADO trava o carrossel. Um clique de mouse também dispara
     // focusin (no facade de vídeo, por exemplo) e travaria o autoplay para
     // sempre, já que o foco permanece ali depois do clique.
