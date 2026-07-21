@@ -60,6 +60,17 @@ const SEED: Suggestion[] = [
     createdAt: "2026-05-29T00:00:00.000Z",
     upvotes: [],
   },
+  {
+    id: "seed-4",
+    title: "Ver a versão histórica de um deploy (voltar no tempo)",
+    description:
+      "Hoje clicar num deploy abre a página na versão ATUAL de produção. Seria útil poder abrir a página exatamente como ela estava naquele deploy — pra comparar duas versões, ver o que mudou entre um deploy e outro, e ter a opção de restaurar caso algo tenha quebrado.",
+    status: "open",
+    createdBy: "James Olaya",
+    createdById: "admin-1",
+    createdAt: "2026-07-21T00:00:00.000Z",
+    upvotes: [],
+  },
 ];
 
 export async function listSuggestions(): Promise<Suggestion[]> {

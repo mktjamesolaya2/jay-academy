@@ -10,6 +10,7 @@ import {
 import { formatDateTimeBR } from "@/lib/format-date";
 import { describeActivity, type ActivityEntry } from "@/lib/activity-log";
 import { getRecentDeploys } from "@/lib/vercel-deploys";
+import { inferDeployPath } from "@/lib/deploy-target";
 
 export function ActivityFeed({ entries }: { entries: ActivityEntry[] }) {
   return (
@@ -58,6 +59,13 @@ export function ActivityFeed({ entries }: { entries: ActivityEntry[] }) {
 export async function DeploysFeed() {
   const deploys = await getRecentDeploys();
 
+  // Descobre a página que cada deploy mexeu. Clicar leva pra versão ATUAL dela
+  // em produção — o link da Vercel apontava pro build daquele deploy, que sempre
+  // caía na raiz do portal.
+  const targets = await Promise.all(
+    (deploys ?? []).map((d) => inferDeployPath(d.commitMessage))
+  );
+
   return (
     <div className="bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
@@ -75,14 +83,21 @@ export async function DeploysFeed() {
         </p>
       ) : (
         <div className="space-y-1.5">
-          {deploys.map((d) => {
+          {deploys.map((d, i) => {
             const s = deployStyle(d.state);
+            const target = targets[i];
+            const href = target || d.url || undefined;
             return (
               <a
                 key={d.id}
-                href={d.url || undefined}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
+                title={
+                  target
+                    ? `Abre ${target} (versão atual)`
+                    : "Abre este deploy na Vercel"
+                }
                 className="flex items-center gap-2.5 px-2 py-2 rounded-md hover:bg-[#121212] transition group"
               >
                 <span className={`shrink-0 ${s.color}`}>{s.icon}</span>
@@ -90,18 +105,23 @@ export async function DeploysFeed() {
                   <p className="text-xs font-medium text-white truncate">
                     {d.commitMessage || d.branch || "Deploy"}
                   </p>
-                  {d.createdAt > 0 && (
-                    <p className="text-[10px] text-neutral-500">
-                      {formatDateTimeBR(new Date(d.createdAt).toISOString())}
-                    </p>
-                  )}
+                  <p className="text-[10px] text-neutral-500 truncate">
+                    {d.createdAt > 0 &&
+                      formatDateTimeBR(new Date(d.createdAt).toISOString())}
+                    {target && (
+                      <span className="text-neutral-400">
+                        {d.createdAt > 0 ? " · " : ""}
+                        {target}
+                      </span>
+                    )}
+                  </p>
                 </div>
                 <span
                   className={`text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ring-1 shrink-0 ${s.badge}`}
                 >
                   {s.label}
                 </span>
-                {d.url && (
+                {href && (
                   <ExternalLink
                     size={11}
                     strokeWidth={2}
