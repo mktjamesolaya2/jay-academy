@@ -295,8 +295,12 @@ ul{list-style:none;}
   padding:0;overflow:hidden;
   background-image:linear-gradient(90deg,#DA8A67 0%,#BE6127 100%);
 }
-@keyframes marquee{100%{transform:translateX(-100%)}}
-.marquee-track{display:flex;width:max-content;animation:marquee 30s linear infinite;}
+/* Loop 100% contínuo: o track tem DOIS grupos idênticos e desliza -50% (= exatamente
+   a largura de um grupo). No reset o 2º grupo está no lugar do 1º → emenda sem gap,
+   sem "piscar". A duração vem de --marquee-dur (JS, proporcional à largura). */
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee-track{display:flex;width:max-content;animation:marquee var(--marquee-dur,30s) linear infinite;}
+.marquee-group{display:flex;flex:0 0 auto;}
 .marquee-item{
   flex:0 0 auto;display:flex;align-items:center;justify-content:center;
   padding:1em .3em;color:#000;font-size:1.5em;font-weight:700;
@@ -318,10 +322,10 @@ ul{list-style:none;}
 }
 .carrossel__nav--prev{left:0;}
 .carrossel__nav--next{right:0;}
-/* Ao abrir um vídeo, as setas (que ficam a left/right:0 no meio da altura)
-   cobrem os controles do player e roubam o toque no mobile. Somem para liberar
-   a área do vídeo — a navegação segue por swipe, bolinhas e teclado. */
-.carrossel.tem-video-aberto .carrossel__nav{opacity:0;pointer-events:none;visibility:hidden;}
+/* As setas somem quando há uma só página (JS mede paginas()<=1) — ex.: depoimentos
+   no desktop, onde os 3 vídeos já cabem lado a lado. Nos carrosséis de vídeo elas
+   PERMANECEM visíveis mesmo com um vídeo tocando, para trocar de depoimento; clicar
+   numa seta pausa o vídeo atual (ver JS). */
 .carrossel__dots{display:flex;gap:6px;justify-content:center;margin-top:10px;}
 /* 8px visuais num alvo de toque de 44px: o padding é transparente e as margens
    negativas anulam sua contribuição no layout, para o bloco continuar com 8px
@@ -370,6 +374,22 @@ ul{list-style:none;}
 .video-facade iframe{width:100%;height:100%;border:0;display:block;}
 .ratio-vertical{aspect-ratio:.5625;}
 .ratio-wide{aspect-ratio:1.77777;}
+
+/* ====================== LIGHTBOX (imagens ampliadas) ====================== */
+.carrossel__slide > img{cursor:zoom-in;}
+.lightbox{
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.85);padding:24px;cursor:zoom-out;
+}
+.lightbox[hidden]{display:none;}
+.lightbox__img{
+  max-width:min(92vw,900px);max-height:90vh;width:auto;height:auto;
+  border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.6);cursor:default;
+}
+.lightbox__fechar{
+  position:absolute;top:16px;right:20px;width:44px;height:44px;border:0;border-radius:50%;
+  background:rgba(0,0,0,.5);color:#fff;font-size:30px;line-height:1;cursor:pointer;
+}
 
 /* ====================== 04 · LISTA DE QUALIFICAÇÃO ====================== */
 .lista-check{width:100%;}
@@ -429,6 +449,7 @@ ul{list-style:none;}
 /* ====================== 07 · PROFESSOR ====================== */
 #professor{background-image:url('/lp/basic-magic-shadow-v2/DESKTOP-James-Olaya-Basic.jpg');border-top:2px solid #DF706C;}
 #professor .sec__in{align-items:flex-start;}
+.professor-foto-mobile{display:none;}
 #professor .tit-professor{
   width:50%;font-family:'Amethysta',serif;font-size:66px;font-weight:700;
   line-height:1.1em;color:#fff;text-align:left;text-wrap:balance;
@@ -444,10 +465,12 @@ ul{list-style:none;}
   #professor .bio{font-size:14px;margin:10px 0 calc(var(--ws) + 0px);}
 }
 @media(max-width:767px){
-  #professor{
-    padding:200px 20px 32px;
-    background-image:url('/lp/basic-magic-shadow-v2/MOBILE-James-Olaya-Basic.jpg');
-    background-position:top center;background-size:contain;
+  /* No mobile a foto (que traz o card do Instagram embutido) vira um BLOCO no topo
+     e o título fica ABAIXO dela — antes o título caía por cima do card, ilegível. */
+  #professor{padding:24px 20px 32px;background-image:none;}
+  .professor-foto-mobile{
+    display:block;width:100%;height:auto;border:2px solid #DF706C;border-radius:16px;
+    margin-bottom:18px;
   }
   #professor .sec__in{gap:10px;}
   #professor .tit-professor{width:100%;text-align:center;font-size:40px;--mb:10px;}
@@ -516,13 +539,13 @@ ul{list-style:none;}
 @media(max-width:767px){
   .caixa-urgencia{padding:20px;}
   .urgencia-txt{width:100%;text-align:center;font-size:24px;}
-  .contador{width:100%;max-width:65%;margin-inline:auto;}
   /* flex:1 nos dois itens: sem base definida a caixa colapsava a 11px e os
-     dígitos/rótulos transbordavam a própria caixa. Agora cada item ocupa metade
-     da linha e os filhos (display:block) preenchem a caixa. */
-  .contador__item{flex:1 1 0;padding:20px 10px;min-width:0;}
-  .contador__num{font-size:46px;}
-  .contador__lab{font-size:10px;}
+     dígitos/rótulos transbordavam a própria caixa. max-width + gap menores e fonte
+     ajustada garantem que número ("00") e rótulo ("Segundos") caibam inteiros. */
+  .contador{width:100%;max-width:320px;margin-inline:auto;gap:8px;}
+  .contador__item{flex:1 1 0;padding:14px 6px;min-width:0;}
+  .contador__num{font-size:42px;}
+  .contador__lab{font-size:11px;}
 }
 
 /* ====================== 12 · GARANTIA ====================== */
@@ -618,12 +641,18 @@ ul{list-style:none;}
     <h2 class="w tit tit--marrom tit--centro" style="--mb:20px;">TRANSFORME SUAS CLIENTES EM VERDADEIRAS DEUSAS DO OLIMPO COM O BASIC MAGIC SHADOW</h2>
     <div class="w carrossel" data-por-vista="3" data-por-vista-mobile="2">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-1.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 1" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-2.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 2" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-3.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 3" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-4.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 4" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-5.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 5" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-6.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 6" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-01.jpg" width="1100" height="1100" alt="Antes e depois Basic Magic Shadow 1" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-02.jpg" width="1100" height="1100" alt="Antes e depois Basic Magic Shadow 2" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-03.jpg" width="1100" height="1100" alt="Antes e depois Basic Magic Shadow 3" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-04.jpg" width="1100" height="1100" alt="Antes e depois Basic Magic Shadow 4" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-05.jpg" width="1100" height="1100" alt="Antes e depois Basic Magic Shadow 5" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-2.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 6" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-5.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 7" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Basic-Magic-Shadow-6.jpg" width="800" height="800" alt="Resultado Basic Magic Shadow 8" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-06.jpg" width="1100" height="1100" alt="Resultado Basic Magic Shadow 9" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-07.jpg" width="1100" height="1100" alt="Resultado Basic Magic Shadow 10" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-08.jpg" width="1100" height="1100" alt="Resultado Basic Magic Shadow 11" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-09.jpg" width="880" height="1100" alt="Resultado Basic Magic Shadow 12" loading="lazy"></div>
       </div></div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
@@ -653,7 +682,7 @@ ul{list-style:none;}
 <section class="sec" style="background:#000;">
   <div class="sec__in sec__in--gap10" style="align-items:center;">
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">VEJA OS DEPOIMENTOS DE ALGUMAS DAS <span class="destaque">MINHAS ALUNAS</span>:</h2>
-    <div class="w carrossel" data-por-vista="5" data-por-vista-tablet="3" data-por-vista-mobile="1">
+    <div class="w carrossel carrossel--video" data-por-vista="5" data-por-vista-tablet="3" data-por-vista-mobile="1">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
         <div class="carrossel__slide"><div class="video-facade ratio-vertical" data-yt="0XRQAa4j3co" aria-label="Depoimento Ingrid Lima" role="button" tabindex="0"></div></div>
         <div class="carrossel__slide"><div class="video-facade ratio-vertical" data-yt="kiKaf2hl8RI" aria-label="Depoimento Flavia Giovaneli" role="button" tabindex="0"></div></div>
@@ -678,12 +707,12 @@ ul{list-style:none;}
         <p class="card__desc">Se você está começando na Micropigmentação esse módulo é obrigatório para você, e se você já trabalha, aconselho a assistir, porque muita gente começa errado e não consegue encontrar o caminho para o sucesso.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-3.jpg" width="800" height="800" alt="Higiene, Bio Segurança e Vigilância Sanitária" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/modulo-higiene.jpg" width="800" height="800" alt="Higiene, Bio Segurança e Vigilância Sanitária" loading="lazy">
         <h3 class="card__tit">Higiene, Bio Segurança e Vigilância Sanitária</h3>
         <p class="card__desc">Tudo que você precisa saber para trabalhar de forma correta, e ninguém melhor para ensinar isso do que eu, que tenho formação em Bio Medicina e especialização em Patologias Clínicas.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/Modulos-Basic-Shadow-5.jpg" width="800" height="800" alt="Pele" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/modulo-pele.jpg" width="800" height="800" alt="Pele" loading="lazy">
         <h3 class="card__tit">Pele</h3>
         <p class="card__desc">Tudo que você precisa entender e dominar, sobre o maior órgão do nosso corpo, a final você precisa entender e dominar esse assunto, pois a pele de suas clientes, será a tela para a suas obras de artes.</p>
       </article>
@@ -720,6 +749,7 @@ ul{list-style:none;}
 <!-- ============================ 07 · PROFESSOR ============================ -->
 <section class="sec sec--foto" id="professor">
   <div class="sec__in">
+    <img class="professor-foto-mobile" src="/lp/basic-magic-shadow-v2/MOBILE-James-Olaya-Basic.jpg" width="800" height="768" alt="James Olaya — Instituto James Olaya" loading="lazy">
     <h2 class="w tit-professor">Quem será seu <span style="color:#DA8A67;">Professor?</span></h2>
     <div class="cartao-creme">
       <div class="w estrelas" data-ico="estrelas"></div>
@@ -745,6 +775,16 @@ ul{list-style:none;}
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem1pro.jpg" width="700" height="625" alt="Procedimento de aluna 1" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem2pro.jpg" width="700" height="625" alt="Procedimento de aluna 2" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem3pro.jpg" width="700" height="625" alt="Procedimento de aluna 3" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-01.jpg" width="1100" height="1100" alt="Procedimento de aluna 4" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-02.jpg" width="825" height="1100" alt="Procedimento de aluna 5" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-03.jpg" width="1100" height="1100" alt="Procedimento de aluna 6" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-04.jpg" width="880" height="1100" alt="Procedimento de aluna 7" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-05.jpg" width="880" height="1100" alt="Procedimento de aluna 8" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-06.jpg" width="825" height="1100" alt="Procedimento de aluna 9" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-07.jpg" width="825" height="1100" alt="Procedimento de aluna 10" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-08.jpg" width="825" height="1100" alt="Procedimento de aluna 11" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-09.jpg" width="825" height="1100" alt="Procedimento de aluna 12" loading="lazy"></div>
+        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-10.jpg" width="825" height="1100" alt="Procedimento de aluna 13" loading="lazy"></div>
       </div></div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
@@ -768,15 +808,15 @@ ul{list-style:none;}
     <article class="w card card--bonus">
       <div class="card__img"><img src="/lp/basic-magic-shadow-v2/2-design-sobrancelha-1-1.png" width="500" height="500" alt="Curso de Designer em Sobrancelhas com Visagismo" loading="lazy"></div>
       <div class="card__txt">
-        <h3 class="card__tit">2 – Curso de Designer em Sobrancelhas com Visagismo</h3>
-        <p class="card__desc">Nunca mais você terá dúvidas de Designer, vai aprender a fazer um designer artístico, único e exclusivo para cada cliente, após esse curso, você vai enxergar os rostos das suas clientes como uma tela de obra de arte.</p>
+        <h3 class="card__tit">2 – Bônus: Design de Sobrancelhas com Visagismo</h3>
+        <p class="card__desc">De bônus, você recebe o Design de Sobrancelhas com Visagismo: nunca mais vai ter dúvidas de design, vai aprender a fazer um traçado artístico, único e exclusivo para cada cliente, e passará a enxergar o rosto das suas clientes como uma tela de obra de arte.</p>
       </div>
     </article>
     <article class="w card card--bonus">
       <div class="card__img"><img src="/lp/basic-magic-shadow-v2/3-Key-Acesso-1-1-Photoroom-1.png" width="500" height="500" alt="Acesso vitalício ao Curso" loading="lazy"></div>
       <div class="card__txt">
-        <h3 class="card__tit">3 – Acesso vitalício ao Curso</h3>
-        <p class="card__desc">Enquanto a Jay Academy Online existir, você terá acesso a esse curso.</p>
+        <h3 class="card__tit">3 – Possibilidade de acesso vitalício</h3>
+        <p class="card__desc">Existe ainda a possibilidade de acesso vitalício ao curso por um valor especial — assim, enquanto a Jay Academy Online existir, você continua com o conteúdo à sua disposição.</p>
       </div>
     </article>
     <article class="w card card--bonus">
@@ -794,7 +834,7 @@ ul{list-style:none;}
 <section class="sec borda-grad">
   <div class="sec__in sec__in--gap10" style="align-items:center;">
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">SEJA CERTIFICADA PELA MAIOR E MAIS CONSAGRADA ACADEMIA DE MICROPIGMENTAÇÃO DO BRASIL!</h2>
-    <div class="w carrossel carrossel--cobre" data-por-vista="3" data-por-vista-mobile="2">
+    <div class="w carrossel carrossel--cobre carrossel--unico" data-por-vista="1" data-por-vista-mobile="1">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem9pro.jpg" width="700" height="625" alt="Certificação Jay Academy 1" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem8pro.jpg" width="700" height="625" alt="Certificação Jay Academy 2" loading="lazy"></div>
@@ -818,9 +858,9 @@ ul{list-style:none;}
       <h2 class="w tit tit--preto tit--centro" style="--mb:20px;">COMPRANDO AGORA VOCÊ LEVA:</h2>
       <ul class="w lista-oferta">
         <li><span class="ico" data-ico="check"></span><span class="txt">Curso Online Basic Magic Shadow - <del>R$ 997,00</del></span></li>
-        <li><span class="ico" data-ico="check"></span><span class="txt">Curso de Designer em Sobrancelhas com Visagismo - <del>R$ 397,00</del></span></li>
+        <li><span class="ico" data-ico="check"></span><span class="txt">Bônus: Design de Sobrancelhas com Visagismo - <del>R$ 397,00</del></span></li>
         <li><span class="ico" data-ico="check"></span><span class="txt">Ebook – Pigmentologia e Colorimetria o guia final - <del>R$ 97,00</del></span></li>
-        <li><span class="ico" data-ico="check"></span><span class="txt">Acesso vitalício ao Curso - <del>R$ 297,00</del></span></li>
+        <li><span class="ico" data-ico="check"></span><span class="txt">Possibilidade de acesso vitalício (valor especial) - <del>R$ 297,00</del></span></li>
         <li><span class="ico" data-ico="check"></span><span class="txt">Atualizações do conteúdo - <del>R$ 197,00</del></span></li>
       </ul>
       <p class="w preco-de">de <del>R$1.985,00</del></p>
@@ -858,7 +898,7 @@ ul{list-style:none;}
 <section class="sec borda-grad borda-grad--base">
   <div class="sec__in sec__in--gap10" style="align-items:center;">
     <h2 class="w tit tit--claro tit--centro" style="--mb:20px;">ASSISTA GRATUITAMENTE ALGUMAS DAS MINHAS AULAS:</h2>
-    <div class="w carrossel" data-por-vista="5" data-por-vista-tablet="3" data-por-vista-mobile="1">
+    <div class="w carrossel carrossel--video" data-por-vista="2" data-por-vista-tablet="3" data-por-vista-mobile="1">
       <div class="carrossel__viewport"><div class="carrossel__trilha">
         <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="jdsbKshTMI0" aria-label="Aula 01" role="button" tabindex="0"></div></div>
         <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="_C2jCl8rF00" aria-label="Aula 02" role="button" tabindex="0"></div></div>
@@ -908,6 +948,12 @@ ul{list-style:none;}
   </div>
 </section>
 
+<!-- ============================ LIGHTBOX ============================ -->
+<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem ampliada" hidden>
+  <button class="lightbox__fechar" type="button" aria-label="Fechar">×</button>
+  <img class="lightbox__img" src="" alt="">
+</div>
+
 
 <script>
 (function(){
@@ -941,18 +987,33 @@ ul{list-style:none;}
     el.innerHTML = ICONES.mais + ICONES.menos;
   });
 
-  /* ---------- marquee: duplica o texto até cobrir 2x a largura da tela ---------- */
+  /* ---------- marquee: dois grupos idênticos + translateX(-50%) = loop sem gap ----------
+     Monta UM grupo com itens suficientes para exceder a largura da tela e o clona.
+     O CSS desliza o track em -50% (uma largura de grupo) e reinicia — como o 2º grupo
+     está exatamente onde o 1º estava, a emenda é invisível (não "pisca"). A duração é
+     proporcional à largura do grupo para a velocidade ficar constante. */
   var TEXTO_MARQUEE = 'PROMOÇÃO VAI ACABAR A QUALQUER MOMENTO ✦';
   var track = document.getElementById('marqueeTrack');
   if (track) {
-    var molde = document.createElement('div');
-    molde.className = 'marquee-item';
-    molde.textContent = TEXTO_MARQUEE;
-    track.appendChild(molde);
-    var largura = molde.getBoundingClientRect().width || 400;
-    // precisa de conteúdo suficiente para o translateX(-100%) parecer contínuo
-    var copias = Math.max(2, Math.ceil((window.innerWidth * 2) / largura));
-    for (var i = 1; i < copias; i++) track.appendChild(molde.cloneNode(true));
+    var grupo = document.createElement('div');
+    grupo.className = 'marquee-group';
+    function novoItem() {
+      var it = document.createElement('div');
+      it.className = 'marquee-item';
+      it.textContent = TEXTO_MARQUEE;
+      return it;
+    }
+    grupo.appendChild(novoItem());
+    track.appendChild(grupo);
+    // preenche até o grupo cobrir a tela (guard evita loop infinito em casos raros)
+    var guarda = 0;
+    while (grupo.getBoundingClientRect().width < window.innerWidth && guarda < 60) {
+      grupo.appendChild(novoItem()); guarda++;
+    }
+    var largGrupo = grupo.getBoundingClientRect().width || 400;
+    track.appendChild(grupo.cloneNode(true)); // 2º grupo idêntico
+    // ~70px/s, com mínimo de 12s para não ficar frenético em telas estreitas
+    track.style.setProperty('--marquee-dur', Math.max(12, Math.round(largGrupo / 70)) + 's');
   }
 
   /* ---------- carrossel ---------- */
@@ -967,6 +1028,20 @@ ul{list-style:none;}
     var GAP = 10;
     var indice = 0;
     var timer = null;
+    var ehVideo = raiz.classList.contains('carrossel--video');
+
+    // navegar num carrossel de vídeo pausa o que estiver tocando (o usuário escolhe
+    // o próximo e dá play — nada toca sozinho). `midia` é atribuído mais abaixo no
+    // mesmo escopo; aqui só é lido em tempo de interação, quando já existe.
+    function pausaVideoAtual() { if (ehVideo && midia && midia.pausaAtual) midia.pausaAtual(); }
+
+    // setas só fazem sentido com mais de uma página; some quando tudo já cabe na tela
+    // (ex.: os 3 depoimentos no desktop).
+    function atualizaSetas() {
+      var mostra = paginas() > 1;
+      if (prev) prev.style.display = mostra ? '' : 'none';
+      if (next) next.style.display = mostra ? '' : 'none';
+    }
 
     function porVista() {
       // os carrosséis de imagem da página original NÃO têm override de mobile
@@ -989,6 +1064,7 @@ ul{list-style:none;}
       if (indice > paginas() - 1) indice = 0;
       aplica();
       montaDots();
+      atualizaSetas();
     }
 
     function aplica() {
@@ -1020,7 +1096,7 @@ ul{list-style:none;}
         b.type = 'button';
         b.className = 'carrossel__dot';
         b.setAttribute('aria-label', 'Posição ' + (i + 1) + ' de ' + total);
-        (function (idx) { b.addEventListener('click', function () { indice = idx; aplica(); reinicia(); }); })(i);
+        (function (idx) { b.addEventListener('click', function () { pausaVideoAtual(); indice = idx; aplica(); reinicia(); }); })(i);
         dots.appendChild(b);
       }
       aplica();
@@ -1047,19 +1123,18 @@ ul{list-style:none;}
     function para() { if (timer) { clearInterval(timer); timer = null; } }
     function reinicia() { comeca(); }
 
-    // Consumido pelo registro de mídia. Ao abrir um vídeo neste carrossel o
-    // autoplay é desligado DE VEZ (até recarregar): quem pausa para assistir não
-    // quer o slide sendo levado embora 5s depois. `_midiaParou` é intencionalmente
-    // um no-op — a navegação manual (swipe, setas, bolinhas) segue funcionando.
+    // Consumido pelo registro de mídia. Ao abrir um vídeo o autoplay para (não quero
+    // o slide sendo arrastado para fora enquanto a pessoa assiste), mas as SETAS
+    // continuam visíveis: o pedido é poder trocar de depoimento mesmo com um vídeo
+    // aberto. `_midiaParou` é no-op — a navegação manual é que retoma/pausa.
     raiz._videoAberto = function () {
       bloqueios.videoAberto = true;
-      raiz.classList.add('tem-video-aberto'); // esconde as setas (ver CSS)
       para();
     };
     raiz._midiaParou = function () {};
 
-    if (prev) prev.addEventListener('click', function () { anda(-1); reinicia(); });
-    if (next) next.addEventListener('click', function () { anda(1); reinicia(); });
+    if (prev) prev.addEventListener('click', function () { pausaVideoAtual(); anda(-1); reinicia(); });
+    if (next) next.addEventListener('click', function () { pausaVideoAtual(); anda(1); reinicia(); });
 
     // Pausa por hover SÓ vale para mouse de verdade. Navegadores móveis emulam
     // `mouseenter` no toque e nunca disparam `mouseleave` — o autoplay travava
@@ -1086,8 +1161,8 @@ ul{list-style:none;}
 
     // teclado: setas navegam quando o carrossel tem foco
     raiz.addEventListener('keydown', function (ev) {
-      if (ev.key === 'ArrowLeft') { anda(-1); reinicia(); ev.preventDefault(); }
-      else if (ev.key === 'ArrowRight') { anda(1); reinicia(); ev.preventDefault(); }
+      if (ev.key === 'ArrowLeft') { pausaVideoAtual(); anda(-1); reinicia(); ev.preventDefault(); }
+      else if (ev.key === 'ArrowRight') { pausaVideoAtual(); anda(1); reinicia(); ev.preventDefault(); }
     });
 
     // arrastar / deslizar (o primeiro gesto que todo mundo tenta no celular)
@@ -1102,6 +1177,7 @@ ul{list-style:none;}
       var d = ev.clientX - x0;
       if (Math.abs(d) > 40 && !arrastou) {
         arrastou = true;
+        pausaVideoAtual();
         anda(d < 0 ? 1 : -1);
       }
     });
@@ -1168,6 +1244,10 @@ ul{list-style:none;}
       videoAberto: function (el) {
         var c = carrosselDe(el);
         if (c && c._videoAberto) c._videoAberto();
+      },
+      // pausa o vídeo que estiver tocando (usado ao navegar num carrossel de vídeo)
+      pausaAtual: function () {
+        if (atual && atual.pausar) atual.pausar();
       }
     };
   })();
@@ -1266,6 +1346,48 @@ ul{list-style:none;}
     v.addEventListener('pause', function () { midia.parou(item); });
     v.addEventListener('ended', function () { midia.parou(item); });
   });
+
+  /* ---------- lightbox: clicar numa imagem do carrossel amplia; clicar fora fecha ----------
+     Só imagens diretas do slide (`.carrossel__slide > img`) — as miniaturas de vídeo
+     ficam dentro de `.video-facade` e são ignoradas. Distingue toque de arrasto (>10px)
+     para não abrir durante um swipe. */
+  (function () {
+    var lb = document.getElementById('lightbox');
+    if (!lb) return;
+    var lbImg = lb.querySelector('.lightbox__img');
+    var btn = lb.querySelector('.lightbox__fechar');
+    var ultimoFoco = null;
+
+    function abre(img) {
+      lbImg.src = img.currentSrc || img.src;
+      lbImg.alt = img.alt || '';
+      ultimoFoco = document.activeElement;
+      lb.hidden = false;
+      document.body.style.overflow = 'hidden'; // trava o scroll do fundo
+      btn.focus();
+    }
+    function fecha() {
+      if (lb.hidden) return;
+      lb.hidden = true;
+      lbImg.removeAttribute('src');
+      document.body.style.overflow = '';
+      if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus();
+    }
+
+    // clicar em qualquer lugar que NÃO seja a própria imagem fecha
+    lb.addEventListener('click', function (ev) { if (ev.target !== lbImg) fecha(); });
+    btn.addEventListener('click', fecha);
+    document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') fecha(); });
+
+    document.querySelectorAll('.carrossel__slide > img').forEach(function (img) {
+      var sx = 0, sy = 0, moveu = false;
+      img.addEventListener('pointerdown', function (e) { sx = e.clientX; sy = e.clientY; moveu = false; });
+      img.addEventListener('pointermove', function (e) {
+        if (Math.abs(e.clientX - sx) > 10 || Math.abs(e.clientY - sy) > 10) moveu = true;
+      });
+      img.addEventListener('click', function () { if (!moveu) abre(img); });
+    });
+  })();
 
   /* ---------- contador regressivo (evergreen de 15 min, por visitante) ---------- */
   (function () {
