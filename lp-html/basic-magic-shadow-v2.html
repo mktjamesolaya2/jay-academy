@@ -310,10 +310,14 @@ ul{list-style:none;}
 
 /* ====================== CARROSSEL ====================== */
 .carrossel{position:relative;width:100%;}
-.carrossel__viewport{overflow:hidden;}
+.carrossel__viewport{overflow:hidden;position:relative;}
 .carrossel__trilha{display:flex;gap:10px;transition:transform .5s ease;will-change:transform;}
 .carrossel__slide{flex:0 0 auto;}
 .carrossel__slide img{width:100%;height:auto;border:2px solid var(--borda-midia);border-radius:var(--radius-midia);}
+/* imagens diretas do slide (não as miniaturas de vídeo, que ficam em .video-facade)
+   com proporção uniforme: acaba com alturas desiguais quando o carrossel mistura fotos
+   quadradas/retrato/paisagem. O corte é só na miniatura — o lightbox mostra a foto inteira. */
+.carrossel__slide > img{aspect-ratio:1/1;object-fit:cover;}
 .carrossel--cobre .carrossel__slide img{border-color:var(--cobre);}
 .carrossel__nav{
   position:absolute;top:50%;transform:translateY(-50%);z-index:2;
@@ -652,10 +656,10 @@ ul{list-style:none;}
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-06.jpg" width="1100" height="1100" alt="Resultado Basic Magic Shadow 9" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-07.jpg" width="1100" height="1100" alt="Resultado Basic Magic Shadow 10" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-08.jpg" width="1100" height="1100" alt="Resultado Basic Magic Shadow 11" loading="lazy"></div>
-        <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/antes-depois-09.jpg" width="880" height="1100" alt="Resultado Basic Magic Shadow 12" loading="lazy"></div>
-      </div></div>
+      </div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
+      </div>
       <div class="carrossel__dots"></div>
     </div>
     <div class="btn-wrap"><a class="btn" href="#VALOR">ACABARAM MINHAS DESCULPAS</a></div>
@@ -687,9 +691,10 @@ ul{list-style:none;}
         <div class="carrossel__slide"><div class="video-facade ratio-vertical" data-yt="0XRQAa4j3co" aria-label="Depoimento Ingrid Lima" role="button" tabindex="0"></div></div>
         <div class="carrossel__slide"><div class="video-facade ratio-vertical" data-yt="kiKaf2hl8RI" aria-label="Depoimento Flavia Giovaneli" role="button" tabindex="0"></div></div>
         <div class="carrossel__slide"><div class="video-facade ratio-vertical" data-yt="ixzdnzWHzTY" aria-label="Depoimento Ju Souza" role="button" tabindex="0"></div></div>
-      </div></div>
+      </div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
+      </div>
       <div class="carrossel__dots"></div>
     </div>
     <div class="btn-wrap"><a class="btn" href="#VALOR">QUERO SER A PRÓXIMA A TER SUCESSO!</a></div>
@@ -707,7 +712,7 @@ ul{list-style:none;}
         <p class="card__desc">Se você está começando na Micropigmentação esse módulo é obrigatório para você, e se você já trabalha, aconselho a assistir, porque muita gente começa errado e não consegue encontrar o caminho para o sucesso.</p>
       </article>
       <article class="card card--modulo">
-        <img src="/lp/basic-magic-shadow-v2/modulo-higiene.jpg" width="800" height="800" alt="Higiene, Bio Segurança e Vigilância Sanitária" loading="lazy">
+        <img src="/lp/basic-magic-shadow-v2/modulo-higiene-epi.jpg" width="800" height="800" alt="Higiene, Bio Segurança e Vigilância Sanitária" loading="lazy">
         <h3 class="card__tit">Higiene, Bio Segurança e Vigilância Sanitária</h3>
         <p class="card__desc">Tudo que você precisa saber para trabalhar de forma correta, e ninguém melhor para ensinar isso do que eu, que tenho formação em Bio Medicina e especialização em Patologias Clínicas.</p>
       </article>
@@ -785,9 +790,10 @@ ul{list-style:none;}
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-08.jpg" width="825" height="1100" alt="Procedimento de aluna 11" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-09.jpg" width="825" height="1100" alt="Procedimento de aluna 12" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/resultado-10.jpg" width="825" height="1100" alt="Procedimento de aluna 13" loading="lazy"></div>
-      </div></div>
+      </div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
+      </div>
       <div class="carrossel__dots"></div>
     </div>
     <div class="btn-wrap"><a class="btn" href="#VALOR">QUERO APRENDER ISSO PELO AMOR DE DEUS</a></div>
@@ -842,9 +848,10 @@ ul{list-style:none;}
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem4pro.jpg" width="700" height="625" alt="Certificação Jay Academy 4" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem5pro.jpg" width="700" height="625" alt="Certificação Jay Academy 5" loading="lazy"></div>
         <div class="carrossel__slide"><img src="/lp/basic-magic-shadow-v2/Imagem6pro.jpg" width="700" height="625" alt="Certificação Jay Academy 6" loading="lazy"></div>
-      </div></div>
+      </div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
+      </div>
       <div class="carrossel__dots"></div>
     </div>
     <div class="btn-wrap"><a class="btn" href="#VALOR">PELO AMOR DE DEUS! ONDE EU PASSO O CARTÃO?</a></div>
@@ -908,9 +915,10 @@ ul{list-style:none;}
         <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="UerQ2N2-ovA" aria-label="Aula 06" role="button" tabindex="0"></div></div>
         <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="Tdyi3D9WuHg" aria-label="Aula 07" role="button" tabindex="0"></div></div>
         <div class="carrossel__slide"><div class="video-facade ratio-wide" data-yt="_C2jCl8rF00" aria-label="Aula 08" role="button" tabindex="0"></div></div>
-      </div></div>
+      </div>
       <button class="carrossel__nav carrossel__nav--prev" type="button" aria-label="Anterior">‹</button>
       <button class="carrossel__nav carrossel__nav--next" type="button" aria-label="Próximo">›</button>
+      </div>
       <div class="carrossel__dots"></div>
     </div>
     <div class="btn-wrap"><a class="btn" href="#VALOR">ACHO QUE VOU INFARTAR! ONDE EU PAGO?</a></div>
@@ -1070,7 +1078,10 @@ ul{list-style:none;}
     function aplica() {
       var n = porVista();
       var passo = 100 / n;
-      trilha.style.transform = 'translateX(calc(-' + (indice * passo) + '% - ' + (indice * GAP) + 'px))';
+      // distância real entre slides = 100%/n + GAP/n (não GAP inteiro): a largura do
+      // slide já é calc((100% - GAP*(n-1))/n), então o gap por passo é GAP/n. Usar GAP
+      // cheio acumulava ~GAP*(n-1)/n px de desvio por índice e "cortava" o próximo slide.
+      trilha.style.transform = 'translateX(calc(-' + (indice * passo) + '% - ' + (indice * GAP / n) + 'px))';
       // Tirar os slides ocultos do tab order não é só acessibilidade: focar um
       // botão fora de vista faz o navegador dar scrollLeft no viewport, o que
       // dessincroniza o translateX e quebra o carrossel até o próximo resize.
