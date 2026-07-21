@@ -109,6 +109,21 @@ export const landingPages: LandingPage[] = [
     createdAt: "2026-06-02",
     contentSource: "react",
   },
+  {
+    slug: "jamesolaya",
+    name: "James Olaya — Site institucional",
+    tagline: "Recriação do jamesolaya.com.br",
+    description:
+      "Cópia do site Wix recriada em HTML limpo, no sistema visual dark cinematográfico (Bebas + ouro). Hero, bio com painel diagonal, banner JAY.O, vídeo institucional, os 4 pilares em faixas diagonais e mapa dark interativo.",
+    stack: "HTML + CSS + JS (rota interna do portal)",
+    status: "published",
+    type: "website",
+    localPath: "portal/lp-html/jamesolaya.html",
+    productionUrl: "/jamesolaya",
+    accent: "gold-black",
+    createdAt: "2026-07-21",
+    contentSource: "lp-html",
+  },
   // __INSERT_LP_HERE__
 ];
 
