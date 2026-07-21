@@ -383,17 +383,6 @@ ul{list-style:none;}
 #video-destaque{width:100%;background:#000;display:flex;justify-content:center;}
 .video-hero{position:relative;width:100%;max-width:480px;margin-inline:auto;line-height:0;background:#000;}
 .video-hero__midia{display:block;width:100%;height:auto;}
-/* glifo de play só decorativo (não recebe toque; o vídeo nunca tem som) */
-/* play decorativo, SEMPRE visível no meio (o pedido foi "um play no meio"); o vídeo
-   toca mudo por trás. Não recebe toque (pointer-events:none) e não altera o som. */
-.video-hero__play{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;
-  width:84px;height:84px;border-radius:50%;background:rgba(0,0,0,.5);pointer-events:none;
-}
-.video-hero__play::before{
-  content:'';position:absolute;left:54%;top:50%;transform:translate(-50%,-50%);
-  border-style:solid;border-width:16px 0 16px 27px;border-color:transparent transparent transparent #fff;
-}
 @media(max-width:767px){
   /* no mobile ocupa a tela inteira: preenche a altura e corta o excesso das laterais */
   #video-destaque .video-hero{max-width:none;height:100svh;}
@@ -687,6 +676,16 @@ ul{list-style:none;}
   </div>
 </section>
 
+<!-- ==================== 03b · VÍDEO EM DESTAQUE (autoplay mudo, sem som) ==================== -->
+<section id="video-destaque" aria-label="Vídeo de um procedimento">
+  <div class="video-hero">
+    <video class="video-hero__midia" muted loop playsinline preload="none"
+           poster="/lp/basic-magic-shadow-v2/video-352-capa.jpg">
+      <source src="/lp/basic-magic-shadow-v2/video-352.mp4" type="video/mp4">
+    </video>
+  </div>
+</section>
+
 <!-- ============================ 04 · QUALIFICAÇÃO ============================ -->
 <section class="sec sec--foto" id="apta">
   <div class="sec__in" style="align-items:flex-start;">
@@ -850,17 +849,6 @@ ul{list-style:none;}
       </div>
     </article>
     <div class="btn-wrap"><a class="btn" href="#VALOR">ACABARAM MINHAS DESCULPAS</a></div>
-  </div>
-</section>
-
-<!-- ==================== 09b · VÍDEO EM DESTAQUE (autoplay mudo, sem som) ==================== -->
-<section id="video-destaque" aria-label="Vídeo de um procedimento">
-  <div class="video-hero">
-    <video class="video-hero__midia" muted loop playsinline preload="none"
-           poster="/lp/basic-magic-shadow-v2/video-352-capa.jpg">
-      <source src="/lp/basic-magic-shadow-v2/video-352.mp4" type="video/mp4">
-    </video>
-    <span class="video-hero__play" aria-hidden="true"></span>
   </div>
 </section>
 
