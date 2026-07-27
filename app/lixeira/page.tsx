@@ -20,6 +20,7 @@ import {
   permanentDeleteFormAction,
 } from "@/app/forms/actions";
 import { formatDateTimeBR } from "@/lib/format-date";
+import { pageOriginLabel } from "@/lib/page-origin";
 
 export const dynamic = "force-dynamic";
 
@@ -97,8 +98,14 @@ export default async function LixeiraPage() {
                       key={`${wp.domain}_${wp.slug}`}
                       icon={Globe}
                       title={wp.title}
-                      sub={`${wp.domain === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br"}/${wp.slug}`}
-                      badge={wp.placed ? typeLabel[wp.placed] : "WP"}
+                      sub={`${pageOriginLabel(wp)}/${wp.slug}`}
+                      badge={
+                        wp.placed
+                          ? typeLabel[wp.placed]
+                          : wp.sourceKind === "web"
+                          ? "Web"
+                          : "WP"
+                      }
                       trashedAt={wp.trashedAt}
                       restoreForm={
                         <form action={restoreWpPageAction}>

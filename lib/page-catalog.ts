@@ -140,7 +140,7 @@ function wpLayer(saved: SavedSummary[]): CatalogEntry[] {
       slug: publicSlug,
       title: wp.title,
       url: `/${publicSlug}`,
-      source: "wp-mirror" as const,
+      source: wp.sourceKind === "web" ? ("web-mirror" as const) : ("wp-mirror" as const),
       category: wp.placed ? typeToCategory[wp.placed] : "institucional",
       status: wp.published ? ("published" as const) : ("draft" as const),
       manageHref: `/wp-pages/${wp.domain}/${wp.slug}`,

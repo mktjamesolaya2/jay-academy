@@ -6,6 +6,8 @@ import {
   resolveUrl,
   isWpAssetUrl,
   extractWpAssetUrls,
+  extractAssetUrls,
+  isAssetUrl,
   delazyHtml,
   delazyBackgrounds,
   rewriteUrls,
@@ -235,4 +237,126 @@ test("rewriteCssUrls resolve url() relativo e troca pelo destino", () => {
   const out = rewriteCssUrls(css, base, map);
   assert.ok(out.includes(`url('/blob/x.woff2')`));
   assert.ok(out.includes(`url("/blob/bg.png")`));
+});
+
+test("extractAssetUrls pega assets de QUALQUER host, resolvendo relativo", () => {
+  const html = `
+    <img src="/img/hero.png">
+    <link rel="stylesheet" href="https://cdn.outro.com/app.css">
+    <div style="background:url('bg.jpg')"></div>
+    <script src="https://site.com/bundle.js"></script>`;
+  const urls = extractAssetUrls(html, "https://site.com/pagina");
+  assert.ok(urls.includes("https://site.com/img/hero.png"));
+  assert.ok(urls.includes("https://cdn.outro.com/app.css"));
+  assert.ok(urls.includes("https://site.com/bg.jpg"));
+  assert.ok(urls.includes("https://site.com/bundle.js"));
+});
+
+test("isAssetUrl aceita por extensão, ignora não-asset", () => {
+  assert.ok(isAssetUrl("https://x.com/a.woff2"));
+  assert.equal(isAssetUrl("https://x.com/pagina-sem-ext"), false);
+});
+
+// ─── F1: absolutizeUrls + decodeUrlEntities (cópia da web) ───
+import { absolutizeUrls, decodeUrlEntities } from "./wp-localize-core.ts";
+
+test("decodeUrlEntities decodifica &amp;", () => {
+  assert.equal(decodeUrlEntities("a?x=1&amp;y=2"), "a?x=1&y=2");
+  assert.equal(decodeUrlEntities("a?x=1&#38;y=2"), "a?x=1&y=2");
+});
+
+test("absolutizeUrls: relativo/root-relativo/protocol-relativo → absoluto", () => {
+  const base = "https://site.com/blog/post";
+  const html = `
+    <link rel="stylesheet" href="/static/app.css">
+    <img src="img/hero.jpg">
+    <script src="//cdn.com/x.js"></script>
+    <a href="/login">entrar</a>
+    <div style="background:url('bg.png')"></div>`;
+  const out = absolutizeUrls(html, base);
+  assert.ok(out.includes('href="https://site.com/static/app.css"'));
+  assert.ok(out.includes('src="https://site.com/blog/img/hero.jpg"'));
+  assert.ok(out.includes('src="https://cdn.com/x.js"'));
+  assert.ok(out.includes('href="https://site.com/login"'));
+  assert.ok(out.includes("url('https://site.com/blog/bg.png')"));
+});
+
+test("absolutizeUrls: NÃO mexe em absoluto/data/#/mailto", () => {
+  const base = "https://site.com/";
+  const html = `<img src="https://x.com/a.png"><a href="#top">t</a><img src="data:image/png;base64,AAA"><a href="mailto:a@b.com">m</a>`;
+  const out = absolutizeUrls(html, base);
+  assert.ok(out.includes('src="https://x.com/a.png"'));
+  assert.ok(out.includes('href="#top"'));
+  assert.ok(out.includes("data:image/png;base64,AAA"));
+  assert.ok(out.includes("mailto:a@b.com"));
+});
+
+test("absolutizeUrls: decodifica &amp; ao absolutizar (load.php)", () => {
+  const out = absolutizeUrls(
+    `<link rel="stylesheet" href="/w/load.php?lang=pt&amp;only=styles">`,
+    "https://pt.wikipedia.org/wiki/X"
+  );
+  assert.ok(out.includes("https://pt.wikipedia.org/w/load.php?lang=pt&only=styles"));
+  assert.ok(!out.includes("&amp;"));
+});
+
+test("absolutizeUrls: srcset com múltiplas URLs", () => {
+  const out = absolutizeUrls(
+    `<img srcset="a.jpg 1x, b.jpg 2x">`,
+    "https://site.com/x/"
+  );
+  assert.ok(out.includes("https://site.com/x/a.jpg 1x"));
+  assert.ok(out.includes("https://site.com/x/b.jpg 2x"));
+});
+
+// ─── F3/F8: extractWebAssetUrls + extractCssAssets ───
+import { extractWebAssetUrls, extractCssAssets } from "./wp-localize-core.ts";
+
+test("extractWebAssetUrls pega CSS disfarçado (sem extensão) por tag", () => {
+  const html = `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto">
+    <link rel="stylesheet" href="https://site.com/w/load.php?only=styles">
+    <link rel="icon" href="https://site.com/favicon.ico">
+    <link rel="preload" as="font" href="https://site.com/f/Inter">`;
+  const urls = extractWebAssetUrls(html);
+  assert.ok(urls.includes("https://fonts.googleapis.com/css2?family=Roboto"));
+  assert.ok(urls.includes("https://site.com/w/load.php?only=styles"));
+  assert.ok(urls.includes("https://site.com/favicon.ico"));
+  assert.ok(urls.includes("https://site.com/f/Inter"));
+});
+
+test("extractCssAssets pega url() e @import (qualquer host)", () => {
+  const css = `@import "base.css";
+    @import url('https://cdn.com/vendor.css');
+    @font-face { src: url(../fonts/Inter.woff2) }
+    body { background: url("https://cdn.com/bg.jpg") }`;
+  const urls = extractCssAssets(css, "https://site.com/css/main.css");
+  assert.ok(urls.includes("https://site.com/css/base.css"));
+  assert.ok(urls.includes("https://cdn.com/vendor.css"));
+  assert.ok(urls.includes("https://site.com/fonts/Inter.woff2"));
+  assert.ok(urls.includes("https://cdn.com/bg.jpg"));
+});
+
+test("absolutizeUrls NÃO corrompe srcset com data: URI (placeholder lazy)", () => {
+  const html = `<source srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">`;
+  const out = absolutizeUrls(html, "https://site.com/pagina");
+  assert.ok(out.includes("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="));
+  assert.ok(!out.includes("site.com/R0lGODlh")); // não corrompeu
+});
+
+import { stripPlaceholderSources } from "./wp-localize-core.ts";
+test("stripPlaceholderSources remove placeholder e deixa a img real aparecer", () => {
+  const html = `<picture><source data-empty="" srcSet="data:image/gif;base64,R0lGODlh" media="(min-width:0px)"/><img src="https://x.com/real.jpg" alt="a"/></picture>`;
+  const out = stripPlaceholderSources(html);
+  assert.ok(!out.includes("<source")); // placeholder removido
+  assert.ok(out.includes('src="https://x.com/real.jpg"')); // img real fica
+});
+test("stripPlaceholderSources NÃO remove source real (srcset de verdade)", () => {
+  const html = `<picture><source srcset="https://x.com/big.jpg 2x" media="(min-width:800px)"/><img src="https://x.com/small.jpg"/></picture>`;
+  const out = stripPlaceholderSources(html);
+  assert.ok(out.includes('srcset="https://x.com/big.jpg 2x"')); // source real preservado
+});
+
+test("absolutizeUrls cobre <form action> (senão form posta pro portal)", () => {
+  const out = absolutizeUrls(`<form action="/subscribe" method="post">`, "https://site.com/lp");
+  assert.ok(out.includes('action="https://site.com/subscribe"'));
 });

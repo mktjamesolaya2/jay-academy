@@ -2,7 +2,87 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-17 — **Fix da contagem de páginas no dashboard (KV mget estourava e zerava as migradas) + índice leve de resumos**
+> **Última atualização**: 2026-07-23 — **Feature "Copiar de uma URL" EM ANDAMENTO (4/10 tasks) + recuperação de histórico + hook anti-perda**
+
+---
+
+## ✅ Feature "Copiar de uma URL" — CONSTRUÍDA + ENDURECIDA (24/07), falta James retestar
+
+> **24/07:** James copiou a Wikipedia no QA → veio SEM ESTILO. Rodei **3 auditorias adversariais** (o "READY TO MERGE" da 1ª rodada era só lógica interna — faltou testar site real). Achados corrigidos TODOS:
+> - **Segurança:** S1 remove `<script>`/handlers da cópia (XSS same-origin), S2 bloqueia SSRF (IPs internos), S3 rejeita não-HTML/gigante (OOM).
+> - **Fidelidade:** F1 absolutiza URLs no import (era a raiz — a troca não batia em URL relativa) + F5 delazy + F6 decode `&amp;` → **cópia carrega da origem e renderiza com estilo**; F3 pega CSS "disfarçado" (Google Fonts/load.php) por tag, F4 localiza fontes/bg em CSS externo, F8 segue @import, F7 detecta charset (anti-mojibake).
+> - **Casos-limite:** C1 slug não-latino vira hash (não colide em "home"), C2 redirect usa host final, C3 slug reservado não publica invisível, C5 chrome multiplataforma. + D1 (erro console smart-summary, pré-existente).
+> - **Provado no site real (Wikipedia):** CSS absoluto, load.php capturado p/ localizar, scripts removidos, imgs absolutas. 76/76 testes, tsc limpo, `next build` OK.
+> - Achados/plano: `docs/superpowers/plans/2026-07-24-copiar-url-hardening.md`. **Retestar:** re-copiar `https://pt.wikipedia.org/wiki/Sobrancelha` no localhost → agora vem com estilo.
+
+
+
+**Status: 9/10 tasks construídas + revisadas + polidas. Revisão final do branch = READY TO MERGE.** Falta só a T10 (QA hands-on do James + checkpoint Vercel). Branch **`feat/copiar-qualquer-url`** (17 commits acima da `main`; **`main` intocada, NADA pushado**).
+
+**Verificado:** 50/50 testes lib, `tsc --noEmit` limpo, `next build` de produção OK. Revisão final (opus): traçou salvar→servir `/p/[slug]`→publicar→catálogo→lista→editar; **funciona ponta a ponta pra web, zero regressão no WP**, `domain` ampliado flui seguro por todos os consumidores, sem colisão de chave KV, armadilha do `relocate` guardada. Sem Critical/Important. Notas de segurança: SSRF mitigado por admin-only; JS copiado roda na origem (mesmo modelo do WP mirror atual).
+
+**▶️ COMO TESTAR (quando o James voltar):** `git checkout feat/copiar-qualquer-url` → `npm run dev` (porta 4000) → logar admin → `/wp-pages` (agora "Páginas copiadas") → botão "Copiar de uma URL" → colar (a) 1 site estático, (b) 1 WordPress externo, (c) 1 SPA React (marcar "forçar navegador robô" se vier vazio) → conferir: salvou, etiqueta "Copiada da web · <host>", abre no editor, publica, renderiza em `/p/<slug>` com assets locais.
+
+**⏳ Depois do QA:** merge na `main` + push (checkpoint headless na Vercel — se não rodar no grátis, decisão: headless só no PC + cópia simples na Vercel; ver spec §10.1).
+
+**Detalhe histórico do que foi construído (T1–T9) abaixo mantido pra referência.**
+
+---
+
+## ⏸️ Histórico da construção — Feature "Copiar de uma URL"
+
+**Método:** subagent-driven (1 implementer + 1 reviewer por task, TDD). Ledger: `.superpowers/sdd/progress.md`.
+
+**O que é:** destravar o "Copiar de uma URL" (o `importByLinksAction`, cujo botão foi removido em 17/07) pra aceitar **qualquer endereço**, com navegador robô pros sites pesados, reusando o pipeline de localização. Reorganização de IA: "Páginas WP" → "**Páginas copiadas**" (WP + web com etiqueta de origem). Decidido tudo com o James via brainstorming (visual companion).
+
+**Documentos (ler pra retomar):**
+- Spec: [docs/superpowers/specs/2026-07-23-copiar-qualquer-url-design.md](../docs/superpowers/specs/2026-07-23-copiar-qualquer-url-design.md)
+- Plano (10 tasks TDD): [docs/superpowers/plans/2026-07-23-copiar-qualquer-url.md](../docs/superpowers/plans/2026-07-23-copiar-qualquer-url.md)
+- Ledger de progresso: `.superpowers/sdd/progress.md` (gitignored)
+
+**⚙️ Onde está o código:** branch **`feat/copiar-qualquer-url`** (`git checkout feat/copiar-qualquer-url`). **`main` intocada, NADA foi pushado** (tudo local).
+
+**✅ Feito (com implementer + reviewer subagente por task, testes verdes):**
+- T1 `deriveWebSlug` (slug do caminho inteiro + fallback `home`) — `lib/web-slug.ts`
+- T2 `extractAssetUrls` genérico (qualquer host) — `lib/wp-localize-core.ts`
+- T3 `looksEmpty` (detecta casca de SPA) — `lib/fetch-any-url.ts`
+- T4 `fetchAnyUrl` + `renderHeadless` (híbrido: fetch → navegador robô; Chrome local / `@sparticuz/chromium` na Vercel) — `lib/headless-fetch.ts`, deps `puppeteer-core`+`@sparticuz/chromium` instaladas. Smoke local OK.
+
+**⏭️ Próximo (retomar na T5):**
+- T5: ampliar store `domain: WpDomain→string` + `sourceKind`/`sourceUrl` (`wp-content-storage.ts`, `wp-localize.ts`, `page-summary.ts`)
+- T6: `pageOriginLabel` + trocar 4 ternários hardcoded (**fix crítico "não-WP virando WP"**: wp-page-card:41, search-modal:78, lixeira:100, wp-pages/[domain]/[slug]/page:68)
+- T7: fonte `web-mirror` no catálogo · T8: `importByLinksAction` branch web · T9: UI (recriar `import-by-link.tsx` + sidebar "Páginas copiadas") · T10: QA local + checkpoint headless na Vercel
+- **Como retomar:** `git checkout feat/copiar-qualquer-url` → ler o plano → `task-brief` da T5 → seguir subagent-driven (implementer+reviewer por task).
+
+**⚠️ Riscos anotados:** headless na Vercel ainda NÃO validado (checkpoint na T10 — se não rodar no grátis, decisão: headless só no PC + cópia simples na Vercel). Rota `/wp-pages` NÃO é renomeada (só o rótulo) pra não quebrar ~12 arquivos.
+
+---
+
+## 🆕 Sessão 2026-07-23 — Recuperação de histórico + hook anti-perda
+
+**Problema:** o James notou que de 17/07 até 23/07 houve bastante progresso, mas **nada foi salvo** nas notas nem na memória. Diagnóstico: o salvamento do progresso era 100% **manual** (regra "atualizar progresso-atual.md ao fim de cada sessão") e **não existia nenhum hook** configurado nos `settings.json` → quando uma sessão terminava abrupta (fechar app / `/clear` / compactação de contexto), o passo era pulado. O trabalho **existe no git**, só não estava curado nas notas.
+
+**Correção 1 — hook automatizado (nunca mais depender de lembrar):**
+- Hook `Stop` + `PreCompact` em `.claude/settings.json` (projeto) que, quando arquivos do projeto (`lp-html/`, `app/`, `lib/`, `components/`) mudaram mais recentemente que `notas/progresso-atual.md`, **injeta um lembrete** pra atualizar as notas antes de encerrar/compactar. Dispara no máximo 1x por sessão. Regra de conteúdo: **só progresso do projeto**, nada de fora.
+
+**Correção 2 — histórico 18→22/07 reconstruído do git (abaixo).**
+
+### 🆕 LP Basic Magic Shadow **v2** (18–20/07) — NOVA LP
+Nova LP paralela: [lp-html/basic-magic-shadow-v2.html](../lp-html/basic-magic-shadow-v2.html) · rota [app/basic-magic-shadow-v2/route.ts](../app/basic-magic-shadow-v2/route.ts) · registrada em [lib/lp-html-registry.ts](../lib/lp-html-registry.ts) · assets em [public/lp/basic-magic-shadow-v2/](../public/lp/basic-magic-shadow-v2/).
+- **18/07:** cópia fiel do WP em vanilla (rota paralela) → tornada funcional sem mexer no design → UX/diagramação + correção do "play travado" do vídeo.
+- **20/07:** carrossel do hero (bolinhas, autoplay no toque, 2 por vista) · pause dos depoimentos no mobile · diagramação do hero no mobile + varredura geral · **aplicado Feedback MAGIC SHADOW (12 prints)** → antes-depois-01..09, resultado-01..10, módulos (higiene/pele) · vídeo **full-screen autoplay mudo** (`video-352.mp4`) + enxugou Procedimentos · removeu o play e moveu o logo pra depois de "TRANSFORME suas clientes".
+
+### 🖤 Site institucional **jamesolaya** (21/07) — recriado
+Recriação do site institucional no **sistema dark cinematográfico** (ver [[projeto_jamesolaya]]): [lp-html/jamesolaya.html](../lp-html/jamesolaya.html) · rota [app/jamesolaya/route.ts](../app/jamesolaya/route.ts) · registrado em [lib/landing-pages.ts](../lib/landing-pages.ts) · assets (hero-dream, retrato, clínica, academy, logo oficial) em [public/lp/jamesolaya/](../public/lp/jamesolaya/).
+
+### 🛠️ Fix dashboard (21/07)
+Clicar num deploy abre **a página alterada**, não a raiz. Novo [lib/deploy-target.ts](../lib/deploy-target.ts) + [components/admin-feeds.tsx](../components/admin-feeds.tsx) + `lib/suggestions-store.ts`.
+
+### 📱 Fio a Fio realista (22/07)
+Hero **mobile full-bleed** em [lp-html/fio-a-fio-realista-by-james-olaya.html](../lp-html/fio-a-fio-realista-by-james-olaya.html) + `public/lp/fio-a-fio-realista/hero.webp`.
+
+### ⏳ Em andamento (23/07, não-commitado)
+Working tree com assets novos de **jamesolaya** (img1..N) + pastas soltas ("fio a fio realista"/"lips sense"/assets/Pinterest.mp4) — trabalho do dia ainda por commitar. **Atenção:** as pastas soltas na raiz do portal parecem material de trabalho, não do deploy — confirmar com o James antes de commitar/apagar.
 
 ---
 

@@ -1246,7 +1246,11 @@ export async function GET(req: Request) {
   if (url.searchParams.get("relocate") === "1") {
     const saved = (await listSaved()).filter((s) => !s.trashed);
     const total = saved.length;
-    const pending = saved.filter((s) => !s.relocatedAt);
+    // Páginas "web" (copiadas de qualquer site) não vieram do WP — não faz
+    // sentido relocatePage() re-buscar da REST API do WP pra elas.
+    const pending = saved.filter(
+      (s) => !s.relocatedAt && s.sourceKind !== "web"
+    );
     const done = total - pending.length;
 
     if (pending.length === 0) {
@@ -1294,7 +1298,7 @@ export async function GET(req: Request) {
   // Aceita o slug interno (com ?domain) OU o slug público (resolve sozinho).
   // localizePage sempre reprocessa, então serve pra re-testar uma página.
   if (oneSlug) {
-    let target: { domain: WpDomain; slug: string } | null = null;
+    let target: { domain: string; slug: string } | null = null;
     if (oneDomain && (await loadContent(oneDomain, oneSlug))) {
       target = { domain: oneDomain, slug: oneSlug };
     }

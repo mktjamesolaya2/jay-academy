@@ -23,6 +23,7 @@ import { SeoShortcut } from "@/components/seo-shortcut";
 import { ScheduleControl } from "@/components/schedule-control";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { formatDateTimeBR } from "@/lib/format-date";
+import { pageOriginLabel } from "@/lib/page-origin";
 
 type Params = Promise<{ domain: string; slug: string }>;
 
@@ -64,8 +65,7 @@ export default async function WpPageDetailPage({
   const isPublished = !!content.published;
   const isForm = content.placed === "form";
   const publicSlug = content.publicSlug || content.slug;
-  const domainLabel =
-    content.domain === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br";
+  const domainLabel = pageOriginLabel(content);
   const encSlug = encodeURIComponent(content.slug);
   const editHref = `/wp-pages/${content.domain}/${encSlug}/edit`;
   const previewHref = `/wp-pages/${content.domain}/${encSlug}/preview`;
@@ -86,7 +86,9 @@ export default async function WpPageDetailPage({
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div className="min-w-0">
               <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
-                Página do WordPress
+                {content.sourceKind === "web"
+                  ? "Página copiada da web"
+                  : "Página do WordPress"}
               </p>
               <h2
                 className="text-3xl font-semibold tracking-[-0.03em] text-white mt-1"

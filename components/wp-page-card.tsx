@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { ArrowRight, Globe, Lock } from "lucide-react";
 import type { WpPageContent } from "@/lib/wp-content-storage";
+import { pageOriginLabel } from "@/lib/page-origin";
 
 type WpCardData = Pick<
   WpPageContent,
-  "domain" | "slug" | "title" | "published" | "publicSlug"
+  "domain" | "slug" | "title" | "published" | "publicSlug" | "sourceKind" | "sourceUrl"
 >;
 
 export function WpPageCard({ page }: { page: WpCardData }) {
@@ -38,7 +39,7 @@ export function WpPageCard({ page }: { page: WpCardData }) {
         </div>
 
         <p className="text-xs text-neutral-500 leading-relaxed">
-          Migrada do WordPress · {page.domain === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br"}
+          {pageOriginLabel(page)}
         </p>
 
         <div className="mt-4 flex items-center gap-2 flex-wrap">

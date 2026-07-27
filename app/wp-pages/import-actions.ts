@@ -14,6 +14,16 @@ import type { WpDomain } from "@/lib/wp-api";
 import { ensurePageSummary } from "@/lib/page-summary";
 import { localizePage } from "@/lib/wp-localize";
 import { logActivity } from "@/lib/activity-log";
+import { fetchAnyUrl } from "@/lib/fetch-any-url";
+import { deriveWebSlug, ensureScheme } from "@/lib/web-slug";
+import { isBlockedHost } from "@/lib/net-guard";
+import { sanitizeCopiedHtml } from "@/lib/sanitize-copied";
+import {
+  absolutizeUrls,
+  delazyHtml,
+  stripPlaceholderSources,
+} from "@/lib/wp-localize-core";
+import { isReservedSlug } from "@/lib/reserved-slugs";
 
 type Result = { url: string; ok: boolean; message: string };
 
@@ -39,12 +49,136 @@ export async function importByLinksAction(
     ),
   ];
 
+  const forceHeadless = formData.get("forceHeadless") === "1";
+  // Manter os scripts do site copiado (fica fiel a sites de JS pesado tipo Apple,
+  // mas o JS de terceiros roda no domínio do painel — só quando o admin opta).
+  const keepScripts = formData.get("keepScripts") === "1";
   const results: Result[] = [];
 
   for (const url of urls) {
     try {
-      const u = new URL(url);
+      const normUrl = ensureScheme(url);
+      const u = new URL(normUrl);
       const host = u.hostname.replace(/^www\./, "");
+      const isWpJay =
+        host === "jayacademy.com.br" || host === "lp.jayacademy.com.br";
+
+      if (!isWpJay) {
+        // Caminho web (qualquer site que não seja o WP legado da Jay Academy).
+        if (isBlockedHost(u.hostname)) {
+          results.push({
+            url,
+            ok: false,
+            message: "Endereço interno/privado bloqueado por segurança",
+          });
+          continue;
+        }
+        const { html, finalUrl } = await fetchAnyUrl(normUrl, { forceHeadless });
+        // Redirect: usa o host FINAL (destino real), não o do link colado — senão
+        // o `domain` mentiria e a dedup ficaria inconsistente. Re-checa SSRF no
+        // destino (um redirect podia levar a um IP interno).
+        const finalUrlObj = new URL(finalUrl);
+        if (isBlockedHost(finalUrlObj.hostname)) {
+          results.push({
+            url,
+            ok: false,
+            message: "Redirecionou pra endereço interno/privado — bloqueado",
+          });
+          continue;
+        }
+        const webHost = finalUrlObj.hostname.replace(/^www\./, "");
+        const webSlug = deriveWebSlug(finalUrl);
+        const title = (
+          html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] || webSlug
+        ).trim();
+        // Preparação da cópia web, em ordem:
+        //  1) delazyHtml: promove data-src → src (imagens lazy aparecem)
+        //  2) absolutizeUrls: URLs relativas → absolutas contra a origem
+        //     (carrega os assets do site original na hora, sem depender de <base>,
+        //     e faz a reescrita do localizador casar depois)
+        //  3) sanitizeCopiedHtml: remove <script>/handlers (segurança same-origin) —
+        //     PULADO quando o admin marca "manter scripts" (fidelidade > segurança).
+        const prepared = absolutizeUrls(
+          stripPlaceholderSources(delazyHtml(html)),
+          finalUrl
+        );
+        const safeHtml = keepScripts ? prepared : sanitizeCopiedHtml(prepared);
+        const existingWeb = await loadContent(webHost, webSlug);
+        const webContent: WpPageContent = {
+          id: 0,
+          slug: webSlug,
+          domain: webHost,
+          title,
+          content: "",
+          fullHtml: safeHtml,
+          excerpt: "",
+          link: finalUrl,
+          modified: new Date().toISOString(),
+          fetchedAt: new Date().toISOString(),
+          sourceKind: "web",
+          sourceUrl: finalUrl,
+          ...(existingWeb
+            ? {
+                placed: existingWeb.placed,
+                placedAt: existingWeb.placedAt,
+                published: existingWeb.published,
+                publishedAt: existingWeb.publishedAt,
+                publicSlug: existingWeb.publicSlug,
+              }
+            : {}),
+        };
+        await saveContent(webContent);
+
+        after(async () => {
+          try {
+            const st = await localizePage(webHost, webSlug);
+            if (st.total > 0 && st.localized === 0) {
+              await logActivity(
+                "wp.localize.fail",
+                title,
+                `0/${st.total} assets localizados (storage indisponível?)`
+              ).catch(() => {});
+            }
+          } catch (e) {
+            // segue; a página fica marcada como pendente pro cron consertar
+            await logActivity(
+              "wp.localize.fail",
+              title,
+              e instanceof Error ? e.message : "erro na localização"
+            ).catch(() => {});
+          }
+        });
+
+        const pubSlug = webContent.publicSlug || webContent.slug;
+        // Slug reservado (rota do sistema ou LP estática) → publicar ali daria
+        // página invisível ("publicado" falso). Não publica; avisa.
+        const reservedSlug = isReservedSlug(pubSlug);
+        let webPublished = false;
+        if (autoPublish && !webContent.published && !reservedSlug) {
+          try {
+            await setPublished(webContent, pubSlug);
+            await ensurePageSummary(webHost, webContent.slug);
+            webPublished = true;
+            revalidatePath(`/p/${pubSlug}`);
+          } catch {
+            // se falhar ao publicar, segue só copiada
+          }
+        }
+
+        results.push({
+          url,
+          ok: true,
+          message: existingWeb
+            ? `Atualizada: ${title} — otimizando em 2º plano`
+            : webPublished
+            ? `Copiada e publicada: ${title} — otimizando em 2º plano`
+            : autoPublish && reservedSlug
+            ? `Copiada: ${title} — NÃO publiquei: o slug "${pubSlug}" colide com uma rota do sistema; publique num slug diferente`
+            : `Copiada: ${title} — otimizando em 2º plano`,
+        });
+        continue;
+      }
+
       const domain: WpDomain = host.startsWith("lp.") ? "lp" : "main";
       const slug = decodeURIComponent(
         u.pathname

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, startTransition } from "react";
 import { Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { generateSummaryAction } from "@/app/wp-pages/manage-actions";
 
@@ -28,7 +28,9 @@ export function SmartSummary({
     const fd = new FormData();
     fd.set("domain", domain);
     fd.set("slug", slug);
-    dispatch(fd);
+    // React 19: o dispatch do useActionState precisa rodar dentro de uma
+    // transition (senão avisa no console e o isPending não atualiza certo).
+    startTransition(() => dispatch(fd));
   }, [summary, canEdit, isPending, domain, slug, dispatch]);
 
   if (summary) {

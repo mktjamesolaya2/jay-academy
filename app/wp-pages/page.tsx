@@ -3,11 +3,13 @@ import { ArrowLeft, Globe, Lock, LayoutGrid } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { ConfirmSubmit } from "@/components/wp-manage-buttons";
 import { WpManageList } from "@/components/wp-manage-list";
+import { ImportByLink } from "@/components/import-by-link";
 import { listSaved } from "@/lib/wp-content-storage";
 import { getCurrentUser, canEdit } from "@/lib/auth";
 import { publishAllAction, unpublishAllAction } from "./manage-actions";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 // Gestão das páginas migradas do WordPress (cópias completas no KV, servidas
 // em /[slug]). A antiga seção "Importar do WordPress" — que consultava o WP
@@ -38,17 +40,18 @@ export default async function WpPagesHub() {
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div>
               <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-500 font-semibold">
-                Páginas migradas
+                Páginas copiadas
               </p>
               <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white mt-1">
                 {saved.length} página{saved.length === 1 ? "" : "s"}
               </h2>
               <p className="text-neutral-400 mt-1.5 max-w-2xl text-[15px]">
-                Páginas migradas do WordPress — o conteúdo vive aqui no portal,
-                independente do servidor antigo. Publicar libera a URL pública{" "}
-                <span className="text-neutral-300 font-mono">/[slug]</span>.
+                Páginas copiadas de qualquer URL — o conteúdo vive aqui no
+                portal, independente do site de origem. Publicar libera a URL
+                pública <span className="text-neutral-300 font-mono">/[slug]</span>.
               </p>
             </div>
+            {userCanEdit && <ImportByLink />}
           </div>
         </header>
 
@@ -120,10 +123,10 @@ export default async function WpPagesHub() {
                   className="mx-auto text-neutral-600 mb-3"
                 />
                 <p className="text-neutral-300 font-semibold">
-                  Nenhuma página migrada
+                  Nenhuma página copiada ainda
                 </p>
                 <p className="text-neutral-500 text-sm mt-1">
-                  As páginas migradas do WordPress aparecem aqui.
+                  As páginas que você copiar (do WordPress ou de qualquer site) aparecem aqui.
                 </p>
               </div>
             ) : (

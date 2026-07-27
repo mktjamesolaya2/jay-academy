@@ -15,6 +15,7 @@ import {
 import { type LandingPage } from "@/lib/landing-pages";
 import { type SavedSummary } from "@/lib/wp-content-storage";
 import { lpHtmlPages } from "@/lib/lp-html-registry";
+import { pageOriginLabel } from "@/lib/page-origin";
 
 type Result = {
   id: string;
@@ -75,7 +76,7 @@ export function SearchModal({
       ...savedWp.map((wp) => ({
         id: `wp-${wp.domain}-${wp.slug}`,
         title: wp.title.replace(/<[^>]*>/g, ""),
-        subtitle: `WP · ${wp.domain === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br"}/${wp.slug}`,
+        subtitle: `${pageOriginLabel(wp)}/${wp.slug}`,
         href: `/wp-pages/${wp.domain}/${encodeURIComponent(wp.slug)}`,
         kind: "wp" as const,
         icon: FileCode2,

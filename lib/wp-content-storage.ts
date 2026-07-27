@@ -1,12 +1,19 @@
 import "server-only";
 import { kvDel, kvGet, kvKeys, kvMget, kvSet } from "./storage";
+import { isReservedSlug } from "./reserved-slugs";
 import type { WpPageContent as BaseWpPageContent } from "./wp-fetch-page";
 import type { WpDomain } from "./wp-api";
 export type { WpDomain };
 
 export type PlacementType = "website" | "lp" | "form";
 
-export type WpPageContent = BaseWpPageContent & {
+export type WpPageContent = Omit<BaseWpPageContent, "domain"> & {
+  /** Host de origem — "main"/"lp" (WP legado) ou qualquer host de site copiado. */
+  domain: string;
+  /** Origem do conteúdo: "wp" (WordPress legado) ou "web" (qualquer URL copiada). */
+  sourceKind?: "wp" | "web";
+  /** URL original de onde a página foi copiada (quando sourceKind === "web"). */
+  sourceUrl?: string;
   placed?: PlacementType;
   placedAt?: string;
   published?: boolean;
@@ -45,11 +52,11 @@ export type WpPageContent = BaseWpPageContent & {
 
 // Index: slug público → { domain, originalSlug }
 // Permite buscar página WP pela URL pública /p/[slug]
-type PublishedIndex = { domain: WpDomain; slug: string };
+type PublishedIndex = { domain: string; slug: string };
 
 export async function getPublishedBySlug(
   publicSlug: string
-): Promise<{ domain: WpDomain; slug: string } | null> {
+): Promise<{ domain: string; slug: string } | null> {
   return await kvGet<PublishedIndex>(`published-index:${publicSlug}`);
 }
 
@@ -57,6 +64,15 @@ export async function setPublished(
   content: WpPageContent,
   publicSlug: string
 ): Promise<void> {
+  // Slug reservado (rota do sistema / LP estática): publicar ali cria uma página
+  // INVISÍVEL (o Next resolve a rota real primeiro). Barra em TODOS os fluxos de
+  // publicação (botão, bulk, autoPublish), não só no import — foi o buraco do "Apple 404".
+  if (isReservedSlug(publicSlug)) {
+    throw new Error(
+      `O slug "${publicSlug}" é reservado (rota do sistema) — escolha outro slug público`
+    );
+  }
+
   // Verifica conflito de slug
   const existing = await getPublishedBySlug(publicSlug);
   if (
@@ -105,7 +121,7 @@ async function loadAllContents(): Promise<WpPageContent[]> {
   return contents.filter((c): c is WpPageContent => c !== null);
 }
 
-function keyFor(domain: WpDomain, slug: string): string {
+function keyFor(domain: string, slug: string): string {
   return `wp:content:${domain}:${slug}`;
 }
 
@@ -118,7 +134,7 @@ function keyFor(domain: WpDomain, slug: string): string {
 // corrida em ações em lote). `saveContent` grava o resumo; `deleteContent`
 // remove. Enquanto o índice não existir (1ª vez após deploy), cai no fallback
 // correto (leitura em lotes do conteúdo). Rebuild explícito via rebuildSummaryIndex.
-function summaryKey(domain: WpDomain, slug: string): string {
+function summaryKey(domain: string, slug: string): string {
   return `wp:summary:${domain}:${slug}`;
 }
 
@@ -152,7 +168,7 @@ export async function saveContent(c: WpPageContent): Promise<void> {
 }
 
 export async function loadContent(
-  domain: WpDomain,
+  domain: string,
   slug: string
 ): Promise<WpPageContent | null> {
   return await kvGet<WpPageContent>(keyFor(domain, slug));
@@ -190,7 +206,7 @@ export async function markPlaced(
 }
 
 export type SavedSummary = {
-  domain: WpDomain;
+  domain: string;
   slug: string;
   title: string;
   modified: string;
@@ -204,6 +220,8 @@ export type SavedSummary = {
   localizedAt?: string;
   localizeStats?: WpPageContent["localizeStats"];
   relocatedAt?: string;
+  sourceKind?: "wp" | "web";
+  sourceUrl?: string;
 };
 
 function summarize(c: WpPageContent): SavedSummary {
@@ -222,6 +240,8 @@ function summarize(c: WpPageContent): SavedSummary {
     localizedAt: c.localizedAt,
     localizeStats: c.localizeStats,
     relocatedAt: c.relocatedAt,
+    sourceKind: c.sourceKind ?? "wp",
+    sourceUrl: c.sourceUrl,
   };
 }
 

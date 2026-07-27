@@ -26,14 +26,14 @@ import {
   bulkCategorizeAction,
 } from "@/app/wp-pages/manage-actions";
 import type { SavedSummary } from "@/lib/wp-content-storage";
+import type { WpDomain } from "@/lib/wp-api";
+import { pageOriginLabel } from "@/lib/page-origin";
 
 type StatusFilter = "all" | "published" | "draft";
 type CatFilter = "all" | "website" | "lp" | "form" | "none";
 type DomFilter = "all" | "main" | "lp";
 
 const keyOf = (s: { domain: string; slug: string }) => `${s.domain}::${s.slug}`;
-const domainLabel = (d: string) =>
-  d === "main" ? "jayacademy.com.br" : "lp.jayacademy.com.br";
 const catLabel = (c?: string) =>
   c === "website"
     ? "Website"
@@ -74,9 +74,11 @@ export function WpManageList({
   const filteredKeys = filtered.map(keyOf);
   const allSelected =
     filtered.length > 0 && filteredKeys.every((k) => selected.has(k));
+  // Bulk actions ainda são só pra páginas WP (main/lp) — seleção de origem web
+  // qualquer entra numa tela própria depois (fora do escopo desta lista).
   const selectedItems = pages
     .filter((p) => selected.has(keyOf(p)))
-    .map((p) => ({ domain: p.domain, slug: p.slug }));
+    .map((p) => ({ domain: p.domain as WpDomain, slug: p.slug }));
 
   function toggle(k: string) {
     setSelected((prev) => {
@@ -149,7 +151,9 @@ export function WpManageList({
           options={[
             ["all", "Todos domínios"],
             ["main", "jayacademy.com.br"],
-            ["lp", "lp.jayacademy.com.br"],
+            // Rótulo evita repetir o host WP grudado (host real fica só no
+            // pageOriginLabel por página, aqui é só o filtro do bucket WP).
+            ["lp", "LP · jayacademy.com.br"],
           ]}
         />
       </div>
@@ -305,11 +309,11 @@ export function WpManageList({
                         dangerouslySetInnerHTML={{ __html: s.title }}
                       />
                       <p className="text-[11px] text-neutral-500 font-mono mt-1">
-                        {domainLabel(s.domain)}/{s.slug}
+                        {pageOriginLabel(s)}/{s.slug}
                       </p>
                       {s.localizedAt ? (
                         <span
-                          title={`Imagens/CSS otimizados no storage próprio (independente do WordPress). ${
+                          title={`Imagens/CSS otimizados no storage próprio (independente da origem). ${
                             s.localizeStats?.localized ?? ""
                           } assets.`}
                           className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-300/80 ring-1 ring-emerald-500/20"
@@ -321,7 +325,7 @@ export function WpManageList({
                         s.localizeStats.total > 0 &&
                         s.localizeStats.localized === 0 ? (
                         <span
-                          title="A otimização falhou (storage indisponível?). A página carrega os assets do WordPress — lenta e quebra se o WP sair do ar. O cron tenta de novo."
+                          title="A otimização falhou (storage indisponível?). A página carrega os assets do site de origem — lenta e quebra se a origem sair do ar. O cron tenta de novo."
                           className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-500/10 text-red-300 ring-1 ring-red-500/25"
                         >
                           <AlertTriangle size={9} strokeWidth={2.4} />
@@ -329,7 +333,7 @@ export function WpManageList({
                         </span>
                       ) : (
                         <span
-                          title="Ainda carrega imagens/CSS do WordPress (mais lenta). O otimizador roda em 2º plano e conserta em breve."
+                          title="Ainda carrega imagens/CSS do site de origem (mais lenta). O otimizador roda em 2º plano e conserta em breve."
                           className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-300/90 ring-1 ring-amber-500/25"
                         >
                           <Loader2 size={9} strokeWidth={2.4} className="animate-spin" />

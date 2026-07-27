@@ -64,6 +64,15 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "purple-fuchsia",
   },
   {
+    // Site institucional recriado no sistema dark cinematográfico (21/07).
+    slug: "jamesolaya",
+    title: "James Olaya (institucional)",
+    htmlFile: "lp-html/jamesolaya.html",
+    assetsDir: "public/lp/jamesolaya",
+    category: "website",
+    accent: "gold-black",
+  },
+  {
     slug: "inmersion-pelo-a-pelo",
     title: "Inmersión Pelo a Pelo",
     htmlFile: "lp-html/inmersion-pelo-a-pelo.html",

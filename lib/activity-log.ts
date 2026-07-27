@@ -6,6 +6,7 @@ export type ActivityKind =
   | "wp.copy"
   | "wp.delete"
   | "wp.publish"
+  | "wp.publish.fail"
   | "wp.unpublish"
   | "wp.categorize"
   | "wp.edit"
@@ -110,6 +111,8 @@ export function describeActivity(entry: ActivityEntry): string {
       return `excluiu a página "${t}"`;
     case "wp.publish":
       return `publicou "${t}"`;
+    case "wp.publish.fail":
+      return `falha ao publicar "${t}"${entry.details ? ` — ${entry.details}` : ""}`;
     case "wp.unpublish":
       return `despublicou "${t}"`;
     case "wp.categorize":

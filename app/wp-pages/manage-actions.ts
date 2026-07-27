@@ -32,7 +32,18 @@ export async function quickPublishAction(formData: FormData) {
   if (!content) return;
 
   const publicSlug = content.publicSlug || slug;
-  await setPublished(content, publicSlug);
+  try {
+    await setPublished(content, publicSlug);
+  } catch (e) {
+    // slug em conflito/reservado → não crasha a tela; registra e sai (a pessoa
+    // usa o form de publicar com slug pra escolher outro e ver a mensagem).
+    await logActivity(
+      "wp.publish.fail",
+      content.title || slug,
+      e instanceof Error ? e.message : "conflito de slug"
+    ).catch(() => {});
+    return;
+  }
   await logActivity("wp.publish", content.title || slug, `/p/${publicSlug}`);
 
   // Resumo inteligente gerado automaticamente na publicação.
@@ -292,7 +303,7 @@ export async function publishAllAction() {
   await requireAdmin();
   const saved = await listSaved();
 
-  const justPublished: Array<{ domain: WpDomain; slug: string }> = [];
+  const justPublished: Array<{ domain: string; slug: string }> = [];
   let skipped = 0;
   for (const s of saved) {
     if (s.published) continue;
@@ -331,16 +342,29 @@ export async function publishAllAction() {
 export async function bulkPublishAction(items: Item[]) {
   await requireAdmin();
   const done: Item[] = [];
+  let skipped = 0;
   for (const it of items) {
     const content = await loadContent(it.domain, it.slug);
     if (!content || content.published) continue;
     const publicSlug = content.publicSlug || content.slug;
-    await setPublished(content, publicSlug);
-    revalidatePath(`/p/${publicSlug}`);
-    done.push(it);
+    try {
+      await setPublished(content, publicSlug);
+      revalidatePath(`/p/${publicSlug}`);
+      done.push(it);
+    } catch {
+      // slug em conflito/reservado — pula esta, NÃO derruba o lote (a pessoa
+      // troca a URL pública dela e publica depois). Foi o crash do "home".
+      skipped++;
+    }
   }
   await Promise.all(done.map((p) => ensurePageSummary(p.domain, p.slug)));
-  await logActivity("wp.publish", `${done.length} página(s)`, "publicadas (seleção)");
+  await logActivity(
+    "wp.publish",
+    `${done.length} página(s)`,
+    skipped > 0
+      ? `publicadas (seleção); ${skipped} puladas por slug em conflito/reservado`
+      : "publicadas (seleção)"
+  );
   revalidatePath("/wp-pages");
   revalidatePath("/dashboard");
 }

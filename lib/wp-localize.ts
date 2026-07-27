@@ -19,6 +19,9 @@ import { fetchPageContent } from "./wp-fetch-page";
 import type { WpDomain } from "./wp-api";
 import {
   extractWpAssetUrls,
+  extractAssetUrls,
+  extractWebAssetUrls,
+  extractCssAssets,
   classifyAsset,
   delazyHtml,
   stripResponsiveImg,
@@ -42,7 +45,10 @@ import {
 // rodar de novo pula o que já foi baixado.
 // ─────────────────────────────────────────────────────────────────────────
 
-const UA = "Mozilla/5.0 (compatible; jayacademy-portal-mirror/1.0)";
+// UA de navegador de verdade: muitos CDNs (Apple, Cloudflare, Wikimedia) bloqueiam
+// User-Agent de "robô", fazendo os assets falharem o download (0/N localizados).
+const UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 const CONCURRENCY = 8;
 const MAX_ASSET_BYTES = 25 * 1024 * 1024; // 25MB de teto por asset
 
@@ -122,7 +128,8 @@ async function fetchAndStore(
   url: string,
   runCache: Map<string, Promise<string | null>>,
   mediaSink: Map<string, MediaItem>,
-  force = false
+  force = false,
+  isWeb = false
 ): Promise<string | null> {
   const cached = runCache.get(url);
   if (cached) return cached;
@@ -171,13 +178,19 @@ async function fetchAndStore(
       const kind = classifyAsset(url);
       const contentType = guessContentType(fetchUrl, res.headers.get("content-type"));
 
-      // CSS: localiza as url() de dentro (fontes, imagens de fundo) antes de salvar.
-      if (kind === "css") {
+      // CSS: localiza as url()/@import de dentro (fontes, imagens de fundo,
+      // partials) antes de salvar. Detecta por content-type TAMBÉM — CSS de URL
+      // sem extensão (Google Fonts, load.php) não casa por extensão. Pra cópia
+      // web usa extração host-agnóstica (o extractWpAssetUrls só pega host do WP).
+      const isCss = kind === "css" || /text\/css/i.test(contentType);
+      if (isCss) {
         const cssText = buf.toString("utf8");
-        const subUrls = extractWpAssetUrls(cssText, fetchUrl);
+        const subUrls = isWeb
+          ? extractCssAssets(cssText, fetchUrl)
+          : extractWpAssetUrls(cssText, fetchUrl);
         const subMap: Record<string, string> = {};
         for (const sub of subUrls) {
-          const local = await fetchAndStore(sub, runCache, mediaSink);
+          const local = await fetchAndStore(sub, runCache, mediaSink, false, isWeb);
           if (local) subMap[sub] = local;
         }
         buf = Buffer.from(rewriteCssUrls(cssText, fetchUrl, subMap), "utf8");
@@ -266,7 +279,7 @@ export async function buildSlugToPublic(): Promise<Record<string, string>> {
  *                      reconstruí-lo a cada página.
  */
 export async function localizePage(
-  domain: WpDomain,
+  domain: string,
   slug: string,
   opts: {
     slugToPublic?: Record<string, string>;
@@ -289,16 +302,25 @@ export async function localizePage(
     (s): s is string => !!s
   );
 
+  const isWeb = content.sourceKind === "web";
+
   // Normaliza ANTES de extrair: de-lazy (imagem real no src) + tira srcset/sizes
-  // (assim não baixamos as variantes de tamanho — economiza muito storage).
-  const normFull = content.fullHtml
+  // (assim não baixamos as variantes de tamanho — economiza muito storage). Só
+  // pra WP: o caminho web usa o HTML cru (sem os ajustes específicos do WP).
+  const normFull = isWeb
+    ? content.fullHtml ?? ""
+    : content.fullHtml
     ? stripResponsiveImg(delazyHtml(content.fullHtml))
     : "";
-  const normContent = content.content
+  const normContent = isWeb
+    ? content.content ?? ""
+    : content.content
     ? stripResponsiveImg(delazyHtml(content.content))
     : "";
 
-  const urls = extractWpAssetUrls(`${normFull}\n${normContent}`, content.link);
+  const urls = isWeb
+    ? extractWebAssetUrls(`${normFull}\n${normContent}`, content.link || content.sourceUrl)
+    : extractWpAssetUrls(`${normFull}\n${normContent}`, content.link);
 
   const map: Record<string, string> = {};
   const stats: LocalizeStats = {
@@ -314,7 +336,7 @@ export async function localizePage(
       opts.runCache ?? new Map<string, Promise<string | null>>();
     const mediaSink = new Map<string, MediaItem>();
     const localUrls = await pool(urls, CONCURRENCY, (u) =>
-      fetchAndStore(u, runCache, mediaSink, opts.force)
+      fetchAndStore(u, runCache, mediaSink, opts.force, isWeb)
     );
     urls.forEach((u, idx) => {
       const local = localUrls[idx];
@@ -345,23 +367,39 @@ export async function localizePage(
   }
 
   // Reescreve a partir do HTML JÁ NORMALIZADO (de-lazy + sem srcset) + links.
-  const apply = (h: string) =>
-    rewriteWpAnchors(rewriteUrls(h, map), selfSlugs, linkMap);
-  if (content.fullHtml) content.fullHtml = apply(normFull);
-  if (content.content) content.content = apply(normContent);
+  // No caminho web pulamos a reescrita de âncoras do WP (rewriteWpAnchors) —
+  // ela assume host/estrutura do WordPress e não se aplica a um site qualquer.
+  const apply = isWeb
+    ? (h: string) => rewriteUrls(h, map)
+    : (h: string) => rewriteWpAnchors(rewriteUrls(h, map), selfSlugs, linkMap);
+  const localizedFull = content.fullHtml ? apply(normFull) : undefined;
+  const localizedContent = content.content ? apply(normContent) : undefined;
 
   const at = new Date().toISOString();
   // Marca como localizada se não havia assets a baixar OU se baixou algo. Se havia
   // assets mas NADA baixou (Blob off / falha), NÃO marca — backfill reprocessa e o
   // <base> do WP continua (não "desconecta" às cegas com imagem quebrada).
-  if (urls.length === 0 || stats.localized > 0) content.localizedAt = at;
-  content.localizeStats = {
+  const markLocalized = urls.length === 0 || stats.localized > 0;
+  const localizeStats = {
     total: stats.total,
     localized: stats.localized,
     failed: stats.failed,
     at,
   };
-  await saveContent(content);
+
+  // ⚠️ Recarrega a versão MAIS RECENTE antes de salvar. A localização é lenta
+  // (centenas de assets num site grande tipo Apple) e o usuário pode PUBLICAR/editar
+  // a página nesse meio-tempo. Salvar o objeto carregado no início apagaria essa
+  // mudança (lost update) — foi o que deixou "índice publicado, conteúdo não" → 404.
+  // Aplicamos só os campos da localização por cima do fresco.
+  const fresh = await loadContent(domain, slug);
+  // Página apagada durante a localização (raro): NÃO ressuscita — só sai.
+  if (!fresh) return stats;
+  if (localizedFull !== undefined) fresh.fullHtml = localizedFull;
+  if (localizedContent !== undefined) fresh.content = localizedContent;
+  if (markLocalized) fresh.localizedAt = at;
+  fresh.localizeStats = localizeStats;
+  await saveContent(fresh);
 
   return stats;
 }
@@ -378,7 +416,7 @@ export function isLocalized(c: Pick<WpPageContent, "localizedAt">): boolean {
  * novo (Supabase), reescrevendo HTML + biblioteca. Marca `relocatedAt`.
  */
 export async function relocatePage(
-  domain: WpDomain,
+  domain: string,
   slug: string,
   slugToPublic?: Record<string, string>,
   runCache?: Map<string, Promise<string | null>>
@@ -389,8 +427,11 @@ export async function relocatePage(
   }
 
   // Re-busca fresco do WP (urls do WP de volta). Se falhar, segue com o que tem.
+  // relocatePage é migração Blob→Supabase de páginas WP legadas — fetchPageContent
+  // só existe pra WP (main/lp), então o cast aqui é seguro (todo chamador desta
+  // função hoje passa domain "main"/"lp").
   try {
-    const fresh = await fetchPageContent(domain, content.id);
+    const fresh = await fetchPageContent(domain as WpDomain, content.id);
     if (fresh && (fresh.fullHtml || fresh.content)) {
       content.fullHtml = fresh.fullHtml ?? content.fullHtml;
       content.content = fresh.content ?? content.content;

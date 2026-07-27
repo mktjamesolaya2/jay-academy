@@ -51,6 +51,143 @@ export function resolveUrl(raw: string, base?: string): string | null {
   }
 }
 
+/** Decodifica as entidades HTML mais comuns que aparecem dentro de URLs
+ * (`&amp;` → `&`). Sem isso, `load.php?a=1&amp;only=styles` é buscado com o
+ * parâmetro errado (`amp;only`) e o servidor devolve outra coisa/404. */
+export function decodeUrlEntities(s: string): string {
+  return s
+    .replace(/&amp;/gi, "&")
+    .replace(/&#0*38;/g, "&")
+    .replace(/&#x0*26;/gi, "&");
+}
+
+/**
+ * Reescreve TODAS as URLs relativas/root-relativas do HTML pra ABSOLUTAS contra
+ * `baseUrl` (a URL de origem da página). Assim a cópia carrega os assets do site
+ * original na hora — sem depender de `<base>` (que a gente remove) — e o
+ * localizador depois casa essas URLs absolutas com o mapa de download. Também
+ * conserta os `<a href>` internos (senão apontariam pro nosso próprio domínio).
+ *
+ * Cobre: src/href/poster/data-src/data-lazy-src/data-bg, srcset (multi),
+ * e url() em style/CSS. Pula `data:`/`#`/`mailto:`/`tel:`/`javascript:` e o que
+ * já é absoluto. É pra usar em páginas copiadas da WEB (não WP).
+ */
+export function absolutizeUrls(html: string, baseUrl: string): string {
+  const abs = (raw: string): string | null => {
+    const v = decodeUrlEntities(raw.trim());
+    if (!v || /^(data:|#|mailto:|tel:|javascript:|blob:)/i.test(v)) return null;
+    if (/^https?:\/\//i.test(v)) return null; // já absoluto
+    if (v.startsWith("//")) return "https:" + v; // protocol-relative
+    try {
+      return new URL(v, baseUrl).href;
+    } catch {
+      return null;
+    }
+  };
+
+  const single =
+    /(\b(?:src|href|poster|action|formaction|data-src|data-lazy-src|data-bg|data-background)\s*=\s*)("[^"]*"|'[^']*')/gi;
+  let out = html.replace(single, (m, pre: string, quoted: string) => {
+    const q = quoted[0];
+    const a = abs(quoted.slice(1, -1));
+    return a ? `${pre}${q}${a}${q}` : m;
+  });
+
+  const fixSrcset = (val: string) => {
+    // NÃO mexer em srcset que contém data: URI (placeholder de lazy-load): o data
+    // URI tem vírgula por dentro (`data:image/gif;base64,…`), então dividir por
+    // vírgula quebraria/corromperia o valor. Deixa como está.
+    if (/data:/i.test(val)) return val;
+    return val
+      .split(",")
+      .map((part) => {
+        const seg = part.trim().split(/\s+/);
+        const a = abs(seg[0] || "");
+        if (a) seg[0] = a;
+        return seg.join(" ");
+      })
+      .join(", ");
+  };
+  const srcset =
+    /(\b(?:srcset|data-lazy-srcset|imagesrcset)\s*=\s*)("[^"]*"|'[^']*')/gi;
+  out = out.replace(srcset, (m, pre: string, quoted: string) => {
+    const q = quoted[0];
+    return `${pre}${q}${fixSrcset(quoted.slice(1, -1))}${q}`;
+  });
+
+  out = out.replace(/url\(\s*(['"]?)([^'")]+)\1\s*\)/gi, (m, q: string, val: string) => {
+    const a = abs(val);
+    return a ? `url(${q}${a}${q})` : m;
+  });
+
+  return out;
+}
+
+/**
+ * Como extractAssetUrls, mas TAMBÉM captura assets por TAG mesmo SEM extensão:
+ * `<link rel="stylesheet|preload|modulepreload|icon|apple-touch-icon|mask-icon|
+ * manifest" href="…">`. É o que pega o CSS "disfarçado" (Google Fonts, load.php
+ * da Wikipedia) que não termina em `.css`. Scripts já saíram na sanitização, então
+ * não precisamos deles. Pra cópias da WEB.
+ */
+export function extractWebAssetUrls(html: string, baseUrl?: string): string[] {
+  const set = new Set<string>(extractAssetUrls(html, baseUrl));
+  const add = (raw: string | undefined) => {
+    if (!raw) return;
+    const abs = resolveUrl(decodeUrlEntities(raw), baseUrl);
+    if (abs) set.add(abs);
+  };
+  for (const m of html.matchAll(/<link\b[^>]*>/gi)) {
+    const tag = m[0];
+    if (
+      !/\brel\s*=\s*["']?[^"'>]*(?:stylesheet|preload|modulepreload|icon|manifest)/i.test(
+        tag
+      )
+    )
+      continue;
+    const href = tag.match(/\bhref\s*=\s*("[^"]*"|'[^']*')/i);
+    if (href) add(href[1].slice(1, -1));
+  }
+  return [...set];
+}
+
+/**
+ * Extrai as URLs referenciadas DENTRO de um CSS: `url(...)` (fontes, imagens de
+ * fundo) e `@import` (partials). De QUALQUER host — usado pra localizar o CSS de
+ * sites externos (o extractWpAssetUrls só pega host do WP). Resolve contra a base
+ * do próprio CSS.
+ */
+export function extractCssAssets(cssText: string, baseUrl?: string): string[] {
+  const set = new Set<string>();
+  const add = (raw: string | undefined) => {
+    if (!raw) return;
+    const abs = resolveUrl(decodeUrlEntities(raw), baseUrl);
+    if (abs) set.add(abs);
+  };
+  for (const m of cssText.matchAll(/url\(\s*(['"]?)([^'")]+)\1\s*\)/gi)) add(m[2]);
+  // @import "x"  |  @import url("x")  |  @import url(x)
+  for (const m of cssText.matchAll(/@import\s+(?:url\(\s*)?(['"])([^'"]+)\1/gi))
+    add(m[2]);
+  for (const m of cssText.matchAll(/@import\s+url\(\s*([^'")]+)\s*\)/gi)) add(m[1]);
+  return [...set];
+}
+
+/**
+ * Remove `<source>` placeholder de `<picture>` (lazy-load): tags com `data-empty`
+ * ou com `srcset="data:…"`. Muitos sites (Apple etc.) põem um `<source>` com um
+ * GIF transparente cobrindo TODAS as larguras (`media="(min-width:0px)"`) e trocam
+ * pela imagem real via JS. Sem esse JS (ou quando ele não roda), o navegador usa o
+ * placeholder e a imagem some. Removendo o placeholder, o navegador cai na `<img
+ * src>` de verdade (que costuma ter a imagem real). Pra cópias da WEB.
+ */
+export function stripPlaceholderSources(html: string): string {
+  return html.replace(/<source\b[^>]*>/gi, (tag) =>
+    /\bdata-empty\b/i.test(tag) || /\bsrcset\s*=\s*["']?\s*data:/i.test(tag)
+      ? ""
+      : tag
+  );
+}
+
 /** Verdadeiro se a URL absoluta aponta pra um asset hospedado no WP. */
 export function isWpAssetUrl(url: string): boolean {
   try {
@@ -59,6 +196,50 @@ export function isWpAssetUrl(url: string): boolean {
   } catch {
     return false;
   }
+}
+
+/** Verdadeiro se a URL absoluta aponta pra um asset (por extensão), de qualquer host. */
+export function isAssetUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    return ASSET_EXT_RE.test(u.pathname + u.search);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Extrai URLs de asset (src/href/srcset/url(), + catch-all de URLs escapadas
+ * em JSON) de um HTML ou CSS — de qualquer host por padrão. O filtro de
+ * aceitação é injetável via `accept` (default = qualquer asset por extensão).
+ */
+export function extractAssetUrls(
+  html: string,
+  baseUrl?: string,
+  accept: (u: string) => boolean = isAssetUrl
+): string[] {
+  const found = new Set<string>();
+  const add = (raw: string | undefined | null) => {
+    if (!raw) return;
+    const abs = resolveUrl(raw, baseUrl);
+    if (abs && accept(abs)) found.add(abs);
+  };
+
+  const attrR = /\b(?:src|href|poster|data-src|data-lazy-src|data-bg|data-background)\s*=\s*["']([^"']+)["']/gi;
+  for (const m of html.matchAll(attrR)) add(m[1]);
+
+  const srcsetR = /\b(?:srcset|data-lazy-srcset|imagesrcset)\s*=\s*["']([^"']+)["']/gi;
+  for (const m of html.matchAll(srcsetR)) for (const part of m[1].split(",")) add(part.trim().split(/\s+/)[0]);
+
+  const urlR = /url\(\s*(['"]?)([^'")]+)\1\s*\)/gi;
+  for (const m of html.matchAll(urlR)) add(m[2]);
+
+  // catch-all de URLs soltas (inclui JSON com barras escapadas `https:\/\/`)
+  const flat = html.replace(/\\\//g, "/");
+  const rawR = new RegExp(`https?://[^\\s"'()\\\\<>]+?\\.(?:${ASSET_EXT})(?:\\?[^\\s"'()\\\\<>]*)?`, "gi");
+  for (const m of flat.matchAll(rawR)) add(m[0]);
+
+  return [...found];
 }
 
 /**
@@ -71,42 +252,7 @@ export function isWpAssetUrl(url: string): boolean {
  *                URL do próprio CSS quando processando um arquivo .css).
  */
 export function extractWpAssetUrls(html: string, baseUrl?: string): string[] {
-  const found = new Set<string>();
-
-  const add = (raw: string | undefined | null) => {
-    if (!raw) return;
-    const abs = resolveUrl(raw, baseUrl);
-    if (abs && isWpAssetUrl(abs)) found.add(abs);
-  };
-
-  // src / href / data-src / data-lazy-src / poster
-  const attrRe =
-    /\b(?:src|href|poster|data-src|data-lazy-src|data-bg|data-background)\s*=\s*["']([^"']+)["']/gi;
-  for (const m of html.matchAll(attrRe)) add(m[1]);
-
-  // srcset / data-lazy-srcset / imagesrcset — múltiplas URLs com descritor "300w"/"2x"
-  const srcsetRe = /\b(?:srcset|data-lazy-srcset|imagesrcset)\s*=\s*["']([^"']+)["']/gi;
-  for (const m of html.matchAll(srcsetRe)) {
-    for (const part of m[1].split(",")) {
-      add(part.trim().split(/\s+/)[0]);
-    }
-  }
-
-  // url(...) em style inline ou em CSS
-  const urlRe = /url\(\s*(['"]?)([^'")]+)\1\s*\)/gi;
-  for (const m of html.matchAll(urlRe)) add(m[2]);
-
-  // Catch-all: qualquer URL de asset do WP solta no texto — inclui as que ficam
-  // dentro de JSON (ex: data-settings do Elementor com fundos de seção), onde as
-  // barras vêm escapadas (`https:\/\/...`). Desescapamos numa cópia só pra achar.
-  const flat = html.replace(/\\\//g, "/");
-  const rawRe = new RegExp(
-    `https?://[a-z0-9.-]*jayacademy\\.com\\.br/[^\\s"'()\\\\<>]+?\\.(?:${ASSET_EXT})(?:\\?[^\\s"'()\\\\<>]*)?`,
-    "gi"
-  );
-  for (const m of flat.matchAll(rawRe)) add(m[0]);
-
-  return [...found];
+  return extractAssetUrls(html, baseUrl, isWpAssetUrl);
 }
 
 /**

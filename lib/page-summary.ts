@@ -1,7 +1,6 @@
 import "server-only";
 import { loadContent, saveContent } from "./wp-content-storage";
 import { generatePageSummary } from "./ai-summary";
-import type { WpDomain } from "./wp-api";
 
 /**
  * Gera e salva o resumo IA da página. Best-effort: NUNCA lança erro
@@ -9,7 +8,7 @@ import type { WpDomain } from "./wp-api";
  * Por padrão só gera se ainda não houver resumo; use force pra regenerar.
  */
 export async function ensurePageSummary(
-  domain: WpDomain,
+  domain: string,
   slug: string,
   opts?: { force?: boolean }
 ): Promise<void> {

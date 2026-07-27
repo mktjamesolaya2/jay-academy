@@ -12,6 +12,7 @@ export type PageSource =
   | "embedded-kv" // HTML base em git + edições persistidas no KV
   | "builder" // JSON do page builder (KV)
   | "wp-mirror" // espelho de página do WordPress (KV)
+  | "web-mirror" // espelho de página copiada de qualquer site (KV)
   | "react" // rota React nativa do portal
   | "redirect"; // handler que só redireciona (308)
 
@@ -94,6 +95,7 @@ export const sourceLabel: Record<PageSource, string> = {
   "embedded-kv": "HTML editável",
   builder: "Builder",
   "wp-mirror": "Página migrada",
+  "web-mirror": "Copiada da web",
   react: "Página do portal",
   redirect: "Redirect",
 };
@@ -123,6 +125,11 @@ export const sourceColors: Record<
     bg: "bg-teal-500/10 ring-teal-500/25",
     text: "text-teal-300",
   },
+  "web-mirror": {
+    dot: "bg-lime-400",
+    bg: "bg-lime-500/10 ring-lime-500/25",
+    text: "text-lime-300",
+  },
   react: {
     dot: "bg-indigo-400",
     bg: "bg-indigo-500/10 ring-indigo-500/25",
@@ -147,6 +154,7 @@ export const sourceOrder: PageSource[] = [
   "embedded-kv",
   "builder",
   "wp-mirror",
+  "web-mirror",
   "react",
   "redirect",
 ];
