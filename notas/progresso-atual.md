@@ -49,6 +49,11 @@ Meta). E sem GTM elas perdem o GA4 do marketing (`G-K3K6P8N1E9`) e conversões d
 do container; o GA4 `G-N93TQZV050` segue medindo visitas. O beacon interno `/api/track`
 continua em todas — o analytics do painel não foi afetado.
 
+**Quarto ponto de injeção, achado só na conferência pós-deploy:** o `app/layout.tsx` (layout
+RAIZ do React) também colava o GTM — logo o **painel admin inteiro** e a `/apresentacao-pmu`
+carregavam o container, fora do `withTracking`. Removido. A `/magicshadow` não usa esse
+layout (é route handler), então segue com GTM.
+
 **Nota de método:** a primeira varredura contou 5 "pixels" na `fio-a-fio-realista` que eram
 **nomes de arquivo de vídeo do Instagram** com 16 dígitos. Virou caso de teste — a limpeza só
 casa `fbq('init')` e `tr?id=`, nunca número solto no HTML.
