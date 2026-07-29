@@ -55,7 +55,8 @@ export const PMU_CLASS_DEFAULT: PmuClassContent = {
       metaLeft: "13 módulos",
       metaRight: "Prática em modelo",
       slug: "lips-sense",
-      hotmartUrl: "https://pay.hotmart.com/Y98532335W",
+      hotmartUrl:
+        "https://pay.hotmart.com/Y98532335W?checkoutMode=10&off=jxkw3xrd",
     },
   ],
 };
