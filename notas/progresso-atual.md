@@ -2,7 +2,43 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-23 — **Feature "Copiar de uma URL" EM ANDAMENTO (4/10 tasks) + recuperação de histórico + hook anti-perda**
+> **Última atualização**: 2026-07-29 — **Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel**
+
+---
+
+## 🆕 Sessão 2026-07-29 — v2 do Basic Magic Shadow vira a oficial + auditoria do Pixel
+
+### A v2 assumiu `/basic-magic-shadow`
+- `lp-html/basic-magic-shadow-v2.html` → `lp-html/basic-magic-shadow.html` (o export do
+  Elementor foi aposentado; recuperável no histórico do git). Ele ainda puxava 10 assets de
+  `jayacademy.com.br` — agora a página é 100% self-contained.
+- `app/basic-magic-shadow/route.ts` perdeu o `delazy: true` (pipeline só faz sentido pro HTML do WP).
+- `app/basic-magic-shadow-v2/route.ts` virou **redirect 308** pro slug oficial; registrado em
+  `lpHtmlRedirects`. A entrada do registro perdeu a duplicata e aponta `assetsDir` pra
+  `public/lp/basic-magic-shadow-v2/` — pasta mantida com o sufixo pra não reescrever 42 refs.
+- `public/lp/basic-magic-shadow/` (432 KB, assets só da v1) apagado.
+- **Escopo:** só o portal. `jayacademy.com.br` continua no WordPress (Cloudflare + PHP) — a
+  troca de DNS segue pendente, então o público que chega pelo domínio ainda vê a página velha.
+- Sem `canonical`/`og:url` de propósito: apontar pro domínio hoje mandaria o Google preferir
+  a versão do WordPress. Adicionar quando o DNS virar.
+
+### Auditoria do Meta Pixel 1841776429524244 (runtime, Chrome real)
+Script descartável com `puppeteer-core` (o mesmo que entrou pra feature "Copiar de uma URL"),
+com `--host-resolver-rules=MAP www.facebook.com 127.0.0.1` pra não sujar a conta com evento de teste.
+
+- ✅ **PageView, ViewContent, InitiateCheckout (clique Hotmart) e WhatsApp (clique wa.me)**
+  todos disparando no pixel certo, cada um com `eventID` próprio.
+- ✅ O POST pro `/api/meta-capi` usa o **mesmo `eventID`** do PageView (dedup correta).
+- ⚠️ **`META_ACCESS_TOKEN` NÃO existe nas envs de produção** (`vercel env ls production`) →
+  `sendMetaCapiEvent` faz no-op silencioso: **o CAPI de servidor não está mandando nada pro
+  Meta hoje**. Só o pixel de browser rastreia. Pra ligar: criar a env com um token de acesso
+  do Events Manager. `/settings` mostra isso na linha "Meta CAPI (servidor)".
+- 🔎 O **GTM (GTM-TVLJSVJZ) injeta um segundo pixel, `935630436819595`**, que espelha todos os
+  eventos (incluindo os automáticos, Scroll/SubscribedButtonClick). O terceiro pixel que roda
+  no WordPress (`872802227099574`) **não** existe no portal.
+- 🐞 **Pegadinha pra próximas auditorias:** em Chrome **headless** o `fbevents.js` carrega,
+  processa os `fbq()` e não emite beacon nenhum pro `/tr` — comprovado também contra a página
+  do WP em produção, que rastreia normalmente. **Auditoria de pixel exige `headless: false`.**
 
 ---
 

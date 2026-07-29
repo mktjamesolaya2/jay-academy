@@ -23,18 +23,12 @@ export type LpHtmlEntry = {
 
 export const lpHtmlPages: LpHtmlEntry[] = [
   {
+    // Reconstruída em vanilla (a antiga "v2"): assumiu o slug oficial em 29/07,
+    // aposentando o export do Elementor. A pasta de assets mantém o sufixo -v2
+    // pra não reescrever as 42 referências do HTML.
     slug: "basic-magic-shadow",
     title: "Basic Magic Shadow",
     htmlFile: "lp-html/basic-magic-shadow.html",
-    assetsDir: "public/lp/basic-magic-shadow",
-    category: "venda",
-    accent: "gold-black",
-  },
-  {
-    // Cópia fiel da v1 reconstruída em vanilla; roda em paralelo até virar a oficial.
-    slug: "basic-magic-shadow-v2",
-    title: "Basic Magic Shadow (v2)",
-    htmlFile: "lp-html/basic-magic-shadow-v2.html",
     assetsDir: "public/lp/basic-magic-shadow-v2",
     category: "venda",
     accent: "gold-black",
@@ -110,6 +104,7 @@ export const lpHtmlPages: LpHtmlEntry[] = [
 
 /** Redirects 308 servidos por route handlers dedicados (slugs antigos). */
 export const lpHtmlRedirects: { from: string; to: string }[] = [
+  { from: "basic-magic-shadow-v2", to: "basic-magic-shadow" },
   { from: "fio-a-fio-realista", to: "fio-a-fio-realista-by-james-olaya" },
   {
     from: "metodo-fio-a-fio-by-james-olaya",
