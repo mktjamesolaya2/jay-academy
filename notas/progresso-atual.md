@@ -2,7 +2,56 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-29 — **Auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-29 — **Política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🎯 Sessão 2026-07-29 (parte 4) — Tracking deixou de ser global
+
+**Antes:** `withTracking()` colava o MESMO stack (GTM + GA4 + Pixel + CAPI) em toda página
+pública, e as 62 páginas migradas do WP ainda traziam pixels do Pixel Cat gravados no HTML.
+
+**Política agora (decisão do James), declarada em código:**
+
+| Tag | Onde vale | Allowlist |
+|---|---|---|
+| **Pixel DSTV `1841776429524244`** | só as 7 LPs de **curso online** | `PIXEL_SLUGS` em `lib/meta-tracking.ts` |
+| **GTM-TVLJSVJZ** | só a `/magicshadow` | `GTM_SLUGS` em `lib/google-tag.ts` |
+| **GA4 `G-N93TQZV050`** | todas | — (fluxo "site" do jayacademy.com.br, código 4463452239, coleta ativa) |
+
+As 7 de curso: `basic-magic-shadow`, `basic-nanofios`, `curso-online-profissao-remove`,
+`fio-a-fio-realista-by-james-olaya`, `metodo-shadow-pro-2`, `pdv-lips-sense-technique`, `pmuclass`.
+
+**Como:** novo `lib/tracking-clean.ts` (funções PURAS, 10 testes em `tracking-clean.test.ts`):
+`stripGoogleTagManager` (casa pelo `gtm.js`/`ns.html`, então pega qualquer container) e
+`stripPixelInits(html, keepIds)` (remove `fbq('init')` fora da allowlist + os `tr?id=` deles;
+não toca no stub do `fbq` nem nos `track()`, então nada quebra). `withTracking` passou a
+receber `slug` e **limpa antes de injetar** — os 3 pontos de chamada (`serve-lp.ts` e as duas
+em `app/p/[slug]/route.ts`) repassam o slug. `withGa4Legacy` virou `withGa4Site` (não é
+legado: é a medição em uso, confirmada no painel do GA4).
+
+**Por que limpar e não só parar de injetar:** 3 LPs (`basic-nanofios`,
+`fio-a-fio-realista-by-james-olaya`, `pdv-lips-sense-technique`) têm GTM **embutido** com o
+container ANTIGO `GTM-NN5KDTCB`; o `withGoogleTag` reescrevia pro novo ao servir. Sem a
+limpeza, elas voltariam a carregar o container velho.
+
+**Verificado em runtime** (Chrome real, beacons contidos por `MAP www.facebook.com 127.0.0.1`):
+- `/basic-magic-shadow`: PageView, ViewContent, InitiateCheckout, WhatsApp no DSTV, CAPI com o
+  mesmo eventID — e o pixel `935630436819595` **desapareceu** (era o GTM que o injetava).
+- `/inmersion-pelo-a-pelo` (não-curso): **zero** requisições pro Facebook.
+- `/magicshadow`: GTM ativo — e ele injeta o `935630436819595` por conta própria. Ou seja:
+  **a única página com GTM segue disparando o pixel do container**, o que é configuração
+  dentro do GTM, não código.
+
+**⚠️ Efeitos colaterais aceitos:** 67 páginas não-curso perderam o pixel — inclusive as
+`/acao-*` e `/campanha-*`, que são de anúncio (param de alimentar remarketing/conversão do
+Meta). E sem GTM elas perdem o GA4 do marketing (`G-K3K6P8N1E9`) e conversões de Google Ads
+do container; o GA4 `G-N93TQZV050` segue medindo visitas. O beacon interno `/api/track`
+continua em todas — o analytics do painel não foi afetado.
+
+**Nota de método:** a primeira varredura contou 5 "pixels" na `fio-a-fio-realista` que eram
+**nomes de arquivo de vídeo do Instagram** com 16 dígitos. Virou caso de teste — a limpeza só
+casa `fbq('init')` e `tr?id=`, nunca número solto no HTML.
 
 ---
 

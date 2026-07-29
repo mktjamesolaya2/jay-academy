@@ -172,6 +172,7 @@ ${cleaned}
   // tratados pelo interceptor acima via data-portal-bound="1", então não
   // duplica o disparo nas páginas com webhook).
   html = await withTracking(html, {
+    slug: content.publicSlug || content.slug,
     isProductPage: true,
     eventSourceUrl: req.url,
     req,
@@ -252,6 +253,7 @@ async function htmlResponse(
   req: Request
 ): Promise<NextResponse> {
   let out = await withTracking(html, {
+    slug,
     isProductPage: true,
     eventSourceUrl: req.url,
     req,

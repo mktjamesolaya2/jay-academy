@@ -4,9 +4,22 @@
 // pro container novo em vez de somar uma segunda tag (a orientação do Google
 // é ter só 1 tag do Google por página). O GA4 (G-K3K6P8N1E9) é configurado
 // DENTRO do GTM pelo marketing — não precisa colar o gtag separado.
+//
+// 29/07: o GTM deixou de ser global. Decisão do James: o container vale SÓ na
+// /magicshadow. Nas outras páginas ele é REMOVIDO ao servir (ver
+// stripGoogleTagManager em lib/tracking-clean.ts), inclusive quando vem
+// embutido no HTML — três LPs trazem o container ANTIGO gravado dentro.
 
 export const GTM_ID = "GTM-TVLJSVJZ";
 const OLD_GTM_ID = "GTM-NN5KDTCB";
+
+/** Slugs onde o GTM pode ficar. Fora daqui, o container é removido. */
+export const GTM_SLUGS = ["magicshadow"];
+
+/** O GTM vale nesta página? */
+export function slugHasGoogleTag(slug: string): boolean {
+  return GTM_SLUGS.includes(slug);
+}
 
 /** Garante o GTM-TVLJSVJZ na página (migrando o antigo, ou injetando fresco). */
 export function withGoogleTag(html: string): string {

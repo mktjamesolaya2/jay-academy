@@ -1,10 +1,18 @@
-// Rastreamento unificado das LPs públicas: GTM do portal (já existia, ver
-// withGoogleTag), GA4 legado do WP, Meta Pixel + CAPI, e meta de verificação
-// de domínio do Facebook Business. Cada função é idempotente por conteúdo —
-// as páginas WP importadas (padrões "route handler via KV" e "route handler
-// lendo HTML de disco") já trazem esses scripts embutidos manualmente do
-// import do WordPress, então NUNCA duplicamos, senão infla volume/quebra
-// dedup no Events Manager.
+// Rastreamento das páginas públicas: GA4 do site, GTM (só onde vale), Meta
+// Pixel + CAPI (só onde vale), e meta de verificação de domínio do Facebook
+// Business. Cada função é idempotente por conteúdo — as páginas WP importadas
+// (padrões "route handler via KV" e "route handler lendo HTML de disco") já
+// trazem esses scripts embutidos manualmente do import do WordPress, então
+// NUNCA duplicamos, senão infla volume/quebra dedup no Events Manager.
+//
+// POLÍTICA POR PÁGINA (29/07, decisão do James) — antes era tudo global:
+//   - Pixel DSTV → SÓ nas LPs de curso online (PIXEL_SLUGS abaixo). Nas outras
+//     páginas os inits são REMOVIDOS, inclusive os que vêm embutidos do
+//     WordPress (Pixel Cat colava 935630436819595 e 872802227099574).
+//   - GTM        → SÓ na /magicshadow (GTM_SLUGS em lib/google-tag.ts).
+//   - GA4        → em todas (fluxo "site" do jayacademy.com.br, coleta ativa).
+// A limpeza é feita ao servir (lib/tracking-clean.ts), não no dado salvo: é
+// reversível e já vale pra página que ainda vai ser importada.
 //
 // CAVEAT conhecido: para páginas que já trazem o Pixel embutido no próprio
 // HTML (legado), não injetamos um novo fbq('init'+'track PageView') — logo
@@ -13,11 +21,29 @@
 // imperfeita até esses HTMLs serem editados manualmente pra remover o script
 // antigo (fora de escopo desta migração).
 
-import { withGoogleTag } from "@/lib/google-tag";
+import { withGoogleTag, slugHasGoogleTag } from "@/lib/google-tag";
+import { stripGoogleTagManager, stripPixelInits } from "@/lib/tracking-clean";
 
 export const META_PIXEL_ID = "1841776429524244";
-export const GA4_LEGACY_ID = "G-N93TQZV050";
+/** GA4 do site (fluxo "site" de jayacademy.com.br, código 4463452239). */
+export const GA4_SITE_ID = "G-N93TQZV050";
 export const FB_DOMAIN_VERIFICATION_CONTENT = "61zuhji4fdykwgd7q89ed8j9uxrfkt";
+
+/** LPs de curso online — as únicas páginas que levam o Pixel DSTV. */
+export const PIXEL_SLUGS = [
+  "basic-magic-shadow",
+  "basic-nanofios",
+  "curso-online-profissao-remove",
+  "fio-a-fio-realista-by-james-olaya",
+  "metodo-shadow-pro-2",
+  "pdv-lips-sense-technique",
+  "pmuclass",
+];
+
+/** O Pixel DSTV vale nesta página? */
+export function slugHasPixel(slug: string): boolean {
+  return PIXEL_SLUGS.includes(slug);
+}
 
 function injectHead(html: string, tag: string): string {
   return /<head[^>]*>/i.test(html)
@@ -31,14 +57,18 @@ function injectBody(html: string, tag: string): string {
     : html + tag;
 }
 
-/** Injeta o gtag.js do GA4 legado (G-N93TQZV050) se ainda não presente. */
-export function withGa4Legacy(html: string): string {
-  if (html.includes(GA4_LEGACY_ID)) return html;
+/**
+ * Injeta o gtag.js do GA4 do site (G-N93TQZV050) se ainda não presente. Vale em
+ * TODAS as páginas — é o fluxo de dados "site" do jayacademy.com.br, com coleta
+ * ativa. (Chamava-se withGa4Legacy: não é legado do WordPress, é a medição em uso.)
+ */
+export function withGa4Site(html: string): string {
+  if (html.includes(GA4_SITE_ID)) return html;
   const tag =
-    `<!-- GA4 (legado) -->` +
-    `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_LEGACY_ID}"></script>` +
+    `<!-- GA4 -->` +
+    `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_SITE_ID}"></script>` +
     `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}` +
-    `gtag('js',new Date());gtag('config','${GA4_LEGACY_ID}');</script>`;
+    `gtag('js',new Date());gtag('config','${GA4_SITE_ID}');</script>`;
   return injectHead(html, tag);
 }
 
@@ -194,14 +224,40 @@ export function buildVisitBeacon(slug: string): string {
 </script>`;
 }
 
-/** Composição única: GTM do portal + GA4 legado + verificação de domínio + Pixel/CAPI. */
+/**
+ * Composição única, aplicando a política por página (ver o cabeçalho do
+ * arquivo): GA4 sempre; GTM só nos GTM_SLUGS; Pixel só nos PIXEL_SLUGS.
+ *
+ * Limpa ANTES de injetar — se a página não tem direito à tag, o que já vinha
+ * embutido no HTML (Pixel Cat do WP, container GTM antigo) também sai.
+ */
 export async function withTracking(
   html: string,
-  opts: { isProductPage: boolean; eventSourceUrl: string; req?: Request }
+  opts: {
+    slug: string;
+    isProductPage: boolean;
+    eventSourceUrl: string;
+    req?: Request;
+  }
 ): Promise<string> {
-  let out = withGoogleTag(html);
-  out = withGa4Legacy(out);
+  // GTM
+  let out = slugHasGoogleTag(opts.slug)
+    ? withGoogleTag(html)
+    : stripGoogleTagManager(html);
+
+  // GA4 — em todas as páginas.
+  out = withGa4Site(out);
   out = withFbDomainVerification(out);
-  out = await withMetaPixelBootstrap(out, opts);
+
+  // Pixel
+  if (slugHasPixel(opts.slug)) {
+    out = stripPixelInits(out, [META_PIXEL_ID]);
+    out = await withMetaPixelBootstrap(out, opts);
+  } else {
+    // Nada de Meta aqui: tira todo init (nosso e embutido) e não injeta
+    // bootstrap, listeners de clique nem listener de Lead.
+    out = stripPixelInits(out, []);
+  }
+
   return out;
 }

@@ -93,6 +93,8 @@ export async function serveLp(
 
   const prepared = delazy ? delazyPipeline(raw) : raw;
   let html = await withTracking(prepared, {
+    // O slug decide quem leva Pixel/GTM (ver a política em lib/meta-tracking.ts).
+    slug,
     isProductPage: true,
     eventSourceUrl: req.url,
     req,
