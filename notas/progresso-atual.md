@@ -2,7 +2,49 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-29 — **GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-29 — **copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## ✍️ Sessão 2026-07-29 (parte 6) — copy da `/basic-magic-shadow`: CTA imperativo + fim da escassez
+
+James pediu duas adaptações na LP `lp-html/basic-magic-shadow.html` (só copy, zero CSS/JS estrutural):
+
+**1. Os 12 CTAs viraram imperativos.** Eram desejos em 1ª pessoa ("EU QUERO",
+"EU QUEROOOOOOOOOOOOOO!", "ONDE EU PASSO O CARTÃO?"); agora são comandos, mantendo a
+irreverência da página (decisão do James: nada de tom corporativo):
+
+| Antes | Depois |
+|---|---|
+| EU QUERO | COMECE A FATURAR MAIS HOJE |
+| ACABARAM MINHAS DESCULPAS (×2) | PARE DE INVENTAR DESCULPA / DÊ O PRÓXIMO PASSO NA CARREIRA |
+| ONDE EU PASSO O CARTÃO? | PEGA O CARTÃO E VEM COMIGO |
+| QUERO SER A PRÓXIMA A TER SUCESSO! | SEJA A PRÓXIMA A FATURAR ALTO |
+| ESTOU DISPOSTA A PAGAR AGORA! | INVISTA NA SUA EVOLUÇÃO AGORA |
+| EU QUEROOOOOOOOOOOOOO! | COBRE O QUE VOCÊ MERECE COBRAR |
+| QUERO APRENDER ISSO PELO AMOR DE DEUS | APRENDA ISSO DE UMA VEZ POR TODAS |
+| PELO AMOR DE DEUS! ONDE EU PASSO O CARTÃO? | CHEGA DE PENSAR — VEM APRENDER |
+| TOQUE AQUI E COMPRE AGORA (botão verde) | GARANTA SEU ACESSO AGORA |
+| ACHO QUE VOU INFARTAR! ONDE EU PAGO? | NÃO PENSE DUAS VEZES, GARANTA JÁ |
+| QUERO MINHA VAGA AGORA! | GARANTA SUA VAGA AGORA |
+
+`FALE CONOSCO NO WHATSAPP` ficou como estava (já imperativo). URL do checkout Hotmart
+intocada (`E98531587I?checkoutMode=10&off=k2warcrt`).
+
+**2. Escassez → faturamento / aprendizado / evolução.** As 3 menções de "promoção acabando":
+- marquee (`TEXTO_MARQUEE`): `PROMOÇÃO VAI ACABAR A QUALQUER MOMENTO ✦` → `MAIS FATURAMENTO ✦ MAIS TÉCNICA ✦ MAIS EVOLUÇÃO ✦`
+- rótulo do contador (`.urgencia-txt`): `POSSO GARANTIR ESSA PROMOÇÃO POR APENAS:` → `SUA EVOLUÇÃO PODE COMEÇAR EM:`
+- texto de contador zerado (`encerra()`): `Última chance — oferta encerrando` → `Sua evolução não espera — comece agora`
+
+O **contador de 15 min continua** (decisão do James) — só o texto ao redor mudou.
+
+**Pegadinha de layout**: os CTAs vivem numa caixa de largura fixa (`--btn-larg`) e o texto
+quebra dentro dela. O maior texto novo tem 33 caracteres contra 42 do antigo, então não há
+risco de estouro. O botão verde usa `--btn-larg-destaque` a 18px: 24 caracteres (era 25).
+
+**Verificação**: dev :4000 → HTTP 200; HTML renderizado com os 12 CTAs novos, 0 ocorrências
+das 3 frases de escassez, GTM-W394J499 presente (script+noscript), link Hotmart intacto;
+104/104 testes verdes.
 
 ---
 
