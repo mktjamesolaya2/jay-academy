@@ -2,7 +2,45 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-29 — **Política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-29 — **GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🎯 Sessão 2026-07-29 (parte 5) — GTM-W394J499 na `/basic-magic-shadow`
+
+James pediu o container **GTM-W394J499** na `https://www.jayacademy.com.br/basic-magic-shadow`.
+Só nessa página (escopo confirmado): a `/magicshadow` fica com o `GTM-TVLJSVJZ` e nenhuma outra
+página recebe GTM.
+
+**O que mudou:** o modelo "1 container global + allowlist de slugs" virou **mapa slug → container**:
+
+| Página | Container |
+|---|---|
+| `/magicshadow` | `GTM-TVLJSVJZ` (container do marketing/Gabriel) |
+| `/basic-magic-shadow` | `GTM-W394J499` |
+| resto | nenhum — o GTM é removido ao servir |
+
+- `lib/google-tag.ts`: `GTM_SLUGS` (array) → **`GTM_BY_SLUG`** (`Record<slug, containerId>`);
+  `slugHasGoogleTag()` → **`gtmIdForSlug()`** (usa `Object.hasOwn`, então slug da URL não alcança
+  o `Object.prototype`); `withGoogleTag(html)` → **`withGoogleTag(html, gtmId)`**. `GTM_ID`
+  segue exportado como o container padrão do marketing (é o citado no CLAUDE.md).
+- Saiu a migração cega do `OLD_GTM_ID` (`GTM-NN5KDTCB` → novo): com dois containers em jogo, um
+  replace de ID é armadilha. `withTracking` agora **sempre** faz `stripGoogleTagManager` e só
+  então injeta o container do slug (se houver) — nunca sobra container a mais nem o antigo.
+- Novo `lib/google-tag.test.ts` (9 casos): mapa, `Object.prototype`, posição do snippet
+  (loader no topo do `<head>`, noscript logo após o `<body>`), idempotência, HTML sem head/body,
+  e "limpar + injetar deixa exatamente 1 loader e 1 noscript" partindo do container antigo embutido.
+- Comentário do `app/layout.tsx` atualizado (falava de `GTM_SLUGS`).
+
+**Verificado:** 103/103 testes, `tsc --noEmit` limpo, build ok. Runtime no dev (porta 4000), 9
+páginas: `/basic-magic-shadow` → 1 loader + 1 noscript do `GTM-W394J499`, sem TVLJSVJZ/NN5KDTCB,
+com Pixel `1841776429524244` e GA4 `G-N93TQZV050` intactos; `/magicshadow` → só TVLJSVJZ; as
+outras 7 → zero `gtm.js`.
+
+⚠️ **Pendência pro James:** a `/basic-magic-shadow` já dispara o Pixel DSTV pelo portal. Se o
+container GTM-W394J499 tiver tag de Pixel configurada dentro dele, a página vai contar PageView
+**duas vezes** — foi exatamente o que o TVLJSVJZ faz na `/magicshadow` (injeta o `935630436819595`).
+Conferir as tags do container no GTM.
 
 ---
 

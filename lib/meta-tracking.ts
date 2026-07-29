@@ -9,7 +9,9 @@
 //   - Pixel DSTV → SÓ nas LPs de curso online (PIXEL_SLUGS abaixo). Nas outras
 //     páginas os inits são REMOVIDOS, inclusive os que vêm embutidos do
 //     WordPress (Pixel Cat colava 935630436819595 e 872802227099574).
-//   - GTM        → SÓ na /magicshadow (GTM_SLUGS em lib/google-tag.ts).
+//   - GTM        → um container POR PÁGINA (GTM_BY_SLUG em lib/google-tag.ts):
+//     GTM-TVLJSVJZ na /magicshadow, GTM-W394J499 na /basic-magic-shadow. Nas
+//     demais páginas o container é removido, inclusive o antigo do WordPress.
 //   - GA4        → em todas (fluxo "site" do jayacademy.com.br, coleta ativa).
 // A limpeza é feita ao servir (lib/tracking-clean.ts), não no dado salvo: é
 // reversível e já vale pra página que ainda vai ser importada.
@@ -21,7 +23,7 @@
 // imperfeita até esses HTMLs serem editados manualmente pra remover o script
 // antigo (fora de escopo desta migração).
 
-import { withGoogleTag, slugHasGoogleTag } from "@/lib/google-tag";
+import { withGoogleTag, gtmIdForSlug } from "@/lib/google-tag";
 import { stripGoogleTagManager, stripPixelInits } from "@/lib/tracking-clean";
 
 export const META_PIXEL_ID = "1841776429524244";
@@ -226,7 +228,8 @@ export function buildVisitBeacon(slug: string): string {
 
 /**
  * Composição única, aplicando a política por página (ver o cabeçalho do
- * arquivo): GA4 sempre; GTM só nos GTM_SLUGS; Pixel só nos PIXEL_SLUGS.
+ * arquivo): GA4 sempre; GTM só nos slugs do GTM_BY_SLUG (com o container
+ * daquele slug); Pixel só nos PIXEL_SLUGS.
  *
  * Limpa ANTES de injetar — se a página não tem direito à tag, o que já vinha
  * embutido no HTML (Pixel Cat do WP, container GTM antigo) também sai.
@@ -240,10 +243,11 @@ export async function withTracking(
     req?: Request;
   }
 ): Promise<string> {
-  // GTM
-  let out = slugHasGoogleTag(opts.slug)
-    ? withGoogleTag(html)
-    : stripGoogleTagManager(html);
+  // GTM — limpa sempre (tira container embutido/antigo) e injeta o desta
+  // página, se ela tiver um. Nunca sobra mais de um container por página.
+  const gtmId = gtmIdForSlug(opts.slug);
+  let out = stripGoogleTagManager(html);
+  if (gtmId) out = withGoogleTag(out, gtmId);
 
   // GA4 — em todas as páginas.
   out = withGa4Site(out);
