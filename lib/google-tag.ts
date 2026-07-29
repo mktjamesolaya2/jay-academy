@@ -16,6 +16,9 @@ export const GTM_BY_SLUG: Record<string, string> = {
   magicshadow: "GTM-TVLJSVJZ",
   // Container da LP Basic Magic Shadow (pedido de 29/07).
   "basic-magic-shadow": "GTM-W394J499",
+  // Container da LP Fio a Fio Realista (pedido de 29/07). Esta LP traz o
+  // container ANTIGO do WP embutido no HTML — a limpeza do withTracking tira.
+  "fio-a-fio-realista-by-james-olaya": "GTM-NB2WK5SJ",
 };
 
 /** Container padrão do marketing (referenciado nas notas e no CLAUDE.md). */

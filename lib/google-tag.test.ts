@@ -5,6 +5,7 @@ import { stripGoogleTagManager } from "./tracking-clean.ts";
 
 const MAGIC = "GTM-TVLJSVJZ";
 const BASIC = "GTM-W394J499";
+const FIOAFIO = "GTM-NB2WK5SJ";
 const OLD_WP = "GTM-NN5KDTCB";
 
 // Container antigo do WordPress embutido no HTML de LP, com o
@@ -23,6 +24,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 test("gtmIdForSlug devolve o container de cada página", () => {
   assert.equal(gtmIdForSlug("basic-magic-shadow"), BASIC);
   assert.equal(gtmIdForSlug("magicshadow"), MAGIC);
+  assert.equal(gtmIdForSlug("fio-a-fio-realista-by-james-olaya"), FIOAFIO);
 });
 
 test("gtmIdForSlug devolve null nas páginas sem GTM", () => {
@@ -100,6 +102,20 @@ test("limpar + injetar deixa só o container novo na página", () => {
     "a página ficou com mais de um noscript do GTM"
   );
   assert.ok(out.includes(`'dataLayer','${BASIC}')`));
+});
+
+// Cenário exato da /fio-a-fio-realista-by-james-olaya: a LP tem o container
+// ANTIGO do WP gravado no próprio HTML e agora deve servir o NB2WK5SJ.
+test("LP com container antigo embutido serve só o container do seu slug", () => {
+  const html = `<html><head>${GTM_EMBUTIDO}</head><body>oi</body></html>`;
+  const out = withGoogleTag(stripGoogleTagManager(html), FIOAFIO);
+
+  assert.ok(out.includes(`'dataLayer','${FIOAFIO}')`), "faltou o container da LP");
+  assert.ok(out.includes(`ns.html?id=${FIOAFIO}`), "faltou o noscript da LP");
+  assert.ok(!out.includes(OLD_WP), "sobrou o container antigo do WordPress");
+  assert.ok(!out.includes(BASIC) && !out.includes(MAGIC), "vazou container de outra página");
+  assert.equal(out.match(/googletagmanager\.com\/gtm\.js/g)?.length, 1);
+  assert.equal(out.match(/googletagmanager\.com\/ns\.html/g)?.length, 1);
 });
 
 test("limpar sem injetar deixa a página sem GTM nenhum", () => {

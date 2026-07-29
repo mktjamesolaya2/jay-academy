@@ -6,18 +6,19 @@
 
 ---
 
-## 🎯 Sessão 2026-07-29 (parte 5) — GTM-W394J499 na `/basic-magic-shadow`
+## 🎯 Sessão 2026-07-29 (parte 5) — um container de GTM POR PÁGINA
 
-James pediu o container **GTM-W394J499** na `https://www.jayacademy.com.br/basic-magic-shadow`.
-Só nessa página (escopo confirmado): a `/magicshadow` fica com o `GTM-TVLJSVJZ` e nenhuma outra
-página recebe GTM.
+James pediu containers próprios em duas LPs: **GTM-W394J499** na `/basic-magic-shadow` e
+**GTM-NB2WK5SJ** na `/fio-a-fio-realista-by-james-olaya`. Cada um vale só na sua página.
 
-**O que mudou:** o modelo "1 container global + allowlist de slugs" virou **mapa slug → container**:
+**O que mudou:** o modelo "1 container global + allowlist de slugs" virou **mapa slug → container**
+(`GTM_BY_SLUG` em `lib/google-tag.ts`). Adicionar LP agora é **1 linha no mapa**:
 
 | Página | Container |
 |---|---|
 | `/magicshadow` | `GTM-TVLJSVJZ` (container do marketing/Gabriel) |
 | `/basic-magic-shadow` | `GTM-W394J499` |
+| `/fio-a-fio-realista-by-james-olaya` | `GTM-NB2WK5SJ` |
 | resto | nenhum — o GTM é removido ao servir |
 
 - `lib/google-tag.ts`: `GTM_SLUGS` (array) → **`GTM_BY_SLUG`** (`Record<slug, containerId>`);
@@ -27,20 +28,24 @@ página recebe GTM.
 - Saiu a migração cega do `OLD_GTM_ID` (`GTM-NN5KDTCB` → novo): com dois containers em jogo, um
   replace de ID é armadilha. `withTracking` agora **sempre** faz `stripGoogleTagManager` e só
   então injeta o container do slug (se houver) — nunca sobra container a mais nem o antigo.
-- Novo `lib/google-tag.test.ts` (9 casos): mapa, `Object.prototype`, posição do snippet
+- Novo `lib/google-tag.test.ts` (10 casos): mapa, `Object.prototype`, posição do snippet
   (loader no topo do `<head>`, noscript logo após o `<body>`), idempotência, HTML sem head/body,
   e "limpar + injetar deixa exatamente 1 loader e 1 noscript" partindo do container antigo embutido.
 - Comentário do `app/layout.tsx` atualizado (falava de `GTM_SLUGS`).
 
-**Verificado:** 103/103 testes, `tsc --noEmit` limpo, build ok. Runtime no dev (porta 4000), 9
-páginas: `/basic-magic-shadow` → 1 loader + 1 noscript do `GTM-W394J499`, sem TVLJSVJZ/NN5KDTCB,
-com Pixel `1841776429524244` e GA4 `G-N93TQZV050` intactos; `/magicshadow` → só TVLJSVJZ; as
-outras 7 → zero `gtm.js`.
+**Verificado:** 104/104 testes, `tsc --noEmit` limpo, build ok. Runtime (dev na 4000 + produção,
+10 páginas cada): `/basic-magic-shadow` → 1 loader + 1 noscript do `GTM-W394J499`;
+`/fio-a-fio-realista-by-james-olaya` → 1+1 do `GTM-NB2WK5SJ` e **zero** `GTM-NN5KDTCB` (o embutido
+do WP sumiu, era o risco); `/magicshadow` → só TVLJSVJZ; as outras 7 → zero `gtm.js`. Em todas,
+Pixel `1841776429524244` (nas 7 de curso) e GA4 `G-N93TQZV050` intactos.
 
-⚠️ **Pendência pro James:** a `/basic-magic-shadow` já dispara o Pixel DSTV pelo portal. Se o
-container GTM-W394J499 tiver tag de Pixel configurada dentro dele, a página vai contar PageView
+**Como adicionar container numa próxima LP:** 1 linha em `GTM_BY_SLUG` + 1 asserção em
+`lib/google-tag.test.ts`. Não precisa tocar em `withTracking` nem nas rotas.
+
+⚠️ **Pendência pro James:** essas LPs já disparam o Pixel DSTV pelo portal. Se um container
+(W394J499 / NB2WK5SJ) tiver tag de Meta Pixel configurada dentro dele, a página conta PageView
 **duas vezes** — foi exatamente o que o TVLJSVJZ faz na `/magicshadow` (injeta o `935630436819595`).
-Conferir as tags do container no GTM.
+Conferir as tags dos containers no GTM.
 
 ---
 

@@ -10,8 +10,9 @@
 //     páginas os inits são REMOVIDOS, inclusive os que vêm embutidos do
 //     WordPress (Pixel Cat colava 935630436819595 e 872802227099574).
 //   - GTM        → um container POR PÁGINA (GTM_BY_SLUG em lib/google-tag.ts):
-//     GTM-TVLJSVJZ na /magicshadow, GTM-W394J499 na /basic-magic-shadow. Nas
-//     demais páginas o container é removido, inclusive o antigo do WordPress.
+//     GTM-TVLJSVJZ na /magicshadow, GTM-W394J499 na /basic-magic-shadow,
+//     GTM-NB2WK5SJ na /fio-a-fio-realista-by-james-olaya. Nas demais páginas o
+//     container é removido, inclusive o antigo do WordPress.
 //   - GA4        → em todas (fluxo "site" do jayacademy.com.br, coleta ativa).
 // A limpeza é feita ao servir (lib/tracking-clean.ts), não no dado salvo: é
 // reversível e já vale pra página que ainda vai ser importada.
