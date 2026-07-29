@@ -1,6 +1,8 @@
 "use server";
 
 import { blobUpload } from "@/lib/storage";
+import { requireAdmin } from "@/lib/auth";
+import { rateLimitByIp, clientIpFromHeaders } from "@/lib/rate-limit";
 
 function sanitizeName(name: string): string {
   return name
@@ -13,6 +15,20 @@ function sanitizeName(name: string): string {
 export async function uploadImageAction(
   formData: FormData
 ): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  // Era a única server action de escrita sem checagem própria. O Next só
+  // despacha ela nas 3 rotas que a importam (/lps/…/build, /lps/…/edit-visual,
+  // /wp-pages/…/edit), todas atrás do middleware — então anônimo não chegava
+  // aqui. Mas QUALQUER usuário logado chegava, inclusive `viewer`, que é
+  // read-only. requireAdmin fecha isso e vale como defesa em profundidade se
+  // um dia a ação for importada por uma página pública.
+  await requireAdmin();
+
+  // Teto por IP: sem isso, uma conta comprometida enche o bucket sem limite.
+  const ip = await clientIpFromHeaders();
+  if (!(await rateLimitByIp("upload-image", ip, 60, 60)).ok) {
+    return { ok: false, error: "Muitos uploads seguidos. Espere um minuto." };
+  }
+
   const file = formData.get("file");
   if (!(file instanceof File)) {
     return { ok: false, error: "Arquivo inválido" };

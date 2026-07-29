@@ -7,6 +7,7 @@ import {
   type FormSubmission,
 } from "@/lib/forms-store";
 import { logAnonymousActivity } from "@/lib/activity-log";
+import { rateLimitByIp, clientIpFromHeaders } from "@/lib/rate-limit";
 
 function sanitize(s: string): string {
   return s.trim().slice(0, 500);
@@ -53,6 +54,13 @@ export async function submitFormAction(
   const honey = (formData.get("website")?.toString() ?? "").trim();
 
   if (honey) return { success: true };
+
+  // Teto por IP, igual ao /api/wp-form-submit — o honeypot sozinho não segura
+  // flood no inbox de leads.
+  const ip = await clientIpFromHeaders();
+  if (!(await rateLimitByIp("form-submit", ip, 15, 60)).ok) {
+    return { error: "Muitos envios seguidos. Espere um minuto e tente de novo." };
+  }
 
   if (!slug) return { error: "Formulário inválido" };
   if (!name) return { error: "Preencha seu nome" };

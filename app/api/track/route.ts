@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { recordVisit } from "@/lib/analytics-store";
-import { rateLimit, tooManyRequests } from "@/lib/rate-limit";
+import { rateLimit, tooManyRequests, isSameOrigin } from "@/lib/rate-limit";
 
 function cap(s: string): string {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
@@ -44,6 +44,12 @@ export async function POST(req: Request) {
     // Beacon de visita — permissivo, mas trava flood óbvio por IP.
     if (!(await rateLimit("track", req, 60, 60)).ok) {
       return tooManyRequests() as NextResponse;
+    }
+    // Só conta visita vinda das nossas próprias páginas: sem isso, qualquer
+    // site inflava o analytics de qualquer slug. `allowEmpty` porque o beacon
+    // usa fetch keepalive, que às vezes vai sem Origin/Referer.
+    if (!isSameOrigin(req, true)) {
+      return NextResponse.json({ ok: false }, { status: 403 });
     }
     const body = (await req.json().catch(() => ({}))) as {
       slug?: string;

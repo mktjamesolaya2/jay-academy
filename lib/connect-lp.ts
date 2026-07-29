@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/auth";
 
 const MARKER = "  // __INSERT_LP_HERE__";
 
@@ -11,9 +12,21 @@ function today(): string {
   return new Date().toISOString().split("T")[0];
 }
 
+// Esta ação INTERPOLA os campos dentro de um arquivo .ts do repositório, então
+// escapar aspas e barras não basta: uma quebra de linha (ou caractere de
+// controle) fecha a string e injeta código no landing-pages.ts. Achatamos
+// controles em espaço ANTES de escapar.
 function escape(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  return value
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"');
 }
+
+/** slug e nome de pasta: só minúsculas, números e hífen. */
+const SAFE_ID = /^[a-z0-9][a-z0-9-]*$/;
+/** Caminho local da LP: sem "..", sem barra invertida, sem controle. */
+const SAFE_PATH = /^[A-Za-z0-9._\-/ ]+$/;
 
 const ALLOWED_ACCENTS = [
   "pink-orange",
@@ -24,6 +37,10 @@ const ALLOWED_ACCENTS = [
 ] as const;
 
 export async function connectLp(formData: FormData) {
+  // Escreve num arquivo do repositório — só admin. A rota /lps/connect já fica
+  // atrás do middleware, mas isso barra também o `viewer`, que é read-only.
+  await requireAdmin();
+
   const folder = formData.get("folder")?.toString().trim() ?? "";
   const slug = formData.get("slug")?.toString().trim() ?? "";
   const name = formData.get("name")?.toString().trim() ?? "";
@@ -35,6 +52,15 @@ export async function connectLp(formData: FormData) {
 
   if (!folder || !slug || !name) {
     throw new Error("folder, slug e name são obrigatórios");
+  }
+  if (!SAFE_ID.test(slug)) {
+    throw new Error("slug inválido: use só minúsculas, números e hífen");
+  }
+  if (!SAFE_PATH.test(folder) || folder.includes("..")) {
+    throw new Error("pasta inválida");
+  }
+  if (devUrl && !/^https?:\/\//i.test(devUrl)) {
+    throw new Error("devUrl precisa começar com http:// ou https://");
   }
 
   const accent = (ALLOWED_ACCENTS as readonly string[]).includes(accentRaw)

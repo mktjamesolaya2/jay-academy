@@ -24,8 +24,34 @@ export async function rateLimit(
   limit: number,
   windowSec: number
 ): Promise<{ ok: boolean; count: number }> {
-  const ip = clientIp(req);
+  return rateLimitByIp(bucket, clientIp(req), limit, windowSec);
+}
+
+/**
+ * Mesma janela fixa, mas recebendo o IP direto — pras **server actions**, que
+ * não têm um `Request` em mãos (o IP sai do `headers()` do next/headers, ver
+ * `clientIpFromHeaders`).
+ */
+export async function rateLimitByIp(
+  bucket: string,
+  ip: string,
+  limit: number,
+  windowSec: number
+): Promise<{ ok: boolean; count: number }> {
   const key = `ratelimit:${bucket}:${ip}`;
   const count = await kvIncr(key, windowSec);
   return { ok: count <= limit, count };
+}
+
+/**
+ * IP do cliente dentro de uma server action. Reusa a mesma leitura de
+ * `x-forwarded-for`/`x-real-ip` do `clientIp`, só que a partir do `headers()`
+ * do next/headers em vez de um `Request`.
+ */
+export async function clientIpFromHeaders(): Promise<string> {
+  const { headers } = await import("next/headers");
+  const h = await headers();
+  const fwd = h.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return h.get("x-real-ip")?.trim() || "unknown";
 }

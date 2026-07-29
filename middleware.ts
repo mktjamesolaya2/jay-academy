@@ -1,9 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { AUTH_SECRET } from "@/lib/auth-secret";
 
-const SECRET = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "jayacademy-dev-secret-change-in-production-please"
-);
+// O segredo vem de lib/auth-secret.ts — que é o mesmo usado pra ASSINAR o
+// cookie em lib/auth.ts e falha rápido na Vercel se a env sumir. Antes este
+// arquivo tinha o próprio fallback de dev hardcoded: sem AUTH_SECRET em
+// produção, o middleware voltaria a aceitar JWT assinado com um segredo que
+// está publicado no git.
+const SECRET = AUTH_SECRET;
 
 // Áreas internas do portal — SÓ essas exigem login.
 // Todo o resto é público: /, /login, /cadastro, /p/, /f/, /api/*, sub-projetos

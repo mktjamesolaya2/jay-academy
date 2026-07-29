@@ -2,7 +2,47 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-29 — **Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel**
+> **Última atualização**: 2026-07-29 — **Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🔒 Sessão 2026-07-29 (parte 2) — Varredura de segurança (foco: edição externa)
+
+**A LP em si está limpa:** HTML estático do repo (só muda por commit+push), sem form, sem
+iframe, todo `target="_blank"` com `rel="noopener"`, um único `<script src>` externo (gtag).
+
+### ⚠️ Descoberta que muda o modelo de ameaça das server actions
+No Next 16 a action **não** é despachável em qualquer rota: o
+`server-reference-manifest.json` lista os `workers` (rotas) autorizados por ID. Testado em
+produção: postar o ID da `uploadImageAction` em `/` ou `/login` → **404 "Server action not
+found"**; postar nas 3 rotas que a importam (`/lps/[slug]/build`, `/lps/[slug]/edit-visual`,
+`/wp-pages/[domain]/[slug]/edit`) → **307 pro /login** (middleware). Ou seja: **anônimo não
+alcança server action de rota admin**. O risco real das actions sem guarda era o `viewer`
+(role read-only) conseguir escrever.
+
+### Corrigido
+- **`uploadImageAction`** (`app/wp-pages/[domain]/[slug]/edit/upload-action.ts`) — era a
+  única action de escrita sem checagem própria: agora `requireAdmin()` + rate-limit 60/min.
+- **Login sem rate-limit** (`app/login/actions.ts`) — força bruta na senha do senior era
+  ilimitada: agora 10 tentativas / 5 min por IP.
+- **`connectLp`** (`lib/connect-lp.ts`) — grava dentro de `lib/landing-pages.ts`; o `escape()`
+  não tratava quebra de linha (injeção de código no arquivo TS). Agora `requireAdmin()`,
+  controles achatados em espaço, `slug` por regex, pasta sem `..`, `devUrl` só http(s).
+- **`middleware.ts`** — tinha o próprio fallback `"jayacademy-dev-secret…"`; passou a
+  importar `AUTH_SECRET` de `lib/auth-secret.ts` (que falha rápido na Vercel sem a env).
+- **`/api/track`** — sem same-origin, qualquer site inflava as visitas de qualquer slug:
+  agora `isSameOrigin(req, true)` (`allowEmpty` porque o beacon keepalive às vezes vai sem Origin).
+- **`submitFormAction`** (`app/f/[slug]`) — só tinha honeypot; ganhou 15/min por IP.
+- Novos helpers em `lib/rate-limit.ts`: **`rateLimitByIp`** + **`clientIpFromHeaders`**
+  (server action não tem `Request`; o IP sai do `headers()`). `rateLimit` delega pro novo.
+
+### Recomendação que NÃO é código
+O maior vetor de "edição externa" da página é o **GTM (GTM-TVLJSVJZ)**: ele injeta JS
+arbitrário em todas as LPs (foi ele que colocou o pixel `935630436819595` lá). Quem tiver
+acesso à conta pode trocar o link do checkout ou capturar leads **sem deploy**. Revisar
+acessos + 2FA no Google Tag Manager e no Meta Business.
+
+**CSP:** decisão do James de manter sem, pra não arriscar o rastreamento.
 
 ---
 
