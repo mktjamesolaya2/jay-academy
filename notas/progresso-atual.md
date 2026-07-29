@@ -2,7 +2,43 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-29 — **Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-29 — **Auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🛒 Sessão 2026-07-29 (parte 3) — Auditoria dos links de checkout Hotmart
+
+Conferência dos 5 cursos online contra os links oficiais passados pelo James. Regra: todo
+checkout precisa de **`checkoutMode=10` + o `off=` da oferta certa** (faltando qualquer um,
+o checkout embutido/oferta quebra).
+
+### Estado das 5 LPs (todas com 1 link Hotmart; os outros CTAs são âncoras `#VALOR`/`#preco`)
+| Curso | Arquivo | Antes |
+|---|---|---|
+| Basic Magic Shadow | `lp-html/basic-magic-shadow.html` | ✅ `E98531587I?checkoutMode=10&off=k2warcrt` |
+| Basic Nano Fios | `lp-html/basic-nanofios.html` | ❌ faltava `checkoutMode=10` (2 CTAs) |
+| Fio a Fio Realista | `lp-html/fio-a-fio-realista-by-james-olaya.html` | ✅ `T98532267X?checkoutMode=10&off=tlrmqecy` |
+| Lips Sense | `lp-html/pdv-lips-sense-technique.html` | ✅ `Y98532335W?checkoutMode=10&off=jxkw3xrd` |
+| Profissão Remove | `lp-html/curso-online-profissao-remove.html` | ✅ `G106407672I?checkoutMode=10&off=umo46sbb` |
+
+### Corrigido (commit `cd0cfc3`, já em produção)
+- `lp-html/basic-nanofios.html` — os 2 CTAs ganharam `checkoutMode=10`.
+- `lib/lp-content-store.ts` — hero slide do Lips Sense no PMU CLASS estava com o link pelado
+  `pay.hotmart.com/Y98532335W`; agora completo. (O KV `lp-content:pmuclass` não tinha cópia
+  salva, então o default do arquivo valeu — confirmado no `/api/lp-content/pmuclass`.)
+- `public/pmuclass/assets/index-BNudAzTv.js` (bundle da SPA, **não há fonte no repo** — edição
+  por substituição literal de string): Nano Fios ganhou `off=rckismlc`, Lips Sense ganhou
+  `checkoutMode=10&off=jxkw3xrd` (3 lugares) e o card `lips-sense-technique` deixou de apontar
+  pro placeholder `seu-link-aqui`.
+
+### Pendências conhecidas (não são bug de agora)
+- Sobram **4 `pay.hotmart.com/seu-link-aqui`** no bundle do PMU CLASS, em cursos de demonstração
+  que não existem (`microblading-avancado`, `microblading-eyeliner`, `nanoblading-masterclass`,
+  `labial-expert-pro`) — sem link oficial pra colocar.
+- O prompt do chat do PMU CLASS cita `go.hotmart.com/Y98532335W?ap=61e1` pro Lips Sense — host e
+  parâmetros diferentes do checkout do site. Conferir com o James se é intencional.
+- `/metodo-shadow-pro-2` aponta pro checkout do **Basic Magic Shadow** (`E98531587I`) —
+  confirmado pelo James como **intencional por enquanto**.
 
 ---
 
