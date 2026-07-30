@@ -2,7 +2,57 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-30 — **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **curadoria do carrossel da `/metodo-shadow-pro` + remoção total da `res-02.webp`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-30 — **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🔍 Sessão 2026-07-30 (parte 9) — “Cicatrizados reais” reformulada
+
+- As três imagens da seção foram trocadas, na ordem solicitada: `0823D46E...`, `IMG_3653` e `IMG_4882`.
+- A primeira e a terceira reutilizam os recortes 900×900 já aprovados do carrossel. `IMG_3653` ganhou
+  um recorte exclusivo mais fechado em `public/lp/shadow-pro/cicatrizados/img-3653.webp`, centralizado
+  nas duas sobrancelhas.
+- Texto de abertura ficou mais curto e hierárquico; os três atributos agora usam cards completos.
+- Desktop: grade de três cards. Mobile: três linhas horizontais com foto, número, atributo e explicação,
+  eliminando o texto espremido em três colunas.
+- QA visual headless em 390 px concluído; assets carregaram em 900×900.
+
+---
+
+## ✨ Sessão 2026-07-30 (parte 8) — oferta e CTA reformulados
+
+- Value stack passou de linhas soltas para um card único; nomes e valores riscados agora têm colunas
+  próprias no desktop e duas linhas organizadas no mobile.
+- Card de preço ganhou mais hierarquia, respiro, borda luminosa e separação clara entre ancoragem,
+  parcelamento, valor e pagamento à vista.
+- `R$ 10,03` saiu da Cormorant e passou para **Poppins 800**, com algarismos tabulares, moeda separada e
+  menor espaçamento entre dígitos para leitura imediata.
+- CTA virou “Quero me inscrever agora”, com seta, brilho deslizante e pulso de luz dourado. As animações
+  respeitam `prefers-reduced-motion`.
+- QA visual headless em 390 px: seção com 390×1461, sem overflow; textos, preços e botão sem cortes.
+
+---
+
+## 🖼️ Sessão 2026-07-30 (parte 7) — carrossel reconstruído com `OK_RESULTADOS`
+
+- A seleção anterior do carrossel “Você também pode” estava incorreta e foi removida integralmente.
+- Nova fonte única: as **10 imagens** existentes em `tmp/basic-magic-shadow/OK_RESULTADOS/`.
+- Gerados 10 WebPs em `public/lp/shadow-pro/resultados/`, todos quadrados 900×900 e com as sobrancelhas
+  centralizadas. Sete usaram recorte por atenção; `7E2280...`, `IMG_3608` e `IMG_3653` receberam recortes
+  manuais por serem fotos mais abertas.
+- O carrossel agora tem duas metades idênticas de 10 imagens, preservando o loop infinito.
+- Os assets antigos não foram apagados porque continuam usados em outras seções da LP; saíram somente
+  deste carrossel.
+
+---
+
+## 🎓 Sessão 2026-07-30 (parte 6) — certificado correto do Shadow PRO
+
+- `public/lp/shadow-pro/certificado.webp` foi substituído pela arte
+  `tmp/SHADOWPRO_ONLINE - CERTIFICADO PMUCLASS.png`, que identifica corretamente o curso **Shadow PRO**.
+- Exportação WebP em 1600×1131, qualidade 92, 63 KB; o PNG original em `tmp/` foi preservado.
+- O HTML continua usando o mesmo caminho do asset; alt atualizado para “Certificado Shadow PRO”.
+- Resolvida a pendência histórica: o certificado anterior exibia “Basic Magic Shadow”.
 
 ---
 
@@ -34,8 +84,8 @@
 ## 🖼️ Sessão 2026-07-30 (parte 3) — curadoria visual da `/metodo-shadow-pro`
 
 - Eyebrow do carrossel: **“Prova social” → “Você também pode”**.
-- Carrossel reduzido de 20 para **14 imagens únicas**; as duas metades seguem idênticas para preservar o
-  loop infinito. Removidas: `res-02`, `res-03`, `r5`, `res-05`, `res-06` e `res-07`.
+- Naquela rodada, o carrossel havia sido reduzido de 20 para 14 imagens únicas. **Seleção substituída
+  integralmente na parte 7** pelas 10 fotos da pasta `OK_RESULTADOS`.
 - `res-02.webp` removida também da seção “Cicatrizados” e excluída de
   `public/lp/shadow-pro/alunas/`, portanto deixa de existir em toda a LP e no endereço público após deploy.
 - `res-03`, `res-05` e as demais imagens pedidas apenas para o carrossel continuam nas outras composições
@@ -729,7 +779,9 @@ Continuação do overhaul. James pediu, seção por seção, "algo muito visual/
 - **Blueprint** ("Tudo o que você precisa") → ficha técnica com grid, crosshairs e leader lines.
 - **Para quem** → split diagonal (clip-path) é/não é pra você.
 - **Bio ("Seu professor")** → **capa editorial**: retrato dupla-exposição (Higgsfield nano_banana_pro — rosto real do James + degradê de shadow dourado fundido no peito, `james-dx.webp`) sangrando pela direita + texto/creds/**assinatura** à esquerda.
-- **Certificado** → substituído placeholder pelo **certificado real** ([certificado.webp](../public/lp/shadow-pro/certificado.webp)) emoldurado (inclinação, brilho, selo "Certificado oficial", hover endireita). ⚠️ o cert diz "BASIC MAGIC SHADOW", não "Shadow PRO" — James avisado, pode querer trocar depois.
+- **Certificado** → substituído placeholder pelo certificado real emoldurado (inclinação, brilho, selo
+  “Certificado oficial”, hover endireita). O primeiro asset dizia “BASIC MAGIC SHADOW”; a pendência foi
+  resolvida em 30/07 com o certificado correto do **Shadow PRO**.
 - **Resultados** → carrossel **igual ao "resultados reais" do fio a fio** (marquee auto-scroll + setas + fade + clique-pausa), adaptado ao dourado. Removidos prints ruins (r1 marca-d'água VOGUE, r3 grupo banco-de-imagem, r4 rosto pesado). Imagens limpas: f1-f3, r2/r5/r6 + **4 novas do acervo Magic Shadow** ([s1-s4.webp](../public/lp/shadow-pro/)).
 - **Cicatrizados ("sem fantasia")** → **"prova sob lente"**: foto-herói + carimbo "Sem filtro · RAW" + 3 **medalhões circulares ampliados** (lupa) Degradê/Cor/Bordas. Trocou grid de 3 cards; imagens s4 (herói) + s3/s2/s1.
 - **Emendas pretas entre dobras** aplicadas em TODAS (flat `--bg2` e radiais `.tecnica/.bio/.offer`), desktop + mobile.

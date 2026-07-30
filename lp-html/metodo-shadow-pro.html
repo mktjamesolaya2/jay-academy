@@ -236,28 +236,37 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 @media(max-width:640px){.checklist{grid-template-columns:1fr;gap:11px;}.checklist li{padding:15px 15px;}}
 /* ===== CICATRIZADOS (cards com prova) ===== */
 /* ===== CICATRIZADOS — prova sob lente (herói + medalhões ampliados) ===== */
-.proofz{position:relative;max-width:960px;margin:52px auto 0;}
+.proofz{position:relative;max-width:960px;margin:40px auto 0;}
 .proofz__hero{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(217,180,88,.28);box-shadow:0 34px 84px rgba(0,0,0,.62);aspect-ratio:16/10;}
 .proofz__hero img{width:100%;height:100%;object-fit:cover;display:block;}
 .proofz__hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 120% at 50% 40%,transparent 55%,rgba(10,9,12,.45)),linear-gradient(180deg,transparent 58%,rgba(10,9,12,.7));}
 .proofz__stamp{position:absolute;top:16px;right:16px;z-index:3;display:inline-flex;align-items:center;gap:8px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold2);background:rgba(10,9,12,.55);backdrop-filter:blur(4px);border:1px solid rgba(217,180,88,.4);border-radius:999px;padding:7px 13px;}
 .proofz__stamp::before{content:"";width:7px;height:7px;border-radius:50%;background:#e0563f;box-shadow:0 0 9px #e0563f;}
 .proofz__meta{position:absolute;left:18px;bottom:16px;z-index:3;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11.5px;letter-spacing:.08em;color:#ece0c8;text-shadow:0 2px 10px rgba(0,0,0,.85);}
-.proofz__row{display:flex;justify-content:center;gap:clamp(18px,5vw,60px);margin-top:-58px;position:relative;z-index:4;padding:0 10px;}
-.proofz__lens{display:flex;flex-direction:column;align-items:center;gap:11px;text-align:center;flex:0 0 auto;width:clamp(124px,20vw,176px);}
-.proofz__coin{position:relative;width:clamp(100px,15vw,134px);height:clamp(100px,15vw,134px);border-radius:50%;overflow:hidden;border:3px solid #0a090c;box-shadow:0 0 0 2px var(--gold),0 20px 44px rgba(0,0,0,.62);background:#15121c;transition:transform .4s cubic-bezier(.2,.8,.2,1);}
+.proofz__intro{max-width:680px!important;line-height:1.72;}
+.proofz__row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;position:relative;z-index:4;}
+.proofz__lens{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;min-width:0;padding:25px 19px 23px;border:1px solid rgba(217,180,88,.17);border-radius:22px;background:linear-gradient(155deg,rgba(28,23,36,.92),rgba(15,12,19,.96));box-shadow:0 22px 54px rgba(0,0,0,.32);transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;}
+.proofz__lens:hover{transform:translateY(-5px);border-color:rgba(217,180,88,.42);box-shadow:0 28px 62px rgba(0,0,0,.42);}
+.proofz__coin{position:relative;width:clamp(126px,16vw,166px);height:clamp(126px,16vw,166px);border-radius:50%;overflow:hidden;border:4px solid #0a090c;box-shadow:0 0 0 2px var(--gold),0 20px 44px rgba(0,0,0,.52);background:#15121c;transition:transform .4s cubic-bezier(.2,.8,.2,1);}
 .proofz__lens:hover .proofz__coin{transform:translateY(-5px) scale(1.04);}
 .proofz__coin img{width:100%;height:100%;object-fit:cover;display:block;}
 .proofz__coin::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 2px 12px rgba(255,255,255,.14),inset 0 -8px 20px rgba(0,0,0,.4);pointer-events:none;}
-.proofz__lens .lbl{display:inline-flex;align-items:center;gap:7px;color:var(--gold2);font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;}
-.proofz__lens .lbl i{font-style:normal;font-family:ui-monospace,monospace;color:var(--gold);opacity:.7;}
-.proofz__lens p{margin:0;color:#c9c1b4;font-size:12.8px;line-height:1.45;}
+.proofz__copy{display:flex;min-width:0;flex-direction:column;align-items:center;gap:8px;}
+.proofz__lens .lbl{display:inline-flex;align-items:center;justify-content:center;gap:8px;color:var(--gold2);font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;line-height:1.35;}
+.proofz__lens .lbl i{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:28px;height:28px;border-radius:50%;border:1px solid rgba(217,180,88,.38);background:rgba(217,180,88,.08);font-style:normal;font-family:ui-monospace,monospace;font-size:10px;color:var(--gold);}
+.proofz__lens .lbl b{font:inherit;}
+.proofz__lens p{margin:0;color:#c9c1b4;font-size:13px;line-height:1.58;max-width:23ch;}
 @media(max-width:760px){
   .proofz__hero{aspect-ratio:4/5;}
   .proofz__meta{display:none;}
-  .proofz__row{flex-wrap:wrap;gap:26px 14px;margin-top:-46px;}
-  .proofz__lens{width:calc(33.333% - 10px);}
-  .proofz__lens p{font-size:11.5px;}
+  .proofz{margin-top:30px;}
+  .proofz__row{grid-template-columns:1fr;gap:12px;}
+  .proofz__lens{display:grid;grid-template-columns:94px minmax(0,1fr);gap:16px;padding:14px 16px;text-align:left;border-radius:18px;}
+  .proofz__coin{width:90px;height:90px;border-width:3px;}
+  .proofz__copy{align-items:flex-start;gap:6px;}
+  .proofz__lens .lbl{justify-content:flex-start;font-size:11.5px;text-align:left;}
+  .proofz__lens .lbl i{width:25px;height:25px;}
+  .proofz__lens p{max-width:none;font-size:12.5px;line-height:1.5;text-align:left;}
 }
 /* ===== ANTES E DEPOIS (grade) ===== */
 .ba{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:42px;}
@@ -354,21 +363,36 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 20px;color:#e6dfd2;font-size:14px;font-weight:500;display:flex;align-items:center;gap:9px;}
 .pill svg{width:16px;height:16px;}
 /* ===== OFFER / PRICE ===== */
-.offer{background:linear-gradient(180deg,#0a090c 0%,transparent 11%,transparent 89%,#0a090c 100%),radial-gradient(120% 100% at 50% 8%,#1c1710,#0d0a10 60%,#0a090c);}
-.offer__stack{list-style:none;max-width:520px;margin:0 auto 34px;display:grid;gap:2px;}
-.offer__stack li{display:flex;align-items:flex-start;gap:14px;padding:14px 4px;border-bottom:1px solid var(--line2);color:#ece7f0;font-size:clamp(14.5px,1.6vw,16px);font-weight:500;text-align:left;}
+.offer{background:linear-gradient(180deg,#0a090c 0%,transparent 9%,transparent 91%,#0a090c 100%),radial-gradient(100% 70% at 50% 12%,#21190d,#0d0a10 64%,#0a090c);}
+.offer__stack{list-style:none;max-width:700px;margin:32px auto 42px;display:grid;padding:10px 22px;background:linear-gradient(145deg,rgba(28,23,36,.88),rgba(16,13,20,.92));border:1px solid rgba(217,180,88,.16);border-radius:22px;box-shadow:0 22px 55px rgba(0,0,0,.28);}
+.offer__stack li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:17px 4px;border-bottom:1px solid var(--line2);color:#ece7f0;font-size:clamp(14.5px,1.6vw,16px);font-weight:500;text-align:left;}
 .offer__stack li:last-child{border-bottom:none;}
-.offer__stack .chk{margin-top:1px;}
-.offer__stack del{color:#c98;opacity:.85;font-weight:600;white-space:nowrap;}
-.price{max-width:480px;margin:0 auto;background:linear-gradient(#1c1727,#15111e);border-radius:22px;border:1px solid var(--line);box-shadow:0 0 0 1px rgba(217,180,88,.25),0 30px 70px rgba(0,0,0,.55);padding:52px 30px 34px;text-align:center;position:relative;overflow:hidden;}
-.price__k{color:var(--gold);font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin:2px 0 4px;}
-.price__from{color:var(--muted);font-size:14px;}
-.price__big{font-family:'Cormorant Garamond',serif;color:#fff;font-weight:700;line-height:.95;margin:6px 0 4px;}
-.price__big .x{font-size:clamp(26px,4vw,36px);opacity:.85;}
-.price__big .v{font-size:clamp(50px,10vw,78px);color:var(--gold2);}
-.price__vista{color:var(--gold);font-size:clamp(15px,1.9vw,18px);font-weight:600;margin-bottom:22px;}
+.offer__stack .chk{margin:0;}
+.offer__name{line-height:1.45;}
+.offer__stack del{color:#cda092;opacity:.88;font-size:.9em;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.price{max-width:540px;margin:0 auto;background:radial-gradient(100% 70% at 50% 0,rgba(217,180,88,.13),transparent 52%),linear-gradient(155deg,#1d1827,#120f19 74%);border-radius:28px;border:1px solid rgba(242,211,138,.3);box-shadow:0 0 0 1px rgba(217,180,88,.12),0 34px 90px rgba(0,0,0,.62),0 0 70px rgba(217,180,88,.08);padding:62px 34px 38px;text-align:center;position:relative;overflow:hidden;}
+.price::after{content:"";position:absolute;left:9%;right:9%;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent);opacity:.7;}
+.price>*{position:relative;z-index:1;}
+.price__k{color:var(--gold);font-size:clamp(11px,1.4vw,13px);letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin:2px 0 12px;}
+.price__from{color:#c9c1d0;font-size:14px;margin-top:5px;}
+.price__big{display:flex;align-items:center;justify-content:center;gap:13px;color:#fff;line-height:1;margin:14px 0 9px;font-family:'Poppins',system-ui,sans-serif;font-variant-numeric:tabular-nums;}
+.price__big .x{flex:0 0 auto;color:#17100a;background:linear-gradient(180deg,var(--gold2),var(--gold3));border-radius:999px;padding:7px 11px;font-size:clamp(13px,2.2vw,16px);font-weight:800;letter-spacing:.01em;box-shadow:0 8px 22px rgba(184,147,63,.24);}
+.price__big .v{display:inline-flex;align-items:baseline;gap:7px;color:var(--gold2);font-weight:800;letter-spacing:-.045em;}
+.price__big .currency{font-size:clamp(19px,3.2vw,25px);letter-spacing:-.02em;}
+.price__big .amount{font-size:clamp(48px,9vw,70px);}
+.price__vista{display:flex;align-items:baseline;justify-content:center;gap:7px;color:#e7dfec;font-size:13px;margin-bottom:28px;}
+.price__vista strong{color:var(--gold2);font-size:clamp(17px,2.5vw,21px);font-weight:700;font-variant-numeric:tabular-nums;}
 .price .cta{width:100%;box-sizing:border-box;}
-.price__trust{color:var(--muted);font-size:12px;margin-top:16px;}
+.price__cta{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px;min-height:66px;border:1px solid rgba(255,246,215,.68);font-size:clamp(15px,2vw,18px);box-shadow:0 16px 40px rgba(184,147,63,.42),0 0 0 0 rgba(242,211,138,0);animation:priceCtaGlow 3s ease-in-out infinite;}
+.price__cta::before{content:"";position:absolute;z-index:-1;top:-80%;bottom:-80%;left:-55%;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.78),transparent);transform:rotate(18deg);animation:priceCtaSheen 3.4s cubic-bezier(.4,0,.2,1) infinite;}
+.price__cta b{font-size:24px;font-weight:500;line-height:1;transition:transform .25s ease;}
+.price__cta:hover{transform:translateY(-3px) scale(1.012);}
+.price__cta:hover b{transform:translateX(5px);}
+.price__trust{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px 9px;color:var(--muted);font-size:11.5px;margin-top:19px;}
+.price__trust i{color:var(--gold);font-style:normal;}
+@keyframes priceCtaSheen{0%,58%{left:-55%;opacity:0;}64%{opacity:1;}86%,100%{left:125%;opacity:0;}}
+@keyframes priceCtaGlow{0%,100%{box-shadow:0 16px 40px rgba(184,147,63,.4),0 0 0 0 rgba(242,211,138,0);}50%{box-shadow:0 20px 52px rgba(184,147,63,.58),0 0 0 7px rgba(242,211,138,.07);}}
+@media(prefers-reduced-motion:reduce){.price__cta,.price__cta::before{animation:none;}}
 /* ===== GUARANTEE ===== */
 .guar{display:grid;grid-template-columns:auto 1fr;gap:clamp(24px,4vw,44px);align-items:center;max-width:900px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(30px,4vw,44px);}
 .guar__seal{flex:0 0 auto;width:clamp(110px,14vw,150px);height:clamp(110px,14vw,150px);border-radius:50%;background:radial-gradient(circle at 38% 32%,#2a2233,#14101c);border:2px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(217,180,88,.25);}
@@ -429,11 +453,24 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .prob h4{font-size:18px;}
 .prob-vs{text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(20px,2.6vw,30px);color:var(--gold);margin:8px 0 4px;}
 /* ===== oferta com desconto/urgencia ===== */
-.price__badge{position:absolute;top:0;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#e94b5a,#c0392b);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:14px;padding:7px 20px;border-radius:0 0 12px 12px;box-shadow:0 10px 22px rgba(192,57,43,.45);letter-spacing:.03em;z-index:2;}
+.price__badge{position:absolute;top:0;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#e94b5a,#c0392b);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:14px;padding:9px 24px;border-radius:0 0 14px 14px;box-shadow:0 10px 28px rgba(192,57,43,.42);letter-spacing:.04em;z-index:2;}
 .price__anchor{color:var(--muted);font-size:15px;margin-bottom:2px;}
 .price__anchor s{color:#c98;opacity:.8;}
-.spots{max-width:480px;margin:14px auto 0;background:rgba(233,75,90,.08);border:1px solid rgba(233,75,90,.25);border-radius:12px;padding:12px 18px;color:#f2c4b0;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:9px;}
+.spots{max-width:540px;margin:18px auto 0;background:linear-gradient(135deg,rgba(233,75,90,.09),rgba(233,75,90,.035));border:1px solid rgba(233,75,90,.28);border-radius:14px;padding:14px 20px;color:#f2c4b0;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:11px;}
 .spots svg{width:17px;height:17px;flex:0 0 auto;}
+@media(max-width:520px){
+  .offer__stack{margin-top:26px;padding:7px 15px;border-radius:18px;}
+  .offer__stack li{grid-template-columns:auto minmax(0,1fr);gap:10px 12px;padding:15px 0;}
+  .offer__stack del{grid-column:2;font-size:12.5px;margin-top:-7px;}
+  .price{padding:60px 20px 30px;border-radius:23px;}
+  .price__big{gap:8px;}
+  .price__big .x{padding:6px 9px;}
+  .price__big .v{gap:5px;}
+  .price__cta{min-height:64px;padding-left:18px;padding-right:18px;}
+  .price__trust{max-width:300px;margin-left:auto;margin-right:auto;}
+  .spots{align-items:flex-start;text-align:left;padding:13px 15px;}
+  .spots svg{margin-top:2px;}
+}
 /* ===== RESPONSIVE ===== */
 @media(max-width:900px){
   /* mobile: cena vira banner no topo, texto abaixo (sem texto sobre o James) */
@@ -525,36 +562,28 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
       <button class="carousel__arrow carousel__arrow--l" id="carPrev" type="button" aria-label="Anterior"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="carousel__arrow carousel__arrow--r" id="carNext" type="button" aria-label="Próximo"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="carousel__track" id="carTrack" title="Clique para pausar">
-        <!-- grupo A (14 imagens únicas) -->
-        <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-01.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/s2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-04.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/s3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/s1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-08.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-09.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/s4.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-10.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
+        <!-- grupo A (10 imagens únicas, todas de tmp/basic-magic-shadow/OK_RESULTADOS) -->
+        <figure><img src="/lp/shadow-pro/resultados/resultado-01.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-02.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-03.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-04.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-05.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-06.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-07.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-08.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-09.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-10.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
         <!-- grupo B — cópia EXATA do grupo A (o loop infinito usa scrollWidth/2) -->
-        <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-01.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/s2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-04.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/s3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/s1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-08.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-09.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/s4.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-10.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-01.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-02.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-03.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-04.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-05.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-06.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-07.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-08.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-09.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
+        <figure><img src="/lp/shadow-pro/resultados/resultado-10.webp" alt="Resultado real Shadow PRO" loading="lazy" decoding="async"></figure>
       </div>
     </div></div>
     <script>
@@ -773,7 +802,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   <div class="wrap cert">
     <figure class="cert__ph">
       <span class="ribbon">Certificado oficial</span>
-      <img src="/lp/shadow-pro/certificado.webp" alt="Certificado Jay Academy — assinado por James Olaya">
+      <img src="/lp/shadow-pro/certificado.webp" alt="Certificado Shadow PRO da Jay Academy — assinado por James Olaya">
     </figure>
     <div>
       <span class="eyebrow">Autoridade validada</span>
@@ -794,23 +823,23 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <div class="meandro"></div>
     <p class="sec-sub">Comprando agora você leva:</p>
     <ul class="offer__stack">
-      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span>Curso Online Shadow PRO <del>R$&nbsp;997,00</del></li>
-      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span>Bônus: Design de Sobrancelhas com Visagismo <del>R$&nbsp;397,00</del></li>
-      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span>Ebook — Pigmentologia e Colorimetria, o guia final <del>R$&nbsp;97,00</del></li>
-      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span>Possibilidade de acesso vitalício (valor especial) <del>R$&nbsp;297,00</del></li>
-      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span>Atualizações do conteúdo <del>R$&nbsp;197,00</del></li>
-      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span>Certificado de conclusão</li>
-      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span>Desconto exclusivo na Jayloja.com</li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span><span class="offer__name">Curso Online Shadow PRO</span><del>R$&nbsp;997,00</del></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span><span class="offer__name">Bônus: Design de Sobrancelhas com Visagismo</span><del>R$&nbsp;397,00</del></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span><span class="offer__name">Ebook — Pigmentologia e Colorimetria, o guia final</span><del>R$&nbsp;97,00</del></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span><span class="offer__name">Possibilidade de acesso vitalício (valor especial)</span><del>R$&nbsp;297,00</del></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span><span class="offer__name">Atualizações do conteúdo</span><del>R$&nbsp;197,00</del></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span><span class="offer__name">Certificado de conclusão</span></li>
+      <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span><span class="offer__name">Desconto exclusivo na Jayloja.com</span></li>
     </ul>
     <div class="price">
       <span class="price__badge">🔥 OFERTA</span>
       <div class="price__k">Pacote completo · Condição promocional</div>
       <div class="price__anchor">de <s>R$&nbsp;1.985,00</s></div>
       <div class="price__from">hoje por apenas</div>
-      <div class="price__big"><span class="x">12x</span> <span class="v">R$&nbsp;10,03</span></div>
-      <div class="price__vista">ou R$ 97,00 à vista</div>
-      <a class="cta" href="https://pay.hotmart.com/E98531587I?checkoutMode=10&off=k2warcrt">Quero garantir meu acesso</a>
-      <div class="price__trust">Compra segura · Acesso imediato · Garantia de 7 dias</div>
+      <div class="price__big"><span class="x">12×</span><span class="v"><span class="currency">R$</span><span class="amount">10,03</span></span></div>
+      <div class="price__vista"><span>ou</span><strong>R$ 97,00</strong><span>à vista</span></div>
+      <a class="cta price__cta" href="https://pay.hotmart.com/E98531587I?checkoutMode=10&off=k2warcrt"><span>Quero me inscrever agora</span><b aria-hidden="true">→</b></a>
+      <div class="price__trust"><span>Compra segura</span><i>•</i><span>Acesso imediato</span><i>•</i><span>Garantia de 7 dias</span></div>
     </div>
     <div class="spots"><svg viewBox="0 0 24 24" fill="none" stroke="#e97" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg> Condição promocional: o valor pode subir sem aviso. Entrando hoje, você trava esse preço.</div>
   </div>
@@ -836,23 +865,29 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <span class="eyebrow c">Sem filtro, sem fantasia</span>
     <h2 class="sec-title">Cicatrizados reais, <span class="gold">sem fantasia</span></h2>
     <div class="meandro"></div>
-    <p class="sec-sub">Quando o Shadow é bem executado, a cicatrização mostra: degradê limpo, bordas suaves e cor estável. Isso não é sorte. É um método.</p>
+    <p class="sec-sub proofz__intro">O resultado verdadeiro aparece depois da cicatrização. É quando você reconhece os três sinais de um Shadow bem executado:</p>
     <div class="proofz">
       <div class="proofz__row">
         <div class="proofz__lens">
-          <div class="proofz__coin"><img src="/lp/shadow-pro/alunas/res-05.webp" alt="Detalhe do degradê" loading="lazy"></div>
-          <span class="lbl"><i>01</i> Degradê limpo</span>
-          <p>Transição suave da base ao topo, sem marcação.</p>
+          <div class="proofz__coin"><img src="/lp/shadow-pro/resultados/resultado-01.webp" alt="Sobrancelha com degradê limpo" loading="lazy"></div>
+          <div class="proofz__copy">
+            <span class="lbl"><i>01</i><b>Degradê limpo</b></span>
+            <p>Transição suave da base ao topo, sem marcação aparente.</p>
+          </div>
         </div>
         <div class="proofz__lens">
-          <div class="proofz__coin"><img src="/lp/shadow-pro/alunas/res-03.webp" alt="Detalhe da cor" loading="lazy" style="object-position:center 32%;"></div>
-          <span class="lbl"><i>02</i> Cor estável</span>
-          <p>Pigmento fixado sem virar tons indesejados.</p>
+          <div class="proofz__coin"><img src="/lp/shadow-pro/cicatrizados/img-3653.webp" alt="Sobrancelhas com cor estável" loading="lazy"></div>
+          <div class="proofz__copy">
+            <span class="lbl"><i>02</i><b>Cor estável</b></span>
+            <p>Pigmento fixado com equilíbrio, sem virar tons indesejados.</p>
+          </div>
         </div>
         <div class="proofz__lens">
-          <div class="proofz__coin"><img src="/lp/shadow-pro/alunas/res-10.webp" alt="Detalhe das bordas" loading="lazy"></div>
-          <span class="lbl"><i>03</i> Bordas suaves</span>
-          <p>Acabamento uniforme que valoriza o olhar.</p>
+          <div class="proofz__coin"><img src="/lp/shadow-pro/resultados/resultado-09.webp" alt="Sobrancelha com bordas suaves" loading="lazy"></div>
+          <div class="proofz__copy">
+            <span class="lbl"><i>03</i><b>Bordas suaves</b></span>
+            <p>Acabamento uniforme, elegante e sem contornos pesados.</p>
+          </div>
         </div>
       </div>
     </div>
