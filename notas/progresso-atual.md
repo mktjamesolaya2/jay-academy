@@ -37,6 +37,19 @@ O que foi feito em `lp-html/metodo-shadow-pro-2.html`:
    `res-05/res-03/res-10`, e o `transform:scale(1.4)` do `.proofz__coin img` saiu (ampliava tanto que só
    sobrava pele). Nenhuma imagem nova precisou ser gerada.
 
+**Ajustes seguintes na mesma sessão:**
+- As 8 legendas "Antes · Depois" saíram (e as regras de CSS delas) — o James pediu a grade mais clean;
+  o próprio corte quadrado já separa o antes (em cima) do depois (embaixo).
+- A dobra **"Por que a maioria erra"**, a única longa 100% texto, ganhou uma ilustração: a prancha de
+  treino em pele sintética (degradê ponto a ponto) que o James deixou em `tmp/ERROS.png`. Virou
+  `public/lp/shadow-pro/mapa-degrade.webp` e entra como `<figure class="diagfig">` entre o subtítulo e a
+  lista dos 3 erros, num card claro com os cantinhos dourados **reusados** do `.bp-plate` (seletores
+  estendidos, sem duplicar CSS).
+  - O PNG tinha 819×819 e 567 KB, mas **70% era branco vazio** (a arte só ocupa `y 272-513`). Cortado para
+    faixa horizontal 739×361 → 900×440 em WebP q78 = **30 KB**.
+  - ⚠️ `width:100%` **sem `height:auto`** deixou o atributo `height="440"` valer e a arte saiu esmagada;
+    peguei no primeiro render headless. Vale pra qualquer `<img>` com width/height explícitos neste arquivo.
+
 ⚠️ **Pegadinha nova**: `lib/serve-lp.ts` tem um `diskCache` em memória — **editar o HTML de uma LP não
 aparece no `npm run dev` sem reiniciar o servidor**. Perdi um ciclo de screenshots achando que o CSS não
 tinha aplicado.
