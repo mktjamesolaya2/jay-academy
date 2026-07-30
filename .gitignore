@@ -46,3 +46,8 @@ videos-lips-sense-backup/
 
 # brainstorming visual companion
 .superpowers/
+
+# sessões do Claude Code e material bruto de trabalho (fotos/artes originais
+# antes de virarem asset em public/) — local, não vai pro repo
+.claude/
+tmp/
