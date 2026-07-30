@@ -219,10 +219,11 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .bp-col--l .bp-annot::before{content:"";position:absolute;right:0;top:16px;width:26px;height:1px;background:linear-gradient(270deg,var(--gold2),rgba(217,180,88,.15));}
 .bp-col--l .bp-annot::after{content:"";position:absolute;right:-2px;top:13.5px;width:7px;height:7px;border-radius:50%;background:var(--gold2);box-shadow:0 0 8px rgba(242,211,138,.6);}
 @media(max-width:820px){
-  .bp__diag{grid-template-columns:1fr;gap:30px;margin-top:40px;}
+  .bp__diag{grid-template-columns:1fr;gap:0;margin-top:40px;}
   .bp-plate-wrap{order:-1;margin-bottom:30px;}
   .bp-plate{width:min(74vw,300px);}
   .bp-col{gap:22px;}
+  .bp-col--r{margin-top:22px;}
   .bp-col--l .bp-annot,.bp-col--r .bp-annot{flex-direction:row;text-align:left;padding-left:36px;padding-right:0;}
   .bp-col--l .bp-annot::before{left:0;right:auto;background:linear-gradient(90deg,var(--gold2),rgba(217,180,88,.15));}
   .bp-col--l .bp-annot::after{left:-2px;right:auto;}
@@ -318,7 +319,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .bio::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#0a090c 28%,rgba(10,9,12,.5) 48%,transparent 68%),linear-gradient(180deg,transparent 62%,rgba(10,9,12,.9));}
 .bio__in{position:relative;z-index:2;width:100%;}
 .bio__box{max-width:526px;text-align:left;}
-.bio__box .eyebrow{margin-bottom:18px;}
+.bio__box .eyebrow{margin-bottom:8px;}
+.bio__professor{display:block;font-family:'Cormorant Garamond',serif;font-size:clamp(38px,5vw,58px);font-style:italic;font-weight:600;line-height:1;color:#fff;margin:0 0 25px;text-shadow:0 8px 30px rgba(0,0,0,.55);}
 .bio__box .sec-title{margin-bottom:20px;}
 .bio__txt p{color:#d8d1c4;font-size:clamp(15px,1.7vw,18px);line-height:1.6;margin-bottom:16px;}
 .bio__txt p.big{font-family:'Cormorant Garamond',serif;font-size:clamp(21px,2.7vw,30px);color:#fff;font-style:italic;line-height:1.34;position:relative;padding-left:22px;margin-bottom:30px;}
@@ -328,10 +330,6 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .bio__creds .c{display:flex;flex-direction:column;gap:2px;}
 .bio__creds .c b{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3vw,34px);font-weight:700;color:var(--gold2);line-height:1;}
 .bio__creds .c span{font-family:'Poppins',sans-serif;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
-/* assinatura */
-.bio__sign{display:flex;align-items:baseline;gap:14px;margin:0 0 30px;}
-.bio__sign .name{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:clamp(30px,4vw,46px);color:#fff;line-height:1;letter-spacing:.01em;}
-.bio__sign .role{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);}
 .bio__cap{position:absolute;right:22px;bottom:20px;z-index:3;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);background:rgba(10,9,12,.5);backdrop-filter:blur(4px);border:1px solid rgba(217,180,88,.35);border-radius:999px;padding:6px 12px;}
 /* ===== CERT ===== */
 .cert{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,4vw,58px);align-items:center;}
@@ -488,10 +486,10 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   .bio__in{padding-top:300px;}
   .bio__box{max-width:none;text-align:center;}
   .bio__box .eyebrow{margin-left:auto;margin-right:auto;}
+  .bio__professor{text-align:center;}
   .bio__txt p.big{padding-left:0;text-align:center;}
   .bio__txt p.big::before{display:none;}
   .bio__creds{justify-content:center;}
-  .bio__sign{justify-content:center;}
   .bio__cap{display:none;}
   .cert{grid-template-columns:1fr;gap:34px;}
   .cert__ph{order:-1;}
@@ -738,7 +736,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
       </div>
     </div>
     <div class="center" style="margin-top:clamp(48px,6vw,72px);">
-      <p style="color:var(--gold2);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.4vw,26px);margin:0 auto 26px;">Você não vai "tentar fazer Shadow". Você vai <span style="color:#fff;">dominar a técnica.</span></p>
+      <p style="color:var(--gold2);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.4vw,26px);margin:0 auto 26px;">Você não vai "tentar fazer Shadow".<span style="display:block;color:#fff;">Você vai dominar a técnica.</span></p>
       <a class="cta" href="#oferta">Quero dominar a técnica</a>
     </div>
   </div>
@@ -780,16 +778,13 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   <div class="wrap bio__in">
     <div class="bio__box bio__txt">
       <span class="eyebrow">Seu professor</span>
+      <strong class="bio__professor">James Olaya</strong>
       <h2 class="sec-title">Aprenda com quem <span class="gold">elevou o padrão</span> do mercado</h2>
       <p class="big">Quando você domina degradê, saturação e acabamento, você para de depender de sorte — e passa a entregar o resultado que faz a cliente pensar: "É <em>exatamente</em> isso que eu queria."</p>
       <div class="bio__creds">
         <div class="c"><b>+10</b><span>anos de agulha</span></div>
         <div class="c"><b>+3.000</b><span>alunas formadas</span></div>
         <div class="c"><b>Shadow</b><span>degradê autoral</span></div>
-      </div>
-      <div class="bio__sign">
-        <span class="name">James Olaya</span>
-        <span class="role">Fundador · Método Shadow PRO</span>
       </div>
       <a class="cta" href="#oferta">Quero aprender com o James</a>
     </div>
