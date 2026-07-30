@@ -2,7 +2,49 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-29 — **mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-30 — **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 📱 Sessão 2026-07-30 — UX mobile da `/metodo-shadow-pro-2` (Shadow PRO)
+
+James abriu a LP no celular e mandou 7 prints. Todos apontavam a mesma coisa: **a foto do procedimento é o
+produto** e estava sendo cortada, encolhida ou coberta por tarja/badge/legenda. Sessão de CSS mobile, troca
+de imagem e ordem de seção — a copy dos argumentos não mudou.
+
+O que foi feito em `lp-html/metodo-shadow-pro-2.html`:
+1. **Hero** — banner de `64vw/max 380px` → `76vw/max 440px` e `background-position` de `82%` → `92% top`.
+   Aumentar a altura corta MAIS na horizontal (o `cover` escala pela altura), por isso as duas coisas andam
+   juntas; a `92%` o James fica inteiro. O `padding` do `.hero__in` virou `calc(min(76vw,440px) - 46px)` —
+   antes ignorava o `max-height` e desalinhava perto de 600px de largura.
+2. **Banner da sobrancelha** (`.prova::after`) — `center 32%` → `left 32%`: a sobrancelha fica no terço
+   esquerdo da `prova-editorial.webp` e estava sendo comida pelo recorte central.
+3. **4 pilares** — `pilar1..4.webp` → `alunas/res-09/08/05/10.webp`; no mobile o `.tcol__shaft` virou
+   quadrado e o `.tcol__b` **saiu de dentro do shaft** (agora é irmão dele, com `flex:1` pra alinhar as
+   bases douradas). No desktop nada mudou: `.tcol` ganhou `position:relative` e o `.tcol__b` continua
+   absoluto, só que ancorado a `bottom:13px` (a altura da base) em vez de `bottom:0` do shaft.
+4. **Ficha técnica** — `bp-brow.webp` → `alunas/res-03.webp` com `object-position:center 34%` (corta a
+   máscara cirúrgica que aparecia embaixo); a regra `.bp-plate::after` (legenda "FIG. 01 · SHADOW NATURAL
+   CICATRIZADO") foi apagada. Os 7 pontos numerados continuam.
+5. **Resultados reais** — a regra `.carousel__track figure::after` (tarja "Aluna Jay Academy") saiu; título
+   virou "Resultados reais de quem aplicou o método" e o subtítulo perdeu o "de alunas". A seção **subiu
+   para a 3ª posição** (logo depois da `.prova`), levando junto o "Antes e depois" — ordem hoje:
+   hero → prova → resultados → antes/depois → problema → … → certificado → oferta.
+6. **Antes e depois** — o quadrado saiu do `img` e foi para o card (`.ba__item{aspect-ratio:1}` + img
+   absoluta), padrão que o arquivo já usa em `.col`/`.tcol__shaft`/`.proofz__hero`. A legenda
+   "Antes · Depois" foi **para o topo** do card: a metade de baixo é o "depois" e não pode ter tarja.
+7. **Cicatrizados (SEM FILTRO · RAW)** — herói `s4` → `alunas/res-02`, medalhões `s3/s2/s1` →
+   `res-05/res-03/res-10`, e o `transform:scale(1.4)` do `.proofz__coin img` saiu (ampliava tanto que só
+   sobrava pele). Nenhuma imagem nova precisou ser gerada.
+
+⚠️ **Pegadinha nova**: `lib/serve-lp.ts` tem um `diskCache` em memória — **editar o HTML de uma LP não
+aparece no `npm run dev` sem reiniciar o servidor**. Perdi um ciclo de screenshots achando que o CSS não
+tinha aplicado.
+
+Verificação (headless a 390px e 1440px, via playwright no scratchpad): 40 figures no `#carTrack` com as duas
+metades de 20 idênticas, 8 `.ba__item`, 0 "Aluna Jay Academy", 0 "FIG. 01", 0 "de alunas", checkout Hotmart
+intacto (×2), 0 `GTM-`, 30/30 imagens em 200, sem rolagem horizontal real (o `scrollWidth` de 410 é o track
+do carrossel, `body` tem `overflow-x:hidden` e `scrollX` fica 0). 104/104 testes passando.
 
 ---
 
