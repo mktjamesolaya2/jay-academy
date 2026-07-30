@@ -15,9 +15,11 @@
   --text:#ece7f0; --muted:#a09aad; --line:rgba(230,198,132,.14); --line2:rgba(255,255,255,.07);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;width:100%;max-width:100%;overflow-x:hidden;background:var(--bg);overscroll-behavior-x:none;}
 /* touch-action:manipulation mata o zoom de duplo-toque; o pinça é bloqueado no <script> do rodapé */
-body{background:var(--bg);color:var(--text);font-family:'Poppins',system-ui,sans-serif;overflow-x:hidden;line-height:1.55;-webkit-font-smoothing:antialiased;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body{position:relative;width:100%;max-width:100%;background:var(--bg);color:var(--text);font-family:'Poppins',system-ui,sans-serif;overflow-x:hidden;overscroll-behavior-x:none;line-height:1.55;-webkit-font-smoothing:antialiased;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body>*{max-width:100%;}
+@supports(overflow:clip){html,body{overflow-x:clip;}}
 img{max-width:100%;display:block;}
 .wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
 .serif{font-family:'Cormorant Garamond',Georgia,serif;}
