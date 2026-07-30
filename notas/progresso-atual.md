@@ -2,7 +2,30 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-30 — **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-30 — **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🪶 Sessão 2026-07-30 (parte 11) — peso do vídeo da ficha técnica
+
+- `ficha-shadow.mp4` entrou com **21 MB** (720×900, 6,5 Mbps, com trilha de áudio) para rodar em
+  `autoplay`/`loop`/`muted` num quadro de no máximo 320 px. O `preload="metadata"` não segura nada:
+  o autoplay baixa o arquivo inteiro, então o celular puxava 21 MB logo antes da dobra da oferta.
+- Reencodado para **1,8 MB** (−91%): 640×800 (2× o tamanho exibido), H.264 CRF 26 `preset slow`,
+  **sem áudio** (o elemento é mudo) e `-movflags +faststart`. Mesma duração; comparação 2× nos fios
+  da sobrancelha não mostra perda visível.
+- Não há `ffmpeg` nem Homebrew nesta máquina — usei o binário do pacote npm `ffmpeg-static`
+  instalado **fora do repo** (no scratchpad da sessão), sem tocar no `package.json`.
+- Verificado em produção com Chromium headless a 390 px: `readyState=4`, `paused=false`,
+  `videoWidth=640`, tocando em loop.
+- `.gitignore` passou a ignorar `.claude/` e `tmp/`, que ficavam soltos como untracked toda sessão.
+
+---
+
+## ↵ Sessão 2026-07-30 (parte 10) — quebra no título do hero
+
+- “(sem depender de sorte)” agora usa `display:block` e sempre começa em uma linha própria, mantendo
+  tamanho, itálico e cor anteriores.
 
 ---
 
