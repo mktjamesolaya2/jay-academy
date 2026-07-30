@@ -2,7 +2,53 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-30 — **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-30 — **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🖼️ Sessão 2026-07-30 (parte 18) — foto antes/depois substituída
+
+- A imagem `88648505-051D-441F-A0E1-97437117E682.JPG`, publicada como `ad-07.webp`, foi substituída
+  por `tmp/basic-magic-shadow/OK_ANTES:DEPOIS/imagemantesdepoisnova.png`.
+- A nova versão foi exportada em WebP 900×900, qualidade 88 e 96 KB, preservando o enquadramento
+  quadrado e removendo o ícone que aparecia no canto inferior esquerdo.
+
+---
+
+## ➕ Sessão 2026-07-30 (parte 17) — fórmula vertical do método
+
+- O bloco “O método é simples” passou a exibir Distribuição, Saturação, Acabamento e Degradê limpo
+  em quatro linhas independentes.
+- Os dois sinais de soma e o sinal de igualdade ficam centralizados entre as etapas, formando uma
+  sequência vertical legível no desktop e no celular.
+
+---
+
+## 💬 Sessão 2026-07-30 (parte 16) — WhatsApp e oferta refinada
+
+- O último CTA agora abre o WhatsApp `+55 19 97163-4567` em nova aba com a mensagem
+  “Oi, gostaria de mais informações sobre o curso Shadow Pro.” já preenchida.
+- Adicionado CTA flutuante de WhatsApp, exibido somente após cerca de 1,25 tela de rolagem; responsivo,
+  acessível e com animação suave que respeita `prefers-reduced-motion`.
+- A faixa vermelha “🔥 OFERTA” foi removida do card de preço. “CONDIÇÃO PROMOCIONAL” passou a aparecer
+  dentro do card em um selo dourado de destaque; preço, checkout e demais informações foram mantidos.
+- A rota local respondeu `200`, os dois links de WhatsApp e o novo texto foram confirmados no HTML
+  servido; suíte completa com **104 testes aprovados** e `git diff --check` sem erros.
+
+---
+
+## ▶️ Sessão 2026-07-30 (parte 15) — movimento robusto no celular
+
+- Carrossel “Você também pode”: velocidade passou de pixels por frame para **38 px/s por tempo real**,
+  então redução de frame rate por economia de bateria não reduz o movimento quase a zero.
+- Toques em telas móveis não alternam mais o estado de pausa; “clique para pausar” fica apenas em
+  dispositivos com mouse preciso. `IntersectionObserver`, `visibilitychange` e `pageshow` retomam o loop.
+- Vídeo da ficha: `preload="auto"`, `muted`, `playsinline` e `webkit-playsinline`; ao entrar na viewport,
+  o script reforça `defaultMuted` e chama `play()`.
+- Se Safari, preferência do usuário ou economia de bateria rejeitar o autoplay, aparece um botão
+  acessível “Toque para reproduzir”. Ele some assim que o vídeo entra em `playing`.
+- QA móvel headless: carrossel avançou 127 px/2,4 s; vídeo `readyState=4`, tocando; pausa forçada exibiu
+  o fallback, e o toque retomou a reprodução.
 
 ---
 
