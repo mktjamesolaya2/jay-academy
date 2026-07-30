@@ -2,7 +2,43 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-29 — **copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-29 — **mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🖼️ Sessão 2026-07-29 (parte 7) — mais prova visual na `/metodo-shadow-pro-2` (Shadow PRO)
+
+James pediu para pegar a copy da LP do **Shadow PRO** e reforçá-la com as fotos de resultado que só existiam
+na `/basic-magic-shadow`. Decisões dele: editar a `/metodo-shadow-pro-2` no lugar (sem slug novo), criar
+**seção nova de antes-e-depois + carrossel maior**, e usar **legenda neutra "Aluna Jay Academy"** (as fotos são
+de alunas do curso Basic — não afirmamos que fizeram o Shadow PRO).
+
+**Diagnóstico**: o carrossel de "Resultados reais" tinha 20 `<figure>` mas **só 10 imagens únicas** (a lista era
+duplicada só para o loop infinito) e a página **não tinha nenhum antes-e-depois**.
+
+**O que mudou em `lp-html/metodo-shadow-pro-2.html`** (52 inserções, 2 remoções — arquivo único):
+1. **Carrossel 10 → 20 imagens únicas**: as 10 `res-01..10.webp` foram intercaladas com as 10 originais de
+   `/lp/shadow-pro/`, e o grupo foi duplicado **exatamente** (40 figures).
+   ⚠️ A duplicação exata é obrigatória: o auto-scroll faz `scrollLeft -= scrollWidth/2` — metades diferentes = salto visível.
+2. **Seção nova "Antes e depois"** entre a prova social e `#oferta`: grid `.ba` com as 8 fotos `ad-01..08.webp`,
+   legenda "Antes · Depois", CTA "Quero esse padrão no meu trabalho". Reusa as classes existentes
+   (`.sec`, `.wrap.center`, `.eyebrow`, `.sec-title`, `.meandro`, `.sec-sub`, `.cta`) — nasceu no mesmo visual dourado/escuro.
+   CSS novo `.ba/.ba__item` colado depois das regras do `.proofz`; 4 colunas no desktop, 2 em `@media(max-width:900px)`.
+3. **Legenda neutra**: `.carousel__track figure::after{content:"Aluna Jay Academy"}` (era "Aluna Shadow PRO") — vale para as 40.
+4. `.sec-sub` do carrossel passou a citar o volume: "Dezenas de trabalhos reais de alunas — …".
+
+**Assets** (novos, versionados): `public/lp/shadow-pro/alunas/` — 18 WebP (8 `ad-*`, 10 `res-*`) gerados com
+`sharp@0.34.5` (já estava em `node_modules`) a partir dos JPG de `public/lp/basic-magic-shadow-v2/`.
+- Os JPG originais **não foram tocados** — a `/basic-magic-shadow` continua servindo deles.
+- **Pegadinha de peso**: os 18 JPG somavam **4,8 MB**. Na primeira conversão (1100 px / q80) deram 1,87 MB, ainda
+  demais. Como essa LP **não tem lightbox** (o maior display é ~300 px), 900 px / q74 é suficiente: **1,29 MB no total**.
+
+**Verificação**: dev :4000 HTTP 200; no HTML servido — 40 figures / **20 URLs únicas** no `#carTrack`, as duas
+metades **byte-idênticas** (diff), 8 `.ba__item`, 0 referência a `basic-magic-shadow-v2`, 18/18 imagens novas em 200,
+checkout Hotmart intacto (2 ocorrências). Testes: **104/104**.
+
+**Nota**: a `/metodo-shadow-pro-2` **está na allowlist do Meta Pixel** (`lib/meta-tracking.ts:41`) — o `fbq` no HTML
+servido é da política por página, não veio dessa mudança. Sem GTM nessa página, como esperado.
 
 ---
 
