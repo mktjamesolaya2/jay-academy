@@ -50,6 +50,16 @@ O que foi feito em `lp-html/metodo-shadow-pro-2.html`:
   - ⚠️ `width:100%` **sem `height:auto`** deixou o atributo `height="440"` valer e a arte saiu esmagada;
     peguei no primeiro render headless. Vale pra qualquer `<img>` com width/height explícitos neste arquivo.
 
+- **Zoom travado na página**: `maximum-scale=1.0, user-scalable=no` no `<meta viewport>`,
+  `touch-action:manipulation` + `text-size-adjust:100%` no `body` (mata o zoom de duplo-toque) e um
+  script no rodapé cancelando `gesturestart/change/end` e `touchmove` com mais de um dedo —
+  **o Safari do iOS ignora `user-scalable=no` desde o iOS 10**, o meta sozinho não resolve.
+  Só nesta LP; é uma escolha do James, e vale lembrar que travar zoom atrapalha acessibilidade.
+- **FICHA TÉCNICA**: a `res-03` tinha uma máscara cirúrgica na base. Em vez de empurrar com
+  `object-position`, gerei um recorte dedicado `public/lp/shadow-pro/ficha-brow.webp`
+  (crop 544×680 da `res-03` → 700×875, 36 KB) com a sobrancelha centralizada; o `object-position:center 34%`
+  foi removido.
+
 ⚠️ **Pegadinha nova**: `lib/serve-lp.ts` tem um `diskCache` em memória — **editar o HTML de uma LP não
 aparece no `npm run dev` sem reiniciar o servidor**. Perdi um ciclo de screenshots achando que o CSS não
 tinha aplicado.

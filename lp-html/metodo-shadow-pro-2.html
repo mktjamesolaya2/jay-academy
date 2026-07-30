@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Método Shadow PRO — James Olaya | Shadow Natural com degradê limpo</title>
 <meta name="description" content="O segredo do Shadow Natural não é dom. É controle de degradê. Aprenda a técnica completa com James Olaya: degradê limpo, cicatrizado bonito e resultado premium.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Poppins',system-ui,sans-serif;overflow-x:hidden;line-height:1.55;-webkit-font-smoothing:antialiased;}
+/* touch-action:manipulation mata o zoom de duplo-toque; o pinça é bloqueado no <script> do rodapé */
+body{background:var(--bg);color:var(--text);font-family:'Poppins',system-ui,sans-serif;overflow-x:hidden;line-height:1.55;-webkit-font-smoothing:antialiased;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 img{max-width:100%;display:block;}
 .wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
 .serif{font-family:'Cormorant Garamond',Georgia,serif;}
@@ -231,7 +232,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .bp-col{display:flex;flex-direction:column;gap:clamp(20px,2.4vw,34px);}
 .bp-plate-wrap{display:flex;justify-content:center;}
 .bp-plate{position:relative;width:clamp(220px,25vw,320px);aspect-ratio:4/5;}
-.bp-plate>img{width:100%;height:100%;object-fit:cover;object-position:center 34%;border-radius:6px;border:1px solid rgba(217,180,88,.45);}
+.bp-plate>img{width:100%;height:100%;object-fit:cover;border-radius:6px;border:1px solid rgba(217,180,88,.45);}
 .bp-plate i.cx,.diagfig i.cx{position:absolute;width:15px;height:15px;z-index:3;border:0 solid var(--gold2);}
 .bp-plate i.tl,.diagfig i.tl{top:-4px;left:-4px;border-top-width:1.5px;border-left-width:1.5px;}
 .bp-plate i.tr,.diagfig i.tr{top:-4px;right:-4px;border-top-width:1.5px;border-right-width:1.5px;}
@@ -804,7 +805,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
       </div>
       <div class="bp-plate-wrap">
         <div class="bp-plate">
-          <img src="/lp/shadow-pro/alunas/res-03.webp" alt="Shadow natural cicatrizado — ficha técnica" loading="lazy">
+          <img src="/lp/shadow-pro/ficha-brow.webp" alt="Shadow natural cicatrizado — ficha técnica" loading="lazy">
           <i class="cx tl"></i><i class="cx tr"></i><i class="cx bl"></i><i class="cx br"></i>
         </div>
       </div>
@@ -1009,6 +1010,16 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 </footer>
 
 <script>
+(function(){
+  // trava o pinca-zoom: o Safari do iOS ignora user-scalable=no desde o iOS 10,
+  // entao os eventos de gesto tem que ser cancelados na mao.
+  ['gesturestart','gesturechange','gestureend'].forEach(function(ev){
+    document.addEventListener(ev,function(e){ e.preventDefault(); },{passive:false});
+  });
+  document.addEventListener('touchmove',function(e){
+    if(e.touches.length>1) e.preventDefault();
+  },{passive:false});
+})();
 (function(){
   document.querySelectorAll('.qa__q').forEach(function(b){
     b.addEventListener('click',function(){ b.closest('.qa').classList.toggle('open'); });
