@@ -2,7 +2,17 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-30 — **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-30 — **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🌟 Sessão 2026-07-30 (parte 14) — novo hero responsivo
+
+- `tmp/Generated image 1.png` substituiu o `hero-scene.webp`: versão desktop 1677×938 em WebP, 78 KB.
+- Criado recorte dedicado `hero-scene-mobile.webp` (1100×835, 64 KB) preservando James e a sobrancelha
+  no banner estreito; ativado abaixo de 600 px.
+- QA visual headless: 1440×900 e 390×844. Desktop mantém texto na área escura e James inteiro à direita;
+  mobile mantém os dois elementos visuais acima do conteúdo, sem cortes importantes.
 
 ---
 
