@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { listPublished } from "@/lib/wp-content-storage";
+import { lpHtmlRedirects } from "@/lib/lp-html-registry";
 
 // Sitemap dinâmico: LPs estáticas (rotas dedicadas) + páginas WP publicadas no KV.
 // Substitui o page-sitemap.xml do Yoast quando o domínio apontar pra cá.
@@ -25,12 +26,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  // Slugs antigos que hoje só respondem 308: continuam no KV como página
+  // publicada, mas anunciá-los no sitemap manda o Google rastrear uma URL que
+  // redireciona. A rota estática do redirect tem prioridade, então essa página
+  // do KV nem chega a ser servida.
+  const redirectSet = new Set(lpHtmlRedirects.map((r) => r.from));
+
   try {
     const published = await listPublished();
     const staticSet = new Set(STATIC_LPS);
     for (const p of published) {
       const slug = p.publicSlug || p.slug;
-      if (!slug || staticSet.has(slug)) continue;
+      if (!slug || staticSet.has(slug) || redirectSet.has(slug)) continue;
       entries.push({
         url: `${BASE}/${slug}`,
         changeFrequency: "monthly",
