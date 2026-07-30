@@ -60,6 +60,28 @@ O que foi feito em `lp-html/metodo-shadow-pro-2.html`:
   (crop 544×680 da `res-03` → 700×875, 36 KB) com a sobrancelha centralizada; o `object-position:center 34%`
   foi removido.
 
+**Rodada de oferta honesta (mesma sessão):**
+- 🚨 **A LP anunciava um preço que não era o cobrado.** Ela dizia 12x R$ 20,37 / R$ 197,00, mas o botão
+  leva ao checkout `E98531587I?off=k2warcrt` — **o mesmo link da `/basic-magic-shadow`** — que cobra
+  **12x R$ 10,03 / R$ 97,00** e exibe o produto "Basic Magic Shadow". Descoberto ao comparar as duas LPs.
+  Decisão do James: **alinhar a LP ao checkout** (R$ 97). ⚠️ As duas LPs dividem o mesmo produto Hotmart;
+  mexer no preço de uma tem que considerar a outra.
+- **Contadores removidos** (barra do topo e caixa de preço), junto com o JS de countdown e o
+  `shpro_deadline` no `localStorage`. Eram 30 min que reiniciavam sozinhos a cada visitante.
+- **Urgência reescrita** sem prazo inventado: "Condição promocional: o valor pode subir sem aviso.
+  Entrando hoje, você trava esse preço." + ancoragem **de R$ 1.985,00** (soma real dos 5 itens).
+- **Value stack** em "A oferta completa": 5 itens com valor riscado (997+397+97+297+197) + os 2 itens que
+  a lista antiga prometia e não estavam no stack (certificado e desconto Jayloja) — não podiam sumir calados.
+- **Seção "Da tentativa à decisão" removida** inteira, com o CSS `.tecnica*`/`.shift*` que ficou órfão.
+- **"É pra você / Não é pra você"** deixou de ser o `.split` (foto de fundo + faixa diagonal que cortava o
+  texto no celular) e passou a usar o **`.forwho`, que já existia no CSS e nunca tinha sido usado**.
+  Todo o CSS `.split*` saiu. A página deixou de baixar `prova-editorial.webp` uma segunda vez.
+- **Listas desalinhadas**: a causa era o `.wrap.center` — o texto dentro dos `<li>` flex herdava
+  `text-align:center` e quebrava centralizado. Resolvido com `text-align:left` + `align-items:flex-start`.
+- **Logo** `SHADOW PRO` (de `tmp/`) no topo do hero, no lugar do título tipográfico → `logo-shadow-pro.webp`
+  (24 KB, com alpha). ⚠️ O override `margin-left:0` do desktop **tem que vir depois** da regra base no
+  arquivo — mesma especificidade, quem vence é a ordem; na primeira tentativa o logo ficou centralizado.
+
 ⚠️ **Pegadinha nova**: `lib/serve-lp.ts` tem um `diskCache` em memória — **editar o HTML de uma LP não
 aparece no `npm run dev` sem reiniciar o servidor**. Perdi um ciclo de screenshots achando que o CSS não
 tinha aplicado.
