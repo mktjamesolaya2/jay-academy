@@ -167,7 +167,6 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 /* ===== TEMPLO (4 pilares sustentando a viga) ===== */
 .temple{max-width:1000px;margin:54px auto 0;}
 .temple__beam{position:relative;height:clamp(54px,6vw,70px);border:1px solid rgba(217,180,88,.42);border-radius:9px 9px 0 0;background:linear-gradient(180deg,rgba(217,180,88,.18),rgba(217,180,88,.04));display:flex;align-items:center;justify-content:center;margin:0 4px;box-shadow:0 -14px 30px rgba(217,180,88,.06) inset;}
-.temple__beam::before{content:"";position:absolute;top:9px;left:16px;right:16px;height:1px;background:linear-gradient(90deg,transparent,rgba(217,180,88,.5),transparent);}
 .temple__beam::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:6px;background:repeating-linear-gradient(90deg,var(--gold) 0 4px,transparent 4px 13px);opacity:.5;}
 .temple__beam span{font-family:'Cormorant Garamond',serif;font-weight:700;font-style:italic;font-size:clamp(19px,2.7vw,31px);color:var(--gold2);letter-spacing:.01em;}
 .temple__cols{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(10px,1.5vw,18px);padding-top:12px;}
@@ -203,7 +202,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .bp-col{display:flex;flex-direction:column;gap:clamp(20px,2.4vw,34px);}
 .bp-plate-wrap{display:flex;justify-content:center;}
 .bp-plate{position:relative;width:clamp(220px,25vw,320px);aspect-ratio:4/5;}
-.bp-plate>img{width:100%;height:100%;object-fit:cover;border-radius:6px;border:1px solid rgba(217,180,88,.45);}
+.bp-plate>img,.bp-plate>video{display:block;width:100%;height:100%;object-fit:cover;border-radius:6px;border:1px solid rgba(217,180,88,.45);}
 .bp-plate i.cx,.diagfig i.cx{position:absolute;width:15px;height:15px;z-index:3;border:0 solid var(--gold2);}
 .bp-plate i.tl,.diagfig i.tl{top:-4px;left:-4px;border-top-width:1.5px;border-left-width:1.5px;}
 .bp-plate i.tr,.diagfig i.tr{top:-4px;right:-4px;border-top-width:1.5px;border-right-width:1.5px;}
@@ -516,7 +515,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 <!-- ===== RESULTADOS ALUNAS ===== -->
 <section class="sec" style="background:linear-gradient(180deg,#0a090c 0%, var(--bg2) 12%, var(--bg2) 88%, #0a090c 100%);">
   <div class="wrap center">
-    <span class="eyebrow c">Prova social</span>
+    <span class="eyebrow c">Você também pode</span>
     <h2 class="sec-title">Resultados reais de quem <span class="gold">aplicou o método</span></h2>
     <div class="meandro"></div>
     <p class="sec-sub">Dezenas de trabalhos reais — quando a técnica é clara, o resultado aparece, e a confiança muda junto.</p>
@@ -526,21 +525,15 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
       <button class="carousel__arrow carousel__arrow--l" id="carPrev" type="button" aria-label="Anterior"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <button class="carousel__arrow carousel__arrow--r" id="carNext" type="button" aria-label="Próximo"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
       <div class="carousel__track" id="carTrack" title="Clique para pausar">
-        <!-- grupo A (20 imagens únicas) -->
+        <!-- grupo A (14 imagens únicas) -->
         <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/alunas/res-01.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-02.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/s2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-03.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/alunas/res-04.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-05.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/s3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-06.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-07.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/s1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/alunas/res-08.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
@@ -551,17 +544,11 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
         <figure><img src="/lp/shadow-pro/f1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/alunas/res-01.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/f2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-02.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/s2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-03.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/f3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/alunas/res-04.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/r5.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-05.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/s3.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-06.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/r2.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
-        <figure><img src="/lp/shadow-pro/alunas/res-07.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/s1.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/alunas/res-08.webp" alt="Resultado de aluna Jay Academy" loading="lazy" decoding="async"></figure>
         <figure><img src="/lp/shadow-pro/r6.webp" alt="Resultado aluna Shadow PRO" loading="lazy" decoding="async"></figure>
@@ -681,10 +668,10 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <div class="temple">
       <div class="temple__beam"><span>O cicatrizado bonito</span></div>
       <div class="temple__cols">
-        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/alunas/res-09.webp" alt="Distribuição do degradê — procedimento real" loading="lazy"><span class="tcol__n">I</span></div><div class="tcol__b"><h4>Distribuição do degradê</h4><p>Onde depositar, onde suavizar e criar transições limpas.</p></div><span class="tcol__base"></span></div>
-        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/alunas/res-08.webp" alt="Controle de saturação — procedimento real" loading="lazy"><span class="tcol__n">II</span></div><div class="tcol__b"><h4>Controle de saturação</h4><p>O ponto certo para fixar bem sem pesar a cor.</p></div><span class="tcol__base"></span></div>
-        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/alunas/res-05.webp" alt="Execução estável — procedimento real" loading="lazy"><span class="tcol__n">III</span></div><div class="tcol__b"><h4>Execução estável</h4><p>Consistência para o resultado parar de variar.</p></div><span class="tcol__base"></span></div>
-        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/alunas/res-10.webp" alt="Acabamento que valoriza — procedimento real" loading="lazy"><span class="tcol__n">IV</span></div><div class="tcol__b"><h4>Acabamento que valoriza</h4><p>Finalização correta para uniformidade e retenção.</p></div><span class="tcol__base"></span></div>
+        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/pilares/pilar-01.webp" alt="Distribuição do degradê — procedimento real" loading="lazy"><span class="tcol__n">I</span></div><div class="tcol__b"><h4>Distribuição do degradê</h4><p>Onde depositar, onde suavizar e criar transições limpas.</p></div><span class="tcol__base"></span></div>
+        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/pilares/pilar-02.webp" alt="Controle de saturação — procedimento real" loading="lazy"><span class="tcol__n">II</span></div><div class="tcol__b"><h4>Controle de saturação</h4><p>O ponto certo para fixar bem sem pesar a cor.</p></div><span class="tcol__base"></span></div>
+        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/pilares/pilar-03.webp" alt="Execução estável — procedimento real" loading="lazy"><span class="tcol__n">III</span></div><div class="tcol__b"><h4>Execução estável</h4><p>Consistência para o resultado parar de variar.</p></div><span class="tcol__base"></span></div>
+        <div class="tcol"><span class="tcol__cap"></span><div class="tcol__shaft"><img src="/lp/shadow-pro/pilares/pilar-04.webp" alt="Acabamento que valoriza — procedimento real" loading="lazy"><span class="tcol__n">IV</span></div><div class="tcol__b"><h4>Acabamento que valoriza</h4><p>Finalização correta para uniformidade e retenção.</p></div><span class="tcol__base"></span></div>
       </div>
     </div>
     <p style="color:#f0e7d6;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.4vw,26px);margin:40px auto 0;max-width:46ch;">Quando você domina esses 4 pontos, o Shadow deixa de ser tentativa e vira a sua marca.</p>
@@ -709,7 +696,9 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
       </div>
       <div class="bp-plate-wrap">
         <div class="bp-plate">
-          <img src="/lp/shadow-pro/ficha-brow.webp" alt="Shadow natural cicatrizado — ficha técnica" loading="lazy">
+          <video autoplay loop muted playsinline preload="metadata" poster="/lp/shadow-pro/ficha-brow.webp" aria-label="Procedimento Shadow Natural — ficha técnica">
+            <source src="/lp/shadow-pro/ficha-shadow.mp4" type="video/mp4">
+          </video>
           <i class="cx tl"></i><i class="cx tr"></i><i class="cx bl"></i><i class="cx br"></i>
         </div>
       </div>
@@ -849,11 +838,6 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
     <div class="meandro"></div>
     <p class="sec-sub">Quando o Shadow é bem executado, a cicatrização mostra: degradê limpo, bordas suaves e cor estável. Isso não é sorte. É um método.</p>
     <div class="proofz">
-      <div class="proofz__hero">
-        <img src="/lp/shadow-pro/alunas/res-02.webp" alt="Cicatrizado real — sem filtro" loading="lazy" style="object-position:center 45%;">
-        <span class="proofz__stamp">Sem filtro · RAW</span>
-        <span class="proofz__meta">Cicatrizado real · 30 dias · sem edição</span>
-      </div>
       <div class="proofz__row">
         <div class="proofz__lens">
           <div class="proofz__coin"><img src="/lp/shadow-pro/alunas/res-05.webp" alt="Detalhe do degradê" loading="lazy"></div>

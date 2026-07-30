@@ -2,7 +2,44 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-30 — **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-30 — **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **curadoria do carrossel da `/metodo-shadow-pro` + remoção total da `res-02.webp`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🎬 Sessão 2026-07-30 (parte 5) — vídeo na ficha técnica
+
+- A imagem central `ficha-brow.webp` do bloco “Tudo o que você precisa…” foi substituída pelo vídeo
+  `3AAAEF40-C542-4684-AC37-6F5FA5B0C5C9.MP4`, publicado como
+  `public/lp/shadow-pro/ficha-shadow.mp4`.
+- O vídeo roda com `autoplay loop muted playsinline`, sem controles; `ficha-brow.webp` permanece como
+  poster enquanto o MP4 carrega.
+- A moldura, proporção 4:5 e cantos dourados foram preservados; CSS compartilhado entre imagem e vídeo.
+- O MP4 original tem cerca de 20 MB. O conversor nativo não aceitou um contêiner de saída compatível
+  nesta máquina, então o original foi preservado sem perda de qualidade.
+
+---
+
+## 🏛️ Sessão 2026-07-30 (parte 4) — novas fotos nos 4 pilares
+
+- As fotos do bloco “Os 4 pilares do Método” foram trocadas, na ordem pedida, por `IMG_3653.JPG`,
+  `0823D46E-585F-44CF-9BB4-5CBD54761F93.JPG`, `62CC35C3-3A30-4497-9222-4D5B14613E1E.JPG` e
+  `IMG_4882.JPG`.
+- Foram geradas versões WebP quadradas de 900×900 em `public/lp/shadow-pro/pilares/` (67–127 KB);
+  originais em `tmp/basic-magic-shadow/OK_RESULTADOS/` preservados.
+- Removido o traço decorativo interno acima de “O cicatrizado bonito”
+  (`.temple__beam::before`); moldura e ornamento inferior preservados.
+
+---
+
+## 🖼️ Sessão 2026-07-30 (parte 3) — curadoria visual da `/metodo-shadow-pro`
+
+- Eyebrow do carrossel: **“Prova social” → “Você também pode”**.
+- Carrossel reduzido de 20 para **14 imagens únicas**; as duas metades seguem idênticas para preservar o
+  loop infinito. Removidas: `res-02`, `res-03`, `r5`, `res-05`, `res-06` e `res-07`.
+- `res-02.webp` removida também da seção “Cicatrizados” e excluída de
+  `public/lp/shadow-pro/alunas/`, portanto deixa de existir em toda a LP e no endereço público após deploy.
+- `res-03`, `res-05` e as demais imagens pedidas apenas para o carrossel continuam nas outras composições
+  da página onde já eram usadas.
 
 ---
 
