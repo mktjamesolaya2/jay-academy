@@ -4,6 +4,8 @@
 // No-op silencioso se META_ACCESS_TOKEN não estiver configurada (não pode
 // quebrar build/preview sem a env).
 
+import { clientIp } from "./rate-limit-core";
+
 const META_PIXEL_ID = "1841776429524244";
 const GRAPH_URL = `https://graph.facebook.com/v21.0/${META_PIXEL_ID}/events`;
 
@@ -21,8 +23,11 @@ export async function sendMetaCapiEvent(evt: {
 
   const userData: CapiUserData = { ...evt.userData };
   if (evt.req) {
-    const fwd = evt.req.headers.get("x-forwarded-for");
-    if (fwd) userData.client_ip_address = fwd.split(",")[0].trim();
+    // clientIp cobre x-forwarded-for E x-real-ip; devolve "unknown" quando não
+    // acha nenhum dos dois — nesse caso é melhor omitir do que mandar lixo,
+    // que a Meta rejeitaria como IP inválido.
+    const ip = clientIp(evt.req);
+    if (ip && ip !== "unknown") userData.client_ip_address = ip;
     const ua = evt.req.headers.get("user-agent");
     if (ua) userData.client_user_agent = ua;
   }

@@ -77,9 +77,11 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "pink-orange",
   },
   {
-    slug: "metodo-shadow-pro-2",
+    // O "-2" vinha da recriação (a página WP original foi excluída); assumiu o
+    // slug limpo em 30/07, com redirect 308 no antigo.
+    slug: "metodo-shadow-pro",
     title: "Método Shadow PRO",
-    htmlFile: "lp-html/metodo-shadow-pro-2.html",
+    htmlFile: "lp-html/metodo-shadow-pro.html",
     assetsDir: "public/lp/shadow-pro",
     category: "venda",
     accent: "gold-black",
@@ -105,6 +107,7 @@ export const lpHtmlPages: LpHtmlEntry[] = [
 /** Redirects 308 servidos por route handlers dedicados (slugs antigos). */
 export const lpHtmlRedirects: { from: string; to: string }[] = [
   { from: "basic-magic-shadow-v2", to: "basic-magic-shadow" },
+  { from: "metodo-shadow-pro-2", to: "metodo-shadow-pro" },
   { from: "fio-a-fio-realista", to: "fio-a-fio-realista-by-james-olaya" },
   {
     from: "metodo-fio-a-fio-by-james-olaya",

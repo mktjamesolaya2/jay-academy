@@ -19,6 +19,8 @@ export const GTM_BY_SLUG: Record<string, string> = {
   // Container da LP Fio a Fio Realista (pedido de 29/07). Esta LP traz o
   // container ANTIGO do WP embutido no HTML — a limpeza do withTracking tira.
   "fio-a-fio-realista-by-james-olaya": "GTM-NB2WK5SJ",
+  // Container da LP Método Shadow PRO (pedido de 30/07).
+  "metodo-shadow-pro": "GTM-NGVQTHXT",
 };
 
 /** Container padrão do marketing (referenciado nas notas e no CLAUDE.md). */

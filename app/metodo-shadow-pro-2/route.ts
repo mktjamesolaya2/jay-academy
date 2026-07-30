@@ -1,10 +1,11 @@
-import { serveLp } from "@/lib/serve-lp";
+import { NextResponse, type NextRequest } from "next/server";
 
-// Método Shadow PRO — LP recriada (a original do WP foi excluída), servida de
-// lp-html/ como está (sem de-lazy) + tracking canônico via serveLp(). Rota
-// estática tem prioridade sobre o [slug] dinâmico.
-export const dynamic = "force-static";
+// O "-2" veio de acidente: a página WP original foi excluída e a LP recriada
+// nasceu neste slug. Em 30/07 assumiu o slug limpo /metodo-shadow-pro, então
+// aqui fica o redirect (308 permanente) pra não quebrar link já divulgado.
 
-export function GET(req: Request) {
-  return serveLp(req, { file: "metodo-shadow-pro-2.html" });
+export const dynamic = "force-dynamic";
+
+export function GET(req: NextRequest) {
+  return NextResponse.redirect(new URL("/metodo-shadow-pro", req.url), 308);
 }

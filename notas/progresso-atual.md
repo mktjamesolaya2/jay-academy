@@ -2,7 +2,36 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-30 — **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-30 — **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🔗 Sessão 2026-07-30 (parte 2) — slug `/metodo-shadow-pro`, GTM próprio e qualidade do CAPI
+
+**Renomeação de slug** (`metodo-shadow-pro-2` → `metodo-shadow-pro`). O "-2" vinha da recriação: a página
+WP original foi excluída e a LP nasceu nesse slug. Mesmo padrão do `basic-magic-shadow-v2`:
+- `git mv` do HTML e da rota; **novo** `app/metodo-shadow-pro-2/route.ts` com redirect **308**.
+- 5 referências atualizadas: `lp-html-registry.ts` (slug, htmlFile **e** `lpHtmlRedirects`),
+  `meta-tracking.ts` (`PIXEL_SLUGS` — esquecer aqui derrubaria o Pixel da página), `app/sitemap.ts`,
+  `reserved-slugs.ts` (novo **+ o antigo**, que o redirect ocupa) e `CLAUDE.md`.
+- `lib/page-catalog.test.ts` é a rede de segurança: confere registro × arquivos reais.
+
+**GTM-NGVQTHXT** adicionado ao `GTM_BY_SLUG` (4º container por página). Nada de colar snippet no HTML —
+o `withTracking` injeta head + noscript e limpa qualquer container antigo.
+
+**Meta CAPI — o aviso de IPv6 do Events Manager NÃO tem correção nossa.** Investigado:
+`dig AAAA www.jayacademy.com.br` → vazio, e a **Vercel não suporta IPv6 em domínio custom**
+(https://vercel.com/docs/domains/troubleshooting). Não existe AAAA pra apontar. A própria Meta diz que
+avisos não acionáveis podem ser ignorados. ⚠️ Não reinvestigar.
+O `client_ip_address` já era enviado. O que faltava mesmo era qualidade de correspondência:
+- front (`meta-tracking.ts`) passou a mandar **`_fbp`/`_fbc`** no `userData`; se o `_fbc` ainda não virou
+  cookie, é derivado do `fbclid` da URL (`fb.1.<ts>.<id>`). O `_fbp` é gravado pelo `fbevents.js`, que é
+  async — por isso o envio espera 1,2s quando o cookie ainda não existe.
+- `app/api/meta-capi/route.ts`: `userData` virou **allowlist `{fbp, fbc}`** (o corpo vem do browser; sem
+  isso dava pra injetar `em`/`ph` falsos e envenenar a correspondência da conta).
+- `lib/meta-capi.ts` passou a reusar o **`clientIp()`** do `rate-limit-core` (cobre `x-real-ip` também) e
+  omite o IP quando ele seria `"unknown"`.
+Verificado em browser headless: o POST para `/api/meta-capi` sai com `fbp` e `fbc` preenchidos.
 
 ---
 

@@ -12,7 +12,7 @@ const STATIC_LPS = [
   "pdv-lips-sense-technique",
   "curso-online-profissao-remove",
   "pmuclass",
-  "metodo-shadow-pro-2",
+  "metodo-shadow-pro",
   "inmersion-pelo-a-pelo",
 ];
 

@@ -38,7 +38,7 @@ export const PIXEL_SLUGS = [
   "basic-nanofios",
   "curso-online-profissao-remove",
   "fio-a-fio-realista-by-james-olaya",
-  "metodo-shadow-pro-2",
+  "metodo-shadow-pro",
   "pdv-lips-sense-technique",
   "pmuclass",
 ];
@@ -105,12 +105,39 @@ fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView', {}, { eventID: window.__metaEventId });
 ${viewContent}
 try {
-  fetch(window.location.origin + '/api/meta-capi', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ eventName: 'PageView', eventId: window.__metaEventId, eventSourceUrl: window.location.href }),
-    keepalive: true
-  }).catch(function(){});
+  // _fbp/_fbc são o principal sinal de correspondência do CAPI (bem mais que o
+  // IP). Leitura sem regex de propósito: escapar barra dentro desta template
+  // string é fonte de bug silencioso.
+  function ck(n){
+    var a = document.cookie ? document.cookie.split('; ') : [];
+    for (var i = 0; i < a.length; i++) {
+      var p = a[i].split('=');
+      if (p[0] === n) { try { return decodeURIComponent(p.slice(1).join('=')); } catch (e) { return ''; } }
+    }
+    return '';
+  }
+  // Visita vinda de anúncio: se o cookie _fbc ainda não existe, monta do fbclid
+  // no formato que a Meta documenta (fb.1.<timestamp>.<fbclid>).
+  function fbcFromUrl(){
+    try {
+      var id = new URLSearchParams(window.location.search).get('fbclid');
+      return id ? 'fb.1.' + Date.now() + '.' + id : '';
+    } catch (e) { return ''; }
+  }
+  function sendCapi(){
+    var ud = {}, fbp = ck('_fbp'), fbc = ck('_fbc') || fbcFromUrl();
+    if (fbp) ud.fbp = fbp;
+    if (fbc) ud.fbc = fbc;
+    fetch(window.location.origin + '/api/meta-capi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventName: 'PageView', eventId: window.__metaEventId, eventSourceUrl: window.location.href, userData: ud }),
+      keepalive: true
+    }).catch(function(){});
+  }
+  // o _fbp é gravado pelo fbevents.js, que carrega async — se ainda não estiver
+  // lá, espera um pouco em vez de mandar o evento sem o cookie.
+  if (ck('_fbp')) sendCapi(); else setTimeout(sendCapi, 1200);
 } catch (e) {}
 </script>
 <noscript><img height="1" width="1" style="display:none" alt=""

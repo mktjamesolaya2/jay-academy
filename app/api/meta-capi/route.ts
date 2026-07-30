@@ -21,6 +21,11 @@ const ALLOWED_EVENTS = new Set([
   "WhatsApp",
 ]);
 
+// O corpo vem do browser, então o user_data também é allowlist: só os cookies
+// do próprio Pixel. Sem isso alguém poderia injetar em/ph/external_id falsos e
+// envenenar o público de correspondência da conta.
+const ALLOWED_USER_DATA = ["fbp", "fbc"] as const;
+
 export async function POST(req: Request) {
   if (payloadTooLarge(req, 16 * 1024)) {
     return NextResponse.json({ error: "payload too large" }, { status: 413 });
@@ -51,12 +56,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "event not allowed" }, { status: 400 });
   }
 
+  const userData: Record<string, string> = {};
+  for (const k of ALLOWED_USER_DATA) {
+    const v = body.userData?.[k];
+    if (typeof v === "string" && v) userData[k] = v.slice(0, 256);
+  }
+
   await sendMetaCapiEvent({
     eventName: body.eventName,
     eventId: body.eventId,
     eventSourceUrl: body.eventSourceUrl,
     req,
-    userData: body.userData,
+    userData,
   });
 
   return NextResponse.json({ ok: true });
