@@ -227,6 +227,7 @@ export default async function DashboardPage() {
                 <EditableGreeting
                   greeting={greeting}
                   initialName={me?.name ?? "você"}
+                  editable={me?.role !== "senior"}
                 />
                 <p className="text-sm text-neutral-500 mt-1">
                   Aqui está um resumo do que está acontecendo hoje.

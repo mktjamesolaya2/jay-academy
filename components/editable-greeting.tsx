@@ -15,9 +15,11 @@ function computeGreeting(d: Date): string {
 export function EditableGreeting({
   greeting: initialGreeting,
   initialName,
+  editable = true,
 }: {
   greeting: string;
   initialName: string;
+  editable?: boolean;
 }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(initialName);
@@ -87,14 +89,16 @@ export function EditableGreeting({
       <span>
         {greeting}, {name} 👋
       </span>
-      <button
-        type="button"
-        onClick={() => setEditing(true)}
-        className="opacity-0 group-hover:opacity-100 inline-flex items-center justify-center w-7 h-7 rounded-md text-neutral-500 hover:text-white hover:bg-[#161616] transition"
-        title="Trocar como aparece o nome"
-      >
-        <Pencil size={12} strokeWidth={2.4} />
-      </button>
+      {editable && (
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="opacity-0 group-hover:opacity-100 inline-flex items-center justify-center w-7 h-7 rounded-md text-neutral-500 hover:text-white hover:bg-[#161616] transition"
+          title="Trocar como aparece o nome"
+        >
+          <Pencil size={12} strokeWidth={2.4} />
+        </button>
+      )}
     </h1>
   );
 }

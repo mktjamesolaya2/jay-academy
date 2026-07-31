@@ -149,5 +149,6 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 Migração das páginas CONCLUÍDA (~96 no KV, ~70 publicadas nos slugs originais; 68/68 URLs do
 sitemap WP respondendo na Vercel). UI de importação removida. `?wpcheck=1` → `ok:true` (nenhum
 asset do servidor WP em página publicada) = **WP pode ser desligado** após backup (dump do banco +
-`wp-content/uploads`, que não têm cópia local). Homepage `/` segue como lobby admin (decisão
-consciente). Referência viva e histórico: `notas/progresso-atual.md`.
+`wp-content/uploads`, que não têm cópia local). Homepage `/` serve provisoriamente o mesmo site
+institucional de `/jamesolaya`; login admin só em `/login` e painel protegido em `/dashboard`.
+Referência viva e histórico: `notas/progresso-atual.md`.

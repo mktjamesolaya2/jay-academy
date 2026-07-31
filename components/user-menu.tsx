@@ -6,7 +6,7 @@ import { logoutAction } from "@/app/login/actions";
 import { type SessionUser, type UserRole } from "@/lib/auth";
 
 const roleLabel: Record<UserRole, string> = {
-  senior: "Senior",
+  senior: "Administrador principal",
   admin: "Administrador",
   viewer: "Visualizador",
 };

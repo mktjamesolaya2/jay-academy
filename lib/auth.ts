@@ -29,13 +29,14 @@ const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 dias
 const USERS_KEY = "users:all";
 
 const SENIOR_EMAIL = "suporte@jamesolaya.com.br";
+const SENIOR_DISPLAY_NAME = "Administrador";
 
 // Senior hardcoded — sempre disponível mesmo sem KV. Único papel que pode
 // gerenciar outros usuários.
 const HARDCODED_SENIOR: User = {
   id: "admin-1",
   email: SENIOR_EMAIL,
-  name: "James Olaya",
+  name: SENIOR_DISPLAY_NAME,
   role: "senior",
   passwordHash: "",
   createdAt: "2026-05-28T00:00:00.000Z",
@@ -75,9 +76,15 @@ async function readUsers(): Promise<User[]> {
       ...HARDCODED_SENIOR,
       passwordHash: await getSeniorHash(),
     });
-  } else if (users[seniorIdx].role !== "senior") {
-    // Migration: força o user hardcoded como senior caso role tenha ficado antigo
-    users[seniorIdx] = { ...users[seniorIdx], role: "senior" };
+  } else {
+    // Migration: a conta principal é sempre a conta de suporte. Também corrige
+    // nomes antigos salvos no KV sem trocar senha ou data.
+    users[seniorIdx] = {
+      ...users[seniorIdx],
+      email: SENIOR_EMAIL,
+      name: SENIOR_DISPLAY_NAME,
+      role: "senior",
+    };
   }
   // Migration: roles legados ("editor") viram "admin"; demais usuários ficam
   // como estão. Se algum outro user estiver marcado como senior por engano,
@@ -139,7 +146,22 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
-  return await verifyToken(token);
+  const user = await verifyToken(token);
+  if (!user) return null;
+
+  // Sessões duram 30 dias. Normaliza também o JWT já emitido para que uma
+  // sessão antiga não continue mostrando um nome legado até o próximo login.
+  if (user.id === HARDCODED_SENIOR.id || user.email === SENIOR_EMAIL) {
+    return {
+      ...user,
+      id: HARDCODED_SENIOR.id,
+      email: SENIOR_EMAIL,
+      name: SENIOR_DISPLAY_NAME,
+      role: "senior",
+    };
+  }
+
+  return user;
 }
 
 /** Senior OU admin podem editar/criar/excluir. Viewer não. */
@@ -306,6 +328,9 @@ export async function updateMyName(
 
   const me = await getCurrentUser();
   if (!me) return { ok: false, error: "Você precisa estar logado" };
+  if (me.id === HARDCODED_SENIOR.id) {
+    return { ok: false, error: "O nome da conta principal é Administrador" };
+  }
 
   const users = await readUsers();
   const idx = users.findIndex((u) => u.id === me.id);
