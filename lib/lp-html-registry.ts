@@ -58,6 +58,15 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "purple-fuchsia",
   },
   {
+    // Prévia isolada: não entra no sitemap e usa noindex até aprovação.
+    slug: "fio-a-fio-realista-v2",
+    title: "Fio a Fio Realista V2 (prévia)",
+    htmlFile: "lp-html/fio-a-fio-realista-v2.html",
+    assetsDir: "public/lp/fio-a-fio-realista-v2",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     // Site institucional recriado no sistema dark cinematográfico (21/07).
     slug: "jamesolaya",
     title: "James Olaya (institucional)",
