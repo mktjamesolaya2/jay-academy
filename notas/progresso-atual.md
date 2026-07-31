@@ -30,6 +30,8 @@
   direita, com texto escuro e dourado de maior contraste. No desktop, texto e retrato ocupam lados opostos.
 - Corrigida a cascata responsiva dessa dobra: abaixo de 900 px a grade agora usa uma única coluna real,
   impedindo a coluna desktop vazia de comprimir os textos no mobile.
+- O retrato do professor agora sangra até a borda direita da seção em todas as larguras, compensando
+  dinamicamente a margem do container no desktop e os gutters de 20/18 px em tablets e celulares.
 - Ritmo vertical e legibilidade refinados em todas as seções: manifesto, fórmula, pilares, treino,
   currículo, acesso, professor, oferta, garantia, FAQ e fechamento.
 - Carrosséis agora deixam uma margem/preview consistente, usam cards proporcionais à viewport e entregam
