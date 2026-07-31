@@ -2,7 +2,26 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-07-31 — **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-07-31 — **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 📱 Sessão 2026-07-31 (parte 4) — revisão mobile integral da V2 Fio a Fio
+
+- A V2 recebeu contenção horizontal reforçada (`max-width`, `overflow-x: clip`, `min-width: 0`) para
+  impedir arraste lateral acidental sem bloquear a rolagem interna dos carrosséis.
+- Hero recalibrado para 320–680 px: enquadramento de James/sobrancelha, altura fluida, logo, títulos,
+  subtítulos, lista, CTA e faixa de estatísticas agora seguem uma escala específica para telas estreitas.
+- Ritmo vertical e legibilidade refinados em todas as seções: manifesto, fórmula, pilares, treino,
+  currículo, acesso, professor, oferta, garantia, FAQ e fechamento.
+- Carrosséis agora deixam uma margem/preview consistente, usam cards proporcionais à viewport e entregam
+  o gesto horizontal nativo no touch; o arraste manual por pointer ficou restrito a mouse/caneta.
+- Cards de treino deixaram alturas rígidas e passaram a usar proporções responsivas; módulos ganharam
+  alvos de toque maiores; preço e CTA foram reorganizados para leitura clara em 320–380 px.
+- CTA fixo respeita `safe-area-inset` do iPhone. Preferência `prefers-reduced-motion` pausa autoplay dos
+  carrosséis e vídeos, e estados de foco visível foram adicionados aos elementos interativos.
+- QA com user-agent de iPhone: rota e assets críticos responderam 200 com MIME correto; JavaScript e
+  pares de `<style>` validados, `git diff --check` limpo, **104 testes aprovados** e build concluído.
 
 ---
 
