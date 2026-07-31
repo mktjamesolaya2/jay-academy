@@ -25,6 +25,9 @@
   subtítulos, lista, CTA e faixa de estatísticas agora seguem uma escala específica para telas estreitas.
 - Enquadramento do hero refinado novamente após revisão visual: a arte fica ancorada à direita com zoom
   progressivo de 108–115%, deixando James maior sem cortar os ombros e preservando a sobrancelha no quadro.
+- Ajuste fino posterior: a arte do hero mobile foi deslocada 8 px para a direita, sem mudar zoom ou altura.
+- A dobra do professor passou para fundo marfim, integrando o contorno claro do PNG; James foi alinhado à
+  direita, com texto escuro e dourado de maior contraste. No desktop, texto e retrato ocupam lados opostos.
 - Ritmo vertical e legibilidade refinados em todas as seções: manifesto, fórmula, pilares, treino,
   currículo, acesso, professor, oferta, garantia, FAQ e fechamento.
 - Carrosséis agora deixam uma margem/preview consistente, usam cards proporcionais à viewport e entregam
