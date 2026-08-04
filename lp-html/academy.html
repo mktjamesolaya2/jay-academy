@@ -99,6 +99,74 @@
     }
 
     /* ============================================================
+       DOBRA 0 — ABERTURA EM LETTERING
+       Lâmina preta antes da hero. A frase de boas-vindas já está lá,
+       fantasma, e vai sendo ESCRITA letra a letra conforme a rolagem,
+       crescendo até tomar a tela. No fim a lâmina desliza pra cima e
+       entrega a hero. DUAS LINHAS, nunca mais que isso.
+
+       Por que fantasma e não invisível: uma tela preta e vazia no
+       carregamento lê como página quebrada. Começar em .12 de opacidade
+       dá o que olhar antes da primeira rolagem, sem hint instrucional.
+       ============================================================ */
+    .abertura {
+      position: relative;
+      /* sem JS a lâmina é só uma tela de título; a corrida de rolagem
+         só existe quando a animação está de pé */
+      height: 100vh; height: 100svh;
+      background: #050403;
+    }
+    .abertura.is-animada { height: 220vh; }
+    .abertura__palco {
+      position: sticky; top: 0;
+      height: 100vh; height: 100svh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    /* o mesmo halo dourado da hero, fechado no centro — é o que amarra a
+       abertura na dobra seguinte em vez de parecer outra página */
+    .abertura__halo {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(58% 52% at 50% 50%,
+        rgba(172, 151, 81, .17) 0%, rgba(150, 104, 46, .07) 44%, rgba(172, 151, 81, 0) 72%);
+    }
+    .abertura.is-animada .abertura__halo { opacity: 0; }
+    .abertura__bloco {
+      position: relative; z-index: 1;
+      text-align: center;
+      transform-origin: 50% 50%;
+      will-change: transform;
+    }
+    /* linha 1 na língua do rótulo da LP: minúscula, caixa alta, muito espaçada */
+    .abertura__rotulo {
+      font-size: clamp(10px, .95vw, 15px);
+      font-weight: 400;
+      letter-spacing: .46em;
+      margin-right: -.46em;   /* devolve o espaço que o tracking joga no fim */
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .58);
+      margin-bottom: clamp(14px, 1.8vw, 26px);
+    }
+    /* linha 2 é a que cresce até a borda: caixa alta fina, como o material impresso */
+    .abertura__nome {
+      font-size: min(11.6vw, 224px);
+      font-weight: 200;
+      line-height: .92;
+      letter-spacing: .04em;
+      margin-right: -.04em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      white-space: nowrap;
+    }
+    .abertura .letra { display: inline-block; }
+    /* estado antes do primeiro quadro — evita o flash da frase inteira acesa */
+    .abertura.is-animada .letra { opacity: .12; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .abertura, .abertura.is-animada { height: 100vh; height: 100svh; }
+    }
+
+    /* ============================================================
        DOBRA 1 — HERO
        ============================================================ */
     .hero {
@@ -1094,6 +1162,19 @@
 </head>
 <body>
 
+  <!-- ============ DOBRA 0 — ABERTURA ============ -->
+  <!-- O texto vem escrito no HTML e é o JS que o quebra em letras. Se o script
+       não rodar, a lâmina continua sendo uma tela de título legível. -->
+  <section class="abertura">
+    <div class="abertura__palco">
+      <div class="abertura__halo"></div>
+      <div class="abertura__bloco">
+        <p class="abertura__rotulo">Bem-vindo à</p>
+        <p class="abertura__nome">Jay Academy</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ DOBRA 1 — HERO ============ -->
   <section class="hero">
     <div class="hero__palco">
@@ -1107,12 +1188,13 @@
 
       <div class="hero__content">
         <p class="hero__kicker">Sua carreira na área da beleza</p>
-        <!-- ⚠️ 04/08 (ata da reunião): o título dizia "Micropigmentação de alto
-             nível", que descrevia o assunto mas não dizia ONDE a visitante está.
-             Trocado por boas-vindas, deixando o lugar explícito na primeira linha. -->
+        <!-- ⚠️ 04/08: a ata pedia um título que dissesse ONDE a visitante está, e
+             por isso virou "Bem-vindo à Jay Academy". O James mudou de ideia no
+             mesmo dia: o boas-vindas saiu daqui e virou a DOBRA 0 (abertura em
+             lettering), então a hero volta ao título original. -->
         <h1 class="hero__title">
-          Bem-vindo à
-          <span>Jay Academy</span>
+          Micropigmentação
+          <span>de alto nível</span>
         </h1>
         <p class="hero__text">
           A escola de James Olaya para profissionais que buscam excelência,
@@ -1634,9 +1716,67 @@
   </footer>
 
   <script>
+    const semMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---- DOBRA 0: a frase é ESCRITA conforme a rolagem ----
+       A rolagem dentro da lâmina vira um progresso de 0 a 1. Até .62 desse
+       progresso as letras acendem em cascata e o bloco cresce; o resto é a
+       pausa com a frase inteira na tela, antes de a lâmina sair por cima. */
+    const abertura = document.querySelector('.abertura');
+    if (abertura && !semMovimento) {
+      const bloco = abertura.querySelector('.abertura__bloco');
+      const halo = abertura.querySelector('.abertura__halo');
+      const letras = [];
+      abertura.querySelectorAll('.abertura__rotulo, .abertura__nome').forEach((linha) => {
+        const texto = linha.textContent.trim();
+        linha.textContent = '';
+        Array.from(texto).forEach((caractere) => {
+          const span = document.createElement('span');
+          span.className = 'letra';
+          // o span é inline-block: um espaço comum colapsaria pra zero de largura
+          span.textContent = caractere === ' ' ? ' ' : caractere;
+          linha.appendChild(span);
+          letras.push(span);
+        });
+      });
+      abertura.classList.add('is-animada');
+
+      // cada letra começa antes de a anterior terminar: é a sobreposição que
+      // dá leitura de escrita. Sem ela vira fade em bloco, que é outra coisa.
+      const JANELA = .30;
+
+      const pintar = () => {
+        const corrida = abertura.offsetHeight - window.innerHeight;
+        const topo = -abertura.getBoundingClientRect().top;
+        const p = corrida > 0 ? Math.min(1, Math.max(0, topo / corrida)) : 1;
+        const escrita = Math.min(1, p / .62);
+
+        letras.forEach((letra, i) => {
+          const inicio = (i / letras.length) * (1 - JANELA);
+          const t = Math.min(1, Math.max(0, (escrita - inicio) / JANELA));
+          const e = 1 - Math.pow(1 - t, 3);
+          letra.style.opacity = (.12 + .88 * e).toFixed(3);
+          letra.style.transform = 'translateY(' + ((1 - e) * .16).toFixed(3) + 'em)';
+        });
+
+        bloco.style.transform = 'scale(' + (.70 + .30 * Math.min(1, p / .72)).toFixed(4) + ')';
+        halo.style.opacity = Math.min(1, p / .5).toFixed(3);
+      };
+
+      let agendado = false;
+      const agendar = () => {
+        if (agendado) return;
+        agendado = true;
+        requestAnimationFrame(() => { agendado = false; pintar(); });
+      };
+      window.addEventListener('scroll', agendar, { passive: true });
+      window.addEventListener('resize', agendar);
+      pintar();
+    }
+
     // respiro na entrada de cada dobra — uma vez só, sem loop
     const alvos = document.querySelectorAll('.surge');
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    if (!semMovimento && 'IntersectionObserver' in window) {
       const observador = new IntersectionObserver((entradas) => {
         entradas.forEach((e) => {
           if (e.isIntersecting) { e.target.classList.add('visivel'); observador.unobserve(e.target); }
