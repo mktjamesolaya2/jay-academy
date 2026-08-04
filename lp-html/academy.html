@@ -605,6 +605,33 @@
       transition: color .3s ease, border-color .3s ease, letter-spacing .3s ease;
     }
     .card:hover .card__cta { color: var(--preto); border-color: var(--preto); letter-spacing: .32em; }
+    /* ⚠️ 04/08 (ata): CARD INTEIRO CLICÁVEL. Em vez de embrulhar tudo num <a>
+       (que aninharia links e quebraria a leitura por leitor de tela), o próprio
+       "Ver formação" ganha uma camada invisível cobrindo o card. Um link só,
+       área de clique inteira. */
+    .card { position: relative; }
+    .card__cta::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+    .card:hover .card__capa { transform: translateY(-6px); }
+
+    /* ⚠️ 04/08 (ata): DEPOIMENTOS EM CARD. Eram tipográficos, só com filete em
+       cima. Viram brochura pousada sobre o off-white — a mesma linguagem das
+       capas dos cursos, que é o card que o James aprovou. */
+    .claro .depoimento {
+      padding: clamp(20px, 2.2vw, 30px);
+      border-top: 0;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(16, 24, 32, .07), 0 1px 2px rgba(16, 24, 32, .06);
+    }
+    .claro .depoimento--destaque { box-shadow: 0 14px 38px rgba(16, 24, 32, .11), 0 1px 2px rgba(16, 24, 32, .06); }
+    .claro .depoimento cite { margin-top: auto; padding-top: clamp(14px, 1.6vw, 20px); border-top: 1px solid rgba(16, 24, 32, .12); }
+    .claro .depoimento blockquote { flex: 1; }
+
+    /* ⚠️ 04/08 (ata): a dobra do método sobrava vazio e o texto ficava jogado
+       pra esquerda. Colunas mais próximas e o bloco de texto centrado no eixo
+       do retrato. */
+    #metodo .metodo__topo { gap: clamp(20px, 2.6vw, 44px); align-items: center; }
+    #metodo .metodo__topo .titulo-lamina { max-width: 22ch; }
+
     /* o MESMO link, na paleta escura — pra não precisar de um botão só dele */
     .secao:not(.claro) .card__cta { color: var(--ouro-claro); border-bottom-color: rgba(220, 195, 131, .45); }
     .secao:not(.claro) a.card__cta:hover { color: var(--off-white); border-color: var(--off-white); letter-spacing: .32em; }
@@ -1080,9 +1107,12 @@
 
       <div class="hero__content">
         <p class="hero__kicker">Sua carreira na área da beleza</p>
+        <!-- ⚠️ 04/08 (ata da reunião): o título dizia "Micropigmentação de alto
+             nível", que descrevia o assunto mas não dizia ONDE a visitante está.
+             Trocado por boas-vindas, deixando o lugar explícito na primeira linha. -->
         <h1 class="hero__title">
-          Micropigmentação
-          <span>de alto nível</span>
+          Bem-vindo à
+          <span>Jay Academy</span>
         </h1>
         <p class="hero__text">
           A escola de James Olaya para profissionais que buscam excelência,
@@ -1451,9 +1481,11 @@
           <strong>leva a profissão a sério.</strong>
         </h2>
         <p class="texto-lamina">
-          Um ambiente pensado para proporcionar uma experiência de formação completa, com
-          estrutura, conforto e tudo o que você precisa para se concentrar no que realmente
-          importa: sua evolução.
+          <!-- ⚠️ 04/08 (ata): negrito estratégico pra criar hierarquia no corrido.
+               O `.texto-lamina b` já existe no sistema e pinta em off-white. -->
+          Um ambiente pensado para proporcionar uma <b>experiência de formação completa</b>, com
+          <b>estrutura</b> e <b>conforto</b> e tudo o que você precisa para se concentrar no que
+          realmente importa: <b>sua evolução</b>.
         </p>
       </div>
 
