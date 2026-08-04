@@ -1,0 +1,1619 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jay Academy — formações presenciais em micropigmentação</title>
+  <meta name="description" content="A escola de James Olaya para profissionais que buscam excelência, técnica e resultados reais na micropigmentação." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ============================================================
+       SISTEMA — só tema e cores do Brand Book JAY.O (sem grafismo grego)
+       ============================================================ */
+    :root {
+      --ouro: #AC9751;
+      --ouro-claro: #DCC383;
+      --preto: #101820;
+      --off-white: #F8F7F2;
+      --fundo: #070605;
+      --painel: #0E0C0A;
+      --linha: rgba(172, 151, 81, .22);
+      --texto-fraco: rgba(248, 247, 242, .70);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--fundo);
+      color: var(--off-white);
+      font-family: 'Poppins', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* --- blocos de base reaproveitados em todas as dobras --- */
+    .faixa { width: 90%; max-width: 1440px; margin: 0 auto; }
+    /* fundo CHAPADO do começo ao fim — nada de glow por seção: qualquer gradiente
+       aqui cria uma borda visível entre uma dobra e a seguinte. */
+    /* REGRA DA LP: o intervalo entre dobras separa, não esvazia.
+       ~100px em tela cheia. Nada de 150px+ de padding — vira buraco. */
+    .secao { padding: clamp(58px, 6.8vw, 104px) 0; position: relative; }
+
+    /* filete de cabelo dourado separando uma dobra da outra — o respiro de revista.
+       Só entre seções irmãs: nunca logo abaixo da hero. */
+    .secao + .secao::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 1440px;
+      height: 1px;
+      background: linear-gradient(to right, rgba(172, 151, 81, 0), rgba(172, 151, 81, .28) 18%, rgba(172, 151, 81, .28) 82%, rgba(172, 151, 81, 0));
+    }
+
+    /* O sistema tipográfico antigo (.rotulo/.eyebrow/.titulo/.corpo — título
+       grande com dourado no meio da frase) SAIU: violava a regra nº 1 da LP
+       ("nunca dourado no texto") e deixava a metade de baixo da página com
+       outra cara. Tudo agora é a tipografia de lâmina, mais abaixo. */
+
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      font-size: clamp(10.5px, .78vw, 12px);
+      font-weight: 500;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      padding: 16px clamp(26px, 2.4vw, 40px);
+      border-radius: 999px;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn--ouro {
+      background: linear-gradient(120deg, var(--ouro-claro) 0%, var(--ouro) 58%, #8e7c40 100%);
+      color: var(--preto);
+      box-shadow: 0 14px 34px rgba(172, 151, 81, .26);
+    }
+    .btn--ouro:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(172, 151, 81, .38); }
+    .btn--linha { border: 1px solid rgba(172, 151, 81, .55); color: var(--off-white); }
+    .btn--linha:hover { border-color: var(--ouro-claro); background: rgba(172, 151, 81, .12); transform: translateY(-2px); }
+
+    .moldura {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .55);
+    }
+    .moldura img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+    /* entrada suave — um respiro, não uma animação de template */
+    .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+    .surge.visivel { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .surge { opacity: 1; transform: none; transition: none; }
+      * { animation: none !important; }
+    }
+
+    /* ============================================================
+       DOBRA 1 — HERO
+       ============================================================ */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100svh;
+      background:
+        /* 1ª camada: resolve o pé da hero no preto exato do resto da página —
+           sem isso o degradê morre num tom diferente e cria uma emenda visível */
+        linear-gradient(to bottom, rgba(7, 6, 5, 0) 52%, var(--fundo) 92%),
+        radial-gradient(60% 56% at 50% 50%, rgba(172, 151, 81, .20) 0%, rgba(150, 104, 46, .10) 46%, rgba(172, 151, 81, 0) 74%),
+        radial-gradient(125% 95% at 50% 45%, rgba(46, 34, 20, .5) 0%, var(--fundo) 74%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero__palco { position: relative; width: 90%; max-width: 1500px; }
+    .hero__foto {
+      position: relative;
+      aspect-ratio: 2.15 / 1;
+      border-radius: 26px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 40px 120px rgba(0, 0, 0, .6);
+    }
+    .hero__foto picture, .hero__foto img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    /* poço elíptico ancorado no canto do texto */
+    .hero__scrim {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(125% 108% at 2% 106%,
+          rgba(5, 4, 3, .97) 0%, rgba(5, 4, 3, .93) 26%, rgba(5, 4, 3, .78) 44%,
+          rgba(5, 4, 3, .44) 60%, rgba(5, 4, 3, .14) 74%, rgba(5, 4, 3, 0) 86%),
+        linear-gradient(to top, rgba(6, 5, 4, .60) 0%, rgba(6, 5, 4, .20) 18%, rgba(6, 5, 4, 0) 36%);
+    }
+    .hero__content {
+      position: absolute; z-index: 2;
+      left: clamp(24px, 4.5%, 76px);
+      bottom: clamp(46px, 6.4%, 82px);
+      width: min(45%, 560px);
+    }
+
+    /* rótulo/kicker no padrão da apresentação: minúsculo, caixa alta, muito espaçado */
+    .hero__kicker {
+      font-size: clamp(9px, .68vw, 11px);
+      font-weight: 400;
+      letter-spacing: .46em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .74);
+      text-shadow: 0 1px 14px rgba(0, 0, 0, .85);
+      margin-bottom: clamp(18px, 2.2vw, 32px);
+    }
+
+    /* título em CAIXA ALTA, 1ª linha em peso médio e 2ª leve — como o deck escreve.
+       Sem dourado e sem gradiente: no material da marca o título é sempre branco. */
+    .hero__title {
+      font-size: clamp(22px, 2.7vw, 45px);
+      font-weight: 400;
+      line-height: 1.16;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 30px rgba(0, 0, 0, .55);
+    }
+    .hero__title span { display: block; font-weight: 200; color: rgba(248, 247, 242, .88); }
+
+    /* filete curto separando título e texto — o respiro do material impresso */
+    .hero__text {
+      position: relative;
+      margin-top: clamp(20px, 2.4vw, 34px);
+      padding-top: clamp(18px, 2.1vw, 28px);
+      font-size: clamp(12.5px, .92vw, 15px);
+      font-weight: 300; line-height: 1.75;
+      letter-spacing: .012em;
+      color: rgba(248, 247, 242, .74);
+      max-width: 38ch;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, .7);
+    }
+    .hero__text::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 54px; height: 1px;
+      background: rgba(248, 247, 242, .38);
+    }
+
+    .acoes { display: flex; flex-wrap: wrap; gap: 14px; margin-top: clamp(24px, 2.8vw, 40px); }
+
+    /* rodapé da página, igual ao das lâminas: tagline à esquerda, @ à direita */
+    .hero__frame {
+      position: absolute;
+      z-index: 2;
+      left: clamp(24px, 4.5%, 76px);
+      right: clamp(24px, 4.5%, 76px);
+      bottom: clamp(18px, 2.6%, 34px);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: clamp(8px, .58vw, 9.5px);
+      font-weight: 400;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .38);
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       TIPOGRAFIA DE LÂMINA — o jeito que o material JAY.O escreve.
+       Caixa alta, pesos misturados na mesma frase, sem dourado no texto,
+       rótulos minúsculos com muito espaçamento. É o ÚNICO sistema de
+       título da LP — o antigo (.titulo/.eyebrow) foi removido.
+       ============================================================ */
+    .rotulo-lamina {
+      font-size: clamp(9px, .68vw, 11px);
+      font-weight: 400;
+      letter-spacing: .46em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .55);
+    }
+
+    .titulo-lamina {
+      margin-top: clamp(22px, 2.6vw, 40px);
+      font-size: clamp(20px, 2.35vw, 40px);
+      font-weight: 200;
+      line-height: 1.22;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .82);
+      text-wrap: balance;
+    }
+    .titulo-lamina strong { display: block; font-weight: 400; color: var(--off-white); }
+
+    .texto-lamina {
+      position: relative;
+      margin-top: clamp(24px, 2.8vw, 40px);
+      padding-top: clamp(20px, 2.2vw, 30px);
+      font-size: clamp(12.5px, .92vw, 15px);
+      font-weight: 300;
+      line-height: 1.78;
+      letter-spacing: .012em;
+      color: rgba(248, 247, 242, .70);
+      max-width: 44ch;
+    }
+    .texto-lamina::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 54px; height: 1px;
+      background: rgba(248, 247, 242, .32);
+    }
+    .texto-lamina + .texto-lamina { margin-top: 1.1em; padding-top: 0; }
+    .texto-lamina + .texto-lamina::before { display: none; }
+    .texto-lamina b { font-weight: 400; color: var(--off-white); }
+
+    /* remate: a frase que fecha a dobra, no mesmo device do título */
+    .remate {
+      margin-top: clamp(30px, 3.6vw, 56px);
+      padding-top: clamp(18px, 2.1vw, 28px);
+      border-top: 1px solid rgba(172, 151, 81, .26);
+      font-size: clamp(11.5px, .95vw, 15px);
+      font-weight: 200;
+      line-height: 1.85;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .58);
+    }
+    .remate b { display: block; font-weight: 400; color: var(--off-white); }
+
+    /* legenda de foto: etiqueta minúscula em caixa alta, como no material */
+    .legenda-foto {
+      margin-top: clamp(12px, 1.3vw, 18px);
+      font-size: clamp(8.5px, .6vw, 10px);
+      font-weight: 400;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .42);
+    }
+
+    /* ============================================================
+       DOBRA 2 — a pausa. Sem foto: só tipografia respirando no preto,
+       com os dois parágrafos em colunas, como uma abertura de matéria.
+       ============================================================ */
+    /* a dobra da pausa pode respirar um pouco mais que as outras, mas pouco */
+    .manifesto { padding: clamp(70px, 8.2vw, 128px) 0; }
+    .manifesto__titulo {
+      font-size: clamp(24px, 3.5vw, 60px);
+      line-height: 1.18;
+      max-width: 19ch;
+    }
+    .manifesto__colunas {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(24px, 3.2vw, 70px);
+      margin-top: clamp(34px, 4vw, 66px);
+      max-width: 940px;
+    }
+    .manifesto__colunas .texto-lamina { margin-top: 0; max-width: none; }
+    .manifesto__colunas .texto-lamina + .texto-lamina { padding-top: clamp(20px, 2.2vw, 30px); }
+    .manifesto__colunas .texto-lamina + .texto-lamina::before { display: block; }
+    .manifesto .remate { max-width: 62ch; }
+
+    /* ============================================================
+       DOBRA 2 — NÃO É APENAS UM CURSO
+       ============================================================ */
+    .dupla {
+      display: grid;
+      grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+      gap: clamp(28px, 4vw, 76px);
+      align-items: center;
+    }
+    .dupla--invertida { grid-template-columns: minmax(0, 1.14fr) minmax(0, 0.86fr); }
+    .dupla__texto { display: flex; flex-direction: column; }
+    /* o :first-of-type de <p> aqui era o eyebrow, não o parágrafo — a regra
+       antiga nunca casava e o texto ficava colado no título. */
+    .dupla__texto .titulo-lamina + .texto-lamina,
+    .cabeca-secao .titulo-lamina + .texto-lamina { margin-top: clamp(22px, 2.8vw, 42px); }
+    /* o cabeçalho nunca teve respiro próprio: o título encostava na grade
+       logo abaixo (cards, depoimentos, painéis) */
+    .cabeca-secao { margin-bottom: clamp(30px, 3.6vw, 58px); }
+    .frase-corte {
+      margin-top: clamp(22px, 2.6vw, 38px);
+      padding-top: clamp(18px, 2vw, 26px);
+      border-top: 1px solid var(--linha);
+      font-size: clamp(15px, 1.25vw, 20px);
+      font-weight: 300;
+      line-height: 1.5;
+      color: var(--off-white);
+    }
+    .frase-corte b { display: block; font-weight: 600; color: var(--ouro-claro); }
+
+    /* ============================================================
+       DOBRA 3 — lâmina CLARA. A apresentação alterna páginas escuras e
+       claras; esta é a clara. Tokens invertidos só dentro do `.claro`.
+       ============================================================ */
+    .claro {
+      background: var(--off-white);
+      color: var(--preto);
+    }
+    .claro .rotulo-lamina { color: rgba(16, 24, 32, .52); }
+    .claro .titulo-lamina { color: rgba(16, 24, 32, .60); }
+    .claro .titulo-lamina strong { color: var(--preto); }
+    .claro .texto-lamina { color: rgba(16, 24, 32, .70); }
+    .claro .texto-lamina::before { background: rgba(16, 24, 32, .30); }
+    .claro .texto-lamina b { color: var(--preto); }
+    .claro .remate { border-top-color: rgba(16, 24, 32, .22); color: rgba(16, 24, 32, .62); }
+    .claro .remate b { color: var(--preto); }
+    /* o filete dourado entre seções não existe quando a próxima é clara */
+    .claro::before { display: none !important; }
+    .secao.claro + .secao::before { display: none; }
+
+    /* cabeçalho em duas colunas: título à esquerda, entrada à direita */
+    .cabeca-dupla {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+      gap: clamp(24px, 4vw, 90px);
+      align-items: end;
+      margin-bottom: clamp(36px, 4.2vw, 68px);
+    }
+    .cabeca-dupla .titulo-lamina { max-width: 15ch; }
+    .cabeca-dupla .texto-lamina { margin-top: 0; max-width: 46ch; }
+
+    /* trio escalonado — as fotos não ficam alinhadas na mesma linha */
+    .trio {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(16px, 2.4vw, 40px);
+      align-items: start;
+    }
+    .trio figure { margin: 0; }
+    .trio figure:nth-child(2) { margin-top: clamp(20px, 3.2vw, 58px); }
+    .trio figure:nth-child(3) { margin-top: clamp(40px, 6.4vw, 116px); }
+    .trio__quadro { position: relative; overflow: hidden; border-radius: 14px; background: rgba(16, 24, 32, .06); }
+    .trio__quadro img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .trio figure:nth-child(1) .trio__quadro { aspect-ratio: 3 / 4; }
+    .trio figure:nth-child(2) .trio__quadro { aspect-ratio: 4 / 5; }
+    .trio figure:nth-child(3) .trio__quadro { aspect-ratio: 5 / 6; }
+
+    .trio figcaption {
+      margin-top: clamp(14px, 1.4vw, 20px);
+      padding-top: clamp(10px, 1vw, 14px);
+      border-top: 1px solid rgba(16, 24, 32, .18);
+      font-size: clamp(11.5px, .86vw, 13.5px);
+      font-weight: 300;
+      line-height: 1.6;
+      color: rgba(16, 24, 32, .62);
+    }
+    .trio figcaption b {
+      display: block;
+      font-weight: 400;
+      color: var(--preto);
+      font-size: clamp(9px, .68vw, 10.5px);
+      letter-spacing: .32em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* quatro afirmações, não quatro legendas: a frase ganha corpo e peso leve,
+       o rótulo vira o carimbo em cima, e filetes verticais separam as colunas. */
+    .indicadores {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: clamp(40px, 4.8vw, 76px);
+      padding-top: clamp(26px, 3vw, 44px);
+      border-top: 1px solid rgba(16, 24, 32, .18);
+    }
+    .indicadores div {
+      padding: 0 clamp(18px, 2.4vw, 42px);
+      border-left: 1px solid rgba(16, 24, 32, .12);
+    }
+    .indicadores div:first-child { padding-left: 0; border-left: 0; }
+    .indicadores div:last-child { padding-right: 0; }
+    .indicadores b {
+      display: block;
+      font-size: clamp(8.5px, .64vw, 10px);
+      font-weight: 400;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      color: #8A7A3E;
+      margin-bottom: clamp(14px, 1.6vw, 22px);
+    }
+    .indicadores span {
+      display: block;
+      font-size: clamp(15px, 1.35vw, 23px);
+      font-weight: 200;
+      line-height: 1.34;
+      letter-spacing: -.005em;
+      color: rgba(16, 24, 32, .88);
+      max-width: 13ch;
+      text-wrap: balance;
+    }
+
+    /* ============================================================
+       DOBRA 4 — O MÉTODO. Cabeçalho e retrato dividem o topo; as cinco
+       etapas correm EMBAIXO, na largura toda, em colunas separadas por
+       filete vertical — o mesmo device dos indicadores da dobra 3. O
+       trilho com pontinhos que existia aqui lia como lista de tópicos.
+       ============================================================ */
+    .metodo__topo {
+      display: grid;
+      grid-template-columns: minmax(0, 1.34fr) minmax(0, .66fr);
+      gap: clamp(28px, 4vw, 70px);
+      align-items: end;
+      margin-bottom: clamp(34px, 4vw, 60px);
+    }
+    /* o título abre a dobra num corpo maior: ao lado de um retrato inteiro,
+       o tamanho padrão deixava metade da faixa vazia */
+    .metodo__topo .titulo-lamina { font-size: clamp(22px, 2.9vw, 50px); max-width: 26ch; }
+    /* o retrato é uma coluna contida na MESMA moldura das dobras 7 e 8:
+       full-bleed virava um rosto monumental e desalinhava a dobra da página */
+    .metodo__retrato { margin: 0; }
+    .metodo__retrato .moldura { aspect-ratio: 3 / 4; }
+
+    .etapas {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      padding-top: clamp(24px, 2.8vw, 40px);
+      border-top: 1px solid rgba(172, 151, 81, .26);
+    }
+    .etapa {
+      padding: 0 clamp(14px, 1.8vw, 32px);
+      border-left: 1px solid rgba(172, 151, 81, .13);
+    }
+    .etapa:first-child { padding-left: 0; border-left: 0; }
+    .etapa:last-child { padding-right: 0; }
+
+    /* o numeral vive na mesma linha do rótulo: marca a ordem sem virar
+       aquele numeral gigante e apagado que o James já tinha reprovado */
+    .etapa__rotulo {
+      display: flex;
+      align-items: baseline;
+      gap: clamp(8px, .8vw, 12px);
+      font-size: clamp(8px, .62vw, 9.5px);
+      font-weight: 400;
+      letter-spacing: .32em;
+      text-transform: uppercase;
+      color: var(--ouro);
+      margin-bottom: clamp(12px, 1.4vw, 18px);
+    }
+    .etapa__rotulo i { font-style: normal; letter-spacing: .18em; color: rgba(248, 247, 242, .30); }
+    .etapa h3 {
+      font-size: clamp(14px, 1.15vw, 19px);
+      font-weight: 200;
+      line-height: 1.3;
+      letter-spacing: -.005em;
+      color: var(--off-white);
+      margin-bottom: clamp(8px, .9vw, 13px);
+      text-wrap: balance;
+    }
+    .etapa p { font-size: clamp(11.5px, .82vw, 13.5px); font-weight: 300; color: rgba(248, 247, 242, .52); line-height: 1.66; }
+
+    /* ============================================================
+       DOBRA 5 — AS FORMAÇÕES
+       ============================================================ */
+    /* A Vogue é a formação de alto nível da casa: ela ocupa a vitrine e as outras
+       quatro ficam ao lado, menores. Hierarquia em vez de cinco iguais. */
+    .formacoes {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: clamp(22px, 3vw, 52px);
+      align-items: start;
+    }
+    .satelites {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 28px);
+    }
+    /* etiqueta da formação de topo — mesmo filete/ouro dos rótulos da LP */
+    .fita {
+      /* o .card é flex-column: sem o align-self a etiqueta estica na largura toda */
+      align-self: flex-start;
+      margin-bottom: 12px;
+      font-size: 9.5px;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: #8A7A3E;
+      border: 1px solid rgba(138, 122, 62, .45);
+      padding: 5px 12px;
+    }
+    .card--destaque .card__nome { font-size: clamp(16px, 1.5vw, 24px); }
+    .card--destaque .card__frase { max-width: 46ch; font-size: clamp(13px, 1vw, 15px); }
+    /* O card É a capa oficial do curso (Canva "JAYO ACADEMY - CAPAS CURSOS"):
+       foto real, a tipografia JAY.O e a palavra fantasma em creme. A arte vem
+       montada sobre BRANCO, então o card é a brochura impressa pousada sobre o
+       off-white da seção — canto reto e sombra rasa, como papel na mesa. */
+    .card { position: relative; display: flex; flex-direction: column; }
+    .card__capa {
+      position: relative;
+      aspect-ratio: 900 / 1243;   /* proporção exata da capa: nada de recorte */
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 10px 30px rgba(16, 24, 32, .13), 0 1px 2px rgba(16, 24, 32, .10);
+      transition: transform .5s cubic-bezier(.16, 1, .3, 1), box-shadow .5s ease;
+    }
+    .card__capa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card:hover .card__capa {
+      transform: translateY(-6px);
+      box-shadow: 0 22px 48px rgba(16, 24, 32, .20), 0 1px 2px rgba(16, 24, 32, .10);
+    }
+
+    .card__corpo { padding-top: clamp(16px, 1.5vw, 22px); display: flex; flex-direction: column; flex: 1; }
+    .card__nome {
+      font-size: clamp(13px, .98vw, 16px);
+      font-weight: 400;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--preto);
+      line-height: 1.35;
+    }
+    .card__nome span {
+      display: block;
+      font-weight: 300;
+      color: #8A7A3E;
+      letter-spacing: .26em;
+      font-size: .74em;
+      margin-top: 4px;
+    }
+    .card__frase {
+      margin-top: 12px;
+      font-size: clamp(12px, .88vw, 13.5px);
+      font-weight: 300;
+      line-height: 1.62;
+      color: rgba(16, 24, 32, .62);
+      flex: 1;
+    }
+
+    /* ficha técnica: rótulo em caixa alta fina + valor, separados por filete */
+    .ficha { margin-top: clamp(16px, 1.5vw, 22px); border-top: 1px solid rgba(16, 24, 32, .20); }
+    .ficha div {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(16, 24, 32, .10);
+    }
+    .ficha dt {
+      font-size: 9.5px;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: rgba(16, 24, 32, .42);
+      white-space: nowrap;
+    }
+    .ficha dd { font-size: clamp(11.5px, .88vw, 13.5px); font-weight: 300; color: var(--preto); text-align: right; }
+    .ficha dd.ouro { color: #8A7A3E; font-weight: 400; }
+    .ficha dd.vago { color: rgba(16, 24, 32, .30); font-style: italic; }
+    /* ⚠️ Decisão do James (03/08): NADA de valor de kit na dobra. O kit continua
+       como argumento ("incluso"), mas sem número. */
+
+    .card__cta {
+      align-self: flex-start;
+      margin-top: clamp(16px, 1.5vw, 22px);
+      text-decoration: none;
+      font-size: 10.5px;
+      font-weight: 400;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: #8A7A3E;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(138, 122, 62, .45);
+      transition: color .3s ease, border-color .3s ease, letter-spacing .3s ease;
+    }
+    .card:hover .card__cta { color: var(--preto); border-color: var(--preto); letter-spacing: .32em; }
+    /* o MESMO link, na paleta escura — pra não precisar de um botão só dele */
+    .secao:not(.claro) .card__cta { color: var(--ouro-claro); border-bottom-color: rgba(220, 195, 131, .45); }
+    .secao:not(.claro) a.card__cta:hover { color: var(--off-white); border-color: var(--off-white); letter-spacing: .32em; }
+
+    /* faixa do kit de produtos — a foto da linha JAY.O tem fundo PRETO, então
+       ela não pode encostar no claro: vira um painel escuro dentro da lâmina. */
+    /* A foto do kit é uma tira larga com TRÊS conjuntos separados por vazios
+       pretos enormes — e a copy nomeia exatamente esses três. Ela foi recortada
+       em três painéis (`kit-experts`, `kit-homecare`, `kit-pigmentos`), cada um
+       com o seu nome. Some o vazio e a imagem passa a dizer o que o texto diz. */
+    .kit {
+      margin-top: clamp(40px, 5vw, 84px);
+      padding-top: clamp(30px, 3.4vw, 54px);
+      border-top: 1px solid rgba(16, 24, 32, .18);
+    }
+    .kit__lead { max-width: 68ch; margin-bottom: clamp(24px, 2.8vw, 44px); }
+    .kit__lead > * + * { margin-top: clamp(12px, 1.4vw, 20px); }
+    /* as frações repetem a largura de cada recorte: assim os três saem na MESMA
+       escala e na mesma altura, sem ampliar nenhum. */
+    .kit__grupos {
+      display: grid;
+      grid-template-columns: 607fr 430fr 560fr;
+      gap: clamp(12px, 1.4vw, 20px);
+      align-items: start;
+    }
+    .grupo__foto {
+      background: var(--fundo);
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(16, 24, 32, .16);
+      transition: transform .5s cubic-bezier(.16, 1, .3, 1), box-shadow .5s ease;
+    }
+    .grupo:hover .grupo__foto { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(16, 24, 32, .24); }
+    .grupo__foto img { width: 100%; height: auto; display: block; }
+    .grupo figcaption { padding-top: clamp(12px, 1.2vw, 18px); }
+    .grupo figcaption b {
+      display: block;
+      font-size: clamp(11px, .86vw, 13px);
+      font-weight: 400;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--preto);
+    }
+    .grupo figcaption span {
+      display: block;
+      margin-top: 7px;
+      font-size: clamp(11px, .82vw, 12.5px);
+      font-weight: 300;
+      line-height: 1.55;
+      color: rgba(16, 24, 32, .58);
+    }
+
+    /* ============================================================
+       DOBRA 6 — QUAL É O SEU MOMENTO
+       ============================================================ */
+    /* QUIZ DE REVISTA. O título da dobra já é uma pergunta, então ela virou a
+       pergunta de verdade: quatro alternativas A–D numa grade de filetes e o
+       GABARITO no rodapé dizendo a formação de cada uma. Assim a dobra entrega o
+       que promete sem repetir o card de capa da dobra 5. */
+    .momentos {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: clamp(34px, 4vw, 62px);
+      border-top: 1px solid rgba(248, 247, 242, .14);
+    }
+    .momento {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: clamp(14px, 1.8vw, 26px);
+      align-items: start;
+      padding: clamp(22px, 2.6vw, 38px) clamp(16px, 2vw, 32px);
+      border-bottom: 1px solid rgba(248, 247, 242, .14);
+      text-decoration: none;
+      color: inherit;
+      transition: background .3s ease;
+    }
+    /* o filete do meio: só nas ímpares, senão a coluna da direita ganha uma
+       borda solta na beira da faixa */
+    .momento:nth-child(odd) { border-right: 1px solid rgba(248, 247, 242, .14); }
+    .momento:hover { background: rgba(172, 151, 81, .05); }
+    .momento__letra {
+      font-size: clamp(28px, 3vw, 48px);
+      font-weight: 200;
+      line-height: .9;
+      color: rgba(172, 151, 81, .55);
+      transition: color .3s ease;
+    }
+    .momento:hover .momento__letra { color: var(--ouro-claro); }
+    .momento b {
+      display: block;
+      font-size: clamp(11px, .86vw, 13px);
+      font-weight: 400;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--ouro-claro);
+    }
+    .momento__txt {
+      display: block;
+      margin-top: 10px;
+      font-size: clamp(12.5px, .92vw, 14px);
+      font-weight: 300;
+      line-height: 1.62;
+      color: var(--texto-fraco);
+    }
+    /* o gabarito é quem diz PARA QUAL formação cada momento leva */
+    .gabarito {
+      margin-top: clamp(22px, 2.6vw, 36px);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px clamp(20px, 2.6vw, 44px);
+      align-items: baseline;
+    }
+    .gabarito__rot {
+      font-size: 9px;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .34);
+    }
+    .gabarito a {
+      text-decoration: none;
+      font-size: clamp(10.5px, .82vw, 12.5px);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .62);
+      transition: color .3s ease;
+    }
+    .gabarito a b { font-weight: 300; color: var(--ouro-claro); transition: color .3s ease; }
+    .gabarito a:hover, .gabarito a:hover b { color: var(--off-white); }
+    /* bloco centralizado: o filete do texto-lâmina nasce à esquerda, então
+       precisa ser recentrado — senão fica pendurado fora do eixo */
+    /* ⚠️ o fechamento saiu daqui em 03/08: ele passou a ser alinhado à esquerda,
+       no mesmo eixo das outras dobras. Se voltar a centralizar, recolocar. */
+    .centro { text-align: center; }
+    .centro .texto-lamina { margin-left: auto; margin-right: auto; }
+    .centro .texto-lamina::before { left: 50%; transform: translateX(-50%); }
+
+    /* ============================================================
+       DOBRA 7 — O PROFESSOR
+       ============================================================ */
+    /* ⚠️ 03/08: aqui existia um "cartão" com filete em cima E embaixo cercando o
+       nome. O James cortou: a LP usa UM filete, nunca dois cercando um bloco —
+       isso vira caixa, e caixa não é a linguagem da página. */
+    .professor__cartao { margin-top: clamp(20px, 2.4vw, 32px); }
+    /* ⚠️ 03/08: o nome estava em VERSAL, peso 200 e quase do tamanho do título —
+       dois headlines em caixa alta empilhados, brigando pelo mesmo lugar. A dobra
+       tem UM título; o nome é outra natureza de informação, então tem outra voz:
+       caixa mista, corpo menor que o título, sem tracking de versalete. */
+    .professor__assinatura {
+      font-size: clamp(19px, 1.65vw, 27px);
+      font-weight: 300;
+      letter-spacing: .005em;
+      line-height: 1.2;
+      color: var(--off-white);
+    }
+    .professor__papel {
+      font-size: clamp(9px, .68vw, 10.5px);
+      font-weight: 400;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: var(--ouro);
+      margin-top: 8px;
+    }
+    /* entrada: corpo maior e peso fino, como as frases de corte da dobra 2 */
+    .professor__entrada {
+      margin-top: clamp(20px, 2.4vw, 32px);
+      font-size: clamp(15px, 1.25vw, 21px);
+      font-weight: 200;
+      line-height: 1.5;
+      color: rgba(248, 247, 242, .90);
+      text-wrap: balance;
+    }
+    .professor__entrada + .texto-lamina { margin-top: clamp(14px, 1.6vw, 22px); padding-top: 0; }
+    .professor__entrada + .texto-lamina::before { display: none; }
+    /* o retrato em 1.14fr espremia a coluna de texto (linhas de ~45 caracteres,
+       com "nível." sozinho na última). Meio a meio equilibra os dois lados. */
+    #professor .dupla--invertida { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+
+    /* ============================================================
+       DOBRA 8 — A ACADEMY
+       ============================================================ */
+    /* ⚠️ 03/08: a fachada chegou a sangrar de ponta a ponta e o James mandou
+       voltar — fica dentro da faixa, na mesma moldura arredondada das outras.
+       Ou seja: a regra "full-bleed só na hero e no fechamento" continua valendo
+       na página inteira, sem exceção. */
+    .academy__larga .moldura { aspect-ratio: 21 / 9; }
+    .academy__grade {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(14px, 1.6vw, 24px);
+      margin-top: clamp(18px, 2.2vw, 32px);
+    }
+    .academy__grade .moldura { aspect-ratio: 3 / 2; }
+
+    /* ============================================================
+       DOBRA 9 — PROVA SOCIAL
+       ============================================================ */
+    /* Um depoimento em destaque + três menores ao lado — o mesmo princípio da
+       dobra das formações. Antes eram três iguais, e o mais forte (o da Clara,
+       que fala de "investimento mais importante") lia com o mesmo peso dos outros. */
+    .depoimentos {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: clamp(24px, 3.2vw, 60px);
+      align-items: start;
+    }
+    .depoimentos__col { display: flex; flex-direction: column; gap: clamp(20px, 2.4vw, 34px); }
+    .depoimentos__pe {
+      margin-top: clamp(28px, 3.2vw, 48px);
+      padding-top: clamp(16px, 1.8vw, 24px);
+      border-top: 1px solid rgba(16, 24, 32, .18);
+      font-size: clamp(10px, .74vw, 11.5px);
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(16, 24, 32, .42);
+    }
+    .depoimento { display: flex; flex-direction: column; gap: 18px; }
+    .depoimento .moldura { aspect-ratio: 1 / 1; border-radius: 16px; }
+    .depoimento blockquote {
+      font-size: clamp(14px, 1.15vw, 18px);
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--off-white);
+    }
+    .depoimento blockquote::before { content: '“'; color: var(--ouro); font-size: 2em; line-height: 0; vertical-align: -.35em; margin-right: 6px; }
+    .depoimento cite { font-style: normal; display: block; }
+    .depoimento cite b { display: block; font-weight: 500; font-size: clamp(13px, 1vw, 15px); }
+    .depoimento cite span { font-size: clamp(11px, .82vw, 13px); letter-spacing: .14em; text-transform: uppercase; color: var(--ouro); }
+    /* depoimento sem foto: vira citação de revista — filete em cima, texto grande e fino */
+    .depoimento--texto {
+      justify-content: space-between;
+      padding-top: clamp(20px, 2.2vw, 30px);
+      border-top: 1px solid rgba(172, 151, 81, .3);
+    }
+    .depoimento--texto blockquote {
+      font-size: clamp(16px, 1.45vw, 24px);
+      font-weight: 200;
+      line-height: 1.52;
+      letter-spacing: -.01em;
+    }
+    .depoimento--texto blockquote::before { display: none; }
+
+    /* --- lâmina clara: escuro sobre off-white --- */
+    .claro .depoimento { padding-top: clamp(18px, 2vw, 26px); border-top: 1px solid rgba(16, 24, 32, .20); }
+    .claro .depoimento blockquote { color: rgba(16, 24, 32, .82); font-weight: 300; }
+    .claro .depoimento blockquote::before { display: none; }
+    .claro .depoimento cite b { color: var(--preto); }
+    .claro .depoimento cite span { color: #8A7A3E; }
+    /* o destaque ganha corpo de citação de revista e filete dourado */
+    .claro .depoimento--destaque { border-top-color: rgba(138, 122, 62, .55); }
+    .claro .depoimento--destaque blockquote {
+      font-size: clamp(17px, 1.55vw, 27px);
+      font-weight: 200;
+      line-height: 1.5;
+      letter-spacing: -.01em;
+      color: var(--preto);
+    }
+    .contador {
+      margin-top: clamp(34px, 4vw, 60px);
+      padding-top: clamp(22px, 2.6vw, 36px);
+      border-top: 1px solid var(--linha);
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .contador b { font-size: clamp(30px, 3.6vw, 56px); font-weight: 200; color: var(--ouro-claro); }
+    .contador span { font-size: clamp(12px, .95vw, 15px); font-weight: 300; letter-spacing: .1em; text-transform: uppercase; color: var(--texto-fraco); }
+
+    /* ============================================================
+       DOBRA 10 — RESULTADOS
+       ============================================================ */
+    /* três macros de procedimento, quadradas. Eram quatro imagens de IA com
+       rótulo (SIMETRIA/DESENHO/...); o rótulo saiu junto — a foto já fala. */
+    .resultados { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 24px); }
+    .resultados .moldura { aspect-ratio: 1 / 1; border-radius: 14px; }
+    .resultados figure { margin: 0; position: relative; }
+    .resultados figcaption {
+      margin-top: 12px;
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--ouro);
+    }
+
+    /* ============================================================
+       DOBRA 11 — CTA FINAL
+       ============================================================ */
+    /* FECHAMENTO refeito (03/08). Antes: composição de IA + véu radial cobrindo a
+       imagem inteira + texto centralizado. O véu escurecia tudo, o rosto sumia e
+       a casa virava um borrão amarelo.
+       Agora: a FOTO REAL da casa na hora azul, véu só no terço de baixo, e o
+       texto ancorado embaixo à esquerda, dentro da faixa — o mesmo eixo de todas
+       as outras dobras, em vez de centralizado no meio do nada. */
+    /* FECHAMENTO = CONVITE (03/08). Sem imagem: a página inteira é foto, então
+       o fim é só tipografia e ar. Estrutura de convite impresso — rótulo miúdo,
+       filete curto, o nome da escola espaçado, a tagline, filete, chamada, CTA. */
+    .fechamento { position: relative; padding: clamp(70px, 9vw, 150px) 0; }
+    .convite { text-align: center; }
+    .convite__fio {
+      display: block;
+      width: 70px;
+      height: 1px;
+      background: rgba(172, 151, 81, .6);
+      margin: clamp(20px, 2.4vw, 34px) auto;
+    }
+    .convite__nome {
+      font-size: clamp(26px, 3.6vw, 62px);
+      font-weight: 200;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .convite__sub {
+      margin-top: 14px;
+      font-size: clamp(9.5px, .76vw, 12px);
+      letter-spacing: .38em;
+      text-transform: uppercase;
+      color: var(--ouro);
+    }
+    /* o `.texto-lamina` traz um filete próprio, que aqui cairia logo abaixo do
+       filete dourado — duas linhas coladas. Some, o dourado já separa. */
+    .convite .texto-lamina { margin: 0 auto; padding-top: 0; }
+    .convite .texto-lamina::before { display: none; }
+    .convite .acoes { margin-top: clamp(30px, 3.6vw, 46px); justify-content: center; }
+
+    .rodape {
+      padding: clamp(26px, 3vw, 44px) 0;
+      border-top: 1px solid var(--linha);
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .32);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       LARGURAS INTERMEDIÁRIAS
+       ============================================================ */
+    @media (max-width: 1180px) and (min-width: 769px) {
+      .hero { min-height: 0; padding: clamp(24px, 4.5vh, 52px) 0; }
+      .hero__foto { aspect-ratio: 2.5 / 1; }
+      .hero__scrim { display: none; }
+      .hero__content { position: static; width: auto; max-width: 660px; margin-top: clamp(18px, 3vh, 30px); }
+      .hero__title { font-size: clamp(30px, 4.4vw, 44px); text-shadow: none; }
+      .hero__text { font-size: clamp(13px, 1.5vw, 16px); text-shadow: none; }
+
+      .indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 26px; }
+    }
+
+    /* cinco colunas de etapa não cabem antes de ~1180px — viram três, e a
+       quarta reinicia a fileira (por isso perde o filete da esquerda) */
+    @media (max-width: 1180px) {
+      .metodo__topo { grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); }
+      .etapas { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: clamp(26px, 3.4vw, 40px); }
+      .etapa:nth-child(4) { padding-left: 0; border-left: 0; }
+      .etapa:nth-child(3) { padding-right: 0; }
+    }
+
+    /* ============================================================
+       MOBILE
+       ============================================================ */
+    @media (max-width: 768px) {
+      .faixa { width: calc(100% - 40px); }
+
+      .hero { height: 100vh; height: 100svh; min-height: 480px; }
+      .hero__palco { width: 100%; height: 100%; }
+      .hero__foto { height: 100%; aspect-ratio: auto; border-radius: 0; box-shadow: none; }
+      .hero__scrim {
+        background: linear-gradient(to bottom,
+          rgba(6, 5, 4, .88) 0%, rgba(6, 5, 4, .66) 24%, rgba(6, 5, 4, .22) 42%, rgba(6, 5, 4, 0) 58%);
+      }
+      /* o bloco ocupa a altura toda da hero e vira coluna flex: o texto fica no
+         ar preto do topo e o CTA é empurrado pro pé da tela. Antes o botão vinha
+         logo abaixo do texto, lá em cima, cobrindo a foto. */
+      .hero__content {
+        position: absolute; top: clamp(30px, 7%, 64px); bottom: clamp(26px, 6%, 56px);
+        left: 22px; right: 22px; width: auto; text-align: center;
+        display: flex; flex-direction: column;
+      }
+      .hero__content .acoes { margin-top: auto; justify-content: center; }
+      .hero__title { font-size: clamp(23px, 7vw, 34px); letter-spacing: .05em; }
+      .hero__kicker { letter-spacing: .34em; }
+      .hero__text { max-width: 32ch; margin-left: auto; margin-right: auto; }
+      .hero__text::before { left: 50%; transform: translateX(-50%); }
+      .acoes { justify-content: center; }
+      .hero__frame { display: none; }   /* no celular a moldura rouba espaço */
+
+      .manifesto__colunas { grid-template-columns: 1fr; }
+      .manifesto__colunas .texto-lamina + .texto-lamina { padding-top: clamp(20px, 5vw, 28px); }
+
+      .dupla, .dupla--invertida { grid-template-columns: 1fr; }
+      /* ⚠️ o `#professor .dupla--invertida` lá em cima tem ID no seletor, então
+         vence essa regra por especificidade e a dobra ficava em DUAS colunas no
+         celular — texto espremido à esquerda, retrato jogado ao lado. Precisa
+         repetir o ID aqui pra desempatar. */
+      #professor .dupla--invertida { grid-template-columns: 1fr; }
+      .dupla--invertida .dupla__texto { order: -1; }
+      /* no celular o retrato empilha embaixo do título, e as etapas viram uma
+         coluna só — o filete deixa de ser vertical e passa a separar por cima */
+      .metodo__topo { grid-template-columns: 1fr; gap: clamp(24px, 7vw, 34px); }
+      /* 4/5 e não 5/4: numa faixa deitada o corte come a testa e o queixo */
+      .metodo__retrato .moldura { aspect-ratio: 4 / 5; }
+      .metodo__retrato img { object-position: 50% 6%; }
+      .etapas { grid-template-columns: 1fr; row-gap: 0; }
+      .etapa,
+      .etapa:nth-child(4) {
+        padding: clamp(20px, 5.5vw, 28px) 0 0;
+        border-left: 0;
+        border-top: 1px solid rgba(172, 151, 81, .13);
+      }
+      .etapa:first-child { padding-top: 0; border-top: 0; }
+      .cabeca-dupla { grid-template-columns: 1fr; gap: clamp(20px, 6vw, 32px); }
+      .trio { grid-template-columns: 1fr; gap: clamp(26px, 7vw, 40px); }
+      .trio figure:nth-child(2), .trio figure:nth-child(3) { margin-top: 0; }
+      .trio figure .trio__quadro { aspect-ratio: 4 / 5 !important; }
+      .indicadores { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 26px; }
+      /* a Vogue ocupa a largura toda e as outras quatro ficam 2x2 embaixo. As capas
+         em largura cheia empilhadas viravam uma parede de scroll. */
+      .formacoes { grid-template-columns: 1fr; gap: clamp(26px, 6vw, 40px); }
+      .satelites { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 4vw, 20px); }
+      .card__frase { font-size: 11.5px; }
+      .ficha dt { font-size: 8.5px; letter-spacing: .18em; }
+      .academy__grade { grid-template-columns: 1fr; }
+      /* no celular os três lado a lado ficariam minúsculos, e empilhados os três
+         em largura cheia davam ~1000px de scroll (o home care é quase quadrado e
+         esticava demais). Meio termo: o Experts abre a faixa e os outros dois
+         dividem a linha de baixo — as frações mantêm os dois na mesma altura. */
+      .kit__grupos { grid-template-columns: 430fr 560fr; gap: clamp(14px, 3.5vw, 20px); }
+      .kit__grupos .grupo:first-child { grid-column: 1 / -1; }
+      /* as quatro alternativas viram uma coluna só: em duas, a frase de cada uma
+         ficaria com três palavras por linha */
+      .momentos { grid-template-columns: 1fr; }
+      .momento { padding: clamp(18px, 4.5vw, 26px) 0; }
+      .momento:nth-child(odd) { border-right: 0; }
+      .momento__letra { font-size: 30px; }
+      .gabarito { gap: 10px 22px; }
+      /* três quadrados em duas colunas deixam o terceiro sozinho à esquerda, com
+         um buraco do lado. Ele passa a ocupar a linha inteira e se centraliza,
+         mantendo a MESMA largura dos de cima (metade da linha menos o vão). */
+      .resultados { grid-template-columns: repeat(2, minmax(0, 1fr)); --vao: clamp(14px, 1.6vw, 24px); gap: var(--vao); }
+      .resultados figure:nth-child(3) {
+        grid-column: 1 / -1;
+        justify-self: center;
+        width: calc((100% - var(--vao)) / 2);
+      }
+      /* destaque em cima, os três embaixo — lado a lado no celular a citação
+         grande ficaria com quatro palavras por linha */
+      .depoimentos { grid-template-columns: 1fr; gap: clamp(22px, 5vw, 32px); }
+      .depoimento .moldura { max-width: 220px; }
+      .rodape { justify-content: flex-start; }
+    }
+
+    @media (max-width: 768px) and (max-height: 700px) {
+      .hero__text { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ DOBRA 1 — HERO ============ -->
+  <section class="hero">
+    <div class="hero__palco">
+      <div class="hero__foto">
+        <picture>
+          <source media="(max-width: 768px)" srcset="/lp/academy/composicoes/A5-mobile.jpg" />
+          <img src="/lp/academy/composicoes/A1.jpg" alt="A casa da Jay Academy iluminada à noite, com James Olaya de jaleco no halo dourado" />
+        </picture>
+        <div class="hero__scrim"></div>
+      </div>
+
+      <div class="hero__content">
+        <p class="hero__kicker">Sua carreira na área da beleza</p>
+        <h1 class="hero__title">
+          Micropigmentação
+          <span>de alto nível</span>
+        </h1>
+        <p class="hero__text">
+          A escola de James Olaya para profissionais que buscam excelência,
+          técnica e resultados reais na micropigmentação.
+        </p>
+        <div class="acoes">
+          <a class="btn btn--ouro" href="#formacoes">Conheça as formações</a>
+        </div>
+      </div>
+
+      <div class="hero__frame">
+        <span>Jay Academy · James Olaya</span>
+        <span>@jayo.academy</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 2 — NÃO É APENAS UM CURSO ============ -->
+  <!-- Dobra 2 é a PAUSA depois da hero: só tipografia no preto, sem foto.
+       A apresentação alterna assim — lâmina de foto, lâmina de texto. -->
+  <section class="secao manifesto" id="sobre">
+    <div class="faixa surge">
+      <p class="rotulo-lamina">Não é apenas um curso</p>
+      <h2 class="titulo-lamina manifesto__titulo">
+        Mais do que aprender uma técnica.
+        <strong>É entrar em um novo nível profissional.</strong>
+      </h2>
+
+      <div class="manifesto__colunas">
+        <p class="texto-lamina">
+          Na Jay Academy, cada formação presencial foi criada para profissionais que entendem
+          que conhecimento técnico é apenas o começo.
+        </p>
+        <p class="texto-lamina">
+          Aqui, você aprende de perto, pratica, recebe orientação e vive uma experiência
+          pensada para acelerar sua evolução na micropigmentação.
+        </p>
+      </div>
+
+      <p class="remate">
+        Porque dominar uma técnica muda o seu procedimento.
+        <b>Dominar o processo muda a sua carreira.</b>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 3 — A EXPERIÊNCIA PRESENCIAL ============ -->
+  <section class="secao claro" id="experiencia">
+    <div class="faixa surge">
+      <div class="cabeca-dupla">
+        <div>
+          <p class="rotulo-lamina">A experiência presencial</p>
+          <h2 class="titulo-lamina">Aprenda <strong>onde a técnica acontece.</strong></h2>
+        </div>
+        <p class="texto-lamina">
+          A formação acontece presencialmente, em um ambiente preparado para você viver cada
+          etapa da experiência. Você aprende ao lado de quem domina o mercado e coloca o
+          conhecimento em prática com acompanhamento próximo.
+        </p>
+      </div>
+
+      <!-- Fotos REAIS da Academy, vindas do acervo do site jamesolaya.com.br
+           (img12, img27 e img24). Estavam escurecidas porque eram fundo de site;
+           exposição levantada e grão domado no pré-processamento. -->
+      <div class="trio">
+        <figure>
+          <div class="trio__quadro">
+            <img src="/lp/academy/reais/sala-aula.jpg" alt="Sala de aula da Jay Academy com alunas nas bancadas e James ensinando na lousa" loading="lazy" />
+          </div>
+          <figcaption><b>A sala</b>Bancadas montadas, equipamento no lugar e a aula acontecendo dentro da casa da Academy.</figcaption>
+        </figure>
+        <figure>
+          <div class="trio__quadro">
+            <img src="/lp/academy/reais/demonstracao-real.jpg" alt="James Olaya executando um procedimento em modelo enquanto a turma acompanha em volta" loading="lazy" />
+          </div>
+          <figcaption><b>A demonstração</b>Você vê o procedimento inteiro acontecer a centímetros de distância.</figcaption>
+        </figure>
+        <figure>
+          <div class="trio__quadro">
+            <img src="/lp/academy/reais/pratica-real.jpg" alt="James Olaya atendendo sob a luz de estúdio, em plano fechado" loading="lazy" />
+          </div>
+          <figcaption><b>A prática</b>Modelo real, sob a luz, com acompanhamento durante a execução.</figcaption>
+        </figure>
+      </div>
+
+      <div class="indicadores">
+        <div><b>Aulas presenciais</b><span>Aprendizado imersivo.</span></div>
+        <div><b>Prática real</b><span>Conhecimento aplicado.</span></div>
+        <div><b>Acompanhamento</b><span>Orientação durante sua evolução.</span></div>
+        <div><b>Experiência</b><span>Uma formação para viver, não apenas assistir.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 4 — O MÉTODO JAMES OLAYA ============ -->
+  <section class="secao" id="metodo">
+    <div class="faixa surge">
+      <div class="metodo__topo">
+        <div>
+          <p class="rotulo-lamina">O método James Olaya</p>
+          <h2 class="titulo-lamina">
+            Você não aprende apenas uma técnica.
+            <strong>Você aprende a pensar como um profissional.</strong>
+          </h2>
+        </div>
+
+        <!-- Retrato REAL do James (arquivo dele, `Academy/james_dark.png`), na
+             mesma moldura das dobras 7 e 8. Original 9:16 recortado em 3/4 —
+             em 4/5 o corte terminava no pescoço. -->
+        <figure class="metodo__retrato">
+          <div class="moldura">
+            <img src="/lp/academy/reais/james-dark.jpg" alt="Retrato de James Olaya em preto e branco, de óculos escuros redondos, sobre fundo preto" loading="lazy" />
+          </div>
+          <figcaption class="legenda-foto">James Olaya · Jay Academy</figcaption>
+        </figure>
+      </div>
+
+      <ol class="etapas">
+        <li class="etapa">
+          <p class="etapa__rotulo"><i>01</i> Fundamento</p>
+          <h3>Entenda o porquê de cada decisão.</h3>
+          <p>Antes da agulha, o raciocínio: pele, pigmento, formato e o motivo de cada escolha.</p>
+        </li>
+        <li class="etapa">
+          <p class="etapa__rotulo"><i>02</i> Técnica</p>
+          <h3>Aprenda a executar com precisão.</h3>
+          <p>Movimento, profundidade, pressão e ritmo — o gesto certo, repetido até virar seu.</p>
+        </li>
+        <li class="etapa">
+          <p class="etapa__rotulo"><i>03</i> Prática</p>
+          <h3>Transforme conhecimento em habilidade.</h3>
+          <p>Modelo real, sob acompanhamento, no momento em que o erro ainda pode ser corrigido.</p>
+        </li>
+        <li class="etapa">
+          <p class="etapa__rotulo"><i>04</i> Refinamento</p>
+          <h3>Desenvolva olhar, controle e consistência.</h3>
+          <p>O ajuste fino é o que separa um bom trabalho de um trabalho impecável — e ele se ensina.</p>
+        </li>
+        <li class="etapa">
+          <p class="etapa__rotulo"><i>05</i> Resultado</p>
+          <h3>Leve uma nova capacidade para a carreira.</h3>
+          <p>Você sai com uma habilidade que não depende de sorte nem de tendência.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 5 — AS FORMAÇÕES ============ -->
+  <!-- Lâmina CLARA (a 2ª da página, depois da dobra 3). As capas oficiais dos
+       cursos vêm montadas sobre branco, então cada card lê como a brochura
+       impressa pousada sobre o off-white da seção. -->
+  <section class="secao claro" id="formacoes">
+    <div class="faixa surge">
+      <div class="cabeca-secao">
+        <p class="rotulo-lamina">As formações</p>
+        <h2 class="titulo-lamina">
+          Escolha o próximo nível
+          <strong>da sua carreira.</strong>
+        </h2>
+      </div>
+
+      <div class="formacoes">
+        <!-- CAPAS OFICIAIS: Canva "JAYO ACADEMY - CAPAS CURSOS" (DAG5oPHXt2w),
+             páginas 8, 13, 14, 15 e 19. Nada de imagem gerada por IA aqui.
+             ⚠️ Falta a DURAÇÃO de cada formação — não consta em nenhum material,
+             por isso ela não aparece na ficha. -->
+
+        <!-- A VOGUE é a vitrine: formação de topo, dada pelo próprio James. -->
+        <article class="card card--destaque">
+          <span class="fita">A formação de alto nível da casa</span>
+          <div class="card__capa">
+            <img src="/lp/academy/capas/vogue.jpg" alt="Capa oficial da formação Jay Vogue Brows: dermógrafo desenhando fio a fio realista" loading="lazy" />
+          </div>
+          <div class="card__corpo">
+            <h3 class="card__nome">Jay Vogue <span>Brows</span></h3>
+            <p class="card__frase">Fio a fio realista, direto com James Olaya. A formação de alto nível da casa.</p>
+            <dl class="ficha">
+              <div><dt>Nível</dt><dd>Avançado</dd></div>
+              <div><dt>Professor</dt><dd class="ouro">James Olaya</dd></div>
+              <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
+            </dl>
+            <a class="card__cta" href="#comecar">Ver formação</a>
+          </div>
+        </article>
+
+        <div class="satelites">
+          <article class="card">
+            <div class="card__capa">
+              <img src="/lp/academy/capas/beauty.jpg" alt="Capa oficial da formação Jay Beauty: retrato de uma mulher de cabelo ruivo com a mão junto ao rosto" loading="lazy" />
+            </div>
+            <div class="card__corpo">
+              <h3 class="card__nome">Jay Beauty <span>12 em 1</span></h3>
+              <p class="card__frase">Design e visagismo, henna e tintura, brow lamination, repair e growth. A porta de entrada.</p>
+              <dl class="ficha">
+                <div><dt>Nível</dt><dd>Iniciante</dd></div>
+                <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
+              </dl>
+              <a class="card__cta" href="#comecar">Ver formação</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card__capa">
+              <img src="/lp/academy/capas/brows.jpg" alt="Capa oficial da formação Jay Brows Shadow &amp; Nano: procedimento de micropigmentação em close" loading="lazy" />
+            </div>
+            <div class="card__corpo">
+              <h3 class="card__nome">Jay Brows <span>Shadow &amp; Nano</span></h3>
+              <p class="card__frase">Micropigmentação de sobrancelhas nas duas frentes: Brow Nude Shadow e Nanobrows fio a fio.</p>
+              <dl class="ficha">
+                <div><dt>Nível</dt><dd>Especialização</dd></div>
+                <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
+              </dl>
+              <a class="card__cta" href="#comecar">Ver formação</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card__capa">
+              <img src="/lp/academy/capas/pixel.jpg" alt="Capa oficial da formação Jay Pixel Brows &amp; Lips: lábios e procedimento em sobrancelha" loading="lazy" />
+            </div>
+            <div class="card__corpo">
+              <!-- ⚠️ James: a capa oficial chama de JAY PIXEL; a apresentação 2026
+                   chama a mesma formação de "Jay Shadow Brows & Lips". Qual vale? -->
+              <h3 class="card__nome">Jay Pixel <span>Brows &amp; Lips</span></h3>
+              <p class="card__frase">Micropigmentação de sobrancelhas e lábios: Brow Nude e Nanolips.</p>
+              <dl class="ficha">
+                <div><dt>Nível</dt><dd>Especialização</dd></div>
+                <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
+              </dl>
+              <a class="card__cta" href="#comecar">Ver formação</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card__capa">
+              <img src="/lp/academy/capas/nano.jpg" alt="Capa oficial da formação Jay Nano Brows &amp; Lips: lábios e sobrancelha em nanopigmentação" loading="lazy" />
+            </div>
+            <div class="card__corpo">
+              <h3 class="card__nome">Jay Nano <span>Brows &amp; Lips</span></h3>
+              <p class="card__frase">Nanopigmentação de sobrancelhas e lábios — precisão e naturalidade em Nanobrows e Nanolips.</p>
+              <dl class="ficha">
+                <div><dt>Nível</dt><dd>Avançado</dd></div>
+                <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
+              </dl>
+              <a class="card__cta" href="#comecar">Ver formação</a>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ⚠️ James: a apresentação tem MAIS formações que estas cinco. Falta decidir se entram. -->
+      <p class="texto-lamina" style="max-width: 70ch;">
+        <b>Também na casa:</b> Jay Remove 3 em 1, Jay Laser Pro, Lips Sense Advanced 6 em 1
+        e os workshops de Pigmentologia e Ácido Hialurônico.
+      </p>
+
+      <!-- Foto REAL da linha JAY.O, recortada da apresentação oficial (pág. 29).
+           O fundo dela é PRETO: na lâmina clara vira painel escuro. A tira
+           original (kit-produtos.jpg) segue no repo, mas quem entra na página
+           são os três recortes — ver o comentário do `.kit` no CSS. -->
+      <div class="kit">
+        <div class="kit__lead">
+          <p class="rotulo-lamina">O que vai junto</p>
+          <h3 class="titulo-lamina" style="font-size: clamp(17px, 1.9vw, 30px);">
+            Você sai da formação
+            <strong>com o estoque para começar.</strong>
+          </h3>
+          <!-- ⚠️ 03/08: os valores saíram a pedido do James. O kit continua como
+               argumento, mas sem número em lugar nenhum da dobra. -->
+          <p class="texto-lamina">
+            Toda formação inclui kit de produtos JAY.O — os dermocosméticos da linha Experts,
+            o home care e os pigmentos. Você sai da formação com o material para atender.
+          </p>
+        </div>
+
+        <div class="kit__grupos">
+          <figure class="grupo">
+            <div class="grupo__foto">
+              <img src="/lp/academy/reais/kit-experts.jpg" alt="Linha Experts da JAY.O: Magic Crystal, Magic End, Magic Butter, Magic Micelar, Magic Mousse e Magic Wipes" loading="lazy" />
+            </div>
+            <figcaption>
+              <b>Dermocosméticos Experts</b>
+              <span>Magic Crystal, End, Butter, Micelar, Mousse e Wipes</span>
+            </figcaption>
+          </figure>
+
+          <figure class="grupo">
+            <div class="grupo__foto">
+              <img src="/lp/academy/reais/kit-homecare.jpg" alt="Home care JAY.O: Magic Lips e Magic Repair" loading="lazy" />
+            </div>
+            <figcaption>
+              <b>Home care</b>
+              <span>Magic Lips e Magic Repair, para a cliente levar</span>
+            </figcaption>
+          </figure>
+
+          <figure class="grupo">
+            <div class="grupo__foto">
+              <img src="/lp/academy/reais/kit-pigmentos.jpg" alt="Pigmentos JAY.O da linha Brows Minerals, cinco frascos" loading="lazy" />
+            </div>
+            <figcaption>
+              <b>Pigmentos</b>
+              <span>A linha Brows Minerals, a mesma que você usa na aula</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 6 — QUAL É O SEU MOMENTO ============
+       TIRADA DA PÁGINA a pedido do James (03/08): "de momento exclui essa parte".
+       O quiz de revista (alternativas A–D + gabarito) está inteiro no commit
+       c661131 — pra trazer de volta é só restaurar esta seção e o CSS de
+       `.momentos` / `.momento` / `.gabarito`, que continuam no <style>.
+       ============================================================ -->
+
+  <!-- ============ DOBRA 7 — O PROFESSOR ============ -->
+  <section class="secao" id="professor">
+    <div class="faixa dupla dupla--invertida surge">
+      <!-- Retrato street escolhido pelo James (03/08), gerado no Higgsfield com o
+           soul dele. Já é 3:4, então entra no quadro sem recorte.
+           O retrato de estúdio REAL que estava aqui (james-professor.jpg, do
+           acervo do PMU CLASS) segue no repo caso ele queira voltar. -->
+      <div class="moldura" style="aspect-ratio: 3 / 4;">
+        <img src="/lp/academy/reais/james-street.jpg" alt="James Olaya de camiseta preta e jeans, em pé numa faixa de pedestre, visto de cima" loading="lazy" />
+      </div>
+      <div class="dupla__texto">
+        <p class="rotulo-lamina">O professor</p>
+        <h2 class="titulo-lamina">
+          Por trás de cada formação,
+          <strong>existe experiência.</strong>
+        </h2>
+        <div class="professor__cartao">
+          <p class="professor__assinatura">James Olaya</p>
+          <p class="professor__papel">Artista, educador e referência na micropigmentação</p>
+        </div>
+        <!-- o 1º parágrafo é a entrada (corpo maior, peso 200) e o 2º é corrido:
+             sem essa diferença os dois liam como um bloco só de texto cinza -->
+        <p class="professor__entrada">
+          Ao longo de sua trajetória, James desenvolveu uma metodologia própria baseada em
+          técnica, precisão e busca constante pela excelência.
+        </p>
+        <p class="texto-lamina">
+          Hoje, essa experiência é compartilhada presencialmente com profissionais que desejam
+          ir além do básico e construir uma carreira de alto nível.
+        </p>
+        <div class="acoes">
+          <!-- ⚠️ 03/08: era um `.btn--linha` (pílula de contorno) que aparecia UMA
+               única vez na página inteira — device órfão. Virou o mesmo link
+               sublinhado com seta das formações (dobra 5), na paleta escura.
+               O destino é o site institucional, que é onde a história de fato está. -->
+          <a class="card__cta" href="/jamesolaya">Conheça a história de James</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 8 — A ACADEMY ============ -->
+  <section class="secao" id="academy">
+    <div class="faixa surge">
+      <div class="cabeca-secao">
+        <p class="rotulo-lamina">A Academy</p>
+        <h2 class="titulo-lamina">
+          Um lugar criado para quem
+          <strong>leva a profissão a sério.</strong>
+        </h2>
+        <p class="texto-lamina">
+          Um ambiente pensado para proporcionar uma experiência de formação completa, com
+          estrutura, conforto e tudo o que você precisa para se concentrar no que realmente
+          importa: sua evolução.
+        </p>
+      </div>
+
+      <!-- FOTOS REAIS DA CASA, subidas pelo James em 03/08 (Academy/clinica).
+           Substituíram três imagens geradas por IA (dobras/interior, composicoes/A3
+           e A2). Sem legenda por decisão dele — as fotos falam sozinhas. -->
+      <div class="academy__larga">
+        <div class="moldura">
+          <img src="/lp/academy/reais/casa/casa-noite.jpg" alt="Fachada da Jay Academy iluminada ao anoitecer, entre as árvores" loading="lazy" />
+        </div>
+      </div>
+      <div class="academy__grade">
+        <div class="moldura">
+          <img src="/lp/academy/reais/casa/lounge.jpg" alt="Lounge da Academy com poltronas de couro, tijolo branco e a escada" loading="lazy" />
+        </div>
+        <div class="moldura">
+          <img src="/lp/academy/reais/casa/sala-pratica.jpg" alt="Sala de prática da Academy com as macas e bancadas alinhadas" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 9 — PROVA SOCIAL ============
+       Lâmina CLARA por decisão do James (03/08). É a 3ª clara da página
+       (dobra 3, dobra 5 e esta), mantendo a alternância claro/escuro. -->
+  <section class="secao claro" id="alunos">
+    <div class="faixa surge">
+      <div class="cabeca-secao">
+        <p class="rotulo-lamina">Quem já passou por aqui</p>
+        <h2 class="titulo-lamina">
+          Quem vive a experiência,
+          <strong>leva a transformação para a carreira.</strong>
+        </h2>
+      </div>
+
+      <!-- Depoimentos REAIS, lidos dos prints de Instagram do material "[JÚLIA] JAYO
+           ACADEMY - PROVA SOCIAL ALUNOS" no Canva (DAHAkyAhyOI, páginas exportadas
+           como imagem e lidas uma a uma em 03/08).
+           ⚠️ SEM FOTO de propósito: casar uma frase real com um rosto gerado por IA
+           seria atribuir o depoimento à pessoa errada.
+           O 3º card era um PLACEHOLDER visível no ar até hoje — resolvido. -->
+      <div class="depoimentos">
+        <figure class="depoimento depoimento--destaque">
+          <blockquote>
+            Já fiz várias especializações em vários lugares diferentes e eu posso afirmar com
+            convicção que foi o investimento mais importante que eu fiz. Saí satisfeita e sem
+            dúvida foi um divisor de águas — aprendi muito, sem falar dos professores, que são
+            de excelência.
+          </blockquote>
+          <cite><b>@clarafonsecass</b><span>Aluna · Instagram</span></cite>
+        </figure>
+
+        <div class="depoimentos__col">
+          <figure class="depoimento">
+            <blockquote>
+              Ele é direto, objetivo, empático, atencioso, domina o que fala e ENSINA de verdade,
+              além da equipe estar bem preparada para auxiliar a gente. Pra mim ele é o melhor
+              do mundo.
+            </blockquote>
+            <cite><b>@calitacastro_sobrancelhas</b><span>Aluna · Instagram</span></cite>
+          </figure>
+
+          <figure class="depoimento">
+            <blockquote>
+              O melhor lugar pra se aprender não tem pra vocês. Professores extremamente
+              preparados para responderem qualquer tipo de dúvida. Um divisor de águas na minha
+              carreira — voltaria milhões de vezes.
+            </blockquote>
+            <cite><b>@hungarobeautyclinic</b><span>Aluna · Instagram</span></cite>
+          </figure>
+
+          <figure class="depoimento">
+            <blockquote>
+              Senti no curso que os detalhes que fazem a diferença no atendimento foram
+              relembrados a todo momento. Não me arrependo em momento algum.
+            </blockquote>
+            <cite><b>@marianemiiranda</b><span>Aluna · Instagram</span></cite>
+          </figure>
+        </div>
+      </div>
+
+      <!-- ⚠️ 03/08: o contador "+ [número] profissionais formados" SAIU — era
+           placeholder no ar e o número real nunca foi informado. Volta quando o
+           James passar o número. -->
+      <p class="depoimentos__pe">Comentários publicados pelas próprias alunas no Instagram.</p>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 10 — RESULTADOS ============
+       ⚠️ 03/08: chegou a virar lâmina clara com antes/depois e o James mandou
+       voltar pro escuro e tirar os antes/depois. Fica no escuro, com macros de
+       procedimento — o registro "aesthetic" que ele pediu. -->
+  <section class="secao" id="resultados">
+    <div class="faixa surge">
+      <div class="cabeca-secao">
+        <p class="rotulo-lamina">Resultados</p>
+        <h2 class="titulo-lamina">
+          O conhecimento termina.
+          <strong>A habilidade permanece.</strong>
+        </h2>
+      </div>
+
+      <!-- MACROS DE PROCEDIMENTO REAIS, recortadas das páginas de prova social do
+           Canva (DAHAkyAhyOI) — foto profissional do trabalho, sem os balões de
+           comentário nem a logo. Os antes/depois foram descartados a pedido do
+           James: aqui o registro é o do acabamento, não o da comparação.
+           ⚠️ NÃO usar a pasta `Magic Shadow 3/assets/proofs`: aquilo é material
+           de referência da VOGUE, com o logo da revista na imagem.
+           ⚠️ As 4 imagens que estavam aqui (dobras/r-*.jpg) eram GERADAS POR IA. -->
+      <div class="resultados">
+        <figure>
+          <div class="moldura"><img src="/lp/academy/reais/resultados/macro-1.jpg" alt="Dermógrafo aplicando pigmento na sobrancelha, em macro" loading="lazy" /></div>
+        </figure>
+        <figure>
+          <div class="moldura"><img src="/lp/academy/reais/resultados/macro-2.jpg" alt="Sobrancelha em execução com o pigmento aplicado, olho fechado" loading="lazy" /></div>
+        </figure>
+        <figure>
+          <div class="moldura"><img src="/lp/academy/reais/resultados/macro-3.jpg" alt="Ponta do dermógrafo sobre a sobrancelha durante o shadow" loading="lazy" /></div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 11 — CTA FINAL ============ -->
+  <section class="fechamento" id="comecar">
+    <!-- CONVITE, escolhido pelo James (03/08) entre 10 ideias. SEM IMAGEM: depois
+         de uma página inteira de foto, o fechamento é só tipografia e ar.
+         Saiu com isso a composição de IA `composicoes/B4.jpg`. -->
+    <div class="convite faixa surge">
+      <p class="rotulo-lamina">Você está convidada</p>
+      <span class="convite__fio"></span>
+      <p class="convite__nome">Jay Academy</p>
+      <!-- tagline oficial, da apresentação 2026 -->
+      <p class="convite__sub">Formações presenciais em micropigmentação</p>
+      <span class="convite__fio"></span>
+      <p class="texto-lamina">Escolha a formação que corresponde ao seu momento.</p>
+      <div class="acoes">
+        <a class="btn btn--ouro" href="#formacoes">Conheça as formações</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="faixa rodape">
+    <span>Jay Academy · James Olaya</span>
+    <span>Formações presenciais em micropigmentação</span>
+  </footer>
+
+  <script>
+    // respiro na entrada de cada dobra — uma vez só, sem loop
+    const alvos = document.querySelectorAll('.surge');
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      const observador = new IntersectionObserver((entradas) => {
+        entradas.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add('visivel'); observador.unobserve(e.target); }
+        });
+      }, { rootMargin: '0px 0px -12% 0px' });
+      alvos.forEach((a) => observador.observe(a));
+    } else {
+      alvos.forEach((a) => a.classList.add('visivel'));
+    }
+  </script>
+</body>
+</html>

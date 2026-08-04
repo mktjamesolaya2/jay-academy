@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LP Academy — preview no iPhone 13</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --ouro:#AC9751; --ouro-claro:#DCC383; --off-white:#F8F7F2; --fundo:#0b0a09; }
+  body {
+    background: radial-gradient(120% 80% at 50% 0%, #17140f 0%, var(--fundo) 60%);
+    color: var(--off-white);
+    font-family: 'Poppins', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: clamp(24px, 4vw, 54px) 20px clamp(40px, 6vw, 80px);
+    gap: clamp(20px, 3vw, 36px);
+  }
+
+  header { text-align: center; }
+  header p { font-size: 10px; letter-spacing: .42em; text-transform: uppercase; color: rgba(248,247,242,.5); }
+  header h1 { margin-top: 12px; font-size: clamp(18px, 2.2vw, 28px); font-weight: 200; letter-spacing: .06em; text-transform: uppercase; }
+  header h1 strong { font-weight: 400; color: var(--ouro-claro); }
+  header small { display: block; margin-top: 12px; font-size: 12px; font-weight: 300; color: rgba(248,247,242,.55); }
+
+  /* ===== iPhone 13: tela 390x844, borda arredondada 47px, notch no topo ===== */
+  .iphone {
+    --larg: 390px;
+    --alt: 844px;
+    position: relative;
+    width: calc(var(--larg) + 22px);
+    height: calc(var(--alt) + 22px);
+    border-radius: 58px;
+    padding: 11px;
+    background: linear-gradient(160deg, #3a3a3d 0%, #1c1c1e 30%, #2c2c2e 60%, #48484a 100%);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.08),
+      0 40px 90px rgba(0,0,0,.7),
+      0 8px 24px rgba(0,0,0,.5);
+    flex: none;
+  }
+  .iphone__tela {
+    position: relative;
+    width: var(--larg);
+    height: var(--alt);
+    border-radius: 47px;
+    overflow: hidden;
+    background: #000;
+  }
+  .iphone__tela iframe { width: 100%; height: 100%; border: 0; display: block; }
+  /* notch do 13 (não é Dynamic Island, que é do 14 Pro pra cima) */
+  .iphone__notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 162px; height: 30px;
+    background: #000;
+    border-radius: 0 0 18px 18px;
+    z-index: 3; pointer-events: none;
+  }
+  .iphone__barra {
+    position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%);
+    width: 134px; height: 5px; border-radius: 100px;
+    background: rgba(255,255,255,.55);
+    z-index: 3; pointer-events: none;
+  }
+  /* botões laterais */
+  .iphone::before, .iphone::after {
+    content: ''; position: absolute; background: #2c2c2e; border-radius: 2px;
+  }
+  .iphone::before { left: -3px; top: 168px; width: 3px; height: 62px; box-shadow: 0 78px 0 #2c2c2e; }
+  .iphone::after { right: -3px; top: 190px; width: 3px; height: 96px; }
+
+  .barra-topo {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
+  }
+  .chip {
+    font-size: 10px; letter-spacing: .24em; text-transform: uppercase; font-weight: 300;
+    color: rgba(248,247,242,.6);
+    border: 1px solid rgba(172,151,81,.35);
+    padding: 8px 16px; border-radius: 100px;
+    background: rgba(172,151,81,.06);
+  }
+  .chip b { color: var(--ouro-claro); font-weight: 400; }
+  button.chip { cursor: pointer; font-family: inherit; transition: color .3s ease, border-color .3s ease; }
+  button.chip:hover { color: var(--off-white); border-color: rgba(220,195,131,.7); }
+
+  footer { font-size: 11px; font-weight: 300; color: rgba(248,247,242,.4); text-align: center; max-width: 60ch; line-height: 1.7; }
+
+  @media (max-width: 460px) {
+    .iphone { transform: scale(.82); transform-origin: top center; margin-bottom: -160px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p>Jay Academy</p>
+  <h1>A LP no <strong>iPhone 13</strong></h1>
+  <small>Role dentro da tela do celular. É a página de verdade rodando ali dentro, não um print.</small>
+</header>
+
+<div class="barra-topo">
+  <span class="chip">Tela <b>390 × 844</b></span>
+  <button class="chip" id="btn-topo">Voltar ao topo</button>
+  <button class="chip" id="btn-recarregar">Recarregar</button>
+</div>
+
+<div class="iphone">
+  <div class="iphone__tela">
+    <div class="iphone__notch"></div>
+    <iframe id="tela" src="/academy" title="Jay Academy no iPhone 13"></iframe>
+    <div class="iphone__barra"></div>
+  </div>
+</div>
+
+<footer>
+  A moldura é só cenário — o que está dentro é o <b>localhost:4000/academy</b> em 390px de largura,
+  exatamente o que uma aluna veria no celular dela.
+</footer>
+
+<script>
+  const tela = document.getElementById('tela');
+  document.getElementById('btn-recarregar').onclick = () => { tela.src = tela.src; };
+  document.getElementById('btn-topo').onclick = () => {
+    // mesma origem, então dá pra rolar o conteúdo de dentro
+    try { tela.contentWindow.scrollTo({ top: 0, behavior: 'smooth' }); }
+    catch (e) { tela.src = tela.src; }
+  };
+</script>
+</body>
+</html>

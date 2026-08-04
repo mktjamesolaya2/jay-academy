@@ -67,6 +67,15 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // LP de apresentação da Jay Academy (formações presenciais).
+    slug: "academy",
+    title: "Jay Academy (apresentação)",
+    htmlFile: "lp-html/academy.html",
+    assetsDir: "public/lp/academy",
+    category: "website",
+    accent: "gold-black",
+  },
+  {
     // Site institucional recriado no sistema dark cinematográfico (21/07).
     slug: "jamesolaya",
     title: "James Olaya (institucional)",

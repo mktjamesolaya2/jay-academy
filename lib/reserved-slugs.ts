@@ -16,6 +16,7 @@ const RESERVED = new Set([
   "curso-online-profissao-remove", "fio-a-fio-realista-by-james-olaya",
   "inmersion-pelo-a-pelo", "jamesolaya", "metodo-shadow-pro", "metodo-shadow-pro-2",
   "pdv-lips-sense-technique", "pmuclass", "laser", "magicshadow",
+  "academy",
 ]);
 
 /** true = o slug colide com uma rota do sistema ou uma LP estática → não publicar ali. */
