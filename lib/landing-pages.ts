@@ -124,6 +124,21 @@ export const landingPages: LandingPage[] = [
     createdAt: "2026-07-21",
     contentSource: "lp-html",
   },
+  {
+    slug: "academy",
+    name: "Jay Academy — Formações presenciais",
+    tagline: "A escola presencial de James Olaya",
+    description:
+      "LP de apresentação da Jay Academy: a escola, a experiência, o método em 5 etapas, as 5 formações com as capas oficiais do Canva, o kit JAY.O em três painéis, o professor, a casa em fotos reais, prova social com depoimentos de alunas e fechamento em convite.",
+    stack: "HTML + CSS + JS (rota interna do portal)",
+    status: "published",
+    type: "website",
+    localPath: "portal/lp-html/academy.html",
+    productionUrl: "/academy",
+    accent: "gold-black",
+    createdAt: "2026-08-04",
+    contentSource: "lp-html",
+  },
   // __INSERT_LP_HERE__
 ];
 
