@@ -140,8 +140,32 @@ tarja de comentário do Instagram por cima, então:
 | A prática | 3 | Aluna de máscara e luva azul executando em modelo real | 1050×1260 (5:6) |
 
 A página 4 da cópia (`JAY-VOGUE-CONCEITO-70.jpg`, **4000×5910** — a turma inteira reunida
-em volta, com a vidraça da casa ao fundo) ficou de reserva. É a de maior resolução das
-quatro, se algum dia precisar de uma foto grande de turma.
+em volta, com a vidraça da casa ao fundo) ficou de reserva.
+
+### ⏳ "A sala" ainda em escolha
+
+O James: *"da sala, eu gostei dessa, porém eu acho q tem melhores, da uma olhada"*.
+
+Achei o **filão bom**: o design irmão **`DAHE-SWJM00` "[JÚLIA] 02 ... PROVA SOCIAL ALUNOS"**
+usa o ensaio profissional das turmas — arquivos `LIPSSENSE-04-2026-*.jpg`,
+`vogue-01-2026-*.jpg`, todos em **4000×6000**. É a melhor fonte de foto de turma do acervo.
+Mesmo procedimento: cópia (**`DAHRbggohco`**, renomeada "TEMP 2 - fotos de turma p/ LP
+Academy (pode apagar)") → apagar tarjas → exportar em 4320×5400.
+
+Quatro opções cortadas em 3:4 e uma página de comparação:
+**`localhost:4000/lp/academy/opcoes-sala/`** (fonte em `public/lp/academy/opcoes-sala/`).
+
+| | Cena | Original |
+|---|---|---|
+| Atual | bancada, James de microfone auricular, duas alunas atrás | 2000×1333 |
+| A | turma inteira em volta da maca | 4000×6000 |
+| B | quatro alunas de crachá sob o ring light — **a minha aposta** | 4000×6000 |
+| C | mesma cena da A, instante mais aberto | 3856×5784 |
+| D | plano fechado, James + uma aluna, telão atrás | 4000×6000 |
+
+**Quando ele escolher:** copiar a escolhida de `opcoes-sala/` pra
+`public/lp/academy/reais/sala-aula.jpg`, atualizar o `alt` na dobra `#experiencia` e
+**apagar a pasta `opcoes-sala/`** — ela é andaime, não pode ir pro deploy definitivo.
 
 **Onde NÃO procurar (já vasculhado, não tem turma):**
 - `DAF2sbUupQ0` (APRESENTAÇÃO FULL 2, 106 pág.) — catálogo de curso, fundo sempre a casa

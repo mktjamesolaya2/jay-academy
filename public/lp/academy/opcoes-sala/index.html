@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Opções para "A sala" — LP Academy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* mesma lâmina clara da dobra 3 da LP, pra a foto ser julgada no contexto certo */
+    body {
+      background: #F8F7F2;
+      color: #101820;
+      font-family: 'Poppins', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding: clamp(28px, 5vw, 72px) 0 clamp(60px, 8vw, 120px);
+    }
+    .faixa { width: 90%; max-width: 1440px; margin: 0 auto; }
+
+    .rotulo {
+      font-size: 11px; font-weight: 400; letter-spacing: .46em;
+      text-transform: uppercase; color: rgba(16, 24, 32, .5);
+    }
+    h1 {
+      margin-top: 18px;
+      font-size: clamp(22px, 2.4vw, 38px); font-weight: 200;
+      line-height: 1.2; letter-spacing: .05em; text-transform: uppercase;
+    }
+    h1 strong { display: block; font-weight: 400; }
+    .nota {
+      margin-top: 22px; padding-top: 18px;
+      border-top: 1px solid rgba(16, 24, 32, .18);
+      max-width: 62ch; font-size: 13.5px; font-weight: 300; line-height: 1.75;
+      color: rgba(16, 24, 32, .72);
+    }
+
+    .grade {
+      margin-top: clamp(36px, 4.5vw, 64px);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: clamp(18px, 2.4vw, 38px);
+      align-items: start;
+    }
+    figure { margin: 0; }
+    /* 3:4 é o formato exato do primeiro card da dobra 3 */
+    .quadro {
+      position: relative; overflow: hidden; border-radius: 14px;
+      aspect-ratio: 3 / 4; background: rgba(16, 24, 32, .06);
+    }
+    .quadro img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .selo {
+      position: absolute; top: 12px; left: 12px;
+      padding: 5px 11px; border-radius: 999px;
+      background: rgba(248, 247, 242, .92);
+      font-size: 10px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+    }
+    figcaption {
+      margin-top: 14px; padding-top: 11px;
+      border-top: 1px solid rgba(16, 24, 32, .18);
+      font-size: 13px; font-weight: 300; line-height: 1.6;
+      color: rgba(16, 24, 32, .7);
+    }
+    figcaption b {
+      display: block; margin-bottom: 5px;
+      font-size: 10.5px; font-weight: 500; letter-spacing: .2em;
+      text-transform: uppercase; color: #101820;
+    }
+    figcaption span { display: block; margin-top: 7px; font-size: 11.5px; color: rgba(16, 24, 32, .45); }
+  </style>
+</head>
+<body>
+  <div class="faixa">
+    <p class="rotulo">LP Academy · dobra "Aprenda onde a técnica acontece"</p>
+    <h1>Opções para <strong>o card "A sala".</strong></h1>
+    <p class="nota">
+      Todas são foto de ensaio da casa, já cortadas no 3:4 do card e na resolução
+      real do arquivo — nenhuma está ampliada. É só me dizer a letra.
+    </p>
+
+    <div class="grade">
+      <figure>
+        <div class="quadro">
+          <span class="selo">Atual</span>
+          <img src="atual.jpg" alt="James Olaya na bancada com microfone auricular, duas alunas treinando atrás" />
+        </div>
+        <figcaption>
+          <b>Atual</b>A bancada: você de microfone auricular executando, duas alunas
+          treinando na fileira de trás.
+          <span>1100 × 1467</span>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <div class="quadro">
+          <span class="selo">A</span>
+          <img src="a.jpg" alt="Turma de alunas em volta da maca acompanhando o procedimento" />
+        </div>
+        <figcaption>
+          <b>Opção A</b>A turma inteira em volta da maca, todas acompanhando o
+          procedimento de perto. É a que mostra mais gente.
+          <span>1400 × 1867 · original 4000 × 6000</span>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <div class="quadro">
+          <span class="selo">B</span>
+          <img src="b.jpg" alt="Alunas com crachá acompanhando o procedimento sob a luz do ring light" />
+        </div>
+        <figcaption>
+          <b>Opção B</b>Quatro alunas de crachá acompanhando sob o ring light.
+          A luz quente e a profundidade puxam pro cinematográfico.
+          <span>1400 × 1867 · original 4000 × 6000</span>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <div class="quadro">
+          <span class="selo">C</span>
+          <img src="c.jpg" alt="Turma em volta da maca durante o procedimento, uma aluna filmando" />
+        </div>
+        <figcaption>
+          <b>Opção C</b>Mesma cena da A, num instante mais aberto — dá pra ver a
+          sala e uma aluna filmando.
+          <span>1400 × 1867 · original 3856 × 5784</span>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <div class="quadro">
+          <span class="selo">D</span>
+          <img src="d.jpg" alt="James executando com uma aluna acompanhando ao lado, telão atrás" />
+        </div>
+        <figcaption>
+          <b>Opção D</b>Plano fechado: você executando com uma aluna ao lado e o
+          telão da aula atrás. Mais íntima, menos turma.
+          <span>1400 × 1867 · original 4000 × 6000</span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</body>
+</html>
