@@ -17,15 +17,16 @@
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
     display: flex; flex-direction: column; align-items: center;
-    padding: clamp(24px, 4vw, 54px) 20px clamp(40px, 6vw, 80px);
-    gap: clamp(20px, 3vw, 36px);
+    /* ⚠️ cabeçalho enxuto de propósito: isto é ferramenta, não vitrine. Cada
+       pixel gasto aqui em cima é pixel que o aparelho perde de zoom. */
+    padding: 16px 20px 20px;
+    gap: 12px;
   }
 
-  header { text-align: center; }
-  header p { font-size: 10px; letter-spacing: .42em; text-transform: uppercase; color: rgba(248,247,242,.5); }
-  header h1 { margin-top: 12px; font-size: clamp(18px, 2.2vw, 28px); font-weight: 200; letter-spacing: .06em; text-transform: uppercase; }
+  header { text-align: center; display: flex; align-items: baseline; gap: 12px; }
+  header p { font-size: 9.5px; letter-spacing: .4em; text-transform: uppercase; color: rgba(248,247,242,.42); }
+  header h1 { font-size: 15px; font-weight: 200; letter-spacing: .1em; text-transform: uppercase; }
   header h1 strong { font-weight: 400; color: var(--ouro-claro); }
-  header small { display: block; margin-top: 12px; font-size: 12px; font-weight: 300; color: rgba(248,247,242,.55); }
 
   /* ===== iPhone 13: tela 390x844, borda arredondada 47px, notch no topo ===== */
   .iphone {
@@ -87,11 +88,25 @@
   button.chip { cursor: pointer; font-family: inherit; transition: color .3s ease, border-color .3s ease; }
   button.chip:hover { color: var(--off-white); border-color: rgba(220,195,131,.7); }
 
-  footer { font-size: 11px; font-weight: 300; color: rgba(248,247,242,.4); text-align: center; max-width: 60ch; line-height: 1.7; }
-
-  @media (max-width: 460px) {
-    .iphone { transform: scale(.82); transform-origin: top center; margin-bottom: -160px; }
+  /* o rodapé fica fixo no canto pra não roubar altura do aparelho */
+  footer {
+    position: fixed; right: 16px; bottom: 12px;
+    font-size: 10px; font-weight: 300; color: rgba(248,247,242,.28);
+    text-align: right; max-width: 42ch; line-height: 1.6; pointer-events: none;
   }
+
+  /* ⚠️ o aparelho tem 866px de altura fixa: numa tela de notebook ele não cabia e
+     o pé ficava cortado. O JS mede a janela e encolhe a MOLDURA — a tela por
+     dentro continua sendo 390×844 de verdade, então o layout não muda, só o zoom
+     com que você olha. `--z` é o fator. */
+  .palco { display: flex; justify-content: center; }
+  .iphone { transform: scale(var(--z, 1)); transform-origin: top center; }
+
+  /* atalhos pra cada dobra: com a LP inteira em ~13.000px, rolar até a dobra 8
+     no dedo a cada ajuste é o que fazia perder tempo */
+  .dobras { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 760px; }
+  .dobras .chip { font-size: 9.5px; letter-spacing: .18em; padding: 7px 13px; }
+  .chip.ativo { color: var(--off-white); border-color: rgba(220,195,131,.75); background: rgba(172,151,81,.16); }
 </style>
 </head>
 <body>
@@ -99,20 +114,25 @@
 <header>
   <p>Jay Academy</p>
   <h1>A LP no <strong>iPhone 13</strong></h1>
-  <small>Role dentro da tela do celular. É a página de verdade rodando ali dentro, não um print.</small>
 </header>
 
 <div class="barra-topo">
   <span class="chip">Tela <b>390 × 844</b></span>
+  <button class="chip" id="btn-zoom">Tamanho real</button>
   <button class="chip" id="btn-topo">Voltar ao topo</button>
   <button class="chip" id="btn-recarregar">Recarregar</button>
+  <a class="chip" href="/academy" target="_blank" rel="noopener">Abrir em aba</a>
 </div>
 
-<div class="iphone">
-  <div class="iphone__tela">
-    <div class="iphone__notch"></div>
-    <iframe id="tela" src="/academy" title="Jay Academy no iPhone 13"></iframe>
-    <div class="iphone__barra"></div>
+<div class="dobras" id="dobras"></div>
+
+<div class="palco">
+  <div class="iphone" id="aparelho">
+    <div class="iphone__tela">
+      <div class="iphone__notch"></div>
+      <iframe id="tela" src="/academy" title="Jay Academy no iPhone 13"></iframe>
+      <div class="iphone__barra"></div>
+    </div>
   </div>
 </div>
 
@@ -123,12 +143,84 @@
 
 <script>
   const tela = document.getElementById('tela');
+  const aparelho = document.getElementById('aparelho');
+  const dobras = document.getElementById('dobras');
+
   document.getElementById('btn-recarregar').onclick = () => { tela.src = tela.src; };
-  document.getElementById('btn-topo').onclick = () => {
-    // mesma origem, então dá pra rolar o conteúdo de dentro
-    try { tela.contentWindow.scrollTo({ top: 0, behavior: 'smooth' }); }
+  document.getElementById('btn-topo').onclick = () => rolarPara(0);
+
+  // mesma origem: dá pra mexer no conteúdo de dentro sem gambiarra de postMessage
+  const dentro = () => tela.contentWindow;
+
+  function rolarPara(y) {
+    try { dentro().scrollTo({ top: y, behavior: 'smooth' }); }
     catch (e) { tela.src = tela.src; }
+  }
+
+  // --- encolhe a MOLDURA até o aparelho caber na janela ---
+  // A tela por dentro continua 390x844 SEMPRE: o que muda é só o zoom com que se
+  // olha. Numa janela de notebook o aparelho de 866px não cabe inteiro, e ver a
+  // dobra cortada engana mais do que ajuda.
+  let tamanhoReal = false;
+
+  function ajustarZoom() {
+    const topo = aparelho.getBoundingClientRect().top + window.scrollY;
+    const disponivel = window.innerHeight - topo - 24;
+    const z = tamanhoReal ? 1 : Math.min(1, Math.max(.55, disponivel / 866));
+    document.documentElement.style.setProperty('--z', z.toFixed(3));
+    // com scale o elemento continua ocupando a altura original no fluxo;
+    // a margem negativa recolhe a sobra pra não criar rolagem fantasma
+    aparelho.style.marginBottom = Math.round(-866 * (1 - z)) + 'px';
+  }
+  window.addEventListener('resize', ajustarZoom);
+  ajustarZoom();
+
+  // 1:1 pra julgar espaçamento fino; caber-na-tela pra ler a dobra inteira
+  const btnZoom = document.getElementById('btn-zoom');
+  btnZoom.onclick = () => {
+    tamanhoReal = !tamanhoReal;
+    btnZoom.textContent = tamanhoReal ? 'Caber na tela' : 'Tamanho real';
+    btnZoom.classList.toggle('ativo', tamanhoReal);
+    ajustarZoom();
   };
+
+  // --- atalhos por dobra, lidos da própria LP ---
+  const NOMES = {
+    sobre: 'Manifesto', experiencia: 'Experiência', metodo: 'Método',
+    formacoes: 'Formações', professor: 'Professor', academy: 'A casa',
+    alunos: 'Depoimentos', resultados: 'Resultados', comecar: 'Fechamento',
+  };
+
+  function montarDobras() {
+    let doc;
+    try { doc = dentro().document; } catch (e) { return; }
+    dobras.innerHTML = '';
+
+    const alvos = [{ id: null, nome: 'Abertura', el: doc.querySelector('.abertura') },
+                   { id: null, nome: 'Hero', el: doc.querySelector('.hero') }];
+    Object.keys(NOMES).forEach((id) => {
+      const el = doc.getElementById(id);
+      if (el) alvos.push({ id, nome: NOMES[id], el });
+    });
+
+    alvos.forEach((alvo) => {
+      if (!alvo.el) return;
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.textContent = alvo.nome;
+      b.onclick = () => {
+        rolarPara(alvo.el.offsetTop);
+        dobras.querySelectorAll('.chip').forEach((c) => c.classList.remove('ativo'));
+        b.classList.add('ativo');
+      };
+      dobras.appendChild(b);
+    });
+    // ⚠️ os atalhos empurram o aparelho pra baixo. Sem recalcular aqui, o zoom
+    // fica com a conta de antes e o pé do celular sai da janela.
+    ajustarZoom();
+  }
+  tela.addEventListener('load', montarDobras);
+  if (tela.contentDocument && tela.contentDocument.readyState === 'complete') montarDobras();
 </script>
 </body>
 </html>
