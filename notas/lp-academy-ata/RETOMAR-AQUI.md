@@ -8,12 +8,22 @@
 
 ---
 
-## ✅ ESTADO: tudo commitado (05/08)
+## ✅ ESTADO: commitado, mas **NÃO pushado** (05/08)
 
-Três commits na branch `lp-academy-deploy`:
-1. `feat(academy): ajustes da ata 04/08 (fase 1 desktop)`
-2. `feat(academy): dobra 0 — abertura em lettering + hero volta ao titulo original`
-3. `feat(academy): fotos coloridas de aula de verdade na dobra 3`
+Branch `lp-academy-deploy`, **4 commits à frente de `origin/main`**:
+1. `fix(academy): registra a LP no dashboard` (vinha de antes)
+2. `feat(academy): ajustes da ata 04/08 (fase 1 desktop)`
+3. `feat(academy): dobra 0 — abertura em lettering + hero volta ao titulo original`
+4. `feat(academy): fotos coloridas de aula de verdade na dobra 3`
+
+⚠️ **O push não foi possível: `.env.local` não existe mais nesta máquina**, e é lá que
+mora o PAT `token_mktjamesolaya2` que o `git push` precisa (a Vercel só injeta as envs de
+produção quando o autor é o dono — ver "Pegadinhas" no `CLAUDE.md`). Sem o arquivo o push
+fica pendurado esperando credencial. Recriar `.env.local` com o PAT e então:
+
+```
+git push "https://mktjamesolaya2:$PAT@github.com/mktjamesolaya2/jay-academy.git" HEAD:main
+```
 
 ---
 
