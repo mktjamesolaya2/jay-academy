@@ -1171,6 +1171,14 @@
       }
       .etapa:first-child { padding-top: 0; border-top: 0; }
       .cabeca-dupla { grid-template-columns: 1fr; gap: clamp(20px, 6vw, 32px); }
+      /* ⚠️ 05/08 (ata, "corrigir posição de títulos" na dobra da experiência):
+         o `15ch` foi desenhado pra coluna estreita do cabeçalho de duas colunas
+         do desktop. Empilhado no celular ele prendia "APRENDA / ONDE A TÉCNICA /
+         ACONTECE." num bloco de 181px com 170px de buraco à direita — 52% da
+         coluna. O mesmo vale pro `22ch` do método. Sem trava, o `text-wrap:
+         balance` que o título já tem distribui as linhas sozinho. */
+      .cabeca-dupla .titulo-lamina,
+      #metodo .metodo__topo .titulo-lamina { max-width: none; }
       .trio { grid-template-columns: 1fr; gap: clamp(26px, 7vw, 40px); }
       .trio figure:nth-child(2), .trio figure:nth-child(3) { margin-top: 0; }
       .trio figure .trio__quadro { aspect-ratio: 4 / 5 !important; }
