@@ -59,6 +59,25 @@
     instante mais aberto, uma aluna filmando). Saída 1400×1867. Andaime já apagado.
   - A legenda de "A sala" foi reescrita junto: falava em "bancadas montadas", que era a
     foto anterior. **Trocou a foto, relê a legenda.**
+- **Preview de celular** em `public/lp/academy/preview-celular.html` → a LP de verdade
+  rodando num iPhone 13 (390×844), com atalho pra cada dobra, recarregar e "Tamanho real".
+  O aparelho se encolhe sozinho até caber na janela; a tela por dentro continua 390×844.
+- **Fase 2 — mobile, os defeitos medidos e corrigidos:**
+  - Cards de benefícios: em 2 colunas o 3º item abria a fileira de baixo mas herdava
+    filete e recuo de 2ª coluna (18px pra dentro + linha vertical órfã); o 2º não fechava
+    na borda; sem filete entre fileiras; alturas 67×87. Até 1180px passou a mandar a
+    posição na fileira; até 768px virou uma coluna com o device das `.etapa`.
+  - `max-width: 13ch` (desenho das 4 colunas do desktop) quebrava as frases em 3 linhas
+    com 200px de vazio → 24ch + corpo de 17px.
+  - `.cabeca-dupla .titulo-lamina { max-width: 15ch }` prendia o título da experiência em
+    181px, 52% da coluna → trava removida no mobile. Experiência 3→2 linhas, método 5→4,
+    e a foto de cada dobra subiu pra primeira visualização.
+  - Varreduras: nenhuma grade com defeito de fim-de-fileira em 390/900; nenhum bloco de
+    texto abaixo de 80% da coluna por trava de desktop; ritmo vertical já consistente
+    (58px por dobra, 70px no manifesto e no fechamento, `.faixa` 20..370 em todas).
+  - **Falta 1 item, e é decisão de desenho:** reorganizar `#experiencia` (3 fotos 4:5
+    empilhadas = ~1.400px em fila, o trio deixa de ser lido como trio). Não mexi porque é
+    mudança de desenho, não defeito. Se cruza com a decisão do carrossel dos depoimentos.
 - Conferido em desktop (1440) e mobile (390) por screenshot, com `puppeteer-core` +
   o Chrome instalado — o projeto já tem a dependência.
 - Pendente: aval do James no desktop antes da Fase 2 (mobile).

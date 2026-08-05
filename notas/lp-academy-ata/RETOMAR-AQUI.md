@@ -186,16 +186,47 @@ microblading-treatment.jpg`, `fpkdl.com_960_...` = stock.
 
 ---
 
-## 🔜 O QUE FAZER, NA ORDEM
+## 📱 Fase 2 — Mobile (05/08)
 
-### 1. O James ver o desktop e aprovar
-`localhost:4000/academy`. Falta o aval dele nas três decisões da abertura (tabela acima).
+**Ferramenta:** `localhost:4000/lp/academy/preview-celular.html` — a LP de verdade
+rodando dentro de um iPhone 13 (390×844), com atalho pra cada dobra, botão de recarregar
+e "Tamanho real" pra alternar 1:1. O aparelho se encolhe sozinho até caber na janela;
+a tela por dentro continua 390×844, então o layout não muda, só o zoom.
 
-### 2. Fase 2 — Mobile (só depois do desktop aprovado)
-- Reorganizar a dobra da experiência (a ata chama de "seção de demonstração")
-- Divisores inconsistentes entre desktop e mobile, inclusive nos cards de benefícios
-- Espaçamentos, alinhamentos e centralização de blocos de texto
-- Acabamento dos cards de benefícios
+### ✅ Feito
+
+| Item da ata | O que estava errado (medido) | Como ficou |
+|---|---|---|
+| Divisores nos cards de benefícios | Em 2 colunas o **3º item abria a fileira de baixo mas herdava filete e recuo de 2ª coluna** — entrava 18px pra dentro com uma linha vertical órfã. O **2º guardava 18px à direita** e não fechava na borda como o 4º. Sem filete entre as fileiras. Alturas 67px × 87px. | Até 1180px quem manda é a posição na fileira (ímpares abrem, pares fecham, fileira de baixo ganha filete por cima). Até 768px vira **uma coluna** com o device das `.etapa` |
+| Alinhamento dos cards | `max-width: 13ch` era desenho das 4 colunas do desktop; numa coluna de 350px quebrava "Orientação / durante / sua evolução" em 3 linhas com 200px de vazio | 24ch + corpo de 17px (a base trava em 15px porque o termo em vw some nessa largura) |
+| "Corrigir posição de títulos" na dobra da experiência | `.cabeca-dupla .titulo-lamina { max-width: 15ch }` prendia o título em **181px com 170px de buraco — 52% da coluna** | Trava removida no mobile; o `text-wrap: balance` resolve. Experiência foi de 3 pra 2 linhas, método de 5 pra 4, e a foto subiu pra primeira visualização |
+
+**Varreduras que rodei (dá pra repetir):**
+- Toda grade da página, procurando item que abre fileira com filete/recuo de meio de
+  fileira → **nenhum defeito restante** em 390px e 900px.
+- Todo bloco de texto com `max-width`, medindo quanto da coluna ele usa → **nenhum**
+  abaixo de 80% por trava de desktop (os que sobram são centrados de propósito, como a
+  hero, ou frases curtas).
+- Ritmo vertical: todas as dobras em 58px de padding (só manifesto e fechamento em 70px,
+  de propósito), `.faixa` em 20..370 em todas. **Consistente, nada a fazer.**
+
+### ⏳ Sobrou UM item, e é decisão de desenho
+
+"**Reorganizar a seção de demonstração para melhorar a compreensão na primeira
+visualização**" (`#experiencia`). O que ainda incomoda: as três fotos empilhadas em 4:5
+dão ~1.400px de imagem em fila. O trio deixa de ser lido como trio.
+
+Não mexi porque é **mudança de desenho, não correção de defeito** — e device novo costuma
+ser reprovado por ele. As saídas possíveis:
+1. **Carrossel horizontal** no celular: volta a leitura de trio (a 2ª foto espia na
+   borda) e corta ~900px de rolagem. É o mesmo device que a ata pede pros depoimentos.
+2. **Foto menor + legenda ao lado**, virando lista: compacto, mas mata a fotografia, que
+   é o ponto da dobra.
+3. **Deixar como está**: a remoção da trava do título já subiu a 1ª foto pra primeira
+   visualização, que era metade da queixa.
+
+⚠️ Isso se cruza com a decisão nº 1 lá embaixo (carrossel dos depoimentos). Se ele
+aprovar carrossel, vale usar o mesmo device nos dois lugares.
 
 ---
 
