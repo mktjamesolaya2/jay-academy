@@ -8,14 +8,18 @@
 
 ---
 
-## ⚠️ ESTADO: nada disso está commitado
+## ✅ ESTADO: tudo commitado (05/08)
 
-As mudanças de 04/08 estão **só no arquivo local**. Se algo se perder, é aqui que dói.
-Antes de qualquer coisa nova, vale commitar o que já existe.
+Três commits na branch `lp-academy-deploy`:
+1. `feat(academy): ajustes da ata 04/08 (fase 1 desktop)`
+2. `feat(academy): dobra 0 — abertura em lettering + hero volta ao titulo original`
+3. `feat(academy): fotos coloridas de aula de verdade na dobra 3`
 
 ---
 
-## ✅ Já feito (Fase 1 — desktop)
+## ✅ Já feito
+
+### Fase 1 — desktop (04/08)
 
 | # | Item | Como ficou |
 |---|------|-----------|
@@ -23,49 +27,73 @@ Antes de qualquer coisa nova, vale commitar o que já existe.
 | 4 | Depoimentos em cards | Cartão branco com sombra na lâmina clara; o nome preso no rodapé por filete, então os quatro alinham por baixo |
 | 5 | Negrito na "seção de evolução" | Aplicado na dobra **`#academy`** — é a única cujo texto fala em "sua evolução". ⚠️ Interpretação minha, o James ainda não confirmou se era essa |
 | 6 | "Você não aprende apenas uma técnica" (`#metodo`) | Colunas aproximadas, título em 22ch, bloco centrado no eixo do retrato |
-| — | Fotos da dobra 3 | Restauradas pra versão anterior ao meu tratamento + `median(3)` pra reduzir ruído. **Melhorou pouco** — ver pendência 3 |
+
+### 05/08
+
+| # | Item | Como ficou |
+|---|------|-----------|
+| 1 | Título da hero desfeito | Voltou pra **"Micropigmentação de alto nível"** |
+| 2 | **Tela de abertura em lettering** (dobra 0) | Lâmina preta de 220vh antes da hero. Ver decisões abaixo |
+| 3 | **As 3 fotos da dobra 3, agora coloridas** ⭐ | Resolvido — ver abaixo |
+
+---
+
+## 🎬 Dobra 0 — abertura em lettering: o que eu decidi sozinho
+
+O James não tinha respondido três coisas. Como o workflow dele é propor e ajustar,
+eu escolhi e deixei registrado — **se ele reclamar, é aqui que se mexe:**
+
+| Pergunta | O que ficou | Por quê |
+|---|---|---|
+| Quebra | `BEM-VINDO À` (rótulo pequeno) / `JAY ACADEMY` (grande) | Duas linhas, como ele pediu, na hierarquia que a LP já usa (rótulo minúsculo + título) |
+| Gatilho | **Conforme a rolagem** | A própria descrição dele dizia "conforme rola… crescendo até ocupar a tela toda" |
+| Saída | **Desliza pra cima** (o `sticky` solta e entrega a hero) | Sem fade: fade faria o texto sumir *antes* de sair, e aí a saída deixa de ser um movimento |
+
+**Detalhes que valem saber antes de mexer:**
+- A frase **começa fantasma** (opacidade `.12`), não invisível. Tela preta vazia no
+  carregamento lê como página quebrada — e hint instrucional ("role para baixo") está
+  fora, é anti-padrão dele.
+- As letras se **sobrepõem** na cascata (`JANELA = .30`). Sem sobreposição vira fade em
+  bloco, que é outra coisa.
+- O halo dourado da hero se repete fechado no centro, pra amarrar as duas dobras.
+- Sem JS ou com `prefers-reduced-motion` a lâmina vira **só uma tela de título** legível,
+  com 100vh em vez da corrida de 220vh (a classe `is-animada` é quem estica).
+- `body { overflow-x: hidden }` **não** quebra o `sticky` aqui porque o `html` não tem
+  overflow — o do body propaga pra viewport. Se alguém puser overflow no `html`, quebra.
+
+---
+
+## 📸 As 3 fotos da dobra 3 — RESOLVIDO
+
+**Não eram recuperáveis no projeto:** todas as versões no git já eram cinza (saturação
+0.0 / 1.1 / 6.0 desde o commit `c778578`). Não existia original colorido.
+
+**De onde vieram as novas:** Canva, design **`DAHIKhsXzBk` — "JAY ACADEMY - TRECHOS DE
+AULA"** (73 páginas de recorte de aula de verdade, colorido). Páginas usadas:
+
+| Slot | Página | Cena | Aspecto |
+|---|---|---|---|
+| A sala | 1 | James apontando o conteúdo na tela, aluna em primeiro plano | 3:4 |
+| A demonstração | 17 | James executando, aluna acompanhando atrás | 4:5 |
+| A prática | 9 | Aluna executando em modelo real, turma ao lado | 5:6 |
+
+**Como foram tiradas de lá:** `export-design` em JPG 1080×1920 e **corte fora da faixa
+onde o Canva assenta o texto** (detectada varrendo as linhas com branco puro), já no
+aspecto que cada slot pede. Acabamento leve: `brightness` 1.04–1.12, `saturation` 1.07,
+`sharpen(0.8)`. **Não precisa mexer no Canva do James** — nada foi editado lá.
+
+**Onde NÃO procurar (já vasculhado, não tem turma):**
+- `DAF2sbUupQ0` (APRESENTAÇÃO FULL 2, 106 pág.) — catálogo de curso, fundo sempre a casa
+- `DAHOvtt3XVA` (TELAS TV RECEPÇÃO, 28 pág.) — só resultado (antes/depois, lábios, olhos)
 
 ---
 
 ## 🔜 O QUE FAZER, NA ORDEM
 
-### 1. Desfazer o título da hero
-Voltar de "Bem-vindo à Jay Academy" para **"Micropigmentação de alto nível"**.
-Foi trocado pela ata, mas o James mudou de ideia — o boas-vindas vai virar tela de abertura (item 2).
+### 1. O James ver o desktop e aprovar
+`localhost:4000/academy`. Falta o aval dele nas três decisões da abertura (tabela acima).
 
-### 2. Tela de abertura em lettering (NOVO)
-Antes da hero: **tela preta**; conforme rola, **"Bem-vindo à Jay Academy"** aparece em efeito
-lettering, crescendo até ocupar a tela toda. **No máximo 2 linhas.** Depois dela vem a hero.
-
-⚠️ **Três coisas que o James ainda não respondeu** (perguntar antes de codar):
-- **Quebra:** "BEM-VINDO À" / "JAY ACADEMY"?
-- **Gatilho:** escreve conforme a rolagem, ou sozinho ao carregar?
-- **Saída:** desliza pra cima revelando a hero, ou some em fade?
-
-### 3. Trocar as 3 fotos da dobra "Aprenda onde a técnica acontece" ⭐
-**É o item mais cobrado — o James pediu 4 vezes.**
-
-Estão em `public/lp/academy/reais/`: `sala-aula.jpg`, `demonstracao-real.jpg`, `pratica-real.jpg`.
-Ele quer **coloridas**. As atuais são P&B e granuladas.
-
-**O que já foi investigado (não repetir):**
-- Vieram do espelho do jamesolaya.com.br, em `public/lp/jamesolaya/` (img12, img27, img24)
-- **Todas as versões no git já são cinza** — saturação 0.0 / 1.1 / 6.0 desde o commit `c778578`.
-  Não existe original colorido no projeto. Medir de novo é perder tempo.
-- O **grão** é da própria foto (sala escura, ISO alto), não é efeito de CSS. `median(3)` reduziu pouco;
-  reduzir mais borra os rostos.
-
-**➡️ Onde procurar (Canva do James):**
-| Design ID | Nome | Páginas | Já visto? |
-|---|---|---|---|
-| `DAHOvtt3XVA` | JAY ACADEMY - TELAS TV RECEPÇÃO | 28 | 5 páginas — **tem foto colorida real** (sat 41 a 97), mas as vistas são de resultado, não de turma |
-| `DAF2sbUupQ0` | JAY ACADEMY - APRESENTAÇÃO FULL 2 | 106 | não |
-| `DAHCQAi9Y8Q` | JAYO ACADEMY - CARROSSEL CURSOS 2026 | 74 | não |
-
-Se não achar turma colorida, a alternativa é trocar por outra imagem real que faça sentido —
-mas **não** repetir as fotos da casa (fachada/lounge/sala), que já estão na dobra `#academy`.
-
-### 4. Fase 2 — Mobile (só depois do desktop aprovado)
+### 2. Fase 2 — Mobile (só depois do desktop aprovado)
 - Reorganizar a dobra da experiência (a ata chama de "seção de demonstração")
 - Divisores inconsistentes entre desktop e mobile, inclusive nos cards de benefícios
 - Espaçamentos, alinhamentos e centralização de blocos de texto
@@ -78,6 +106,7 @@ mas **não** repetir as fotos da casa (fachada/lounge/sala), que já estão na d
 1. **Carrossel dos depoimentos** — no desktop também, ou cards no desktop e carrossel só no celular?
 2. **Destino dos "Ver formação"** — WhatsApp, LP do curso ou âncora interna? Hoje vão pra `#comecar`.
 3. **"Seção de evolução"** — confirmar se o negrito entrou na dobra certa (`#academy`).
+4. **Abertura em lettering** — confirmar quebra, gatilho e saída (tabela lá em cima).
 
 ---
 
@@ -89,6 +118,7 @@ mas **não** repetir as fotos da casa (fachada/lounge/sala), que já estão na d
 | "você não aprende apenas uma técnica" | `#metodo` |
 | "seção de evolução" | `#academy` *(interpretação, não confirmada)* |
 | "cards de benefícios" | `.indicadores`, dentro de `#experiencia` |
+| — | `.abertura` é a dobra 0, que **não** estava na ata |
 
 ---
 
@@ -107,7 +137,22 @@ mas **não** repetir as fotos da casa (fachada/lounge/sala), que já estão na d
 - **Reaproveitar device antes de inventar** — `.indicadores` em colunas com filete, `.trio` escalonado,
   `.card`. Device novo costuma ser reprovado.
 - **A LP usa UM filete**, nunca dois cercando um bloco (isso vira caixa, e caixa não é a linguagem).
-- **Full-bleed só na hero e no fechamento.** Toda dobra mora dentro do `.faixa`.
+- **Full-bleed só na hero, na abertura e no fechamento.** Toda dobra mora dentro do `.faixa`.
+
+---
+
+## 🛠️ Como eu conferi (dá pra repetir)
+
+Não tem ferramenta de browser, mas o projeto tem `puppeteer-core` e o Chrome está instalado:
+
+```
+npm run dev                       # porta 4000
+node <script>.mjs                 # puppeteer-core + executablePath do Chrome
+```
+
+Os scripts de screenshot que usei ficaram no scratchpad da sessão (`shot-abertura.mjs`
+tira a abertura em 5 pontos da rolagem, desktop e mobile; `shot-trio.mjs` tira a dobra 3).
+Se sumirem, são ~30 linhas cada.
 
 ---
 
