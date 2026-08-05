@@ -84,6 +84,24 @@ pilotada por scroll.** Entrada acontece uma vez e acaba.
 - O halo dourado da hero se repete fechado no centro, pra amarrar as duas dobras.
 - `prefers-reduced-motion` desliga as três animações e a frase já aparece pronta.
 
+### A emenda com a hero (pedido do James, 05/08)
+
+Dava uma **linha horizontal** na divisão das duas dobras: a abertura é preto chapado
+(`#050403`) e o topo da hero já entra no morno do halo. Medido no desktop: `rgb(5,4,3)`
+virava `rgb(14,11,7)` de um pixel pro outro.
+
+Agora as duas se encontram no meio do caminho — **véu dos dois lados** (`.abertura::after`
+esquenta descendo, `.hero::before` escurece subindo), calibrados pra fechar no mesmo tom.
+
+⚠️ **Os números são diferentes no celular.** Lá a hero é foto sangrada com scrim e o topo
+dela fica em `rgb(6,5,4)`, quase o mesmo preto da abertura — sem morno nenhum. Com os
+valores do desktop a abertura ia pra 11 contra 6 da hero e a linha **voltava, ao
+contrário**. Por isso existe um override dentro do `@media (max-width: 768px)`.
+
+**Se mexer no fundo da hero ou da abertura, remedir.** O jeito: puppeteer + amostrar a
+coluna central e a borda a cada poucos px em volta da emenda; enquanto a sequência não
+tiver degrau maior que ~1, está limpo (o ±1 é dithering do Chrome, não erro).
+
 ---
 
 ## 📸 As 3 fotos da dobra 3 — RESOLVIDO

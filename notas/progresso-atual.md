@@ -28,6 +28,14 @@
   - As letras se sobrepõem na cascata (.045s de atraso contra .72s de animação); sem isso
     vira fade em bloco, que é outra coisa.
   - `prefers-reduced-motion` desliga as três animações e a frase já aparece pronta.
+- **Emenda da abertura com a hero degradada dos dois lados** (pedido do James). Havia uma
+  linha horizontal na divisão: a abertura é preto chapado e o topo da hero já entra no
+  morno do halo — `rgb(5,4,3)` virava `rgb(14,11,7)` de um pixel pro outro. Agora
+  `.abertura::after` esquenta descendo e `.hero::before` escurece subindo, calibrados pra
+  fechar no mesmo tom. ⚠️ O celular precisou de override próprio dentro do
+  `@media (max-width: 768px)`: lá a hero é foto sangrada com scrim e o topo dela já é
+  quase o preto da abertura, então os valores do desktop recriavam a linha ao contrário.
+  Conferido por amostragem de pixel em 390, 1024, 1440 e 1920 — sem degrau maior que 1.
 - **As 3 fotos da dobra 3 agora são coloridas** — o item mais cobrado pelo James (4 vezes).
   Não havia original colorido no projeto (todas as versões no git já eram cinza desde o
   commit `c778578`). As novas vieram do Canva, design `DAHIKhsXzBk` "JAY ACADEMY - TRECHOS
