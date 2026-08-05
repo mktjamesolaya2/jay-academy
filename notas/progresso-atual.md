@@ -13,13 +13,21 @@
 
 - **Hero desfeita**: o título voltou pra "Micropigmentação de alto nível". O boas-vindas
   que a ata pediu saiu da hero e virou uma dobra própria.
-- **Nova dobra 0, `.abertura`**: lâmina preta de 220vh antes da hero. "Bem-vindo à /
-  Jay Academy" em duas linhas, escrita letra a letra conforme a rolagem e crescendo até
-  tomar a tela; no fim a lâmina desliza pra cima e entrega a hero.
-  - A frase começa fantasma (opacidade `.12`), não invisível — tela preta vazia no
-    carregamento lê como página quebrada, e hint instrucional é anti-padrão do James.
-  - As letras se sobrepõem na cascata (`JANELA = .30`); sem isso vira fade em bloco.
-  - Sem JS ou com `prefers-reduced-motion`, a lâmina vira só uma tela de título de 100vh.
+- **Nova dobra 0, `.abertura`**: lâmina preta de 100vh antes da hero. "Bem-vindo à /
+  Jay Academy" em duas linhas, escrita letra a letra.
+  - ⚠️ **Primeira versão foi reprovada e refeita na mesma sessão.** Ela amarrava a
+    animação ao scroll: 220vh de corrida e a escala do bloco seguindo a rolagem. O James:
+    *"ficou meio bugado… não é para ser uma intro, é como se fosse uma hero mesmo, eu
+    estou tentando passar o mouse e está dando zoom"*. Qualquer roçada na roda mexia no
+    tamanho da frase, e a lâmina ainda comia duas telas de rolagem antes da hero.
+  - **Como ficou:** 100vh cravado (o topo da hero é exatamente a altura da viewport), a
+    página rola normal por cima. Sem `sticky`, sem palco intermediário, **sem nenhum
+    listener de scroll**. A escrita acontece sozinha ao carregar, em CSS — o JS só quebra
+    as linhas em letras e carimba o `animation-delay` de cada uma (~1,9s no total).
+  - O "crescer até tomar a tela" virou um `scale` .88 → 1 na entrada, uma vez só.
+  - As letras se sobrepõem na cascata (.045s de atraso contra .72s de animação); sem isso
+    vira fade em bloco, que é outra coisa.
+  - `prefers-reduced-motion` desliga as três animações e a frase já aparece pronta.
 - **As 3 fotos da dobra 3 agora são coloridas** — o item mais cobrado pelo James (4 vezes).
   Não havia original colorido no projeto (todas as versões no git já eram cinza desde o
   commit `c778578`). As novas vieram do Canva, design `DAHIKhsXzBk` "JAY ACADEMY - TRECHOS

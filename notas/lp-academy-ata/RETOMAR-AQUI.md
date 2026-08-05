@@ -48,28 +48,41 @@ git push "https://mktjamesolaya2:$PAT@github.com/mktjamesolaya2/jay-academy.git"
 
 ---
 
-## 🎬 Dobra 0 — abertura em lettering: o que eu decidi sozinho
+## 🎬 Dobra 0 — abertura em lettering
 
-O James não tinha respondido três coisas. Como o workflow dele é propor e ajustar,
-eu escolhi e deixei registrado — **se ele reclamar, é aqui que se mexe:**
+### ⛔ A primeira versão foi REPROVADA — não refazer assim
 
-| Pergunta | O que ficou | Por quê |
-|---|---|---|
-| Quebra | `BEM-VINDO À` (rótulo pequeno) / `JAY ACADEMY` (grande) | Duas linhas, como ele pediu, na hierarquia que a LP já usa (rótulo minúsculo + título) |
-| Gatilho | **Conforme a rolagem** | A própria descrição dele dizia "conforme rola… crescendo até ocupar a tela toda" |
-| Saída | **Desliza pra cima** (o `sticky` solta e entrega a hero) | Sem fade: fade faria o texto sumir *antes* de sair, e aí a saída deixa de ser um movimento |
+Eu tinha amarrado a animação ao scroll: 220vh de corrida, `sticky`, e a escala do bloco
+seguindo a posição da rolagem. O James:
+
+> *"ficou meio bugado essa tela de inicio… não é para ser uma intro, é como se fosse uma
+> hero msm, eu estou tentando passar o mouse e está dando zoom"*
+
+Dois problemas: qualquer roçada na roda mexia no **tamanho** da frase, e a lâmina **comia
+duas telas de rolagem** antes da hero. **Regra que sai daqui: nesta LP, animação não é
+pilotada por scroll.** Entrada acontece uma vez e acaba.
+
+### ✅ Como ficou
+
+| Pergunta | O que ficou |
+|---|---|
+| Quebra | `BEM-VINDO À` (rótulo pequeno) / `JAY ACADEMY` (grande) — a hierarquia que a LP já usa |
+| Gatilho | **Sozinho ao carregar** (~1,9s até a frase inteira acesa) |
+| Saída | Não tem saída: é uma **tela de 100vh** e a página rola normal por cima |
 
 **Detalhes que valem saber antes de mexer:**
-- A frase **começa fantasma** (opacidade `.12`), não invisível. Tela preta vazia no
-  carregamento lê como página quebrada — e hint instrucional ("role para baixo") está
-  fora, é anti-padrão dele.
-- As letras se **sobrepõem** na cascata (`JANELA = .30`). Sem sobreposição vira fade em
-  bloco, que é outra coisa.
+- `.abertura` tem **100vh cravado** — o topo da hero é exatamente a altura da viewport.
+  Conferido em 1440 e 390.
+- **Zero listener de scroll.** O JS só quebra as linhas em letras e carimba o
+  `animation-delay`; quem anima é o CSS (`letra-acende`, `bloco-cresce`, `halo-abre`).
+- O "crescer até tomar a tela" virou `scale(.88) → 1` **na entrada, uma vez**.
+- As letras se **sobrepõem**: .045s de atraso entre elas contra .72s de animação. Sem
+  sobreposição vira fade em bloco, que é outra coisa. **É esse `.045` que se mexe se
+  ele achar longo demais.**
+- A frase parte de opacidade `.12` (fantasma), não de zero — e hint instrucional
+  ("role para baixo") está fora, é anti-padrão dele.
 - O halo dourado da hero se repete fechado no centro, pra amarrar as duas dobras.
-- Sem JS ou com `prefers-reduced-motion` a lâmina vira **só uma tela de título** legível,
-  com 100vh em vez da corrida de 220vh (a classe `is-animada` é quem estica).
-- `body { overflow-x: hidden }` **não** quebra o `sticky` aqui porque o `html` não tem
-  overflow — o do body propaga pra viewport. Se alguém puser overflow no `html`, quebra.
+- `prefers-reduced-motion` desliga as três animações e a frase já aparece pronta.
 
 ---
 
@@ -116,7 +129,8 @@ aspecto que cada slot pede. Acabamento leve: `brightness` 1.04–1.12, `saturati
 1. **Carrossel dos depoimentos** — no desktop também, ou cards no desktop e carrossel só no celular?
 2. **Destino dos "Ver formação"** — WhatsApp, LP do curso ou âncora interna? Hoje vão pra `#comecar`.
 3. **"Seção de evolução"** — confirmar se o negrito entrou na dobra certa (`#academy`).
-4. **Abertura em lettering** — confirmar quebra, gatilho e saída (tabela lá em cima).
+4. **Abertura em lettering** — a 2ª versão (tela de 100vh, escrita ao carregar) ainda não
+   foi vista por ele. Confirmar se o ritmo da escrita está bom.
 
 ---
 
@@ -147,6 +161,8 @@ aspecto que cada slot pede. Acabamento leve: `brightness` 1.04–1.12, `saturati
 - **Reaproveitar device antes de inventar** — `.indicadores` em colunas com filete, `.trio` escalonado,
   `.card`. Device novo costuma ser reprovado.
 - **A LP usa UM filete**, nunca dois cercando um bloco (isso vira caixa, e caixa não é a linguagem).
+- **Nada de animação pilotada por scroll.** Escala/opacidade seguindo a rolagem lê como bug
+  pra ele ("está dando zoom") e ainda rouba rolagem. Entrada acontece uma vez e acaba.
 - **Full-bleed só na hero, na abertura e no fechamento.** Toda dobra mora dentro do `.faixa`.
 
 ---
