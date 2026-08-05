@@ -6,6 +6,7 @@ import {
   FolderOpen,
   Globe,
   Pencil,
+  Smartphone,
   Sparkles,
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
@@ -175,6 +176,12 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     external
                   />
                 )}
+                <ActionRow
+                  icon={Smartphone}
+                  label="Ver no celular"
+                  sub="A página rodando num iPhone 13"
+                  href={`/lps/${lp.slug}/celular`}
+                />
                 {/* Atalho de edição derivado da fonte de conteúdo (contentSource),
                     não mais de slugs hardcoded. */}
                 {lp.slug === "pmuclass" && (
