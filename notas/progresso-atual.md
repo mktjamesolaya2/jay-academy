@@ -55,7 +55,7 @@
     filão: o design irmão `DAHE-SWJM00` usa o ensaio profissional das turmas
     (`LIPSSENSE-04-2026-*`, `vogue-01-2026-*`), todos em **4000×6000** — a melhor fonte de
     foto de turma do acervo. Quatro opções cortadas em 3:4 e página de comparação em
-    `public/lp/academy/opcoes-sala/` → `localhost:4000/lp/academy/opcoes-sala/`.
+    `public/lp/academy/opcoes-sala/` → `localhost:4000/lp/academy/opcoes-sala.html`.
     ⚠️ Essa pasta é andaime: apagar quando ele escolher.
 - Conferido em desktop (1440) e mobile (390) por screenshot, com `puppeteer-core` +
   o Chrome instalado — o projeto já tem a dependência.

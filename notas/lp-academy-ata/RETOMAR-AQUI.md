@@ -10,11 +10,10 @@
 
 ## ✅ ESTADO: commitado, mas **NÃO pushado** (05/08)
 
-Branch `lp-academy-deploy`, **4 commits à frente de `origin/main`**:
-1. `fix(academy): registra a LP no dashboard` (vinha de antes)
-2. `feat(academy): ajustes da ata 04/08 (fase 1 desktop)`
-3. `feat(academy): dobra 0 — abertura em lettering + hero volta ao titulo original`
-4. `feat(academy): fotos coloridas de aula de verdade na dobra 3`
+Branch `lp-academy-deploy`, **12 commits à frente de `origin/main`** (`git log origin/main..HEAD`).
+Do mais antigo pro mais novo: registro da LP no dashboard → fase 1 da ata → abertura em
+lettering → fotos coloridas → correção da abertura (sem scroll) → degradê da emenda →
+troca das fotos por ensaio → página de comparação da "A sala".
 
 ⚠️ **O push não foi possível: `.env.local` não existe mais nesta máquina**, e é lá que
 mora o PAT `token_mktjamesolaya2` que o `git push` precisa (a Vercel só injeta as envs de
@@ -153,7 +152,7 @@ Mesmo procedimento: cópia (**`DAHRbggohco`**, renomeada "TEMP 2 - fotos de turm
 Academy (pode apagar)") → apagar tarjas → exportar em 4320×5400.
 
 Quatro opções cortadas em 3:4 e uma página de comparação:
-**`localhost:4000/lp/academy/opcoes-sala/`** (fonte em `public/lp/academy/opcoes-sala/`).
+**`localhost:4000/lp/academy/opcoes-sala.html`** (fonte em `public/lp/academy/opcoes-sala/`).
 
 | | Cena | Original |
 |---|---|---|
