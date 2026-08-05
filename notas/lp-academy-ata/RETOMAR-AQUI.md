@@ -210,29 +210,31 @@ a tela por dentro continua 390×844, então o layout não muda, só o zoom.
 - Ritmo vertical: todas as dobras em 58px de padding (só manifesto e fechamento em 70px,
   de propósito), `.faixa` em 20..370 em todas. **Consistente, nada a fazer.**
 
-### ⏳ Sobrou UM item, e é decisão de desenho
+### ✅ A dobra 3 está ATENDIDA — não reabrir
 
-"**Reorganizar a seção de demonstração para melhorar a compreensão na primeira
-visualização**" (`#experiencia`). O que ainda incomoda: as três fotos empilhadas em 4:5
-dão ~1.400px de imagem em fila. O trio deixa de ser lido como trio.
+Eu tinha levantado "carrossel pras 3 fotos" como pendência. **O James pediu a fonte e eu
+conferi: a ata não pede isso.** O item 4 diz, na íntegra:
 
-Não mexi porque é **mudança de desenho, não correção de defeito** — e device novo costuma
-ser reprovado por ele. As saídas possíveis:
-1. **Carrossel horizontal** no celular: volta a leitura de trio (a 2ª foto espia na
-   borda) e corta ~900px de rolagem. É o mesmo device que a ata pede pros depoimentos.
-2. **Foto menor + legenda ao lado**, virando lista: compacto, mas mata a fotografia, que
-   é o ponto da dobra.
-3. **Deixar como está**: a remoção da trava do título já subiu a 1ª foto pra primeira
-   visualização, que era metade da queixa.
+> - Reorganizar a seção de demonstração para melhorar a compreensão na primeira visualização.
+> - Corrigir posição de títulos e imagens nessa seção.
 
-⚠️ Isso se cruza com a decisão nº 1 lá embaixo (carrossel dos depoimentos). Se ele
-aprovar carrossel, vale usar o mesmo device nos dois lugares.
+Não fala em fileira nem em carrossel. **A palavra "carrossel" aparece uma vez só na ata
+inteira, e é no item 8 (Depoimentos).** Tirar as fotos de fileira foi interpretação minha,
+apresentada como se fosse pedido — erro meu.
+
+O que está escrito já foi feito: a trava de largura do título saiu, o título caiu de 3 pra
+2 linhas e a 1ª foto subiu pra primeira visualização (antes a dobra abria só com texto).
+
+⚠️ **Lição:** antes de listar algo como "pendência da ata", checar a fonte. Ele confere.
 
 ---
 
 ## ❓ Decisões paradas com o James
 
-1. **Carrossel dos depoimentos** — no desktop também, ou cards no desktop e carrossel só no celular?
+1. **Carrossel dos depoimentos** (item 8 da ata, o único carrossel que ela pede) — no
+   desktop também, ou cards no desktop e carrossel só no celular?
+   ⏸️ **Parado por decisão dele (05/08): "deixa quieto isso aí, depois fazemos".**
+   Não reabrir sem ele puxar o assunto.
 2. **Destino dos "Ver formação"** — WhatsApp, LP do curso ou âncora interna? Hoje vão pra `#comecar`.
 3. **"Seção de evolução"** — confirmar se o negrito entrou na dobra certa (`#academy`).
 4. **Abertura em lettering** — a 2ª versão (tela de 100vh, escrita ao carregar) ainda não

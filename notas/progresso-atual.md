@@ -75,9 +75,10 @@
   - Varreduras: nenhuma grade com defeito de fim-de-fileira em 390/900; nenhum bloco de
     texto abaixo de 80% da coluna por trava de desktop; ritmo vertical já consistente
     (58px por dobra, 70px no manifesto e no fechamento, `.faixa` 20..370 em todas).
-  - **Falta 1 item, e é decisão de desenho:** reorganizar `#experiencia` (3 fotos 4:5
-    empilhadas = ~1.400px em fila, o trio deixa de ser lido como trio). Não mexi porque é
-    mudança de desenho, não defeito. Se cruza com a decisão do carrossel dos depoimentos.
+  - A dobra `#experiencia` está atendida. Eu tinha levantado "carrossel pras 3 fotos"
+    como pendência, mas a ata não pede isso — ela só fala em "reorganizar" e "corrigir
+    posição de títulos e imagens", que é o que foi feito. Carrossel a ata pede uma vez
+    só, nos depoimentos (item 8), e esse o James deixou parado: "depois fazemos".
 - Conferido em desktop (1440) e mobile (390) por screenshot, com `puppeteer-core` +
   o Chrome instalado — o projeto já tem a dependência.
 - Pendente: aval do James no desktop antes da Fase 2 (mobile).
