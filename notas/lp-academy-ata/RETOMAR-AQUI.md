@@ -8,21 +8,24 @@
 
 ---
 
-## ✅ ESTADO: commitado, mas **NÃO pushado** (05/08)
+## ✅ ESTADO: tudo no ar (05/08)
 
-Branch `lp-academy-deploy`, **12 commits à frente de `origin/main`** (`git log origin/main..HEAD`).
-Do mais antigo pro mais novo: registro da LP no dashboard → fase 1 da ata → abertura em
-lettering → fotos coloridas → correção da abertura (sem scroll) → degradê da emenda →
-troca das fotos por ensaio → página de comparação da "A sala".
+Branch `lp-academy-deploy`, **em dia com `origin/main`**. Tudo desta sessão está deployado:
+fase 1 da ata → abertura em lettering → hero de volta ao título original → fotos de ensaio
+na dobra 3 → degradê da emenda → correção da abertura (sem scroll) → mobile (cards de
+benefícios + títulos) → preview de celular.
 
-⚠️ **O push não foi possível: `.env.local` não existe mais nesta máquina**, e é lá que
-mora o PAT `token_mktjamesolaya2` que o `git push` precisa (a Vercel só injeta as envs de
-produção quando o autor é o dono — ver "Pegadinhas" no `CLAUDE.md`). Sem o arquivo o push
-fica pendurado esperando credencial. Recriar `.env.local` com o PAT e então:
+**Push funciona de novo.** O `.env.local` do portal tinha sumido da máquina (era lá que
+morava o PAT), e por isso o push travou no meio da sessão. Foi recriado com um token novo.
+O comando é o de sempre:
 
 ```
+cd portal
+PAT=$(sed -n 's/^GITHUB_PAT=//p' .env.local | tr -d '\r\n')
 git push "https://mktjamesolaya2:$PAT@github.com/mktjamesolaya2/jay-academy.git" HEAD:main
 ```
+
+⚠️ Se voltar a pedir senha, é o `.env.local` que sumiu de novo — não é o Git.
 
 ---
 
