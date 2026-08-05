@@ -38,10 +38,19 @@
   Conferido por amostragem de pixel em 390, 1024, 1440 e 1920 — sem degrau maior que 1.
 - **As 3 fotos da dobra 3 agora são coloridas** — o item mais cobrado pelo James (4 vezes).
   Não havia original colorido no projeto (todas as versões no git já eram cinza desde o
-  commit `c778578`). As novas vieram do Canva, design `DAHIKhsXzBk` "JAY ACADEMY - TRECHOS
-  DE AULA", páginas 1, 17 e 9 — material de aula de verdade. Exportadas em 1080×1920 e
-  cortadas FORA da faixa onde o Canva assenta o texto, já no aspecto de cada slot
-  (3:4, 4:5, 5:6). Nada foi editado no Canva do James.
+  commit `c778578`).
+  - ⚠️ **1ª troca reprovada.** Usei frames de vídeo do design `DAHIKhsXzBk` "TRECHOS DE
+    AULA". Coloridos e reais, mas o James: *"não gostei das imagens, achei que faltou
+    qualidade nela e ficaram com muitos pixels"*. Frame de vídeo já nasce mole e
+    comprimido (teto de 1080 de largura) e ainda estava sendo ampliado pra encher o card,
+    que renderiza a ~910px em retina.
+  - **O que ficou:** foto de ensaio profissional, do design `DAHAkyAhyOI` "PROVA SOCIAL
+    ALUNOS". As páginas têm tarja de comentário por cima, então foi feita uma **cópia**
+    (`DAHRbRpyTkU`, renomeada pra "TEMP - fotos limpas p/ LP Academy (pode apagar)"), as
+    tarjas foram apagadas lá e as páginas exportadas em 2160×2700. O design original do
+    James não foi tocado.
+  - **Regra que sai daqui:** cortar no aspecto do slot e REDUZIR até a resolução real do
+    arquivo original. Nunca entregar upscale. Saídas: 1100×1467, 1000×1250, 1050×1260.
 - Conferido em desktop (1440) e mobile (390) por screenshot, com `puppeteer-core` +
   o Chrome instalado — o projeto já tem a dependência.
 - Pendente: aval do James no desktop antes da Fase 2 (mobile).

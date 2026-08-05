@@ -104,28 +104,57 @@ tiver degrau maior que ~1, está limpo (o ±1 é dithering do Chrome, não erro)
 
 ---
 
-## 📸 As 3 fotos da dobra 3 — RESOLVIDO
+## 📸 As 3 fotos da dobra 3 — RESOLVIDO (na 2ª tentativa)
 
 **Não eram recuperáveis no projeto:** todas as versões no git já eram cinza (saturação
 0.0 / 1.1 / 6.0 desde o commit `c778578`). Não existia original colorido.
 
-**De onde vieram as novas:** Canva, design **`DAHIKhsXzBk` — "JAY ACADEMY - TRECHOS DE
-AULA"** (73 páginas de recorte de aula de verdade, colorido). Páginas usadas:
+### ⛔ 1ª tentativa reprovada: frame de vídeo
 
-| Slot | Página | Cena | Aspecto |
+Usei o design `DAHIKhsXzBk` "JAY ACADEMY - TRECHOS DE AULA" (73 recortes de aula). São
+coloridos e são aula de verdade, **mas são frames de vídeo**. O James:
+
+> *"não gostei das imagens, achei que faltou qualidade nela e ficaram com muitos pixels"*
+
+Frame de vídeo já nasce mole e comprimido (teto de 1080 de largura), e ainda estava sendo
+**ampliado** pra encher o card, que renderiza a ~910px em tela retina. **Regra que sai
+daqui: cortar no aspecto do slot e REDUZIR até a resolução real do arquivo. Nunca
+entregar upscale.**
+
+### ✅ O que ficou: foto de ensaio profissional
+
+Design **`DAHAkyAhyOI` — "[JÚLIA] JAYO ACADEMY - PROVA SOCIAL ALUNOS"**. As páginas têm
+tarja de comentário do Instagram por cima, então:
+
+1. `copy-design` das páginas 1, 3, 8 e 11 → cópia **`DAHRbRpyTkU`**
+2. `edit-design` apagando tarja + texto + logo em cada página da cópia
+3. `export-design` em 2160×2700 e corte/redução no aspecto do slot
+
+**O design original do James NÃO foi tocado.** A cópia está no Canva dele com o nome
+**"TEMP - fotos limpas p/ LP Academy (pode apagar)"** — pode ser apagada à vontade.
+
+| Slot | Página da cópia | Cena | Saída |
 |---|---|---|---|
-| A sala | 1 | James apontando o conteúdo na tela, aluna em primeiro plano | 3:4 |
-| A demonstração | 17 | James executando, aluna acompanhando atrás | 4:5 |
-| A prática | 9 | Aluna executando em modelo real, turma ao lado | 5:6 |
+| A sala | 2 | James de microfone auricular na bancada, duas alunas treinando atrás | 1100×1467 (3:4) |
+| A demonstração | 1 | James executando sob softbox, turma em primeiro plano assistindo | 1000×1250 (4:5) |
+| A prática | 3 | Aluna de máscara e luva azul executando em modelo real | 1050×1260 (5:6) |
 
-**Como foram tiradas de lá:** `export-design` em JPG 1080×1920 e **corte fora da faixa
-onde o Canva assenta o texto** (detectada varrendo as linhas com branco puro), já no
-aspecto que cada slot pede. Acabamento leve: `brightness` 1.04–1.12, `saturation` 1.07,
-`sharpen(0.8)`. **Não precisa mexer no Canva do James** — nada foi editado lá.
+A página 4 da cópia (`JAY-VOGUE-CONCEITO-70.jpg`, **4000×5910** — a turma inteira reunida
+em volta, com a vidraça da casa ao fundo) ficou de reserva. É a de maior resolução das
+quatro, se algum dia precisar de uma foto grande de turma.
 
 **Onde NÃO procurar (já vasculhado, não tem turma):**
 - `DAF2sbUupQ0` (APRESENTAÇÃO FULL 2, 106 pág.) — catálogo de curso, fundo sempre a casa
 - `DAHOvtt3XVA` (TELAS TV RECEPÇÃO, 28 pág.) — só resultado (antes/depois, lábios, olhos)
+- `DAGKGpYp-6c` (ABERTURA, 17 pág.) — só fundo gráfico vermelho/coluna grega
+- `public/lp/jamesolaya/` (espelho do site) — as grandes coloridas são a casa e produto;
+  as de aula ali são exatamente as cinzas
+- **Google Drive**: o conector está sem escopo ("insufficient authentication scopes")
+
+⚠️ **Cuidado com banco de imagem.** Várias páginas desses designs usam stock, não foto da
+casa. Dá pra separar pelo nome do asset em `get-assets`: `IMG_0416.jpg`,
+`JAY-VOGUE-CONCEITO-70.jpg`, `1.png` = da casa; `beautiful-young-woman-going-through-
+microblading-treatment.jpg`, `fpkdl.com_960_...` = stock.
 
 ---
 
