@@ -100,26 +100,20 @@
 
     /* ============================================================
        DOBRA 0 — ABERTURA EM LETTERING
-       Lâmina preta antes da hero. A frase de boas-vindas já está lá,
-       fantasma, e vai sendo ESCRITA letra a letra conforme a rolagem,
-       crescendo até tomar a tela. No fim a lâmina desliza pra cima e
-       entrega a hero. DUAS LINHAS, nunca mais que isso.
+       Lâmina preta antes da hero. NÃO é uma intro que sequestra a
+       rolagem: é uma tela inteira, do tamanho de uma hero, e a página
+       rola normalmente por cima dela.
 
-       Por que fantasma e não invisível: uma tela preta e vazia no
-       carregamento lê como página quebrada. Começar em .12 de opacidade
-       dá o que olhar antes da primeira rolagem, sem hint instrucional.
+       ⚠️ 05/08: a primeira versão amarrava a animação ao scroll (220vh de
+       corrida + escala acompanhando a rolagem). O James reclamou — "está
+       dando zoom" — porque qualquer roçada na roda mexia no tamanho da
+       frase. Agora a escrita acontece SOZINHA ao carregar, uma vez, e
+       depois a lâmina fica parada. Nada mais escuta o scroll aqui.
        ============================================================ */
     .abertura {
       position: relative;
-      /* sem JS a lâmina é só uma tela de título; a corrida de rolagem
-         só existe quando a animação está de pé */
       height: 100vh; height: 100svh;
       background: #050403;
-    }
-    .abertura.is-animada { height: 220vh; }
-    .abertura__palco {
-      position: sticky; top: 0;
-      height: 100vh; height: 100svh;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
@@ -130,12 +124,10 @@
       background: radial-gradient(58% 52% at 50% 50%,
         rgba(172, 151, 81, .17) 0%, rgba(150, 104, 46, .07) 44%, rgba(172, 151, 81, 0) 72%);
     }
-    .abertura.is-animada .abertura__halo { opacity: 0; }
     .abertura__bloco {
       position: relative; z-index: 1;
       text-align: center;
       transform-origin: 50% 50%;
-      will-change: transform;
     }
     /* linha 1 na língua do rótulo da LP: minúscula, caixa alta, muito espaçada */
     .abertura__rotulo {
@@ -159,11 +151,27 @@
       white-space: nowrap;
     }
     .abertura .letra { display: inline-block; }
-    /* estado antes do primeiro quadro — evita o flash da frase inteira acesa */
-    .abertura.is-animada .letra { opacity: .12; }
+
+    /* --- a escrita, uma vez só, ao carregar ---
+       O halo e o bloco entram juntos; as letras acendem em cascata com o
+       atraso que o JS carimba em cada uma. `both` segura o estado inicial
+       durante o atraso e o final depois — sem isso a frase pisca inteira. */
+    .abertura.is-animada .abertura__halo { animation: halo-abre 1.6s ease-out both; }
+    .abertura.is-animada .abertura__bloco { animation: bloco-cresce 1.5s cubic-bezier(.16, 1, .3, 1) both; }
+    .abertura.is-animada .letra { animation: letra-acende .72s cubic-bezier(.16, 1, .3, 1) both; }
+
+    @keyframes halo-abre { from { opacity: 0; } to { opacity: 1; } }
+    /* o "cresce até tomar a tela" que o James pediu — agora na entrada, não no scroll */
+    @keyframes bloco-cresce { from { transform: scale(.88); } to { transform: none; } }
+    @keyframes letra-acende {
+      from { opacity: .12; transform: translateY(.16em); }
+      to   { opacity: 1;   transform: none; }
+    }
 
     @media (prefers-reduced-motion: reduce) {
-      .abertura, .abertura.is-animada { height: 100vh; height: 100svh; }
+      .abertura.is-animada .abertura__halo,
+      .abertura.is-animada .abertura__bloco,
+      .abertura.is-animada .letra { animation: none; }
     }
 
     /* ============================================================
@@ -1166,12 +1174,10 @@
   <!-- O texto vem escrito no HTML e é o JS que o quebra em letras. Se o script
        não rodar, a lâmina continua sendo uma tela de título legível. -->
   <section class="abertura">
-    <div class="abertura__palco">
-      <div class="abertura__halo"></div>
-      <div class="abertura__bloco">
-        <p class="abertura__rotulo">Bem-vindo à</p>
-        <p class="abertura__nome">Jay Academy</p>
-      </div>
+    <div class="abertura__halo"></div>
+    <div class="abertura__bloco">
+      <p class="abertura__rotulo">Bem-vindo à</p>
+      <p class="abertura__nome">Jay Academy</p>
     </div>
   </section>
 
@@ -1722,14 +1728,12 @@
   <script>
     const semMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    /* ---- DOBRA 0: a frase é ESCRITA conforme a rolagem ----
-       A rolagem dentro da lâmina vira um progresso de 0 a 1. Até .62 desse
-       progresso as letras acendem em cascata e o bloco cresce; o resto é a
-       pausa com a frase inteira na tela, antes de a lâmina sair por cima. */
+    /* ---- DOBRA 0: a frase é ESCRITA uma vez, ao carregar ----
+       O JS só quebra as linhas em letras e carimba o atraso de cada uma; quem
+       anima é o CSS. NADA aqui escuta o scroll — era justamente o scroll
+       pilotando a escala que fazia a frase "dar zoom" a cada roçada na roda. */
     const abertura = document.querySelector('.abertura');
-    if (abertura && !semMovimento) {
-      const bloco = abertura.querySelector('.abertura__bloco');
-      const halo = abertura.querySelector('.abertura__halo');
+    if (abertura) {
       const letras = [];
       abertura.querySelectorAll('.abertura__rotulo, .abertura__nome').forEach((linha) => {
         const texto = linha.textContent.trim();
@@ -1743,39 +1747,11 @@
           letras.push(span);
         });
       });
+      // as letras se sobrepõem: cada uma entra .045s depois da anterior, contra
+      // uma animação de .72s. É a sobreposição que dá leitura de escrita — sem
+      // ela vira fade em bloco, que é outra coisa.
+      letras.forEach((letra, i) => { letra.style.animationDelay = (.28 + i * .045).toFixed(3) + 's'; });
       abertura.classList.add('is-animada');
-
-      // cada letra começa antes de a anterior terminar: é a sobreposição que
-      // dá leitura de escrita. Sem ela vira fade em bloco, que é outra coisa.
-      const JANELA = .30;
-
-      const pintar = () => {
-        const corrida = abertura.offsetHeight - window.innerHeight;
-        const topo = -abertura.getBoundingClientRect().top;
-        const p = corrida > 0 ? Math.min(1, Math.max(0, topo / corrida)) : 1;
-        const escrita = Math.min(1, p / .62);
-
-        letras.forEach((letra, i) => {
-          const inicio = (i / letras.length) * (1 - JANELA);
-          const t = Math.min(1, Math.max(0, (escrita - inicio) / JANELA));
-          const e = 1 - Math.pow(1 - t, 3);
-          letra.style.opacity = (.12 + .88 * e).toFixed(3);
-          letra.style.transform = 'translateY(' + ((1 - e) * .16).toFixed(3) + 'em)';
-        });
-
-        bloco.style.transform = 'scale(' + (.70 + .30 * Math.min(1, p / .72)).toFixed(4) + ')';
-        halo.style.opacity = Math.min(1, p / .5).toFixed(3);
-      };
-
-      let agendado = false;
-      const agendar = () => {
-        if (agendado) return;
-        agendado = true;
-        requestAnimationFrame(() => { agendado = false; pintar(); });
-      };
-      window.addEventListener('scroll', agendar, { passive: true });
-      window.addEventListener('resize', agendar);
-      pintar();
     }
 
     // respiro na entrada de cada dobra — uma vez só, sem loop
