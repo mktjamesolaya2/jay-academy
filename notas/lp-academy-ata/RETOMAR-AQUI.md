@@ -132,39 +132,44 @@ tarja de comentário do Instagram por cima, então:
 **O design original do James NÃO foi tocado.** A cópia está no Canva dele com o nome
 **"TEMP - fotos limpas p/ LP Academy (pode apagar)"** — pode ser apagada à vontade.
 
-| Slot | Página da cópia | Cena | Saída |
+| Slot | Origem | Cena | Saída |
 |---|---|---|---|
-| A sala | 2 | James de microfone auricular na bancada, duas alunas treinando atrás | 1100×1467 (3:4) |
-| A demonstração | 1 | James executando sob softbox, turma em primeiro plano assistindo | 1000×1250 (4:5) |
-| A prática | 3 | Aluna de máscara e luva azul executando em modelo real | 1050×1260 (5:6) |
+| A sala | `DAHRbggohco` p.3 (`LIPSSENSE-04-2026-9.jpg`, 3856×5784) | A turma em volta da maca acompanhando o procedimento — **escolha do James entre 4 opções (a "C")** | 1400×1867 (3:4) |
+| A demonstração | `DAHRbRpyTkU` p.1 (`IMG_0416.jpg`, 2000×1333) | James executando sob softbox, turma em primeiro plano assistindo | 1000×1250 (4:5) |
+| A prática | `DAHRbRpyTkU` p.3 (`1.png`, 1080×1440) | Aluna de máscara e luva azul executando em modelo real | 1050×1260 (5:6) |
+
+⚠️ A legenda de "A sala" foi reescrita junto: falava em "bancadas montadas", que era a
+foto anterior. Descrever o que não está no quadro é o tipo de desleixo que ele nota.
+**Trocou a foto, relê a legenda.**
 
 A página 4 da cópia (`JAY-VOGUE-CONCEITO-70.jpg`, **4000×5910** — a turma inteira reunida
 em volta, com a vidraça da casa ao fundo) ficou de reserva.
 
-### ⏳ "A sala" ainda em escolha
+### ✅ "A sala" — escolhida (a "C")
 
-O James: *"da sala, eu gostei dessa, porém eu acho q tem melhores, da uma olhada"*.
+O James: *"da sala, eu gostei dessa, porém eu acho q tem melhores, da uma olhada"*. Depois:
+*"gostei da opção C"*.
 
-Achei o **filão bom**: o design irmão **`DAHE-SWJM00` "[JÚLIA] 02 ... PROVA SOCIAL ALUNOS"**
-usa o ensaio profissional das turmas — arquivos `LIPSSENSE-04-2026-*.jpg`,
-`vogue-01-2026-*.jpg`, todos em **4000×6000**. É a melhor fonte de foto de turma do acervo.
-Mesmo procedimento: cópia (**`DAHRbggohco`**, renomeada "TEMP 2 - fotos de turma p/ LP
-Academy (pode apagar)") → apagar tarjas → exportar em 4320×5400.
+**O filão bom das fotos de turma** é o design irmão **`DAHE-SWJM00` "[JÚLIA] 02 ... PROVA
+SOCIAL ALUNOS"**: usa o ensaio profissional das turmas — `LIPSSENSE-04-2026-*.jpg`,
+`vogue-01-2026-*.jpg`, todos em **4000×6000**. É a melhor fonte do acervo; guardar isso.
+Mesmo procedimento: cópia (**`DAHRbggohco`**, "TEMP 2 - fotos de turma p/ LP Academy (pode
+apagar)") → apagar tarjas → exportar em 4320×5400.
 
-Quatro opções cortadas em 3:4 e uma página de comparação:
-**`localhost:4000/lp/academy/opcoes-sala.html`** (fonte em `public/lp/academy/opcoes-sala/`).
+Mostrei quatro opções numa página de comparação (`public/lp/academy/opcoes-sala*`), no 3:4
+e na lâmina clara da dobra. Ele escolheu a **C** — a turma em volta da maca num instante
+mais aberto, com uma aluna filmando. **O andaime já foi apagado.**
 
-| | Cena | Original |
-|---|---|---|
-| Atual | bancada, James de microfone auricular, duas alunas atrás | 2000×1333 |
-| A | turma inteira em volta da maca | 4000×6000 |
-| B | quatro alunas de crachá sob o ring light — **a minha aposta** | 4000×6000 |
-| C | mesma cena da A, instante mais aberto | 3856×5784 |
-| D | plano fechado, James + uma aluna, telão atrás | 4000×6000 |
+📌 **Lição sobre escolha de foto:** minha aposta era a B (alunas de crachá sob o ring light,
+rostos visíveis). Ele foi na C, que é a mais **cheia** — turma toda em volta, movimento,
+gente filmando. Quando o assunto é "a sala", ele quer o volume de gente e a cena
+acontecendo, não o retrato bonito. Vale como parâmetro na próxima.
 
-**Quando ele escolher:** copiar a escolhida de `opcoes-sala/` pra
-`public/lp/academy/reais/sala-aula.jpg`, atualizar o `alt` na dobra `#experiencia` e
-**apagar a pasta `opcoes-sala/`** — ela é andaime, não pode ir pro deploy definitivo.
+🗂️ **Se precisar refazer as opções:** as fotos limpas de turma estão nas páginas 1 a 4 da
+cópia `DAHRbggohco`. A página de comparação é simples de reconstruir — grade de `figure`
+com `aspect-ratio: 3/4` na paleta da lâmina clara.
+⚠️ Página em `public/` tem que ser o **caminho do arquivo** (`.../opcoes-sala.html`); o Next
+não serve `index.html` de pasta e devolve 404.
 
 **Onde NÃO procurar (já vasculhado, não tem turma):**
 - `DAF2sbUupQ0` (APRESENTAÇÃO FULL 2, 106 pág.) — catálogo de curso, fundo sempre a casa

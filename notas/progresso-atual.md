@@ -51,12 +51,14 @@
     James não foi tocado.
   - **Regra que sai daqui:** cortar no aspecto do slot e REDUZIR até a resolução real do
     arquivo original. Nunca entregar upscale. Saídas: 1100×1467, 1000×1250, 1050×1260.
-  - **"A sala" em escolha.** O James aprovou a foto mas pediu pra ver mais opções. Achei o
-    filão: o design irmão `DAHE-SWJM00` usa o ensaio profissional das turmas
-    (`LIPSSENSE-04-2026-*`, `vogue-01-2026-*`), todos em **4000×6000** — a melhor fonte de
-    foto de turma do acervo. Quatro opções cortadas em 3:4 e página de comparação em
-    `public/lp/academy/opcoes-sala/` → `localhost:4000/lp/academy/opcoes-sala.html`.
-    ⚠️ Essa pasta é andaime: apagar quando ele escolher.
+  - **"A sala" trocada de novo, agora por escolha do James.** Ele aprovou a foto mas pediu
+    pra ver mais opções. O filão bom é o design irmão `DAHE-SWJM00`, que usa o ensaio
+    profissional das turmas (`LIPSSENSE-04-2026-*`, `vogue-01-2026-*`), todos em
+    **4000×6000** — a melhor fonte de foto de turma do acervo. Montei uma página de
+    comparação com 4 opções no 3:4 do card; ele escolheu a **C** (turma em volta da maca,
+    instante mais aberto, uma aluna filmando). Saída 1400×1867. Andaime já apagado.
+  - A legenda de "A sala" foi reescrita junto: falava em "bancadas montadas", que era a
+    foto anterior. **Trocou a foto, relê a legenda.**
 - Conferido em desktop (1440) e mobile (390) por screenshot, com `puppeteer-core` +
   o Chrome instalado — o projeto já tem a dependência.
 - Pendente: aval do James no desktop antes da Fase 2 (mobile).
