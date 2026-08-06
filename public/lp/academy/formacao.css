@@ -113,7 +113,9 @@
 
     /* --- o que a formação cobre: lista com filete, como a ficha da LP --- */
     .bloco { margin-top: clamp(26px, 3vw, 42px); }
-    .bloco > p {
+    /* só o RÓTULO do bloco, que é sempre o primeiro filho — sem isso a regra
+       pegava também o texto corrido e jogava a frase toda em caixa alta */
+    .bloco > p:first-child {
       text-align: center;
       font-size: 9.5px; font-weight: 400;
       letter-spacing: .3em; text-transform: uppercase;
@@ -177,4 +179,39 @@
       .capa { width: 100%; }
       .lista--dupla { grid-template-columns: 1fr; }
       .marca { display: none; }
+    }
+
+    /* --- texto corrido dentro de um bloco (ex.: "pra quem é") --- */
+    .corrido {
+      font-size: clamp(13px, .95vw, 15px);
+      font-weight: 300; line-height: 1.75;
+      color: rgba(16, 24, 32, .7);
+      text-align: center;
+      max-width: 58ch;
+      margin: 0 auto;
+      text-wrap: pretty;
+    }
+
+    /* --- os módulos: cada um é um bloco de texto separado por filete,
+       o mesmo device das etapas do método na LP --- */
+    .modulos { border-top: 1px solid rgba(16, 24, 32, .18); }
+    .modulo {
+      padding: clamp(16px, 1.8vw, 22px) 0;
+      border-bottom: 1px solid rgba(16, 24, 32, .10);
+      text-align: center;
+    }
+    .modulo h2 {
+      font-size: clamp(12px, .92vw, 14px);
+      font-weight: 400;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--preto);
+    }
+    .modulo p {
+      margin: 8px auto 0;
+      max-width: 56ch;
+      font-size: clamp(12.5px, .92vw, 14px);
+      font-weight: 300; line-height: 1.7;
+      color: rgba(16, 24, 32, .64);
+      text-wrap: pretty;
     }
