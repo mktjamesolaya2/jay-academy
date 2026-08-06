@@ -21,9 +21,8 @@ Não é conteúdo de LP: é infraestrutura pro trabalho do dia a dia.
 - Usa caminho relativo (`/slug`) de propósito: além de funcionar no localhost e em
   produção, **mesma origem é o que permite ler as dobras** pra montar os atalhos. LP em
   outro domínio ainda funciona, só avisa que os atalhos não vão.
-- ⚠️ Existe também `public/lp/academy/preview-celular.html`, a versão antiga, chumbada
-  na Academy e **sem exigir login**. Mantida por isso. Se um dia virar confusão, some
-  com ela — a do painel faz mais.
+- A versão antiga (, chumbada na Academy) foi
+  REMOVIDA em 06/08: duplicata rende confusão, e a do painel serve pra todas as LPs.
 
 ### `scripts/` — caixa de ferramentas (`npm run foto` e `npm run cortar`)
 
@@ -102,7 +101,7 @@ conferida. **Só funciona no localhost**: em produção a env é obrigatória.
     instante mais aberto, uma aluna filmando). Saída 1400×1867. Andaime já apagado.
   - A legenda de "A sala" foi reescrita junto: falava em "bancadas montadas", que era a
     foto anterior. **Trocou a foto, relê a legenda.**
-- **Preview de celular** em `public/lp/academy/preview-celular.html` → a LP de verdade
+- **Preview de celular** (depois movido pro painel, ver sessão parte 2) → a LP de verdade
   rodando num iPhone 13 (390×844), com atalho pra cada dobra, recarregar e "Tamanho real".
   O aparelho se encolhe sozinho até caber na janela; a tela por dentro continua 390×844.
 - **Fase 2 — mobile, os defeitos medidos e corrigidos:**

@@ -191,7 +191,7 @@ microblading-treatment.jpg`, `fpkdl.com_960_...` = stock.
 
 ## 📱 Fase 2 — Mobile (05/08)
 
-**Ferramenta:** `localhost:4000/lp/academy/preview-celular.html` — a LP de verdade
+**Ferramenta:** `localhost:4000/lps/academy/celular` (painel → LP → Atalhos → "Ver no celular") — a LP de verdade
 rodando dentro de um iPhone 13 (390×844), com atalho pra cada dobra, botão de recarregar
 e "Tamanho real" pra alternar 1:1. O aparelho se encolhe sozinho até caber na janela;
 a tela por dentro continua 390×844, então o layout não muda, só o zoom.
