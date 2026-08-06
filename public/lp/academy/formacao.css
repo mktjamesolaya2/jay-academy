@@ -215,3 +215,49 @@
       color: rgba(16, 24, 32, .64);
       text-wrap: pretty;
     }
+
+    /* ============================================================
+       FOTOS DE AULA — 06/08
+       O James: "pegar imagens das aulas desses cursos, demonstrações...
+       e a gente deixar bem completo".
+
+       São FOTO REAL do ensaio da casa (`vogue-01-2026` e o ensaio de
+       procedimento), não banco de imagem — as do carrossel de cursos são
+       stock do Canva e por isso foram descartadas.
+       ============================================================ */
+    .aula { margin-top: clamp(34px, 4vw, 60px); }
+    .aula > p {
+      text-align: center;
+      font-size: 9.5px; font-weight: 400;
+      letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(16, 24, 32, .42);
+      margin-bottom: clamp(14px, 1.6vw, 20px);
+    }
+    .aula__grade {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(10px, 1.2vw, 16px);
+    }
+    .aula figure { margin: 0; }
+    .aula__foto {
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      border-radius: 10px;
+      background: rgba(16, 24, 32, .06);
+    }
+    .aula__foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .aula figcaption {
+      margin-top: 9px;
+      font-size: 10px;
+      font-weight: 300;
+      line-height: 1.5;
+      color: rgba(16, 24, 32, .5);
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      /* três fotos lado a lado em 390px viram selo; duas já respiram */
+      .aula__grade { grid-template-columns: 1fr 1fr; }
+      .aula figure:last-child:nth-child(odd) { grid-column: 1 / -1; }
+      .aula figure:last-child:nth-child(odd) .aula__foto { aspect-ratio: 16 / 9; }
+    }
