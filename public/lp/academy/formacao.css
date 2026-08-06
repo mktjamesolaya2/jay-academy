@@ -1,0 +1,166 @@
+/* Estilo das páginas de formação (lp-html/formacoes/*.html).
+   Fica num arquivo só de propósito: são 5 páginas hoje e a apresentação
+   lista mais de dez — mudar o desenho tem que ser UMA edição, não N. */
+/* ============================================================
+       PÁGINA DE FORMAÇÃO — Jay Academy
+       Fundo BRANCO (pedido do James, 06/08). Página curta: só divulga a
+       formação, sem preço e sem nada que não esteja no material oficial.
+       O sistema visual é o mesmo da LP /academy — ouro, preto, Poppins,
+       caixa alta espaçada e UM filete separando. Nada novo aqui.
+       ============================================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ouro: #AC9751;
+      --ouro-escuro: #8A7A3E;
+      --preto: #101820;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: #fff;
+      color: var(--preto);
+      font-family: 'Poppins', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .faixa { width: 90%; max-width: 1080px; margin: 0 auto; }
+
+    /* --- topo: só a volta e a marca. Não é LP, não tem menu --- */
+    .topo {
+      padding: clamp(20px, 3vw, 32px) 0;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .voltar {
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none;
+      font-size: 10.5px; font-weight: 400;
+      letter-spacing: .24em; text-transform: uppercase;
+      color: rgba(16, 24, 32, .5);
+      transition: color .3s ease;
+    }
+    .voltar:hover { color: var(--preto); }
+    .voltar span { font-size: 14px; line-height: 1; }
+    .marca {
+      font-size: 9.5px; font-weight: 400;
+      letter-spacing: .42em; text-transform: uppercase;
+      color: rgba(16, 24, 32, .38);
+    }
+
+    /* --- o miolo: capa à esquerda, o que é a formação à direita --- */
+    .formacao {
+      display: grid;
+      grid-template-columns: .78fr 1fr;
+      gap: clamp(24px, 4vw, 68px);
+      align-items: start;
+      padding: clamp(8px, 1.5vw, 20px) 0 clamp(48px, 6vw, 88px);
+    }
+    /* a capa é a brochura pousada na página — canto reto e sombra rasa,
+       o mesmo device dos cards da dobra das formações */
+    .capa {
+      aspect-ratio: 900 / 1243;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 14px 40px rgba(16, 24, 32, .15), 0 1px 2px rgba(16, 24, 32, .10);
+    }
+    .capa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .rotulo {
+      font-size: 9.5px; font-weight: 400;
+      letter-spacing: .42em; text-transform: uppercase;
+      color: var(--ouro-escuro);
+    }
+    h1 {
+      margin-top: clamp(14px, 1.6vw, 20px);
+      font-size: clamp(26px, 3.4vw, 52px);
+      font-weight: 200;
+      line-height: 1.12;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    h1 strong { display: block; font-weight: 400; }
+
+    .linha {
+      position: relative;
+      margin-top: clamp(20px, 2.4vw, 30px);
+      padding-top: clamp(18px, 2vw, 26px);
+      font-size: clamp(13.5px, 1vw, 16px);
+      font-weight: 300; line-height: 1.75;
+      color: rgba(16, 24, 32, .68);
+      max-width: 46ch;
+    }
+    .linha::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 54px; height: 1px;
+      background: rgba(16, 24, 32, .3);
+    }
+
+    /* --- o que a formação cobre: lista com filete, como a ficha da LP --- */
+    .bloco { margin-top: clamp(26px, 3vw, 42px); }
+    .bloco > p {
+      font-size: 9.5px; font-weight: 400;
+      letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(16, 24, 32, .42);
+      margin-bottom: 12px;
+    }
+    .lista { list-style: none; border-top: 1px solid rgba(16, 24, 32, .18); }
+    .lista li {
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(16, 24, 32, .10);
+      font-size: clamp(13px, .95vw, 15px);
+      font-weight: 300;
+      color: rgba(16, 24, 32, .84);
+    }
+    /* duas colunas quando a lista é longa — oito itens em fila fica magro */
+    .lista--dupla { display: grid; grid-template-columns: 1fr 1fr; column-gap: clamp(16px, 2vw, 34px); }
+
+    .ficha { margin-top: clamp(22px, 2.4vw, 32px); border-top: 1px solid rgba(16, 24, 32, .18); }
+    .ficha div {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(16, 24, 32, .10);
+    }
+    .ficha dt {
+      font-size: 9.5px; letter-spacing: .26em; text-transform: uppercase;
+      color: rgba(16, 24, 32, .42); white-space: nowrap;
+    }
+    .ficha dd { font-size: clamp(12.5px, .92vw, 14.5px); font-weight: 300; text-align: right; }
+    .ficha dd.ouro { color: var(--ouro-escuro); font-weight: 400; }
+
+    .acoes { margin-top: clamp(28px, 3vw, 40px); display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+    .btn {
+      display: inline-block; text-decoration: none;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .24em; text-transform: uppercase;
+      padding: 16px clamp(26px, 2.4vw, 40px);
+      border-radius: 999px;
+      background: linear-gradient(120deg, #DCC383 0%, var(--ouro) 58%, #8e7c40 100%);
+      color: var(--preto);
+      box-shadow: 0 14px 34px rgba(172, 151, 81, .28);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(172, 151, 81, .4); }
+    .btn--linha {
+      background: none; box-shadow: none;
+      border: 1px solid rgba(16, 24, 32, .22);
+      color: rgba(16, 24, 32, .7);
+    }
+    .btn--linha:hover { border-color: var(--preto); color: var(--preto); }
+
+    footer {
+      border-top: 1px solid rgba(16, 24, 32, .12);
+      padding: clamp(22px, 2.4vw, 30px) 0 clamp(36px, 4vw, 56px);
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
+      font-size: 9.5px; font-weight: 400;
+      letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(16, 24, 32, .36);
+    }
+
+    @media (max-width: 860px) {
+      .formacao { grid-template-columns: 1fr; gap: clamp(24px, 6vw, 34px); }
+      .capa { max-width: 420px; }
+      .lista--dupla { grid-template-columns: 1fr; }
+      .marca { display: none; }
+    }

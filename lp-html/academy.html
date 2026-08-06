@@ -698,12 +698,6 @@
       align-self: flex-start;
       margin-top: clamp(16px, 1.5vw, 22px);
       text-decoration: none;
-      /* nas formações o CTA virou <button> (abre painel em vez de navegar);
-         o reset deixa os dois com exatamente a mesma cara */
-      background: none;
-      border: 0;
-      font-family: inherit;
-      cursor: pointer;
       font-size: 10.5px;
       font-weight: 400;
       letter-spacing: .28em;
@@ -722,109 +716,6 @@
     .card__cta::after { content: ''; position: absolute; inset: 0; z-index: 1; }
     .card:hover .card__capa { transform: translateY(-6px); }
 
-    /* ============================================================
-       PAINEL DA FORMAÇÃO — 06/08
-       O James: "não quero trocar de página ao clicar, manter na mesma".
-       Então "Ver formação" não navega: abre um painel por cima, com a capa
-       grande e o que a formação ensina. Fundo BRANCO, a pedido dele.
-
-       O conteúdo mora dentro do próprio card (`.card__detalhe`, escondido) e
-       o JS clona pro painel. Assim a LP continua sendo HTML editável — quem
-       for mexer no texto mexe ao lado do card, não num objeto de JavaScript.
-       ============================================================ */
-    .card__detalhe { display: none; }
-
-    .painel {
-      position: fixed; inset: 0; z-index: 60;
-      display: none;
-      align-items: center; justify-content: center;
-      padding: clamp(14px, 3vw, 44px);
-    }
-    .painel.aberto { display: flex; }
-    .painel__fundo {
-      position: absolute; inset: 0;
-      background: rgba(10, 12, 14, .62);
-      backdrop-filter: blur(3px);
-    }
-    .painel__caixa {
-      position: relative;
-      width: min(1000px, 100%);
-      max-height: 100%;
-      overflow-y: auto;
-      background: #fff;            /* fundo branco, pedido do James */
-      border-radius: 16px;
-      box-shadow: 0 40px 120px rgba(0, 0, 0, .5);
-      animation: painel-entra .32s cubic-bezier(.16, 1, .3, 1) both;
-    }
-    @keyframes painel-entra { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-
-    .painel__fechar {
-      position: absolute; top: 14px; right: 14px; z-index: 2;
-      width: 34px; height: 34px;
-      display: grid; place-items: center;
-      border: 1px solid rgba(16, 24, 32, .16);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .9);
-      color: rgba(16, 24, 32, .55);
-      font-size: 16px; line-height: 1; cursor: pointer;
-      transition: color .25s ease, border-color .25s ease;
-    }
-    .painel__fechar:hover { color: var(--preto); border-color: rgba(16, 24, 32, .5); }
-
-    /* capa à esquerda, conteúdo à direita — o mesmo par que a dobra já usa */
-    .painel__grade {
-      display: grid;
-      grid-template-columns: .82fr 1fr;
-      gap: clamp(18px, 2.6vw, 44px);
-      padding: clamp(18px, 2.4vw, 40px);
-    }
-    .painel__capa { background: #fff; }
-    .painel__capa img { width: 100%; display: block; }
-
-    .painel__corpo { display: flex; flex-direction: column; color: var(--preto); }
-    .painel__nome {
-      font-size: clamp(19px, 2vw, 31px);
-      font-weight: 200;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      line-height: 1.18;
-      margin-top: 10px;
-    }
-    .painel__nome strong { display: block; font-weight: 400; }
-    .painel__linha {
-      margin-top: clamp(16px, 1.8vw, 24px);
-      padding-top: clamp(14px, 1.6vw, 20px);
-      border-top: 1px solid rgba(16, 24, 32, .18);
-      font-size: clamp(12.5px, .92vw, 14.5px);
-      font-weight: 300; line-height: 1.7;
-      color: rgba(16, 24, 32, .68);
-      max-width: 46ch;
-    }
-    /* as técnicas que a capa oficial lista — uma por linha, com filete entre elas */
-    .painel__tecnicas { margin-top: clamp(16px, 1.8vw, 24px); }
-    .painel__tecnicas p {
-      font-size: 9.5px; letter-spacing: .3em; text-transform: uppercase;
-      color: rgba(16, 24, 32, .42); margin-bottom: 10px;
-    }
-    .painel__tecnicas ul { list-style: none; border-top: 1px solid rgba(16, 24, 32, .12); }
-    .painel__tecnicas li {
-      padding: 9px 0;
-      border-bottom: 1px solid rgba(16, 24, 32, .10);
-      font-size: clamp(12px, .9vw, 14px);
-      font-weight: 300;
-      color: rgba(16, 24, 32, .82);
-    }
-    .painel__acoes { margin-top: auto; padding-top: clamp(20px, 2.2vw, 30px); }
-    .painel__acoes .btn--ouro { color: var(--preto); }
-
-    @media (max-width: 768px) {
-      .painel { padding: 0; }
-      .painel__caixa { border-radius: 0; max-height: 100%; }
-      .painel__grade { grid-template-columns: 1fr; padding: 0 0 clamp(24px, 7vw, 34px); }
-      .painel__capa img { border-radius: 0; }
-      .painel__corpo { padding: 0 clamp(20px, 6vw, 28px); }
-      .painel__fechar { background: rgba(255, 255, 255, .92); }
-    }
 
     /* ⚠️ 04/08 (ata): DEPOIMENTOS EM CARD. Eram tipográficos, só com filete em
        cima. Viram brochura pousada sobre o off-white — a mesma linguagem das
@@ -1576,27 +1467,7 @@
               <div><dt>Professor</dt><dd class="ouro">James Olaya</dd></div>
               <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
             </dl>
-            <button class="card__cta" type="button" aria-haspopup="dialog">Ver formação</button>
-            <!-- ⚠️ CONTEÚDO DO PAINEL. Tudo aqui saiu do que está IMPRESSO na capa
-                 oficial + da apresentação 2026. Nada foi suposto. Sem preço, a
-                 pedido do James. Pra editar, é aqui — o JS só clona isto. -->
-            <div class="card__detalhe">
-              <p class="painel__linha">
-                Micropigmentação de sobrancelhas fio a fio realista — a técnica que imita
-                o pelo natural. É a formação de alto nível da casa, dada pelo próprio
-                James Olaya.
-              </p>
-              <div class="painel__tecnicas">
-                <p>O que você recebe</p>
-                <ul>
-                  <li>Kit de design de sobrancelhas</li>
-                  <li>Apostila técnica e caderno de exercícios</li>
-                  <li>Dermocosméticos da linha Experts</li>
-                  <li>Home care para a cliente levar</li>
-                  <li>Pigmentos Brows Minerals</li>
-                </ul>
-              </div>
-            </div>
+            <a class="card__cta" href="/formacao/jay-vogue-brows">Ver formação</a>
           </div>
         </article>
 
@@ -1612,26 +1483,7 @@
                 <div><dt>Nível</dt><dd>Iniciante</dd></div>
                 <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
               </dl>
-              <button class="card__cta" type="button" aria-haspopup="dialog">Ver formação</button>
-              <div class="card__detalhe">
-                <p class="painel__linha">
-                  Design de sobrancelhas e serviços essenciais. É a porta de entrada da
-                  casa: sai atendendo com os serviços que mais giram no dia a dia.
-                </p>
-                <div class="painel__tecnicas">
-                  <p>O que a formação cobre</p>
-                  <ul>
-                    <li>Design</li>
-                    <li>Henna</li>
-                    <li>Tintura</li>
-                    <li>Brow lamination</li>
-                    <li>Repair lips</li>
-                    <li>Repair color</li>
-                    <li>Repair brows</li>
-                    <li>Growth</li>
-                  </ul>
-                </div>
-              </div>
+              <a class="card__cta" href="/formacao/jay-beauty">Ver formação</a>
             </div>
           </article>
 
@@ -1646,20 +1498,7 @@
                 <div><dt>Nível</dt><dd>Especialização</dd></div>
                 <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
               </dl>
-              <button class="card__cta" type="button" aria-haspopup="dialog">Ver formação</button>
-              <div class="card__detalhe">
-                <p class="painel__linha">
-                  Micropigmentação de sobrancelhas nas duas frentes: o preenchimento
-                  esfumado do Brow Nude Shadow e o fio a fio do Nanobrows.
-                </p>
-                <div class="painel__tecnicas">
-                  <p>As duas técnicas</p>
-                  <ul>
-                    <li>Brow Nude — Shadow</li>
-                    <li>Nanobrows — Nanofios</li>
-                  </ul>
-                </div>
-              </div>
+              <a class="card__cta" href="/formacao/jay-brows">Ver formação</a>
             </div>
           </article>
 
@@ -1676,20 +1515,7 @@
                 <div><dt>Nível</dt><dd>Especialização</dd></div>
                 <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
               </dl>
-              <button class="card__cta" type="button" aria-haspopup="dialog">Ver formação</button>
-              <div class="card__detalhe">
-                <p class="painel__linha">
-                  Micropigmentação de sobrancelhas e lábios na mesma formação: o esfumado
-                  do Brow Nude e o Nano Lips.
-                </p>
-                <div class="painel__tecnicas">
-                  <p>As duas técnicas</p>
-                  <ul>
-                    <li>Brow Nude</li>
-                    <li>Nano Lips</li>
-                  </ul>
-                </div>
-              </div>
+              <a class="card__cta" href="/formacao/jay-pixel">Ver formação</a>
             </div>
           </article>
 
@@ -1704,20 +1530,7 @@
                 <div><dt>Nível</dt><dd>Avançado</dd></div>
                 <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
               </dl>
-              <button class="card__cta" type="button" aria-haspopup="dialog">Ver formação</button>
-              <div class="card__detalhe">
-                <p class="painel__linha">
-                  Nanopigmentação de sobrancelhas e lábios — o traço mais fino, para
-                  quem busca precisão e naturalidade nas duas áreas.
-                </p>
-                <div class="painel__tecnicas">
-                  <p>As duas técnicas</p>
-                  <ul>
-                    <li>Nano Brows</li>
-                    <li>Nano Lips</li>
-                  </ul>
-                </div>
-              </div>
+              <a class="card__cta" href="/formacao/jay-nano">Ver formação</a>
             </div>
           </article>
         </div>
@@ -1993,29 +1806,6 @@
     <span>Formações presenciais em micropigmentação</span>
   </footer>
 
-  <!-- ============ PAINEL DA FORMAÇÃO ============ -->
-  <!-- Uma caixa só, reaproveitada por todas as formações: o JS troca o conteúdo.
-       Fica FORA das dobras de propósito — é `position: fixed` e não pode herdar
-       transform de nenhum pai, senão o `fixed` passa a se ancorar no pai e o
-       painel sai do lugar. -->
-  <div class="painel" id="painel" role="dialog" aria-modal="true" aria-labelledby="painel-nome" hidden>
-    <div class="painel__fundo" data-fecha></div>
-    <div class="painel__caixa">
-      <button class="painel__fechar" type="button" data-fecha aria-label="Fechar">✕</button>
-      <div class="painel__grade">
-        <div class="painel__capa"><img id="painel-capa" src="" alt="" /></div>
-        <div class="painel__corpo">
-          <p class="rotulo-lamina" id="painel-nivel" style="color: rgba(16,24,32,.42);"></p>
-          <h2 class="painel__nome" id="painel-nome"></h2>
-          <div id="painel-conteudo"></div>
-          <div class="painel__acoes">
-            <a class="btn btn--ouro" href="#comecar" data-fecha>Falar sobre esta formação</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
     const semMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -2043,85 +1833,6 @@
       // ela vira fade em bloco, que é outra coisa.
       letras.forEach((letra, i) => { letra.style.animationDelay = (.28 + i * .045).toFixed(3) + 's'; });
       abertura.classList.add('is-animada');
-    }
-
-    /* ---- PAINEL DA FORMAÇÃO ----
-       "Ver formação" não navega: abre a formação por cima, na mesma página.
-       O conteúdo vem do `.card__detalhe` que mora dentro do próprio card, então
-       editar o texto é editar HTML ao lado da capa — não tem dado em JS. */
-    const painel = document.getElementById('painel');
-    if (painel) {
-      const capa = document.getElementById('painel-capa');
-      const nome = document.getElementById('painel-nome');
-      const nivel = document.getElementById('painel-nivel');
-      const conteudo = document.getElementById('painel-conteudo');
-      let voltarPara = null;
-
-      function abrir(card, botao) {
-        const img = card.querySelector('.card__capa img');
-        const titulo = card.querySelector('.card__nome');
-        const detalhe = card.querySelector('.card__detalhe');
-        // o nível já está na ficha do card — reaproveita em vez de duplicar
-        const fichaNivel = [...card.querySelectorAll('.ficha div')]
-          .find((d) => d.querySelector('dt') && /nível/i.test(d.querySelector('dt').textContent));
-
-        capa.src = img ? img.getAttribute('src') : '';
-        capa.alt = img ? img.getAttribute('alt') : '';
-        // o <span> do nome vira a segunda linha, como no card
-        nome.innerHTML = titulo ? titulo.innerHTML.replace('<span', '<strong').replace('</span>', '</strong>') : '';
-        nivel.textContent = fichaNivel ? fichaNivel.querySelector('dd').textContent.trim() : '';
-        conteudo.innerHTML = detalhe ? detalhe.innerHTML : '';
-
-        voltarPara = botao;
-        painel.hidden = false;
-        painel.classList.add('aberto');
-        travarRolagem();
-        painel.querySelector('.painel__fechar').focus();
-      }
-
-      function fechar() {
-        painel.classList.remove('aberto');
-        painel.hidden = true;
-        soltarRolagem();
-        if (voltarPara) voltarPara.focus({ preventScroll: true });
-      }
-
-      /* ⚠️ Trava a rolagem de trás SEM perder o lugar.
-         Só `overflow: hidden` no body não serve: ao soltar, a página voltava
-         ~1000px fora do lugar (medido). Guardar a posição e devolver na mão é
-         o único jeito que não pula. */
-      let posicao = 0;
-      function travarRolagem() {
-        posicao = window.scrollY;
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${posicao}px`;
-        document.body.style.left = '0';
-        document.body.style.right = '0';
-      }
-      function soltarRolagem() {
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
-        // ⚠️ 'instant' é obrigatório: a LP tem `scroll-behavior: smooth` no html,
-        // e sem isso o retorno vira ANIMAÇÃO — abrir outro card no meio dela
-        // captura a posição pela metade e a página vai andando pra trás a cada
-        // abertura (medido: -3169px depois de cinco).
-        window.scrollTo({ top: posicao, behavior: 'instant' });
-      }
-
-      document.querySelectorAll('#formacoes .card').forEach((card) => {
-        const botao = card.querySelector('.card__cta');
-        if (botao) botao.addEventListener('click', () => abrir(card, botao));
-      });
-
-      painel.addEventListener('click', (e) => {
-        // fecha no X, no fundo e ao seguir o CTA (que rola pra dobra final)
-        if (e.target.closest('[data-fecha]')) fechar();
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && painel.classList.contains('aberto')) fechar();
-      });
     }
 
     // respiro na entrada de cada dobra — uma vez só, sem loop
