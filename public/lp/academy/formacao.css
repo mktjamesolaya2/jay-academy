@@ -48,51 +48,65 @@
       color: rgba(16, 24, 32, .38);
     }
 
-    /* --- o miolo: capa à esquerda, o que é a formação à direita --- */
+    /* --- o miolo: capa grande no topo, informações embaixo --- */
     .formacao {
-      display: grid;
-      grid-template-columns: .78fr 1fr;
-      gap: clamp(24px, 4vw, 68px);
-      align-items: start;
       padding: clamp(8px, 1.5vw, 20px) 0 clamp(48px, 6vw, 88px);
     }
-    /* a capa é a brochura pousada na página — canto reto e sombra rasa,
-       o mesmo device dos cards da dobra das formações */
+    /* ⚠️ 06/08 — o James: "eu queria a capa bem grandona e centralizada, e aí as
+       informações embaixo". Saiu o par lado a lado; agora é a capa reinando
+       sozinha no topo e o conteúdo correndo por baixo, numa coluna centrada. */
     .capa {
       aspect-ratio: 900 / 1243;
       overflow: hidden;
       background: #fff;
-      box-shadow: 0 14px 40px rgba(16, 24, 32, .15), 0 1px 2px rgba(16, 24, 32, .10);
+      box-shadow: 0 22px 60px rgba(16, 24, 32, .18), 0 1px 2px rgba(16, 24, 32, .10);
+      /* grandona: ocupa a largura que a tela deixar, com teto pra não virar
+         pôster de 1200px em monitor grande */
+      width: min(560px, 78vw);
+      margin: 0 auto;
     }
     .capa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* a coluna do texto é mais larga que a capa: a lista de oito itens em duas
+       colunas precisa de ar, e o bloco centrado ancora tudo no mesmo eixo */
+    .conteudo {
+      width: min(720px, 100%);
+      margin: clamp(30px, 4vw, 54px) auto 0;
+    }
 
     .rotulo {
       font-size: 9.5px; font-weight: 400;
       letter-spacing: .42em; text-transform: uppercase;
       color: var(--ouro-escuro);
+      text-align: center;
     }
     h1 {
       margin-top: clamp(14px, 1.6vw, 20px);
-      font-size: clamp(26px, 3.4vw, 52px);
+      font-size: clamp(28px, 3.8vw, 56px);
       font-weight: 200;
       line-height: 1.12;
       letter-spacing: .04em;
       text-transform: uppercase;
+      text-align: center;
     }
     h1 strong { display: block; font-weight: 400; }
 
     .linha {
       position: relative;
-      margin-top: clamp(20px, 2.4vw, 30px);
-      padding-top: clamp(18px, 2vw, 26px);
+      margin: clamp(22px, 2.6vw, 32px) auto 0;
+      padding-top: clamp(20px, 2.2vw, 28px);
       font-size: clamp(13.5px, 1vw, 16px);
       font-weight: 300; line-height: 1.75;
       color: rgba(16, 24, 32, .68);
-      max-width: 46ch;
+      max-width: 52ch;
+      text-align: center;
+      text-wrap: balance;
     }
+    /* o filete acompanha o texto: centrado, já que o bloco agora é centrado */
     .linha::before {
       content: '';
-      position: absolute; top: 0; left: 0;
+      position: absolute; top: 0; left: 50%;
+      transform: translateX(-50%);
       width: 54px; height: 1px;
       background: rgba(16, 24, 32, .3);
     }
@@ -100,6 +114,7 @@
     /* --- o que a formação cobre: lista com filete, como a ficha da LP --- */
     .bloco { margin-top: clamp(26px, 3vw, 42px); }
     .bloco > p {
+      text-align: center;
       font-size: 9.5px; font-weight: 400;
       letter-spacing: .3em; text-transform: uppercase;
       color: rgba(16, 24, 32, .42);
@@ -129,7 +144,7 @@
     .ficha dd { font-size: clamp(12.5px, .92vw, 14.5px); font-weight: 300; text-align: right; }
     .ficha dd.ouro { color: var(--ouro-escuro); font-weight: 400; }
 
-    .acoes { margin-top: clamp(28px, 3vw, 40px); display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+    .acoes { margin-top: clamp(30px, 3.2vw, 44px); display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: center; }
     .btn {
       display: inline-block; text-decoration: none;
       font-size: 11px; font-weight: 500;
@@ -159,8 +174,7 @@
     }
 
     @media (max-width: 860px) {
-      .formacao { grid-template-columns: 1fr; gap: clamp(24px, 6vw, 34px); }
-      .capa { max-width: 420px; }
+      .capa { width: 100%; }
       .lista--dupla { grid-template-columns: 1fr; }
       .marca { display: none; }
     }
