@@ -2,7 +2,50 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-08-05 — **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🧰 Sessão 2026-08-05 (parte 2) — ferramentas de trabalho
+
+Não é conteúdo de LP: é infraestrutura pro trabalho do dia a dia.
+
+### "Ver no celular" no painel ⭐ (o que ficou de mais útil)
+
+- Rota **`/lps/[slug]/celular`** — serve pra **qualquer LP** do painel.
+- Atalho **"Ver no celular"** no bloco Atalhos da página da LP, logo abaixo de
+  "Abrir página".
+- `components/preview-celular.tsx`: moldura de iPhone 13, tela **390×844 de verdade**,
+  zoom que encolhe só a MOLDURA até caber na janela (o layout não muda), botão
+  "Tamanho real", recarregar, abrir em aba, e **atalho por dobra lido da própria página**.
+- Usa caminho relativo (`/slug`) de propósito: além de funcionar no localhost e em
+  produção, **mesma origem é o que permite ler as dobras** pra montar os atalhos. LP em
+  outro domínio ainda funciona, só avisa que os atalhos não vão.
+- ⚠️ Existe também `public/lp/academy/preview-celular.html`, a versão antiga, chumbada
+  na Academy e **sem exigir login**. Mantida por isso. Se um dia virar confusão, some
+  com ela — a do painel faz mais.
+
+### `scripts/` — caixa de ferramentas (`npm run foto` e `npm run cortar`)
+
+Nasceu porque nesta sessão foram escritos e jogados fora 7 scripts descartáveis.
+
+- **`npm run foto <slug>`** — print em 1440×900 e 390×844 (iPhone 13, 2×).
+  `--dobras` / `--dobra <id>` / `--so <tamanho>` / `--url <base>`. Saída em `tmp/fotos/`.
+  Resolve três armadilhas: espera `document.fonts.ready` (senão o print sai com fonte de
+  sistema), liga as animações `.surge` (que começam invisíveis) e **volta ao topo antes
+  de cada recorte** — rolar + `captureBeyondViewport` se somam e o recorte sai na dobra
+  errada, bug que chegou a enganar uma revisão.
+- **`npm run cortar --de X --para Y --formato 3:4`** — `--largura` é **teto, não
+  promessa**: o script se **recusa a ampliar** e avisa. A regra que o James cobrou em
+  05/08 virou código. `--evitar-topo` / `--evitar-baixo` cortam tarja de export do Canva.
+  No fim informa até que tamanho de card a imagem aguenta em retina.
+- Sem dependência nova: `puppeteer-core` + `sharp` que já estavam instalados.
+
+### Como conferir o painel sem o login do James
+
+Em dev a `AUTH_SECRET` cai no default de `lib/auth-secret.ts`. Dá pra assinar um
+`jay_session` com `jose` e setar o cookie no puppeteer — foi assim que a tela nova foi
+conferida. **Só funciona no localhost**: em produção a env é obrigatória.
 
 ---
 
