@@ -1,6 +1,6 @@
 <!doctype html><html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>I · Cartões de etapa</title>
+<title>R1 · Par lado a lado</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>*{margin:0;padding:0;box-sizing:border-box}
 img{display:block;width:100%;height:100%;object-fit:cover}
@@ -54,8 +54,16 @@ h1 b{display:block;font-weight:500}
 .provas{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1vw,14px)}
 .provas img{aspect-ratio:1/1}
 @media(max-width:820px){.cartoes{grid-template-columns:1fr 1fr}.baixo{grid-template-columns:1fr}.provas{grid-template-columns:1fr 1fr}}
+
+.pares{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.2vw,18px)}
+.par{border:1px solid rgba(16,24,32,.14);padding:clamp(8px,.9vw,12px)}
+.par__fotos{display:grid;grid-template-columns:1fr 1fr;gap:clamp(6px,.7vw,10px)}
+.par img{aspect-ratio:16/9}
+.par b{display:block;margin-top:8px;font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:rgba(16,24,32,.42)}
+.par b.dep{color:#8A7A3E}
+@media(max-width:820px){.pares{grid-template-columns:1fr}}
 </style></head><body>
-<a class="volta" href="/lp/academy/opcoes-layout-2.html">← opções</a>
+<a class="volta" href="/lp/academy/opcoes-resultados.html">← resultados</a>
 <div class="faixa">
   <div class="topo"><span>← Todas as formações</span><span>Jay Academy</span></div>
   <header class="abertura">
@@ -82,5 +90,18 @@ h1 b{display:block;font-weight:500}
     <div><p class="sec__rot">Para quem é</p><p>Para profissionais que querem desenvolver um estilo estético próprio e elevar o padrão dos seus procedimentos — incluindo estética reconstrutiva em casos de alopecia e resultados hiper-realistas.</p></div>
   </div>
   <div class="sec"><p class="sec__rot">Resultados</p>
-  <div class="provas"><img src="/lp/academy/reais/resultados/antes-depois-1.jpg" alt=""><img src="/lp/academy/reais/resultados/antes-depois-2.jpg" alt=""><img src="/lp/academy/reais/resultados/antes-depois-3.jpg" alt=""></div></div>
+  <div class="pares">
+    <figure class="par"><div class="par__fotos">
+      <div><img src="/lp/academy/reais/resultados/pares/1-antes.jpg" alt="Sobrancelha antes do procedimento"><b>Antes</b></div>
+      <div><img src="/lp/academy/reais/resultados/pares/1-depois.jpg" alt="Sobrancelha depois do procedimento"><b class="dep">Depois</b></div>
+    </div></figure>
+    <figure class="par"><div class="par__fotos">
+      <div><img src="/lp/academy/reais/resultados/pares/2-antes.jpg" alt="Sobrancelha antes do procedimento"><b>Antes</b></div>
+      <div><img src="/lp/academy/reais/resultados/pares/2-depois.jpg" alt="Sobrancelha depois do procedimento"><b class="dep">Depois</b></div>
+    </div></figure>
+    <figure class="par"><div class="par__fotos">
+      <div><img src="/lp/academy/reais/resultados/pares/3-antes.jpg" alt="Sobrancelha antes do procedimento"><b>Antes</b></div>
+      <div><img src="/lp/academy/reais/resultados/pares/3-depois.jpg" alt="Sobrancelha depois do procedimento"><b class="dep">Depois</b></div>
+    </div></figure>
+  </div></div>
 </div></body></html>
