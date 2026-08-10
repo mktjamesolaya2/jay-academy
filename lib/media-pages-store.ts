@@ -7,6 +7,14 @@ export type { MediaPage } from "./media-types";
 
 const KEY = "media:pages";
 
+/** Álbuns de arquivo técnico — existem pra nada faltar, mas ficam por último. */
+const TECNICOS = new Set(["lp:sistema", "lp:espelho-wp"]);
+
+function rank(p: MediaPage): number {
+  if (TECNICOS.has(p.id)) return 2;
+  return p.source === "manual" ? 0 : 1;
+}
+
 export async function listPages(): Promise<MediaPage[]> {
   // Decodifica na LEITURA, e não só na escrita: os nomes com "&#8211;" já
   // estão gravados assim no KV, e isso conserta sem precisar de migração.
@@ -14,11 +22,10 @@ export async function listPages(): Promise<MediaPage[]> {
     ...p,
     name: limparNome(p.name),
   }));
-  // Manuais primeiro, depois as do WP; cada grupo por nome.
-  return [...pages].sort((a, b) => {
-    if (a.source !== b.source) return a.source === "manual" ? -1 : 1;
-    return a.name.localeCompare(b.name);
-  });
+  // Manuais primeiro, depois o resto; cada grupo por nome. Os dois álbuns que
+  // não são material do James (espelho do WP e arquivos de sistema) vão pro fim
+  // — estão ali pra nada ficar faltando, não pra disputar a atenção.
+  return [...pages].sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
 }
 
 export async function getPage(id: string): Promise<MediaPage | null> {

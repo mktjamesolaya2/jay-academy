@@ -41,6 +41,42 @@ export async function addManyMedia(items: MediaItem[]): Promise<void> {
   if (changed) await kvSet(KEY, [...byId.values()]);
 }
 
+/**
+ * Aponta mídias existentes para outra URL (id → url nova), numa escrita só.
+ *
+ * Serve pro conserto das imagens importadas do WordPress: elas foram gravadas
+ * apontando pro Blob/Supabase, e quando esse armazenamento morreu ficaram todas
+ * quebradas na galeria. O espelho dos mesmos arquivos está commitado em
+ * public/wpmirror/, então dá pra devolvê-las sem reimportar nada.
+ */
+export async function apontarMidiasPara(
+  novaUrl: Record<string, string>
+): Promise<number> {
+  const ids = Object.keys(novaUrl);
+  if (ids.length === 0) return 0;
+  const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
+  let n = 0;
+  const next = items.map((i) => {
+    const url = novaUrl[i.id];
+    if (!url || i.url === url) return i;
+    n++;
+    return { ...i, url };
+  });
+  if (n) await kvSet(KEY, next);
+  return n;
+}
+
+/** Remove várias mídias de uma vez. Devolve quantas saíram. */
+export async function removerMidias(ids: string[]): Promise<number> {
+  if (ids.length === 0) return 0;
+  const fora = new Set(ids);
+  const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
+  const ficam = items.filter((i) => !fora.has(i.id));
+  const n = items.length - ficam.length;
+  if (n) await kvSet(KEY, ficam);
+  return n;
+}
+
 export async function deleteMedia(id: string): Promise<void> {
   const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
   await kvSet(

@@ -27,7 +27,7 @@ import {
   deleteMediaPageAction,
   uploadMediaAction,
   addMediaByUrlAction,
-  sincronizarLpsAction,
+  sincronizarRepositorioAction,
   moveMediaToPageAction,
   deleteMediaAction,
 } from "@/app/midia/actions";
@@ -82,13 +82,17 @@ export function MediaPagesWorkspace({
   /** índice da foto aberta no visualizador; null = parede */
   const [fotoAberta, setFoto] = useState<number | null>(null);
 
-  function sincronizarLps() {
+  function sincronizarRepositorio() {
     setErr(null);
     setAviso(null);
     startTransition(async () => {
-      const r = await sincronizarLpsAction();
-      if (!r.ok) setErr(r.error || "Erro ao sincronizar");
-      else setAviso(`${r.arquivos} arquivos em ${r.grupos} LPs na biblioteca.`);
+      const r = await sincronizarRepositorioAction();
+      if (!r.ok) return setErr(r.error || "Erro ao sincronizar");
+      const partes = [`${r.arquivos} arquivos em ${r.albuns} álbuns`];
+      if (r.novos) partes.push(`${r.novos} novos`);
+      if (r.consertados) partes.push(`${r.consertados} imagens recuperadas`);
+      if (r.removidas) partes.push(`${r.removidas} que não existem mais saíram`);
+      setAviso(partes.join(" · ") + ".");
     });
   }
 
@@ -151,14 +155,14 @@ export function MediaPagesWorkspace({
           </div>
           {canEdit && (
             <>
-              {/* As imagens das páginas que a gente monta são arquivos do
-                  repositório e nunca entravam aqui — só entrava o que vinha do
-                  import do WP ou de upload. Este botão traz. */}
+              {/* A galeria já se sincroniza sozinha quando o repositório muda
+                  (ver sincronizarSeMudou em app/midia/page.tsx). Este botão é o
+                  conserto manual, pra quando alguma imagem não aparecer. */}
               <button
                 type="button"
-                onClick={sincronizarLps}
+                onClick={sincronizarRepositorio}
                 disabled={isPending}
-                title="Traz pra biblioteca as imagens que moram no repositório, agrupadas por LP"
+                title="Reconfere a biblioteca contra os arquivos do repositório e recupera imagens quebradas"
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#262626] text-sm font-semibold text-neutral-300 hover:text-white hover:border-neutral-600 transition disabled:opacity-60"
               >
                 {isPending ? (
@@ -166,7 +170,7 @@ export function MediaPagesWorkspace({
                 ) : (
                   <ImagePlus size={15} strokeWidth={2.4} />
                 )}
-                Sincronizar imagens das LPs
+                Reconferir imagens
               </button>
               <button
                 type="button"
@@ -226,7 +230,7 @@ export function MediaPagesWorkspace({
             </p>
             {!ql && canEdit && (
               <p className="text-neutral-500 text-sm mt-1">
-                Crie um álbum, sincronize as imagens das LPs ou importe do WordPress —
+                Crie um álbum, reconfira as imagens do repositório ou importe do WordPress —
                 as importadas viram álbum sozinhas.
               </p>
             )}
@@ -470,8 +474,10 @@ function PageCard({
   icon: "wp" | "manual" | "lp" | "none";
   onClick: () => void;
 }) {
-  const origem =
-    icon === "wp" ? "WordPress" : icon === "lp" ? "LP" : icon === "manual" ? "Criada" : null;
+  // Só o que é exceção merece etiqueta. Desde que a galeria passou a trazer o
+  // repositório inteiro, quase todo álbum é "LP" — repetir isso em 16 cartões
+  // não informa nada. O que muda o entendimento é ter vindo de fora.
+  const origem = icon === "wp" ? "WordPress" : null;
 
   return (
     <button

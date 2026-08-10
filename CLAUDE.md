@@ -127,13 +127,15 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 ## Convenções
 - Comentários e docs de projeto (README, `notas/`) em português — manter o padrão.
 - Editar LPs de `lp-html/` como HTML puro, commit por página.
-- **Testes**: `node --experimental-strip-types --test lib/*.test.ts` (4 arquivos: page-catalog,
-  rate-limit, wp-localize-core, media-nomes; 112 casos). NÃO há script `test` no package.json.
+- **Testes**: `npm test` (5 arquivos: page-catalog, rate-limit, wp-localize-core, media-nomes,
+  variantes; 118 casos).
 - Scripts: `npm run dev|build|start`. ⚠️ **`npm run lint` NÃO funciona** — `next lint` saiu no Next 16 e
   o projeto não tem `eslint.config.js` nem dependência de eslint. Vale `npx tsc --noEmit`, que passa limpo.
   `npm run checar-modelos` valida a cadeia de IA do chat contra o catálogo público da OpenRouter.
-  `npm run manifesto-lps` regrava `lib/lp-assets.json` (roda sozinho no `prebuild`) — é ele que alimenta
-  o botão "Sincronizar imagens das LPs" em `/midia`.
+  `npm run manifesto-midia` regrava `lib/midia-assets.json` (roda sozinho no `prebuild`) — é ele que
+  alimenta a biblioteca de mídia: TODA imagem e vídeo de `public/`, agrupados por álbum. A `/midia`
+  se sincroniza sozinha quando a marca do manifesto muda (`media:repo-sync:marca` no KV), então
+  imagem nova commitada aparece na galeria no primeiro acesso depois do deploy.
 
 ## Pegadinhas (importante — lê antes de deployar ou mexer no KV)
 - **Push/deploy TEM que ser como o dono do projeto** `James Olaya <suporte@jamesolaya.com.br>` +

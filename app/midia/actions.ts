@@ -1,6 +1,6 @@
 "use server";
 
-import { sincronizarMidiasDasLps } from "@/lib/media-lp-sync";
+import { sincronizarMidiasDoRepositorio } from "@/lib/media-repo-sync";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { blobUpload } from "@/lib/storage";
@@ -187,21 +187,28 @@ export async function moveMediaToPageAction(
 }
 
 /**
- * Traz pra biblioteca as imagens que moram no repositório (public/lp/...),
- * agrupadas por LP. É idempotente: roda quantas vezes quiser, só entra o que
+ * Traz pra biblioteca toda imagem e vídeo que mora no repositório (public/),
+ * agrupados por álbum, e conserta as importadas do WP que ficaram apontando pro
+ * armazenamento morto. É idempotente: roda quantas vezes quiser, só entra o que
  * ainda não estava lá.
+ *
+ * Normalmente nem precisa: a galeria se sincroniza sozinha quando o repositório
+ * muda (ver sincronizarSeMudou). O botão fica como conserto manual.
  */
-export async function sincronizarLpsAction(): Promise<{
+export async function sincronizarRepositorioAction(): Promise<{
   ok: boolean;
-  grupos?: number;
+  albuns?: number;
   arquivos?: number;
+  novos?: number;
+  consertados?: number;
+  removidas?: number;
   error?: string;
 }> {
   await requireAdmin();
   try {
-    const r = await sincronizarMidiasDasLps();
+    const r = await sincronizarMidiasDoRepositorio();
     revalidatePath("/midia");
-    return { ok: true, grupos: r.gruposCriados, arquivos: r.arquivos };
+    return { ok: true, ...r };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Erro ao sincronizar" };
   }

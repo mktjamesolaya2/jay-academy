@@ -12,6 +12,51 @@ James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
 com vc as imagens não estão subindo p ca!"* e depois *"deixa como a galeria do
 iphone acho q ficaria bom"*.
 
+### Parte 5 — "não quero imagens faltando" (1016 arquivos varridos, 941 na galeria)
+
+James: *"todas as imagens de todas as lps, e de todas as que ainda vão ser
+criadas de todas as maneiras, estejam aqui"*.
+
+O manifesto varria **só `public/lp/`** e ainda pulava `wp-content`. Ficavam de
+fora 590 arquivos: as fotos da Profissão Remove (que moram justamente em
+`wp-content/uploads/`), PMU CLASS, Magic Shadow, JAY.O Laser, as páginas
+recriadas e o espelho do WordPress. Agora varre `public/` inteiro.
+
+- **`scripts/gerar-manifesto-midia.mjs`** (era `-lps`) → `lib/midia-assets.json`.
+  16 álbuns. Dois deles — **Arquivos de sistema** e **Espelho do WordPress** —
+  existem só pra nada faltar e ficam **por último** na galeria (`rank()` em
+  `lib/media-pages-store.ts`).
+- **Sincronia automática**: o manifesto carrega uma *marca* (sha1 de url+tamanho
+  de tudo). Mudou a marca, a `/midia` sincroniza sozinha no primeiro acesso
+  (`sincronizarSeMudou`). Ninguém mais depende de clicar num botão — era essa a
+  parte "de todas as maneiras". Quando nada mudou, custa UMA leitura.
+- **Conserto das imagens quebradas do WP**: o arquivo espelhado se chama
+  `<hash12 do sha1 da URL original>-<nome>-<sufixo>`, e a mídia importada tem id
+  `<hash16 do mesmo sha1>`. Os 12 primeiros caracteres casam os dois — então dá
+  pra apontar as importadas que ficaram órfãs do Blob/Supabase morto pro arquivo
+  local de `public/wpmirror/`, **sem reimportar nada e sem esperar o Blob
+  resetar**. Também é isso que impede o espelho de duplicar cada foto.
+- **Arquivo apagado do repositório sai da galeria** — miniatura quebrada pra
+  sempre é, na tela, a mesma coisa que faltar. Só mexe no que a sincronia criou
+  (id `lp:<url>`).
+
+#### As miniaturas do WordPress (⚠️ a regra que já apagou foto de verdade)
+
+O WP guarda a mesma foto em 4–5 tamanhos (`foo-300x200.jpg`). Mostrar as cinco
+não é "não faltar nada", é a mesma imagem cinco vezes atrapalhando. Ficou só a
+maior — **75 colapsadas**. A regra mora em **`scripts/variantes.mjs`**, separada
+e testada (`variantes.test.mjs`), porque é a única do manifesto que pode sumir
+com material, e sumiu duas vezes durante a escrita:
+
+1. `-(\d+)x(\d+)` comeu **`garantia-rosa-9x16.webp`** — proporção de tela, não
+   miniatura. Corrigido pra `\d{2,4}`.
+2. Tirar o hash do espelho da chave fundiu o **`modulo-07` de duas páginas
+   diferentes** num só. O hash identifica a URL de origem e tem que ficar; só o
+   sufixo aleatório sai (aí sim é reimportação do mesmo arquivo).
+
+Auditoria depois do conserto: dos 75 descartados, 31 são miniatura de verdade e
+44 são reimportação do mesmo hash. **Zero suspeitos.**
+
 ### Por que as imagens das LPs nunca apareciam
 
 A biblioteca só conhecia **dois caminhos de entrada**: o import do WordPress e o

@@ -4,14 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 4000",
-    "prebuild": "node scripts/gerar-manifesto-lps.mjs",
+    "prebuild": "node scripts/gerar-manifesto-midia.mjs",
     "build": "next build",
     "start": "next start -p 4000",
     "lint": "next lint",
     "foto": "node scripts/foto.mjs",
     "cortar": "node scripts/cortar.mjs",
     "checar-modelos": "node scripts/checar-modelos.mjs",
-    "manifesto-lps": "node scripts/gerar-manifesto-lps.mjs"
+    "manifesto-midia": "node scripts/gerar-manifesto-midia.mjs",
+    "test": "node --experimental-strip-types --test lib/*.test.ts scripts/*.test.mjs"
   },
   "dependencies": {
     "@sparticuz/chromium": "^149.0.0",
