@@ -46,13 +46,13 @@ export default async function MediaLibraryPage() {
             Biblioteca de mídia
           </p>
           <h2 className="text-3xl font-semibold tracking-[-0.03em] text-white mt-1">
-            {pages.length} página{pages.length === 1 ? "" : "s"} ·{" "}
+            {pages.length} álbu{pages.length === 1 ? "m" : "ns"} ·{" "}
             {items.length} arquivo{items.length === 1 ? "" : "s"}
           </h2>
           <p className="text-neutral-400 mt-1.5 max-w-2xl text-[15px]">
-            Mídias organizadas por página. As importadas do WordPress já entram
-            agrupadas pela página de origem. Crie páginas, mova arquivos e busque
-            a página pelo nome.
+            Cada álbum é uma página do site. As do WordPress entram agrupadas
+            sozinhas; as imagens das LPs entram pelo botão de sincronizar. Clique
+            numa foto pra copiar o link, mover de álbum ou excluir.
           </p>
         </header>
 

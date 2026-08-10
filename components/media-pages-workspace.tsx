@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   Search,
   FolderPlus,
@@ -13,8 +13,14 @@ import {
   Pencil,
   Trash2,
   ImagePlus,
+  X,
+  Copy,
+  Check,
+  Film,
+  FileText,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import { MediaCard } from "./media-library";
 import {
   createMediaPageAction,
   renameMediaPageAction,
@@ -22,6 +28,8 @@ import {
   uploadMediaAction,
   addMediaByUrlAction,
   sincronizarLpsAction,
+  moveMediaToPageAction,
+  deleteMediaAction,
 } from "@/app/midia/actions";
 import type { MediaItem, MediaPage } from "@/lib/media-types";
 import { escolherCapa } from "@/lib/media-nomes";
@@ -71,6 +79,8 @@ export function MediaPagesWorkspace({
   }, [items, pageIds]);
 
   const [aviso, setAviso] = useState<string | null>(null);
+  /** índice da foto aberta no visualizador; null = parede */
+  const [fotoAberta, setFoto] = useState<number | null>(null);
 
   function sincronizarLps() {
     setErr(null);
@@ -88,7 +98,7 @@ export function MediaPagesWorkspace({
     fd.set("name", name);
     startTransition(async () => {
       const r = await createMediaPageAction(fd);
-      if (!r.ok) setErr(r.error || "Erro ao criar página");
+      if (!r.ok) setErr(r.error || "Erro ao criar álbum");
       else {
         setCreating(false);
         if (r.id) setOpen(r.id);
@@ -121,7 +131,7 @@ export function MediaPagesWorkspace({
     });
     const noPageCount = countByPage[NO_PAGE] || 0;
     const showNoPage =
-      noPageCount > 0 && (!ql || "sem página".includes(ql) || "sem pagina".includes(ql));
+      noPageCount > 0 && (!ql || "sem álbum".includes(ql) || "sem album".includes(ql));
 
     return (
       <div className="space-y-5">
@@ -135,7 +145,7 @@ export function MediaPagesWorkspace({
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Buscar página por nome…"
+              placeholder="Buscar álbum…"
               className="w-full bg-[#0f0f0f] border border-[#1f1f1f] rounded-lg pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-neutral-600"
             />
           </div>
@@ -164,7 +174,7 @@ export function MediaPagesWorkspace({
                 className="btn-primary inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold"
               >
                 <FolderPlus size={15} strokeWidth={2.4} />
-                Nova página
+                Novo álbum
               </button>
             </>
           )}
@@ -189,7 +199,7 @@ export function MediaPagesWorkspace({
           >
             <label className="flex-1 min-w-[240px]">
               <span className="block text-[11px] uppercase tracking-[0.14em] text-neutral-500 font-semibold mb-1.5">
-                Nome da página
+                Nome do álbum
               </span>
               <input
                 name="name"
@@ -212,20 +222,26 @@ export function MediaPagesWorkspace({
           <div className="border border-dashed border-[#262626] rounded-2xl py-16 text-center">
             <Folder size={26} strokeWidth={1.6} className="mx-auto text-neutral-600 mb-3" />
             <p className="text-neutral-300 font-semibold">
-              {ql ? `Nenhuma página encontrada pra “${q}”.` : "Nenhuma página ainda."}
+              {ql ? `Nenhum álbum com “${q}”.` : "Nenhum álbum ainda."}
             </p>
             {!ql && canEdit && (
               <p className="text-neutral-500 text-sm mt-1">
-                Crie uma página ou importe páginas do WordPress (elas viram páginas
-                automaticamente).
+                Crie um álbum, sincronize as imagens das LPs ou importe do WordPress —
+                as importadas viram álbum sozinhas.
               </p>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          /* auto-fill em vez de colunas fixas: numa tela larga cabem mais
+             álbuns por linha, como na grade do app de Fotos. O respiro
+             vertical é maior que o horizontal por causa do nome embaixo. */
+          <div
+            className="grid gap-x-4 gap-y-7"
+            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))" }}
+          >
             {showNoPage && (
               <PageCard
-                title="Sem página"
+                title="Sem álbum"
                 subtitle={`${noPageCount} mídia${noPageCount === 1 ? "" : "s"}`}
                 thumb={thumbByPage[NO_PAGE]}
                 icon="none"
@@ -252,7 +268,7 @@ export function MediaPagesWorkspace({
 
   // ─────────────────────────── DETALHE DE UMA PÁGINA ───────────────────────────
   const page = pages.find((p) => p.id === open) || null;
-  const title = open === NO_PAGE ? "Sem página" : page?.name ?? "Página";
+  const title = open === NO_PAGE ? "Sem álbum" : page?.name ?? "Álbum";
   const pageItems = items.filter((it) => pageOf(it) === open);
   const movePages = pages.map((p) => ({ id: p.id, name: p.name }));
 
@@ -264,11 +280,12 @@ export function MediaPagesWorkspace({
             onClick={() => {
               setOpen(null);
               setErr(null);
+              setFoto(null);
             }}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-white transition shrink-0"
           >
             <ArrowLeft size={15} strokeWidth={2.2} />
-            Páginas
+            Álbuns
           </button>
           <span className="text-neutral-700">/</span>
           <h3 className="text-lg font-semibold text-white tracking-[-0.02em] truncate">
@@ -308,7 +325,7 @@ export function MediaPagesWorkspace({
                 <button
                   type="button"
                   onClick={() => {
-                    const name = window.prompt("Novo nome da página:", page.name);
+                    const name = window.prompt("Novo nome do álbum:", page.name);
                     if (name && name.trim()) {
                       const fd = new FormData();
                       fd.set("id", page.id);
@@ -316,7 +333,7 @@ export function MediaPagesWorkspace({
                       startTransition(() => renameMediaPageAction(fd));
                     }
                   }}
-                  title="Renomear página"
+                  title="Renomear álbum"
                   className="w-9 h-9 rounded-lg bg-[#161616] text-neutral-400 hover:text-white flex items-center justify-center transition"
                 >
                   <Pencil size={14} strokeWidth={2} />
@@ -326,7 +343,7 @@ export function MediaPagesWorkspace({
                   onClick={() => {
                     if (
                       window.confirm(
-                        `Excluir a página "${page.name}"? As mídias não somem — voltam pra "Sem página".`
+                        `Excluir o álbum "${page.name}"? As mídias não somem — voltam pra "Sem álbum".`
                       )
                     ) {
                       const fd = new FormData();
@@ -337,7 +354,7 @@ export function MediaPagesWorkspace({
                       });
                     }
                   }}
-                  title="Excluir página"
+                  title="Excluir álbum"
                   className="w-9 h-9 rounded-lg bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 flex items-center justify-center transition"
                 >
                   <Trash2 size={14} strokeWidth={2} />
@@ -357,29 +374,89 @@ export function MediaPagesWorkspace({
       {pageItems.length === 0 ? (
         <div className="border border-dashed border-[#262626] rounded-2xl py-16 text-center">
           <ImagePlus size={26} strokeWidth={1.6} className="mx-auto text-neutral-600 mb-3" />
-          <p className="text-neutral-300 font-semibold">Nenhuma mídia nessa página</p>
+          <p className="text-neutral-300 font-semibold">Nenhuma mídia neste álbum</p>
           {canEdit && (
             <p className="text-neutral-500 text-sm mt-1">
-              Envie um arquivo aqui ou mova mídias de outra página.
+              Envie um arquivo aqui ou mova mídias de outro álbum.
             </p>
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {pageItems.map((m) => (
-            <MediaCard
-              key={m.id}
-              item={m}
-              canEdit={canEdit}
-              movePages={movePages}
-            />
+        /**
+         * A parede de fotos do app de Fotos: quadrados colados, sem legenda,
+         * sem moldura. A densidade É a interface — quem procura uma imagem
+         * reconhece pela imagem, não pelo nome do arquivo. Nome, categoria e
+         * ações moram no visualizador, a um clique.
+         */
+        <div
+          className="grid gap-[3px] overflow-hidden rounded-xl"
+          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(104px, 1fr))" }}
+        >
+          {pageItems.map((m, i) => (
+            <PhotoTile key={m.id} item={m} onOpen={() => setFoto(i)} />
           ))}
         </div>
+      )}
+
+      {fotoAberta !== null && pageItems[fotoAberta] && (
+        <Visualizador
+          itens={pageItems}
+          indice={fotoAberta}
+          canEdit={canEdit}
+          movePages={movePages}
+          onIr={setFoto}
+          onFechar={() => setFoto(null)}
+        />
       )}
     </div>
   );
 }
 
+/** Um quadradinho da parede. Sem texto: só a imagem. */
+function PhotoTile({ item, onOpen }: { item: MediaItem; onOpen: () => void }) {
+  return (
+    <button
+      onClick={onOpen}
+      title={item.name}
+      aria-label={`Abrir ${item.name}`}
+      className="group relative aspect-square overflow-hidden bg-[#141414] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
+    >
+      {item.type === "image" ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={item.url}
+          alt=""
+          loading="lazy"
+          className="h-full w-full object-cover transition duration-300 motion-safe:group-hover:scale-[1.06]"
+        />
+      ) : (
+        /* vídeo e arquivo não têm o que mostrar — aí sim o nome aparece,
+           senão vira um quadrado preto indecifrável no meio da parede */
+        <span className="flex h-full w-full flex-col items-center justify-center gap-1.5 px-2 text-center">
+          {item.type === "video" ? (
+            <Film size={20} strokeWidth={1.6} className="text-neutral-500" />
+          ) : (
+            <FileText size={20} strokeWidth={1.6} className="text-neutral-500" />
+          )}
+          <span className="line-clamp-2 text-[9.5px] leading-tight text-neutral-500">
+            {item.name}
+          </span>
+        </span>
+      )}
+      <span className="pointer-events-none absolute inset-0 bg-white/0 transition group-hover:bg-white/10" />
+    </button>
+  );
+}
+
+/**
+ * Álbum, no formato do app de Fotos: a capa QUADRADA é o objeto — sem moldura,
+ * sem fundo de cartão, sem etiqueta carimbada em cima da imagem. Nome e
+ * contagem moram embaixo, e a origem (WP/LP) virou texto discreto ali, porque
+ * é informação útil mas não é o assunto da tela.
+ *
+ * A lasquinha atrás da capa é a pilha do iOS: diz "isto é uma coleção, não uma
+ * foto". É o único enfeite — não somar outros.
+ */
 function PageCard({
   title,
   subtitle,
@@ -393,47 +470,250 @@ function PageCard({
   icon: "wp" | "manual" | "lp" | "none";
   onClick: () => void;
 }) {
+  const origem =
+    icon === "wp" ? "WordPress" : icon === "lp" ? "LP" : icon === "manual" ? "Criada" : null;
+
   return (
     <button
       onClick={onClick}
-      className="group text-left bg-[#0f0f0f] border border-[#1f1f1f] rounded-xl overflow-hidden hover:border-neutral-600 transition"
+      className="group text-left focus:outline-none"
+      aria-label={`Abrir ${title}, ${subtitle}`}
     >
-      <div className="aspect-[4/3] bg-[#161616] relative flex items-center justify-center overflow-hidden">
-        {thumb ? (
+      <div className="relative">
+        {/* pilha: a lasquinha que aparece atrás da capa */}
+        <div
+          aria-hidden
+          className="absolute inset-x-2.5 -bottom-1 h-3 rounded-b-[13px] bg-[#242424]"
+        />
+        <div className="relative aspect-square overflow-hidden rounded-[15px] bg-[#141414] ring-1 ring-white/[0.06] transition duration-300 group-hover:ring-white/20 group-focus-visible:ring-2 group-focus-visible:ring-white motion-safe:group-hover:-translate-y-0.5">
+          {thumb ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={thumb}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover transition duration-500 motion-safe:group-hover:scale-[1.04]"
+            />
+          ) : (
+            <span className="flex h-full w-full items-center justify-center">
+              <Folder size={26} strokeWidth={1.4} className="text-neutral-700" />
+            </span>
+          )}
+        </div>
+      </div>
+
+      <p
+        className="mt-3 truncate text-[13.5px] font-semibold tracking-[-0.01em] text-white"
+        title={title}
+      >
+        {title}
+      </p>
+      <p className="mt-0.5 text-[12px] text-neutral-500">
+        {subtitle}
+        {origem && <span className="text-neutral-600"> · {origem}</span>}
+      </p>
+    </button>
+  );
+}
+
+
+/**
+ * Visualizador — o equivalente a tocar numa foto no app de Fotos: a imagem
+ * ocupa a tela, e o que é operação (copiar link, mover, excluir) fica numa
+ * barra discreta embaixo, fora do caminho.
+ *
+ * Setas andam entre as fotos e Esc fecha, porque é o que a mão espera depois
+ * de abrir uma galeria.
+ */
+function Visualizador({
+  itens,
+  indice,
+  canEdit,
+  movePages,
+  onIr,
+  onFechar,
+}: {
+  itens: MediaItem[];
+  indice: number;
+  canEdit: boolean;
+  movePages: { id: string; name: string }[];
+  onIr: (i: number) => void;
+  onFechar: () => void;
+}) {
+  const item = itens[indice];
+  const [copiado, setCopiado] = useState(false);
+  const [, startTransition] = useTransition();
+
+  useEffect(() => {
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onFechar();
+      if (e.key === "ArrowRight" && indice < itens.length - 1) onIr(indice + 1);
+      if (e.key === "ArrowLeft" && indice > 0) onIr(indice - 1);
+    };
+    window.addEventListener("keydown", tecla);
+    // trava a rolagem do fundo enquanto o visualizador está aberto
+    const antes = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", tecla);
+      document.body.style.overflow = antes;
+    };
+  }, [indice, itens.length, onIr, onFechar]);
+
+  async function copiar() {
+    const url = item.url.startsWith("http")
+      ? item.url
+      : window.location.origin + item.url;
+    await navigator.clipboard.writeText(url);
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 1800);
+  }
+
+  function excluir() {
+    if (!confirm(`Excluir "${item.name}" da biblioteca?`)) return;
+    const fd = new FormData();
+    fd.set("id", item.id);
+    startTransition(async () => {
+      await deleteMediaAction(fd);
+      onFechar();
+    });
+  }
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={item.name}
+      onClick={onFechar}
+      className="fixed inset-0 z-50 flex flex-col bg-black/92 backdrop-blur-xl motion-safe:animate-in motion-safe:fade-in motion-safe:duration-150"
+    >
+      <div
+        className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-white" title={item.name}>
+            {item.name}
+          </p>
+          <p className="text-[11px] text-neutral-500">
+            {indice + 1} de {itens.length}
+            {item.size ? ` · ${Math.round(item.size / 1024)} kB` : ""}
+          </p>
+        </div>
+        <button
+          onClick={onFechar}
+          aria-label="Fechar"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          <X size={17} strokeWidth={2.2} />
+        </button>
+      </div>
+
+      <div className="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-2">
+        {indice > 0 && (
+          <Seta lado="esq" onClick={() => onIr(indice - 1)} />
+        )}
+        {item.type === "image" ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={thumb}
-            alt={title}
-            loading="lazy"
-            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition"
+            src={item.url}
+            alt={item.name}
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-full max-w-full rounded-lg object-contain"
           />
         ) : (
-          <Folder size={30} strokeWidth={1.4} className="text-neutral-600" />
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="flex flex-col items-center gap-3 text-neutral-400"
+          >
+            {item.type === "video" ? (
+              <Film size={40} strokeWidth={1.4} />
+            ) : (
+              <FileText size={40} strokeWidth={1.4} />
+            )}
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener"
+              className="text-sm font-semibold text-white underline underline-offset-4"
+            >
+              Abrir arquivo
+            </a>
+          </div>
         )}
-        <span className="absolute top-2 left-2 inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.12em] px-1.5 py-0.5 rounded bg-black/60 text-neutral-300 backdrop-blur">
-          {icon === "wp" ? (
+        {indice < itens.length - 1 && (
+          <Seta lado="dir" onClick={() => onIr(indice + 1)} />
+        )}
+      </div>
+
+      <div
+        className="flex flex-wrap items-center justify-center gap-2 px-4 py-4 sm:px-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={copiar}
+          className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-[#0a0a0a] transition hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          {copiado ? (
             <>
-              <Globe size={9} strokeWidth={2.4} /> WP
-            </>
-          ) : icon === "lp" ? (
-            <>
-              <ImagePlus size={9} strokeWidth={2.4} /> LP
-            </>
-          ) : icon === "manual" ? (
-            <>
-              <Folder size={9} strokeWidth={2.4} /> Página
+              <Check size={13} strokeWidth={2.6} /> Link copiado
             </>
           ) : (
-            "Sem página"
+            <>
+              <Copy size={13} strokeWidth={2.4} /> Copiar link
+            </>
           )}
-        </span>
+        </button>
+        {canEdit && (
+          <>
+            <select
+              value={item.pageId ?? "__none__"}
+              onChange={(e) => {
+                const v = e.target.value;
+                startTransition(async () => {
+                  await moveMediaToPageAction(
+                    [item.id],
+                    v === "__none__" ? null : v
+                  );
+                });
+              }}
+              aria-label="Mover para outro álbum"
+              className="max-w-[240px] cursor-pointer truncate rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-[12.5px] font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              <option value="__none__">Sem álbum</option>
+              {movePages.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={excluir}
+              className="inline-flex items-center gap-2 rounded-full border border-rose-400/25 bg-rose-500/15 px-4 py-2 text-[12.5px] font-semibold text-rose-200 transition hover:bg-rose-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+            >
+              <Trash2 size={13} strokeWidth={2.2} /> Excluir
+            </button>
+          </>
+        )}
       </div>
-      <div className="px-3 py-2.5">
-        <p className="text-sm font-semibold text-white truncate" title={title}>
-          {title}
-        </p>
-        <p className="text-[11px] text-neutral-500 mt-0.5">{subtitle}</p>
-      </div>
+    </div>
+  );
+}
+
+function Seta({ lado, onClick }: { lado: "esq" | "dir"; onClick: () => void }) {
+  const Icone = lado === "esq" ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      aria-label={lado === "esq" ? "Anterior" : "Próxima"}
+      className={`absolute ${
+        lado === "esq" ? "left-2 sm:left-5" : "right-2 sm:right-5"
+      } z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white`}
+    >
+      <Icone size={20} strokeWidth={2.2} />
     </button>
   );
 }
