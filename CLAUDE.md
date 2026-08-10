@@ -132,8 +132,9 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 
 ## Pegadinhas (importante — lê antes de deployar ou mexer no KV)
 - **Push/deploy TEM que ser como o dono do projeto** `James Olaya <suporte@jamesolaya.com.br>` +
-  PAT `token_mktjamesolaya2` (em `.env.local`):
-  `git push "https://mktjamesolaya2:$PAT@github.com/mktjamesolaya2/jay-academy.git" main`.
+  PAT na var **`GITHUB_PAT`** do `.env.local` (não `token_mktjamesolaya2`):
+  `PAT=$(grep -oP '(?<=^GITHUB_PAT=).*' .env.local | tr -d '\r')`
+  `git push "https://mktjamesolaya2:$PAT@github.com/mktjamesolaya2/jay-academy.git" HEAD:main`.
   Autor não-dono → o build do Vercel falha com "AUTH_SECRET não configurada" (envs de produção
   não são injetadas). A config git do repo já está ajustada pro dono.
 - **`vercel env pull` traz os SEGREDOS vazios** (KV/S3/AUTH_SECRET) → não dá pra rodar script
