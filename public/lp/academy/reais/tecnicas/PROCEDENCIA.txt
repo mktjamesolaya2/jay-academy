@@ -35,7 +35,3 @@ labios-resultado.jpg
 clinica.jpg
   origem: lp/jamesolaya/clinic-slice.jpg
   mostra: A clínica da Jay Academy durante os atendimentos
-
-produtos.jpg
-  origem: lp/jamesolaya/img25.jpg
-  mostra: Os dermocosméticos e pigmentos JAY.O
