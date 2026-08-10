@@ -12,6 +12,21 @@ James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
 com vc as imagens não estão subindo p ca!"* e depois *"deixa como a galeria do
 iphone acho q ficaria bom"*.
 
+### Parte 7 — Baixar a imagem pelo visualizador
+
+Botão **Baixar** no visualizador, e o cabeçalho agora mostra a **medida real** do
+arquivo (`1536 × 2752 · 139 kB`) — é ela que diz se a imagem serve pra impressão
+ou só pra web.
+
+- Baixa o arquivo **original**, sem redimensionar nem recomprimir. Conferido
+  byte a byte: sha256 e tamanho idênticos ao arquivo do repositório.
+- ⚠️ `<a download>` sozinho não serve: o atributo é **ignorado quando o arquivo
+  mora em outro domínio** (Supabase), e o navegador abre a imagem em vez de
+  baixar. Então busca o arquivo, salva do blob, e só cai pra "abrir em outra
+  aba" se o CORS barrar.
+- Nome de arquivo limpo: `03b7af09fe79-desktop-james-olaya-lips-sense-1-514e94fd61.jpg`
+  vira `desktop-james-olaya-lips-sense-1.jpg`.
+
 ### Parte 6 — "76 páginas, 46 álbuns": uma foto agora vive em vários álbuns
 
 James contou os álbuns e viu que faltavam 30. Causa única, no modelo de dados:

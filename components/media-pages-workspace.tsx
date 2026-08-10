@@ -20,6 +20,7 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
+  Download,
 } from "lucide-react";
 import {
   createMediaPageAction,
@@ -559,7 +560,12 @@ function Visualizador({
 }) {
   const item = itens[indice];
   const [copiado, setCopiado] = useState(false);
+  const [baixando, setBaixando] = useState(false);
+  /** medida real do arquivo, lida da imagem já carregada */
+  const [medida, setMedida] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+
+  useEffect(() => setMedida(null), [item.url]);
 
   useEffect(() => {
     const tecla = (e: KeyboardEvent) => {
@@ -584,6 +590,34 @@ function Visualizador({
     await navigator.clipboard.writeText(url);
     setCopiado(true);
     setTimeout(() => setCopiado(false), 1800);
+  }
+
+  /**
+   * Baixa o arquivo ORIGINAL, do jeito que ele está guardado — nada é
+   * redimensionado nem recomprimido no caminho. O `<a download>` sozinho não
+   * serve: ele é ignorado quando o arquivo mora em outro domínio (Supabase),
+   * e aí o navegador abre a imagem em vez de baixar. Então busca o arquivo,
+   * baixa do blob, e só cai pra "abrir em outra aba" se o CORS barrar.
+   */
+  async function baixar() {
+    setBaixando(true);
+    try {
+      const resposta = await fetch(item.url);
+      if (!resposta.ok) throw new Error(String(resposta.status));
+      const blob = await resposta.blob();
+      const href = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = nomeDeArquivo(item);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(href);
+    } catch {
+      window.open(item.url, "_blank", "noopener");
+    } finally {
+      setBaixando(false);
+    }
   }
 
   function excluir() {
@@ -614,6 +648,7 @@ function Visualizador({
           </p>
           <p className="text-[11px] text-neutral-500">
             {indice + 1} de {itens.length}
+            {medida ? ` · ${medida}` : ""}
             {item.size ? ` · ${Math.round(item.size / 1024)} kB` : ""}
           </p>
         </div>
@@ -636,6 +671,13 @@ function Visualizador({
             src={item.url}
             alt={item.name}
             onClick={(e) => e.stopPropagation()}
+            // a medida real do arquivo, não a que coube na tela: é ela que diz
+            // se a imagem serve pra impressão ou só pra web
+            onLoad={(e) =>
+              setMedida(
+                `${e.currentTarget.naturalWidth} × ${e.currentTarget.naturalHeight}`
+              )
+            }
             className="max-h-full max-w-full rounded-lg object-contain"
           />
         ) : (
@@ -668,8 +710,21 @@ function Visualizador({
         onClick={(e) => e.stopPropagation()}
       >
         <button
+          onClick={baixar}
+          disabled={baixando}
+          title="Baixa o arquivo original, sem reduzir nada"
+          className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-[#0a0a0a] transition hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-60"
+        >
+          {baixando ? (
+            <Loader2 size={13} strokeWidth={2.6} className="animate-spin" />
+          ) : (
+            <Download size={13} strokeWidth={2.4} />
+          )}
+          Baixar
+        </button>
+        <button
           onClick={copiar}
-          className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-[#0a0a0a] transition hover:bg-neutral-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[12.5px] font-semibold text-white transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           {copiado ? (
             <>
@@ -715,6 +770,19 @@ function Visualizador({
       </div>
     </div>
   );
+}
+
+/**
+ * Nome pro arquivo salvo. As do espelho do WP se chamam
+ * `<hash12>-<nome de verdade>-<sufixo>.jpg` — salvar isso no computador do
+ * James não ajuda ninguém, então tira a moldura e deixa o nome original.
+ */
+function nomeDeArquivo(item: MediaItem): string {
+  const ext = (item.url.split("?")[0].match(/\.[a-z0-9]+$/i) || [""])[0];
+  const limpo = item.name
+    .replace(/^[0-9a-f]{12}-/, "")
+    .replace(/-[0-9a-z]{10}(?=\.[a-z0-9]+$|$)/i, "");
+  return limpo.toLowerCase().endsWith(ext.toLowerCase()) ? limpo : limpo + ext;
 }
 
 function Seta({ lado, onClick }: { lado: "esq" | "dir"; onClick: () => void }) {
