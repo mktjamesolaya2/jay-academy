@@ -2,7 +2,136 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🖼️ Sessão 2026-08-10 (parte 4) — galeria de mídia no formato do app Fotos
+
+James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
+com vc as imagens não estão subindo p ca!"* e depois *"deixa como a galeria do
+iphone acho q ficaria bom"*.
+
+### Por que as imagens das LPs nunca apareciam
+
+A biblioteca só conhecia **dois caminhos de entrada**: o import do WordPress e o
+upload manual. As imagens das páginas que a gente monta são **arquivos
+commitados em `public/lp/...`** — não passam por nenhum dos dois. Por isso a
+galeria só tinha material com etiqueta "WP".
+
+- `scripts/gerar-manifesto-lps.mjs` roda no **`prebuild`** e gera
+  `lib/lp-assets.json` (426 arquivos, 48 KB). ⚠️ **Não trocar por leitura de
+  disco em runtime**: em produção `public/` é servido pela CDN e pode não estar
+  no sistema de arquivos da função.
+- `lib/media-lp-sync.ts` → botão **Sincronizar LPs** em `/midia`. O id de cada
+  mídia é `lp:<url>`, então rodar de novo **não duplica**.
+- `lib/media-nomes.ts` — `limparNome()` decodifica entidade HTML (era o
+  `&#8211;` que aparecia cru na tela) e `escolherCapa()` pega a **maior** imagem
+  do álbum, descartando ícone/logo/arquivo minúsculo (antes vencia a primeira da
+  lista, o que dava aquela capa de despertador borrado). 8 testes em
+  `lib/media-nomes.test.ts`.
+
+### O layout (commit `8a24ef9`)
+
+- Capa de álbum **quadrada, sem moldura nem fundo de cartão** — a foto é o
+  objeto. Uma lasquinha de 3px atrás do rodapé imita a pilha do iOS: é o único
+  enfeite da tela, e é de propósito.
+- Grade de álbuns `auto-fill minmax(150px,1fr)` → 2 colunas no celular, 7 no
+  desktop. **Não aumentar esse mínimo**: com 178px o celular caía pra 1 coluna.
+- Dentro do álbum, a parede de fotos perdeu legenda e cartão: quadrados de 104px
+  com 3px de respiro. **A densidade é a interface.** Vídeo e arquivo mantêm
+  ícone + nome porque um quadrado preto não se lê.
+- Clique numa foto abre visualizador em tela cheia — Esc, setas do teclado,
+  trava de rolagem, e as ações (copiar link, mover de álbum, excluir).
+- **Vocabulário**: "página" virou **"álbum"** em todo texto visível. "Páginas"
+  na barra lateral quer dizer página publicada do site — colidia.
+
+---
+
+## 🐛 Sessão 2026-08-10 (parte 3) — as 2 sugestões abertas da caixa de ideias
+
+James: *"pegue as que estão marcadas como aberto e as conclua, primeiro olhe
+todo o codigo para ver c há bug"*. Eram **MOBILE** e **ajustar bug I.A
+pmuclass**. ⚠️ As sugestões de verdade moram no **KV de produção** — auditar o
+arquivo local não serve de nada.
+
+### MOBILE — página WP não tinha "ver no celular"
+
+Só as LPs do painel tinham. Criada `app/wp-pages/[domain]/[slug]/celular/` com
+atalho na página publicada e cartão na não-publicada.
+
+Dois bugs achados no `components/preview-celular.tsx` no caminho:
+
+1. O menu de dobras enchia de lixo — o WP usa id de máquina (`mwAQ`). Agora só
+   entra id que pareça palavra: `/^[a-z][a-z0-9-]{3,}$/`.
+2. **O `onLoad` do React no `<iframe>` não basta**: com o `src` já no primeiro
+   render, o load pode disparar antes do React pendurar o handler, e as dobras
+   nunca eram lidas. Tem um `useEffect` que tenta 20× a cada 250ms. **Não
+   substituir por um `onLoad` só.**
+
+### I.A do PMU CLASS — 2 dos 4 modelos da corrente não existem mais
+
+Provado **sem chave de API**, consultando o catálogo público da OpenRouter
+(`/api/v1/models`, 399 modelos): 2 dos 4 ids da corrente tinham sumido — o chat
+caía direto pro fallback ou pro erro.
+
+- `lib/chat-models.ts` — corrente num lugar só.
+- **`npm run checar-modelos`** valida a corrente contra o catálogo e sai com
+  erro se um id morreu. Rodar isso quando a I.A "parar de responder".
+- Verificado em produção: `200 | 1820ms | {"reply":"ok","model":"google/gemma-4-31b-it:free"}`.
+
+### O bug do seed (o terceiro, que ninguém tinha pedido)
+
+`listSuggestions()` fazia `if (!stored?.length) → devolve SEED e regrava`. Como
+`[]` também é "sem length", **apagar todas as sugestões ressuscitava as 4 de
+exemplo**. Conserto de uma linha, apoiado no fato de que `kvGet` devolve `null`
+pra chave que não existe e `[]` pra lista vazia:
+
+```ts
+const stored = await kvGet<Suggestion[]>(KEY);
+if (stored) return stored;   // [] é truthy: lista vazia continua vazia
+```
+
+---
+
+## 🏛️ Sessão 2026-08-10 (partes 1–2) — layout N nas 5 formações presenciais
+
+Depois de recusar as rodadas A–E e F–J, James escolheu a **opção N** ("cartões
+brancos no preto") e mandou aplicar nos 5 cursos. Fonte da verdade visual:
+`lp-html/academy.html`. Gerador: `scratchpad/formacoes-n.mjs` →
+`lp-html/formacoes/*.html` + `public/lp/academy/formacao.css`.
+
+Regras que ele fixou e **não devem ser desfeitas**:
+
+- Capa **grande** no topo — `min(600px, 84vw)`. O arquivo tem 900px de largura,
+  então 600px de CSS dá densidade 1,5. (Eu tinha dito que 450px era o teto;
+  estava errado.)
+- **A caixa de texto vem SEMPRE acima da foto.** Não voltar a alternar
+  lado — *"para não confundir"*.
+- Mistura de branco e preto, imagens grandes.
+
+### Fotos: uma por curso, sem repetir
+
+*"essas imagens estão se repetindo em todas as paginas / não quero isso!"* e
+depois *"tem Pixel, que é brows e lips. Você tem que pegar imagem de boca
+também… Dá uma procurada aí, imagem de shadow. Não faz a mesma coisa."*
+
+- Acabou o pool rotativo: cada módulo tem `foto` explícita, e o gerador
+  **quebra a build** se a mesma foto aparecer em dois cursos.
+- O material de boca/shadow existia — só não estava em `lp/academy/`, e sim nas
+  LPs dos outros cursos e no `wpmirror/`. Copiado pra
+  `public/lp/academy/reais/tecnicas/` com `PROCEDENCIA.txt`.
+- **Legenda tem que bater com a foto**: ele pegou uma foto de JAY.O PIGMENTOS ao
+  lado de texto sobre protocolo regenerativo. A foto saiu.
+
+### Ainda em aberto nas formações
+
+- **Jay Beauty está magra** (3 imagens, sem resultados) — falta foto de
+  design/henna/laminação.
+- **Nano tem só 2 pares antes/depois** contra 3 dos outros.
+- **Divergência de nível**: as capas oficiais dizem "INICIANTE" pra
+  Brows/Pixel/Nano; os cartões da `/academy` dizem "Especialização"/"Avançado".
+  Hoje ganha o cartão — decisão do James.
 
 ---
 
