@@ -21,8 +21,10 @@ import {
   deleteMediaPageAction,
   uploadMediaAction,
   addMediaByUrlAction,
+  sincronizarLpsAction,
 } from "@/app/midia/actions";
 import type { MediaItem, MediaPage } from "@/lib/media-types";
+import { escolherCapa } from "@/lib/media-nomes";
 
 const NO_PAGE = "__none__";
 
@@ -54,15 +56,31 @@ export function MediaPagesWorkspace({
   }, [items, pageIds]);
 
   const thumbByPage = useMemo(() => {
+    // Agrupa e deixa `escolherCapa` decidir: pegar a primeira imagem dava
+    // capa de ícone borrado (despertador, logo do PayPal) na maioria dos
+    // grupos vindos do WP.
+    const porGrupo: Record<string, MediaItem[]> = {};
+    for (const it of items) (porGrupo[pageOf(it)] ||= []).push(it);
     const m: Record<string, string> = {};
-    for (const it of items) {
-      if (it.type !== "image") continue;
-      const k = pageOf(it);
-      if (!m[k]) m[k] = it.url;
+    for (const [k, lista] of Object.entries(porGrupo)) {
+      const capa = escolherCapa(lista);
+      if (capa) m[k] = capa;
     }
     return m;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, pageIds]);
+
+  const [aviso, setAviso] = useState<string | null>(null);
+
+  function sincronizarLps() {
+    setErr(null);
+    setAviso(null);
+    startTransition(async () => {
+      const r = await sincronizarLpsAction();
+      if (!r.ok) setErr(r.error || "Erro ao sincronizar");
+      else setAviso(`${r.arquivos} arquivos em ${r.grupos} LPs na biblioteca.`);
+    });
+  }
 
   function createPage(name: string) {
     setErr(null);
@@ -122,20 +140,45 @@ export function MediaPagesWorkspace({
             />
           </div>
           {canEdit && (
-            <button
-              type="button"
-              onClick={() => setCreating((v) => !v)}
-              className="btn-primary inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold"
-            >
-              <FolderPlus size={15} strokeWidth={2.4} />
-              Nova página
-            </button>
+            <>
+              {/* As imagens das páginas que a gente monta são arquivos do
+                  repositório e nunca entravam aqui — só entrava o que vinha do
+                  import do WP ou de upload. Este botão traz. */}
+              <button
+                type="button"
+                onClick={sincronizarLps}
+                disabled={isPending}
+                title="Traz pra biblioteca as imagens que moram no repositório, agrupadas por LP"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#262626] text-sm font-semibold text-neutral-300 hover:text-white hover:border-neutral-600 transition disabled:opacity-60"
+              >
+                {isPending ? (
+                  <Loader2 size={15} strokeWidth={2.4} className="animate-spin" />
+                ) : (
+                  <ImagePlus size={15} strokeWidth={2.4} />
+                )}
+                Sincronizar imagens das LPs
+              </button>
+              <button
+                type="button"
+                onClick={() => setCreating((v) => !v)}
+                className="btn-primary inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold"
+              >
+                <FolderPlus size={15} strokeWidth={2.4} />
+                Nova página
+              </button>
+            </>
           )}
         </div>
 
         {err && (
           <div className="bg-rose-500/10 border border-rose-500/25 rounded-md px-3 py-2 text-[12px] text-rose-300 font-medium">
             {err}
+          </div>
+        )}
+
+        {aviso && (
+          <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-md px-3 py-2 text-[12px] text-emerald-300 font-medium">
+            {aviso}
           </div>
         )}
 
@@ -197,7 +240,7 @@ export function MediaPagesWorkspace({
                   (countByPage[p.id] || 0) === 1 ? "" : "s"
                 }`}
                 thumb={thumbByPage[p.id]}
-                icon={p.source === "wp" ? "wp" : "manual"}
+                icon={p.source === "wp" ? "wp" : p.source === "lp" ? "lp" : "manual"}
                 onClick={() => setOpen(p.id)}
               />
             ))}
@@ -347,7 +390,7 @@ function PageCard({
   title: string;
   subtitle: string;
   thumb?: string;
-  icon: "wp" | "manual" | "none";
+  icon: "wp" | "manual" | "lp" | "none";
   onClick: () => void;
 }) {
   return (
@@ -371,6 +414,10 @@ function PageCard({
           {icon === "wp" ? (
             <>
               <Globe size={9} strokeWidth={2.4} /> WP
+            </>
+          ) : icon === "lp" ? (
+            <>
+              <ImagePlus size={9} strokeWidth={2.4} /> LP
             </>
           ) : icon === "manual" ? (
             <>

@@ -1,5 +1,6 @@
 "use server";
 
+import { sincronizarMidiasDasLps } from "@/lib/media-lp-sync";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { blobUpload } from "@/lib/storage";
@@ -183,4 +184,25 @@ export async function moveMediaToPageAction(
   await assignMediaToPage(ids, pageId);
   revalidatePath("/midia");
   return { ok: true };
+}
+
+/**
+ * Traz pra biblioteca as imagens que moram no repositório (public/lp/...),
+ * agrupadas por LP. É idempotente: roda quantas vezes quiser, só entra o que
+ * ainda não estava lá.
+ */
+export async function sincronizarLpsAction(): Promise<{
+  ok: boolean;
+  grupos?: number;
+  arquivos?: number;
+  error?: string;
+}> {
+  await requireAdmin();
+  try {
+    const r = await sincronizarMidiasDasLps();
+    revalidatePath("/midia");
+    return { ok: true, grupos: r.gruposCriados, arquivos: r.arquivos };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro ao sincronizar" };
+  }
 }

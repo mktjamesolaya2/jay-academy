@@ -21,8 +21,9 @@ export type MediaItem = {
 export type MediaPage = {
   id: string;
   name: string;
-  /** "wp" = criada automaticamente da página de origem; "manual" = criada pelo usuário. */
-  source: "wp" | "manual";
+  /** "wp" = veio do import do WordPress; "lp" = imagem que mora no repositório,
+   * em public/lp/<slug>/; "manual" = o usuário criou o grupo à mão. */
+  source: "wp" | "manual" | "lp";
   createdAt: string;
 };
 

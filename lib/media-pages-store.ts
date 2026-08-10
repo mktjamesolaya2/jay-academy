@@ -1,13 +1,19 @@
 import "server-only";
 import { kvGet, kvSet } from "./storage";
 import type { MediaPage } from "./media-types";
+import { limparNome } from "./media-nomes";
 
 export type { MediaPage } from "./media-types";
 
 const KEY = "media:pages";
 
 export async function listPages(): Promise<MediaPage[]> {
-  const pages = (await kvGet<MediaPage[]>(KEY)) ?? [];
+  // Decodifica na LEITURA, e não só na escrita: os nomes com "&#8211;" já
+  // estão gravados assim no KV, e isso conserta sem precisar de migração.
+  const pages = ((await kvGet<MediaPage[]>(KEY)) ?? []).map((p) => ({
+    ...p,
+    name: limparNome(p.name),
+  }));
   // Manuais primeiro, depois as do WP; cada grupo por nome.
   return [...pages].sort((a, b) => {
     if (a.source !== b.source) return a.source === "manual" ? -1 : 1;
@@ -48,7 +54,7 @@ export async function ensureWpPage(
 ): Promise<string> {
   const id = `wp:${domain}:${slug}`;
   const pages = (await kvGet<MediaPage[]>(KEY)) ?? [];
-  const cleanName = (name || slug).replace(/<[^>]*>/g, "").trim() || slug;
+  const cleanName = limparNome(name || slug) || slug;
   const existing = pages.find((p) => p.id === id);
   if (existing) {
     if (existing.name !== cleanName) {
@@ -83,4 +89,28 @@ export async function deletePage(id: string): Promise<void> {
     KEY,
     pages.filter((p) => p.id !== id)
   );
+}
+
+/**
+ * Garante o grupo de uma LP (id estável `lp:<slug>`). Mesma ideia do
+ * ensureWpPage, para as imagens que moram no repositório e não passam nem pelo
+ * import do WP nem pelo upload.
+ */
+export async function ensureLpPage(
+  slug: string,
+  name: string,
+  at: string
+): Promise<string> {
+  const id = `lp:${slug}`;
+  const pages = (await kvGet<MediaPage[]>(KEY)) ?? [];
+  const limpo = limparNome(name) || slug;
+  const existing = pages.find((p) => p.id === id);
+  if (existing) {
+    if (existing.name !== limpo) {
+      await kvSet(KEY, pages.map((p) => (p.id === id ? { ...p, name: limpo } : p)));
+    }
+    return id;
+  }
+  await kvSet(KEY, [...pages, { id, name: limpo, source: "lp", createdAt: at }]);
+  return id;
 }

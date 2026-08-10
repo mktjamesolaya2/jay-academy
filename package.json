@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 4000",
+    "prebuild": "node scripts/gerar-manifesto-lps.mjs",
     "build": "next build",
     "start": "next start -p 4000",
     "lint": "next lint",
     "foto": "node scripts/foto.mjs",
     "cortar": "node scripts/cortar.mjs",
-    "checar-modelos": "node scripts/checar-modelos.mjs"
+    "checar-modelos": "node scripts/checar-modelos.mjs",
+    "manifesto-lps": "node scripts/gerar-manifesto-lps.mjs"
   },
   "dependencies": {
     "@sparticuz/chromium": "^149.0.0",

@@ -127,8 +127,13 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 ## Convenções
 - Comentários e docs de projeto (README, `notas/`) em português — manter o padrão.
 - Editar LPs de `lp-html/` como HTML puro, commit por página.
-- **Testes**: `node --experimental-strip-types --test lib/*.test.ts` (3 arquivos: page-catalog,
-  rate-limit, wp-localize-core; ~36 casos). NÃO há script `test` no package.json. `npm run dev|build|start|lint`.
+- **Testes**: `node --experimental-strip-types --test lib/*.test.ts` (4 arquivos: page-catalog,
+  rate-limit, wp-localize-core, media-nomes; 112 casos). NÃO há script `test` no package.json.
+- Scripts: `npm run dev|build|start`. ⚠️ **`npm run lint` NÃO funciona** — `next lint` saiu no Next 16 e
+  o projeto não tem `eslint.config.js` nem dependência de eslint. Vale `npx tsc --noEmit`, que passa limpo.
+  `npm run checar-modelos` valida a cadeia de IA do chat contra o catálogo público da OpenRouter.
+  `npm run manifesto-lps` regrava `lib/lp-assets.json` (roda sozinho no `prebuild`) — é ele que alimenta
+  o botão "Sincronizar imagens das LPs" em `/midia`.
 
 ## Pegadinhas (importante — lê antes de deployar ou mexer no KV)
 - **Push/deploy TEM que ser como o dono do projeto** `James Olaya <suporte@jamesolaya.com.br>` +
