@@ -73,10 +73,26 @@ const SEED: Suggestion[] = [
   },
 ];
 
+/**
+ * ⚠️ A condição aqui era `stored && stored.length > 0`, e isso tratava
+ * "nunca foi usado" e "lista vazia" como a mesma coisa. Lista vazia é estado
+ * legítimo — é o que sobra quando o admin apaga todas as sugestões. O efeito
+ * era: apagou tudo, recarregou, as 4 de fábrica voltavam E eram regravadas,
+ * desfazendo as exclusões e sobrescrevendo status e respostas.
+ *
+ * `kvGet` devolve `null` quando a chave nunca existiu e `[]` quando existe
+ * vazia — são distinguíveis, então basta testar a existência. Não trocar por
+ * uma checagem de tamanho de novo.
+ *
+ * Efeito colateral conhecido e aceito: sugestão nova acrescentada ao SEED
+ * depois que a caixa já foi usada não aparece — o seed só entra na primeira
+ * vez. (O lib/lp-store.ts faz merge dos itens novos, mas ali faz sentido:
+ * projeto não se apaga, sugestão sim, e o merge ressuscitaria o que foi
+ * excluído de propósito.)
+ */
 export async function listSuggestions(): Promise<Suggestion[]> {
   const stored = await kvGet<Suggestion[]>(KEY);
-  if (stored && stored.length > 0) return stored;
-  // Seed inicial — só persiste se KV ainda não tem nada
+  if (stored) return stored;
   await kvSet(KEY, SEED);
   return SEED;
 }
