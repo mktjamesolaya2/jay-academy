@@ -482,8 +482,10 @@
     .trio figure:nth-child(2) .trio__quadro { aspect-ratio: 4 / 5; }
     .trio figure:nth-child(3) .trio__quadro { aspect-ratio: 5 / 6; }
 
+    /* a legenda vem ACIMA da foto (ver o HTML): o fio fica em cima dela, e o
+       respiro embaixo, separando-a da imagem que ela apresenta */
     .trio figcaption {
-      margin-top: clamp(14px, 1.4vw, 20px);
+      margin-bottom: clamp(14px, 1.4vw, 20px);
       padding-top: clamp(10px, 1vw, 14px);
       border-top: 1px solid rgba(16, 24, 32, .18);
       font-size: clamp(11.5px, .86vw, 13.5px);
@@ -769,7 +771,8 @@
     }
     .grupo:hover .grupo__foto { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(16, 24, 32, .24); }
     .grupo__foto img { width: 100%; height: auto; display: block; }
-    .grupo figcaption { padding-top: clamp(12px, 1.2vw, 18px); }
+    /* legenda ACIMA da foto (ver o HTML) — o respiro vai embaixo dela */
+    .grupo figcaption { padding-bottom: clamp(12px, 1.2vw, 18px); }
     .grupo figcaption b {
       display: block;
       font-size: clamp(11px, .86vw, 13px);
@@ -1347,27 +1350,32 @@
            A "A sala" foi escolhida pelo James entre 4 opções (a C).
            Regra que ficou: cortar no aspecto do slot e REDUZIR até a resolução real
            do arquivo original. Nunca entregar upscale. -->
+      <!-- ⚠️ A legenda vem ANTES da foto, e não depois. Mesma regra das páginas
+           de curso: "a caixa de texto sempre acima da imagem, para não
+           confundir" — com três fotos em colunas de alturas diferentes, a
+           legenda embaixo grudava visualmente na foto da coluna seguinte.
+           Não voltar a pôr embaixo. -->
       <div class="trio">
         <figure>
-          <div class="trio__quadro">
-            <img src="/lp/academy/reais/sala-aula.jpg" alt="A turma reunida em volta da maca na Jay Academy, acompanhando James Olaya executar o procedimento" loading="lazy" />
-          </div>
           <!-- ⚠️ a legenda falava em "bancadas montadas", que era a foto anterior.
                A foto que o James escolheu é a turma em volta — descrever o que não
                está no quadro é o tipo de desleixo que ele nota na hora. -->
           <figcaption><b>A sala</b>A turma inteira em volta do que está acontecendo, dentro da casa da Academy.</figcaption>
+          <div class="trio__quadro">
+            <img src="/lp/academy/reais/sala-aula.jpg" alt="A turma reunida em volta da maca na Jay Academy, acompanhando James Olaya executar o procedimento" loading="lazy" />
+          </div>
         </figure>
         <figure>
+          <figcaption><b>A demonstração</b>Você vê o procedimento inteiro acontecer a centímetros de distância.</figcaption>
           <div class="trio__quadro">
             <img src="/lp/academy/reais/demonstracao-real.jpg" alt="James Olaya executando um procedimento sob a luz de estúdio, com a turma acompanhando em primeiro plano" loading="lazy" />
           </div>
-          <figcaption><b>A demonstração</b>Você vê o procedimento inteiro acontecer a centímetros de distância.</figcaption>
         </figure>
         <figure>
+          <figcaption><b>A prática</b>Modelo real, sob a luz, com acompanhamento durante a execução.</figcaption>
           <div class="trio__quadro">
             <img src="/lp/academy/reais/pratica-real.jpg" alt="Aluna executando a micropigmentação em modelo real, de máscara e luva, durante a prática" loading="lazy" />
           </div>
-          <figcaption><b>A prática</b>Modelo real, sob a luz, com acompanhamento durante a execução.</figcaption>
         </figure>
       </div>
 
@@ -1563,34 +1571,34 @@
 
         <div class="kit__grupos">
           <figure class="grupo">
-            <div class="grupo__foto">
-              <img src="/lp/academy/reais/kit-experts.jpg" alt="Linha Experts da JAY.O: Magic Crystal, Magic End, Magic Butter, Magic Micelar, Magic Mousse e Magic Wipes" loading="lazy" />
-            </div>
             <figcaption>
               <b>Dermocosméticos Experts</b>
               <span>Magic Crystal, End, Butter, Micelar, Mousse e Wipes</span>
             </figcaption>
-          </figure>
+          <div class="grupo__foto">
+              <img src="/lp/academy/reais/kit-experts.jpg" alt="Linha Experts da JAY.O: Magic Crystal, Magic End, Magic Butter, Magic Micelar, Magic Mousse e Magic Wipes" loading="lazy" />
+            </div>
+            </figure>
 
           <figure class="grupo">
-            <div class="grupo__foto">
-              <img src="/lp/academy/reais/kit-homecare.jpg" alt="Home care JAY.O: Magic Lips e Magic Repair" loading="lazy" />
-            </div>
             <figcaption>
               <b>Home care</b>
               <span>Magic Lips e Magic Repair, para a cliente levar</span>
             </figcaption>
-          </figure>
+          <div class="grupo__foto">
+              <img src="/lp/academy/reais/kit-homecare.jpg" alt="Home care JAY.O: Magic Lips e Magic Repair" loading="lazy" />
+            </div>
+            </figure>
 
           <figure class="grupo">
-            <div class="grupo__foto">
-              <img src="/lp/academy/reais/kit-pigmentos.jpg" alt="Pigmentos JAY.O da linha Brows Minerals, cinco frascos" loading="lazy" />
-            </div>
             <figcaption>
               <b>Pigmentos</b>
               <span>A linha Brows Minerals, a mesma que você usa na aula</span>
             </figcaption>
-          </figure>
+          <div class="grupo__foto">
+              <img src="/lp/academy/reais/kit-pigmentos.jpg" alt="Pigmentos JAY.O da linha Brows Minerals, cinco frascos" loading="lazy" />
+            </div>
+            </figure>
         </div>
       </div>
     </div>
