@@ -76,6 +76,9 @@ h1 b { display: block; font-weight: 500; }
 .dupla { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
   gap: clamp(18px, 2.4vw, 40px); align-items: stretch; }
 .dupla + .dupla { margin-top: clamp(18px, 2.4vw, 40px); }
+/* módulo sem foto (não temos imagem de lábios): a ficha toma a linha inteira */
+.dupla--so-texto { grid-template-columns: 1fr; }
+.dupla--so-texto .ficha p { max-width: 62ch; }
 .dupla figure { overflow: hidden; }
 .dupla figure img { aspect-ratio: 4/3; }
 
