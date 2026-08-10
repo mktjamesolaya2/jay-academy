@@ -8,112 +8,118 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet" />
-  <!-- O estilo é COMPARTILHADO por todas as formações: public/lp/academy/formacao.css.
-       Mexeu no desenho, mexeu lá — não precisa repetir em cinco arquivos. -->
+  <!-- Estilo COMPARTILHADO pelas formações: public/lp/academy/formacao.css.
+       Mexeu no desenho, mexeu lá — não se repete em cinco arquivos. -->
   <link rel="stylesheet" href="/lp/academy/formacao.css" />
 </head>
 <body>
 
+  <!-- ⚠️ CONTEÚDO: capa oficial (capas/beauty.jpg) + Canva "CARROSSEL CURSOS
+       2026" (duração, módulos, pra quem é) + fotos de aula do ensaio real da
+       casa. Nada suposto. SEM PREÇO nem valor de kit — decisão do James. -->
+
   <div class="faixa">
     <div class="topo">
-      <a class="voltar" href="/academy#formacoes"><span>←</span> Todas as formações</a>
+      <a class="voltar" href="/academy#formacoes"><span aria-hidden="true">←</span> Todas as formações</a>
       <p class="marca">Jay Academy</p>
     </div>
 
-    <!-- ⚠️ CONTEÚDO: capa oficial (public/lp/academy/capas/beauty.jpg) +
-         Canva "CARROSSEL CURSOS 2026" (duração, módulos, pra quem é indicada).
-         Nada suposto. SEM PREÇO, nem o valor do kit — decisão do James.
-         FALTA: foto de aula/demonstração — depende do Drive, hoje sem permissão. -->
-    <article class="formacao">
+    <header class="abertura">
+      <p class="abertura__rotulo">Formação presencial</p>
       <div class="capa">
         <img src="/lp/academy/capas/beauty.jpg" alt="Capa oficial da formação Jay Beauty: retrato de uma mulher de cabelo ruivo com a mão junto ao rosto" />
       </div>
+      <h1 class="manchete">Jay Beauty <strong>12 em 1</strong></h1>
+      <p class="lead">Design de sobrancelhas e serviços essenciais. A porta de entrada da casa.</p>
+      <div class="creditos">
+        <span>Campinas, SP</span>
+        <span>4 dias</span>
+        <span>Iniciante</span>
+      </div>
+    </header>
+  </div>
 
-      <div class="conteudo">
-        <p class="rotulo">Formação presencial · Campinas, SP</p>
-        <h1>Jay Beauty <strong>12 em 1</strong></h1>
+    <figure class="sangrada">
+      <img src="/lp/academy/aula/aluna-anotando-larga.jpg" alt="A teoria antes da agulha: pigmentologia e colorimetria — formação presencial na Jay Academy" />
+      <figcaption>A teoria antes da agulha: pigmentologia e colorimetria</figcaption>
+    </figure>
+  <div class="faixa">
+    <div class="coluna">
+      <p class="destaque">Você sai atendendo com os serviços que mais giram no dia a dia.</p>
+    </div>
 
-        <p class="linha">
-          Design de sobrancelhas e serviços essenciais. É a porta de entrada da casa: você sai atendendo com os serviços que mais giram no dia a dia.
-        </p>
-
-
-        <div class="aula">
-          <p>A formação por dentro</p>
-          <div class="aula__grade">
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/aluna-anotando.jpg" alt="A parte teórica — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>A parte teórica</figcaption>
-            </figure>
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/marcacao-sobrancelha.jpg" alt="O design na prática — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>O design na prática</figcaption>
-            </figure>
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/teste-de-pigmento.jpg" alt="Teste de cor e pigmento — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>Teste de cor e pigmento</figcaption>
-            </figure>
-          </div>
-        </div>
-
-        <div class="bloco">
-          <p>As 12 técnicas</p>
-          <ul class="lista lista--dupla">
-            <li>Design</li>
-            <li>Epilação com cera</li>
-            <li>Epilação com linha</li>
-            <li>Henna</li>
-            <li>Tintura</li>
-            <li>Brow lamination</li>
-            <li>Lash lifting</li>
-            <li>Repair lips</li>
-            <li>Repair color</li>
-            <li>Repair brows</li>
-            <li>Repair hair</li>
-            <li>Repair barber</li>
-          </ul>
-        </div>
-
-        <div class="bloco">
-          <p>Como a formação é dividida</p>
-          <div class="modulos">
-            <div class="modulo">
-              <h2>I · Design</h2>
+      <section class="secao">
+        <p class="secao__rotulo">Como a formação é dividida</p>
+        <div class="modulos">
+          <article class="modulo">
+            <div class="modulo__foto">
+              <img src="/lp/academy/aula/marcacao-sobrancelha.jpg" alt="Design — momento da formação presencial na Jay Academy" loading="lazy" />
+            </div>
+            <div>
+              <h2>Design</h2>
               <p>Os fundamentos da arquitetura do olhar: análise facial, marcação, design, remoção de fios e as técnicas de coloração que valorizam o resultado.</p>
             </div>
-            <div class="modulo">
-              <h2>II · Essenciais</h2>
+          </article>
+          <article class="modulo">
+            <div class="modulo__foto">
+              <img src="/lp/academy/aula/teste-de-pigmento.jpg" alt="Essenciais — momento da formação presencial na Jay Academy" loading="lazy" />
+            </div>
+            <div>
+              <h2>Essenciais</h2>
               <p>Amplia o portfólio com técnicas de valorização do olhar e cuidados estéticos complementares.</p>
             </div>
-            <div class="modulo">
-              <h2>III · Growth</h2>
+          </article>
+          <article class="modulo">
+            <div class="modulo__foto">
+              <img src="/lp/academy/aula/execucao-em-close.jpg" alt="Growth — momento da formação presencial na Jay Academy" loading="lazy" />
+            </div>
+            <div>
+              <h2>Growth</h2>
               <p>Protocolos regenerativos que estimulam o crescimento de fios e melhoram a densidade em sobrancelhas, couro cabeludo e barba.</p>
             </div>
-          </div>
+          </article>
         </div>
+      </section>
+    <section class="secao">
+      <p class="secao__rotulo">As 12 técnicas</p>
+      <ul class="tecnicas">
+        <li>Design</li>
+        <li>Epilação com cera</li>
+        <li>Epilação com linha</li>
+        <li>Henna</li>
+        <li>Tintura</li>
+        <li>Brow lamination</li>
+        <li>Lash lifting</li>
+        <li>Repair lips</li>
+        <li>Repair color</li>
+        <li>Repair brows</li>
+        <li>Repair hair</li>
+        <li>Repair barber</li>
+      </ul>
+    </section>
 
-        <div class="bloco">
-          <p>Para quem é</p>
-          <p class="corrido">Para quem busca uma nova profissão, está em transição de carreira, ou já é da beleza e quer ampliar o portfólio com técnicas de alta demanda e recorrência.</p>
-        </div>
+    <section class="secao">
+      <p class="secao__rotulo">Para quem é</p>
+      <div class="coluna">
+        <p class="lead" style="margin-top: 0;">Para quem busca uma nova profissão, está em transição de carreira, ou já é da beleza e quer ampliar o portfólio com técnicas de alta demanda e recorrência.</p>
+      </div>
+    </section>
 
-        <dl class="ficha">
+    <dl class="colofao">
           <div><dt>Nível</dt><dd>Iniciante</dd></div>
           <div><dt>Duração</dt><dd>4 dias</dd></div>
           <div><dt>Módulos</dt><dd>3</dd></div>
-          <div><dt>Formato</dt><dd>Presencial, na casa da Academy</dd></div>
+          <div><dt>Onde</dt><dd>Campinas, SP</dd></div>
           <div><dt>Na formação</dt><dd>Demonstrações e prática em modelo</dd></div>
           <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
-        </dl>
+    </dl>
 
-        <div class="acoes">
-          <!-- ⚠️ destino do CTA ainda não decidido (WhatsApp x âncora) — mesma
-               pendência dos "Ver formação" da LP. Por ora leva pro fechamento. -->
-          <a class="btn" href="/academy#comecar">Falar sobre esta formação</a>
-          <a class="btn btn--linha" href="/academy#formacoes">Ver as outras</a>
-        </div>
-      </div>
-    </article>
+    <div class="acoes">
+      <!-- ⚠️ destino do CTA ainda não decidido (WhatsApp x âncora) — mesma
+           pendência dos "Ver formação" da LP. Por ora leva pro fechamento. -->
+      <a class="btn" href="/academy#comecar">Falar sobre esta formação</a>
+      <a class="btn btn--linha" href="/academy#formacoes">Ver as outras</a>
+    </div>
 
     <footer>
       <span>Jay Academy · James Olaya</span>

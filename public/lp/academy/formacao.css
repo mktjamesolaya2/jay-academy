@@ -1,263 +1,324 @@
-/* Estilo das páginas de formação (lp-html/formacoes/*.html).
-   Fica num arquivo só de propósito: são 5 páginas hoje e a apresentação
-   lista mais de dez — mudar o desenho tem que ser UMA edição, não N. */
 /* ============================================================
-       PÁGINA DE FORMAÇÃO — Jay Academy
-       Fundo BRANCO (pedido do James, 06/08). Página curta: só divulga a
-       formação, sem preço e sem nada que não esteja no material oficial.
-       O sistema visual é o mesmo da LP /academy — ouro, preto, Poppins,
-       caixa alta espaçada e UM filete separando. Nada novo aqui.
-       ============================================================ */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+   PÁGINA DE FORMAÇÃO — Jay Academy
+   lp-html/formacoes/*.html · uma folha só pras cinco (e pras que vierem)
 
-    :root {
-      --ouro: #AC9751;
-      --ouro-escuro: #8A7A3E;
-      --preto: #101820;
-    }
+   ⚠️ 07/08 — REESCRITA. A primeira versão era um documento branco: capa,
+   título, três listas, ficha. O James: "ficou uma página muito básica,
+   queria algo melhor, algo que parece com uma revista mesmo".
 
-    html { scroll-behavior: smooth; }
-    body {
-      background: #fff;
-      color: var(--preto);
-      font-family: 'Poppins', system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+   O que faz virar matéria e não documento:
+   1. a MANCHETE cavalga a capa — o nome da formação sobe por cima da imagem,
+      como capa de revista, em vez de esperar educadamente embaixo
+   2. uma FOTO SANGRADA de borda a borda quebra a coluna branca. É o único
+      momento em que a página sai da margem, e por isso é o momento
+   3. os módulos correm em ZIGUE-ZAGUE (foto de um lado, texto do outro,
+      alternando) — ritmo de matéria, não pilha de cards iguais
+   4. a ficha vira COLOFÃO, em duas colunas na base, como ficha técnica de
+      revista impressa
 
-    .faixa { width: 90%; max-width: 1080px; margin: 0 auto; }
+   Fundo branco (pedido dele) e paleta da marca: ouro #AC9751, preto #101820.
+   Fonte só Poppins — a personalidade vem de ESCALA e PESO, não de uma segunda
+   família (o brand book reserva Baskerville pra marca).
+   ============================================================ */
 
-    /* --- topo: só a volta e a marca. Não é LP, não tem menu --- */
-    .topo {
-      padding: clamp(20px, 3vw, 32px) 0;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    }
-    .voltar {
-      display: inline-flex; align-items: center; gap: 8px;
-      text-decoration: none;
-      font-size: 10.5px; font-weight: 400;
-      letter-spacing: .24em; text-transform: uppercase;
-      color: rgba(16, 24, 32, .5);
-      transition: color .3s ease;
-    }
-    .voltar:hover { color: var(--preto); }
-    .voltar span { font-size: 14px; line-height: 1; }
-    .marca {
-      font-size: 9.5px; font-weight: 400;
-      letter-spacing: .42em; text-transform: uppercase;
-      color: rgba(16, 24, 32, .38);
-    }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    /* --- o miolo: capa grande no topo, informações embaixo --- */
-    .formacao {
-      padding: clamp(8px, 1.5vw, 20px) 0 clamp(48px, 6vw, 88px);
-    }
-    /* ⚠️ 06/08 — o James: "eu queria a capa bem grandona e centralizada, e aí as
-       informações embaixo". Saiu o par lado a lado; agora é a capa reinando
-       sozinha no topo e o conteúdo correndo por baixo, numa coluna centrada. */
-    .capa {
-      aspect-ratio: 900 / 1243;
-      overflow: hidden;
-      background: #fff;
-      box-shadow: 0 22px 60px rgba(16, 24, 32, .18), 0 1px 2px rgba(16, 24, 32, .10);
-      /* grandona: ocupa a largura que a tela deixar, com teto pra não virar
-         pôster de 1200px em monitor grande */
-      width: min(560px, 78vw);
-      margin: 0 auto;
-    }
-    .capa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+:root {
+  --ouro: #AC9751;
+  --ouro-escuro: #8A7A3E;
+  --preto: #101820;
+  --papel: #fff;
+  --papel-morno: #FAF9F6;
 
-    /* a coluna do texto é mais larga que a capa: a lista de oito itens em duas
-       colunas precisa de ar, e o bloco centrado ancora tudo no mesmo eixo */
-    .conteudo {
-      width: min(720px, 100%);
-      margin: clamp(30px, 4vw, 54px) auto 0;
-    }
+  --tinta-70: rgba(16, 24, 32, .70);
+  --tinta-50: rgba(16, 24, 32, .50);
+  --tinta-38: rgba(16, 24, 32, .38);
+  --fio: rgba(16, 24, 32, .16);
+  --fio-fraco: rgba(16, 24, 32, .09);
 
-    .rotulo {
-      font-size: 9.5px; font-weight: 400;
-      letter-spacing: .42em; text-transform: uppercase;
-      color: var(--ouro-escuro);
-      text-align: center;
-    }
-    h1 {
-      margin-top: clamp(14px, 1.6vw, 20px);
-      font-size: clamp(28px, 3.8vw, 56px);
-      font-weight: 200;
-      line-height: 1.12;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      text-align: center;
-    }
-    h1 strong { display: block; font-weight: 400; }
+  --margem: clamp(20px, 6vw, 96px);
+}
 
-    .linha {
-      position: relative;
-      margin: clamp(22px, 2.6vw, 32px) auto 0;
-      padding-top: clamp(20px, 2.2vw, 28px);
-      font-size: clamp(13.5px, 1vw, 16px);
-      font-weight: 300; line-height: 1.75;
-      color: rgba(16, 24, 32, .68);
-      max-width: 52ch;
-      text-align: center;
-      text-wrap: balance;
-    }
-    /* o filete acompanha o texto: centrado, já que o bloco agora é centrado */
-    .linha::before {
-      content: '';
-      position: absolute; top: 0; left: 50%;
-      transform: translateX(-50%);
-      width: 54px; height: 1px;
-      background: rgba(16, 24, 32, .3);
-    }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--papel);
+  color: var(--preto);
+  font-family: 'Poppins', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
 
-    /* --- o que a formação cobre: lista com filete, como a ficha da LP --- */
-    .bloco { margin-top: clamp(26px, 3vw, 42px); }
-    /* só o RÓTULO do bloco, que é sempre o primeiro filho — sem isso a regra
-       pegava também o texto corrido e jogava a frase toda em caixa alta */
-    .bloco > p:first-child {
-      text-align: center;
-      font-size: 9.5px; font-weight: 400;
-      letter-spacing: .3em; text-transform: uppercase;
-      color: rgba(16, 24, 32, .42);
-      margin-bottom: 12px;
-    }
-    .lista { list-style: none; border-top: 1px solid rgba(16, 24, 32, .18); }
-    .lista li {
-      padding: 11px 0;
-      border-bottom: 1px solid rgba(16, 24, 32, .10);
-      font-size: clamp(13px, .95vw, 15px);
-      font-weight: 300;
-      color: rgba(16, 24, 32, .84);
-    }
-    /* duas colunas quando a lista é longa — oito itens em fila fica magro */
-    .lista--dupla { display: grid; grid-template-columns: 1fr 1fr; column-gap: clamp(16px, 2vw, 34px); }
+/* a coluna de leitura da revista — estreita de propósito */
+.coluna { width: min(680px, 100%); margin-inline: auto; }
+.faixa { width: min(1180px, calc(100% - var(--margem) * 2)); margin-inline: auto; }
 
-    .ficha { margin-top: clamp(22px, 2.4vw, 32px); border-top: 1px solid rgba(16, 24, 32, .18); }
-    .ficha div {
-      display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(16, 24, 32, .10);
-    }
-    .ficha dt {
-      font-size: 9.5px; letter-spacing: .26em; text-transform: uppercase;
-      color: rgba(16, 24, 32, .42); white-space: nowrap;
-    }
-    .ficha dd { font-size: clamp(12.5px, .92vw, 14.5px); font-weight: 300; text-align: right; }
-    .ficha dd.ouro { color: var(--ouro-escuro); font-weight: 400; }
+/* ---------- cabeçalho: expediente, não menu ---------- */
+.topo {
+  padding: clamp(18px, 2.4vw, 28px) 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  border-bottom: 1px solid var(--fio-fraco);
+}
+.voltar, .marca {
+  font-size: 9.5px; font-weight: 400;
+  letter-spacing: .34em; text-transform: uppercase;
+}
+.voltar {
+  display: inline-flex; align-items: center; gap: 9px;
+  text-decoration: none; color: var(--tinta-50);
+  transition: color .3s ease;
+}
+.voltar:hover { color: var(--preto); }
+.marca { color: var(--tinta-38); }
 
-    .acoes { margin-top: clamp(30px, 3.2vw, 44px); display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: center; }
-    .btn {
-      display: inline-block; text-decoration: none;
-      font-size: 11px; font-weight: 500;
-      letter-spacing: .24em; text-transform: uppercase;
-      padding: 16px clamp(26px, 2.4vw, 40px);
-      border-radius: 999px;
-      background: linear-gradient(120deg, #DCC383 0%, var(--ouro) 58%, #8e7c40 100%);
-      color: var(--preto);
-      box-shadow: 0 14px 34px rgba(172, 151, 81, .28);
-      transition: transform .2s ease, box-shadow .2s ease;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(172, 151, 81, .4); }
-    .btn--linha {
-      background: none; box-shadow: none;
-      border: 1px solid rgba(16, 24, 32, .22);
-      color: rgba(16, 24, 32, .7);
-    }
-    .btn--linha:hover { border-color: var(--preto); color: var(--preto); }
+/* ============================================================
+   1. ABERTURA — a manchete cavalga a capa
+   ============================================================ */
+.abertura {
+  position: relative;
+  padding: clamp(30px, 5vw, 70px) 0 clamp(28px, 4vw, 52px);
+  text-align: center;
+}
+.abertura__rotulo {
+  font-size: 9.5px; font-weight: 400;
+  letter-spacing: .42em; text-transform: uppercase;
+  color: var(--ouro-escuro);
+  margin-bottom: clamp(18px, 2.4vw, 30px);
+}
+.capa {
+  position: relative;
+  width: min(460px, 72vw);
+  margin-inline: auto;
+  aspect-ratio: 900 / 1243;
+  overflow: hidden;
+  background: var(--papel);
+  box-shadow: 0 26px 70px rgba(16, 24, 32, .20), 0 1px 2px rgba(16, 24, 32, .10);
+}
+.capa img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    footer {
-      border-top: 1px solid rgba(16, 24, 32, .12);
-      padding: clamp(22px, 2.4vw, 30px) 0 clamp(36px, 4vw, 56px);
-      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
-      font-size: 9.5px; font-weight: 400;
-      letter-spacing: .3em; text-transform: uppercase;
-      color: rgba(16, 24, 32, .36);
-    }
+/* ⚠️ A manchete NÃO cavalga mais a capa. Tentei — e o resultado foi dois
+   títulos empilhados, porque a capa oficial já traz o nome da formação
+   impresso nela. Repetir por cima virava ruído, e ainda exigia um véu escuro
+   pra garantir contraste.
+   A capa é a arte, com a tipografia dela. O nome vem embaixo, em preto, e o
+   momento tipográfico grande da página fica reservado pro `.destaque` — um
+   só, depois da foto sangrada. Menos é o que faz parecer revista. */
+.manchete {
+  margin-top: clamp(22px, 2.8vw, 40px);
+  font-size: clamp(24px, 2.9vw, 44px);
+  font-weight: 200;
+  line-height: 1.05;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  color: var(--preto);
+}
+.manchete strong { display: block; font-weight: 500; }
 
-    @media (max-width: 860px) {
-      .capa { width: 100%; }
-      .lista--dupla { grid-template-columns: 1fr; }
-      .marca { display: none; }
-    }
+/* ---------- o lead: primeiro parágrafo em corpo de revista ---------- */
+.lead {
+  margin: clamp(28px, 3.4vw, 46px) auto 0;
+  max-width: 34ch;
+  font-size: clamp(16px, 1.5vw, 23px);
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--tinta-70);
+  text-align: center;
+  text-wrap: balance;
+}
 
-    /* --- texto corrido dentro de um bloco (ex.: "pra quem é") --- */
-    .corrido {
-      font-size: clamp(13px, .95vw, 15px);
-      font-weight: 300; line-height: 1.75;
-      color: rgba(16, 24, 32, .7);
-      text-align: center;
-      max-width: 58ch;
-      margin: 0 auto;
-      text-wrap: pretty;
-    }
+/* linha de crédito, como em revista: local · duração · nível */
+.creditos {
+  margin-top: clamp(22px, 2.6vw, 32px);
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 10px 22px;
+  font-size: 9.5px; font-weight: 400;
+  letter-spacing: .3em; text-transform: uppercase;
+  color: var(--tinta-38);
+}
 
-    /* --- os módulos: cada um é um bloco de texto separado por filete,
-       o mesmo device das etapas do método na LP --- */
-    .modulos { border-top: 1px solid rgba(16, 24, 32, .18); }
-    .modulo {
-      padding: clamp(16px, 1.8vw, 22px) 0;
-      border-bottom: 1px solid rgba(16, 24, 32, .10);
-      text-align: center;
-    }
-    .modulo h2 {
-      font-size: clamp(12px, .92vw, 14px);
-      font-weight: 400;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--preto);
-    }
-    .modulo p {
-      margin: 8px auto 0;
-      max-width: 56ch;
-      font-size: clamp(12.5px, .92vw, 14px);
-      font-weight: 300; line-height: 1.7;
-      color: rgba(16, 24, 32, .64);
-      text-wrap: pretty;
-    }
+/* ============================================================
+   2. A FOTO SANGRADA — o único momento fora da margem
+   ============================================================ */
+.sangrada {
+  margin: clamp(40px, 5vw, 80px) 0 0;
+  width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+.sangrada img { width: 100%; height: clamp(240px, 42vw, 560px); object-fit: cover; display: block; }
+.sangrada figcaption {
+  width: min(1180px, calc(100% - var(--margem) * 2));
+  margin: 10px auto 0;
+  font-size: 10px; font-weight: 300;
+  letter-spacing: .04em;
+  color: var(--tinta-38);
+}
 
-    /* ============================================================
-       FOTOS DE AULA — 06/08
-       O James: "pegar imagens das aulas desses cursos, demonstrações...
-       e a gente deixar bem completo".
+/* ============================================================
+   3. OS MÓDULOS EM ZIGUE-ZAGUE
+   ============================================================ */
+.secao { margin-top: clamp(48px, 6vw, 96px); }
+.secao__rotulo {
+  font-size: 9.5px; font-weight: 400;
+  letter-spacing: .42em; text-transform: uppercase;
+  color: var(--tinta-38);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--fio);
+  margin-bottom: clamp(24px, 3vw, 44px);
+}
 
-       São FOTO REAL do ensaio da casa (`vogue-01-2026` e o ensaio de
-       procedimento), não banco de imagem — as do carrossel de cursos são
-       stock do Canva e por isso foram descartadas.
-       ============================================================ */
-    .aula { margin-top: clamp(34px, 4vw, 60px); }
-    .aula > p {
-      text-align: center;
-      font-size: 9.5px; font-weight: 400;
-      letter-spacing: .3em; text-transform: uppercase;
-      color: rgba(16, 24, 32, .42);
-      margin-bottom: clamp(14px, 1.6vw, 20px);
-    }
-    .aula__grade {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: clamp(10px, 1.2vw, 16px);
-    }
-    .aula figure { margin: 0; }
-    .aula__foto {
-      aspect-ratio: 4 / 3;
-      overflow: hidden;
-      border-radius: 10px;
-      background: rgba(16, 24, 32, .06);
-    }
-    .aula__foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .aula figcaption {
-      margin-top: 9px;
-      font-size: 10px;
-      font-weight: 300;
-      line-height: 1.5;
-      color: rgba(16, 24, 32, .5);
-      text-align: center;
-    }
+.modulos { display: flex; flex-direction: column; gap: clamp(34px, 4.5vw, 76px); }
+.modulo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 3vw, 52px);
+  align-items: center;
+}
+/* alterna o lado: é o que dá o balanço de matéria */
+.modulo:nth-child(even) .modulo__foto { order: 2; }
+.modulo__foto { overflow: hidden; background: var(--papel-morno); aspect-ratio: 4 / 3; }
+.modulo__foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.modulo h2 {
+  font-size: clamp(19px, 2vw, 30px);
+  font-weight: 200;
+  line-height: 1.15;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+}
+.modulo p {
+  margin-top: 14px;
+  font-size: clamp(13px, 1vw, 15.5px);
+  font-weight: 300; line-height: 1.75;
+  color: var(--tinta-70);
+  max-width: 42ch;
+}
 
-    @media (max-width: 860px) {
-      /* três fotos lado a lado em 390px viram selo; duas já respiram */
-      .aula__grade { grid-template-columns: 1fr 1fr; }
-      .aula figure:last-child:nth-child(odd) { grid-column: 1 / -1; }
-      .aula figure:last-child:nth-child(odd) .aula__foto { aspect-ratio: 16 / 9; }
-    }
+/* ============================================================
+   4. AS TÉCNICAS
+   Sem numeração: as técnicas de uma formação não são uma sequência
+   obrigatória, e numerar sugeriria uma ordem que não existe.
+   ============================================================ */
+.tecnicas { columns: 2; column-gap: clamp(24px, 4vw, 64px); list-style: none; }
+.tecnicas li {
+  break-inside: avoid;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--fio-fraco);
+  font-size: clamp(13px, 1vw, 15.5px);
+  font-weight: 300;
+  color: rgba(16, 24, 32, .84);
+}
+
+/* ---------- destaque: a frase que carrega a matéria ---------- */
+.destaque {
+  margin: clamp(44px, 5.5vw, 88px) auto;
+  max-width: 24ch;
+  font-size: clamp(28px, 4.4vw, 68px);
+  font-weight: 200;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--preto);
+}
+.destaque::before {
+  content: '';
+  display: block;
+  width: 54px; height: 1px;
+  background: var(--ouro);
+  margin: 0 auto clamp(20px, 2.4vw, 30px);
+}
+
+/* ---------- tira de fotos: tamanhos diferentes, não grade igual ---------- */
+.tira { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: clamp(8px, 1vw, 14px); align-items: start; }
+.tira figure { margin: 0; }
+.tira__foto { overflow: hidden; background: var(--papel-morno); aspect-ratio: 4 / 3; }
+.tira figure:first-child .tira__foto { aspect-ratio: 4 / 5; }
+.tira__foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tira figcaption {
+  margin-top: 9px;
+  font-size: 10px; font-weight: 300; line-height: 1.5;
+  color: var(--tinta-38);
+}
+
+/* ============================================================
+   5. COLOFÃO — a ficha técnica, como no pé de uma revista
+   ============================================================ */
+.colofao {
+  margin-top: clamp(48px, 6vw, 96px);
+  padding-top: clamp(22px, 2.6vw, 34px);
+  border-top: 1px solid var(--preto);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 clamp(24px, 4vw, 64px);
+}
+.colofao div {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--fio-fraco);
+}
+.colofao dt {
+  font-size: 9.5px; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--tinta-38); white-space: nowrap;
+}
+.colofao dd { font-size: clamp(12.5px, .95vw, 14.5px); font-weight: 300; text-align: right; }
+.colofao dd.ouro { color: var(--ouro-escuro); font-weight: 400; }
+
+.acoes {
+  margin-top: clamp(34px, 4vw, 56px);
+  display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+}
+.btn {
+  display: inline-block; text-decoration: none;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .24em; text-transform: uppercase;
+  padding: 17px clamp(28px, 2.6vw, 44px);
+  border-radius: 999px;
+  background: linear-gradient(120deg, #DCC383 0%, var(--ouro) 58%, #8e7c40 100%);
+  color: var(--preto);
+  box-shadow: 0 14px 34px rgba(172, 151, 81, .28);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(172, 151, 81, .4); }
+.btn--linha {
+  background: none; box-shadow: none;
+  border: 1px solid var(--fio); color: var(--tinta-70);
+}
+.btn--linha:hover { border-color: var(--preto); color: var(--preto); }
+
+footer {
+  margin-top: clamp(48px, 6vw, 90px);
+  border-top: 1px solid var(--fio-fraco);
+  padding: clamp(20px, 2.4vw, 28px) 0 clamp(36px, 4vw, 60px);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
+  font-size: 9.5px; font-weight: 400;
+  letter-spacing: .3em; text-transform: uppercase;
+  color: var(--tinta-38);
+}
+
+/* foco visível — a página é navegável no teclado */
+a:focus-visible { outline: 2px solid var(--ouro); outline-offset: 3px; }
+
+/* ============================================================
+   CELULAR
+   ============================================================ */
+@media (max-width: 820px) {
+  .capa { width: min(340px, 78vw); }
+  /* ⚠️ NÃO devolver margem negativa aqui. Ela existia quando a manchete
+     cavalgava a capa; com a manchete embaixo, ela escondia a primeira linha
+     ("JAY BEAUTY" sumia e sobrava só "12 EM 1"). */
+  .modulo { grid-template-columns: 1fr; gap: 16px; }
+  .modulo:nth-child(even) .modulo__foto { order: 0; }   /* empilhado, alternar confunde */
+  .tecnicas { columns: 1; }
+  .colofao { grid-template-columns: 1fr; }
+  /* três fotos lado a lado em 390px viram selo: a primeira toma a linha */
+  .tira { grid-template-columns: 1fr 1fr; }
+  .tira figure:first-child { grid-column: 1 / -1; }
+  .tira figure:first-child .tira__foto { aspect-ratio: 16 / 9; }
+  .marca { display: none; }
+  .acoes .btn { flex: 1 1 100%; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn { transition: none; }
+  .btn:hover { transform: none; }
+}

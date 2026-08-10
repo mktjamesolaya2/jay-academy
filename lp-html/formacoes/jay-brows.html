@@ -8,98 +8,99 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet" />
-  <!-- O estilo é COMPARTILHADO por todas as formações: public/lp/academy/formacao.css.
-       Mexeu no desenho, mexeu lá — não precisa repetir em cinco arquivos. -->
+  <!-- Estilo COMPARTILHADO pelas formações: public/lp/academy/formacao.css.
+       Mexeu no desenho, mexeu lá — não se repete em cinco arquivos. -->
   <link rel="stylesheet" href="/lp/academy/formacao.css" />
 </head>
 <body>
 
+  <!-- ⚠️ CONTEÚDO: capa oficial (capas/brows.jpg) + Canva "CARROSSEL CURSOS
+       2026" (duração, módulos, pra quem é) + fotos de aula do ensaio real da
+       casa. Nada suposto. SEM PREÇO nem valor de kit — decisão do James. -->
+
   <div class="faixa">
     <div class="topo">
-      <a class="voltar" href="/academy#formacoes"><span>←</span> Todas as formações</a>
+      <a class="voltar" href="/academy#formacoes"><span aria-hidden="true">←</span> Todas as formações</a>
       <p class="marca">Jay Academy</p>
     </div>
 
-    <!-- ⚠️ CONTEÚDO: capa oficial (public/lp/academy/capas/brows.jpg) +
-         Canva "CARROSSEL CURSOS 2026" (duração, módulos, pra quem é indicada).
-         Nada suposto. SEM PREÇO, nem o valor do kit — decisão do James.
-         FALTA: foto de aula/demonstração — depende do Drive, hoje sem permissão. -->
-    <article class="formacao">
+    <header class="abertura">
+      <p class="abertura__rotulo">Formação presencial</p>
       <div class="capa">
         <img src="/lp/academy/capas/brows.jpg" alt="Capa oficial da formação Jay Brows Shadow &amp; Nano: procedimento de micropigmentação em close" />
       </div>
+      <h1 class="manchete">Jay Brows <strong>Shadow &amp; Nano</strong></h1>
+      <p class="lead">Micropigmentação de sobrancelhas nas duas frentes — o esfumado e o fio a fio.</p>
+      <div class="creditos">
+        <span>Campinas, SP</span>
+        <span>5 dias</span>
+        <span>Especialização</span>
+      </div>
+    </header>
+  </div>
 
-      <div class="conteudo">
-        <p class="rotulo">Formação presencial · Campinas, SP</p>
-        <h1>Jay Brows <strong>Shadow &amp; Nano</strong></h1>
+    <figure class="sangrada">
+      <img src="/lp/academy/aula/james-executando-1-larga.jpg" alt="A demonstração acontece a centímetros de distância — formação presencial na Jay Academy" />
+      <figcaption>A demonstração acontece a centímetros de distância</figcaption>
+    </figure>
+  <div class="faixa">
+    <div class="coluna">
+      <p class="destaque">As duas técnicas mais procuradas do mercado, na mesma formação.</p>
+    </div>
 
-        <p class="linha">
-          Micropigmentação de sobrancelhas nas duas frentes: o preenchimento esfumado do Shadow e o fio a fio do Nanoblading — as duas técnicas mais procuradas do mercado.
-        </p>
-
-
-        <div class="aula">
-          <p>A formação por dentro</p>
-          <div class="aula__grade">
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/james-executando-1.jpg" alt="Demonstração com James Olaya — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>Demonstração com James Olaya</figcaption>
-            </figure>
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/bancada-pigmentos.jpg" alt="A bancada montada — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>A bancada montada</figcaption>
-            </figure>
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/execucao-em-close.jpg" alt="A execução, de perto — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>A execução, de perto</figcaption>
-            </figure>
-          </div>
-        </div>
-
-        <div class="bloco">
-          <p>As duas técnicas</p>
-          <ul class="lista">
-            <li>Nanopigmentação de sobrancelhas</li>
-            <li>Micropigmentação Shadow</li>
-          </ul>
-        </div>
-
-        <div class="bloco">
-          <p>Como a formação é dividida</p>
-          <div class="modulos">
-            <div class="modulo">
+      <section class="secao">
+        <p class="secao__rotulo">Como a formação é dividida</p>
+        <div class="modulos">
+          <article class="modulo">
+            <div class="modulo__foto">
+              <img src="/lp/academy/aula/marcacao-sobrancelha.jpg" alt="Nano Brows — momento da formação presencial na Jay Academy" loading="lazy" />
+            </div>
+            <div>
               <h2>Nano Brows</h2>
               <p>Nanopigmentação com tebori e lâminas ultrafinas. Cria fios delicados que imitam o crescimento natural — resultado de densidade natural.</p>
             </div>
-            <div class="modulo">
+          </article>
+          <article class="modulo">
+            <div class="modulo__foto">
+              <img src="/lp/academy/aula/execucao-em-close.jpg" alt="Shadow — momento da formação presencial na Jay Academy" loading="lazy" />
+            </div>
+            <div>
               <h2>Shadow</h2>
               <p>Em vez de fios individualizados, constrói um degradê de pigmento: mais preenchimento e definição, sobrancelha mais estruturada.</p>
             </div>
-          </div>
+          </article>
         </div>
+      </section>
+    <section class="secao">
+      <p class="secao__rotulo">As duas técnicas</p>
+      <ul class="tecnicas">
+        <li>Nanopigmentação de sobrancelhas</li>
+        <li>Micropigmentação Shadow</li>
+      </ul>
+    </section>
 
-        <div class="bloco">
-          <p>Para quem é</p>
-          <p class="corrido">Para iniciantes na micropigmentação, ou profissionais do design de sobrancelhas que querem evoluir para procedimentos mais avançados.</p>
-        </div>
+    <section class="secao">
+      <p class="secao__rotulo">Para quem é</p>
+      <div class="coluna">
+        <p class="lead" style="margin-top: 0;">Para iniciantes na micropigmentação, ou profissionais do design de sobrancelhas que querem evoluir para procedimentos mais avançados.</p>
+      </div>
+    </section>
 
-        <dl class="ficha">
+    <dl class="colofao">
           <div><dt>Nível</dt><dd>Especialização</dd></div>
           <div><dt>Duração</dt><dd>5 dias</dd></div>
           <div><dt>Módulos</dt><dd>2</dd></div>
-          <div><dt>Formato</dt><dd>Presencial, na casa da Academy</dd></div>
+          <div><dt>Onde</dt><dd>Campinas, SP</dd></div>
           <div><dt>Na formação</dt><dd>Demonstrações e prática em modelo</dd></div>
           <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
-        </dl>
+    </dl>
 
-        <div class="acoes">
-          <!-- ⚠️ destino do CTA ainda não decidido (WhatsApp x âncora) — mesma
-               pendência dos "Ver formação" da LP. Por ora leva pro fechamento. -->
-          <a class="btn" href="/academy#comecar">Falar sobre esta formação</a>
-          <a class="btn btn--linha" href="/academy#formacoes">Ver as outras</a>
-        </div>
-      </div>
-    </article>
+    <div class="acoes">
+      <!-- ⚠️ destino do CTA ainda não decidido (WhatsApp x âncora) — mesma
+           pendência dos "Ver formação" da LP. Por ora leva pro fechamento. -->
+      <a class="btn" href="/academy#comecar">Falar sobre esta formação</a>
+      <a class="btn btn--linha" href="/academy#formacoes">Ver as outras</a>
+    </div>
 
     <footer>
       <span>Jay Academy · James Olaya</span>

@@ -8,98 +8,99 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap" rel="stylesheet" />
-  <!-- O estilo é COMPARTILHADO por todas as formações: public/lp/academy/formacao.css.
-       Mexeu no desenho, mexeu lá — não precisa repetir em cinco arquivos. -->
+  <!-- Estilo COMPARTILHADO pelas formações: public/lp/academy/formacao.css.
+       Mexeu no desenho, mexeu lá — não se repete em cinco arquivos. -->
   <link rel="stylesheet" href="/lp/academy/formacao.css" />
 </head>
 <body>
 
+  <!-- ⚠️ CONTEÚDO: capa oficial (capas/nano.jpg) + Canva "CARROSSEL CURSOS
+       2026" (duração, módulos, pra quem é) + fotos de aula do ensaio real da
+       casa. Nada suposto. SEM PREÇO nem valor de kit — decisão do James. -->
+
   <div class="faixa">
     <div class="topo">
-      <a class="voltar" href="/academy#formacoes"><span>←</span> Todas as formações</a>
+      <a class="voltar" href="/academy#formacoes"><span aria-hidden="true">←</span> Todas as formações</a>
       <p class="marca">Jay Academy</p>
     </div>
 
-    <!-- ⚠️ CONTEÚDO: capa oficial (public/lp/academy/capas/nano.jpg) +
-         Canva "CARROSSEL CURSOS 2026" (duração, módulos, pra quem é indicada).
-         Nada suposto. SEM PREÇO, nem o valor do kit — decisão do James.
-         FALTA: foto de aula/demonstração — depende do Drive, hoje sem permissão. -->
-    <article class="formacao">
+    <header class="abertura">
+      <p class="abertura__rotulo">Formação presencial</p>
       <div class="capa">
         <img src="/lp/academy/capas/nano.jpg" alt="Capa oficial da formação Jay Nano Brows &amp; Lips: lábios e sobrancelha em nanopigmentação" />
       </div>
+      <h1 class="manchete">Jay Nano <strong>Brows &amp; Lips</strong></h1>
+      <p class="lead">Imersão no universo da naturalidade, em sobrancelhas e lábios.</p>
+      <div class="creditos">
+        <span>Campinas, SP</span>
+        <span>5 dias</span>
+        <span>Avançado</span>
+      </div>
+    </header>
+  </div>
 
-      <div class="conteudo">
-        <p class="rotulo">Formação presencial · Campinas, SP</p>
-        <h1>Jay Nano <strong>Brows &amp; Lips</strong></h1>
+    <figure class="sangrada">
+      <img src="/lp/academy/aula/teste-de-pigmento-larga.jpg" alt="Colorimetria: a cor é escolhida antes, na cartela — formação presencial na Jay Academy" />
+      <figcaption>Colorimetria: a cor é escolhida antes, na cartela</figcaption>
+    </figure>
+  <div class="faixa">
+    <div class="coluna">
+      <p class="destaque">O traço mais fino que a técnica alcança.</p>
+    </div>
 
-        <p class="linha">
-          Imersão no universo da naturalidade: as técnicas avançadas de micropigmentação natural em sobrancelhas e lábios.
-        </p>
-
-
-        <div class="aula">
-          <p>A formação por dentro</p>
-          <div class="aula__grade">
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/teste-de-pigmento.jpg" alt="Teste de cor e pigmento — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>Teste de cor e pigmento</figcaption>
-            </figure>
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/marcacao-sobrancelha.jpg" alt="A marcação fio a fio — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>A marcação fio a fio</figcaption>
-            </figure>
-            <figure>
-              <div class="aula__foto"><img src="/lp/academy/aula/execucao-em-close.jpg" alt="A execução, de perto — formação presencial na Jay Academy" loading="lazy" /></div>
-              <figcaption>A execução, de perto</figcaption>
-            </figure>
-          </div>
-        </div>
-
-        <div class="bloco">
-          <p>As duas técnicas</p>
-          <ul class="lista">
-            <li>Nanopigmentação de sobrancelhas</li>
-            <li>Nanopigmentação labial</li>
-          </ul>
-        </div>
-
-        <div class="bloco">
-          <p>Como a formação é dividida</p>
-          <div class="modulos">
-            <div class="modulo">
+      <section class="secao">
+        <p class="secao__rotulo">Como a formação é dividida</p>
+        <div class="modulos">
+          <article class="modulo">
+            <div class="modulo__foto">
+              <img src="/lp/academy/aula/marcacao-sobrancelha.jpg" alt="Nano Brows — momento da formação presencial na Jay Academy" loading="lazy" />
+            </div>
+            <div>
               <h2>Nano Brows</h2>
               <p>Nanopigmentação com tebori e lâminas ultrafinas. Cria fios delicados que imitam o crescimento natural — resultado de densidade natural.</p>
             </div>
-            <div class="modulo">
+          </article>
+          <article class="modulo">
+            <div class="modulo__foto">
+              <img src="/lp/academy/aula/execucao-em-close.jpg" alt="Nano Lips — momento da formação presencial na Jay Academy" loading="lazy" />
+            </div>
+            <div>
               <h2>Nano Lips</h2>
               <p>Micropigmentação labial com implantação suave de pigmento: uniformiza a cor, suaviza o contorno e devolve aspecto saudável, com efeito lip tint.</p>
             </div>
-          </div>
+          </article>
         </div>
+      </section>
+    <section class="secao">
+      <p class="secao__rotulo">As duas técnicas</p>
+      <ul class="tecnicas">
+        <li>Nanopigmentação de sobrancelhas</li>
+        <li>Nanopigmentação labial</li>
+      </ul>
+    </section>
 
-        <div class="bloco">
-          <p>Para quem é</p>
-          <p class="corrido">Para micropigmentadores que buscam aperfeiçoamento técnico e querem aprender técnicas de alta precisão e naturalidade.</p>
-        </div>
+    <section class="secao">
+      <p class="secao__rotulo">Para quem é</p>
+      <div class="coluna">
+        <p class="lead" style="margin-top: 0;">Para micropigmentadores que buscam aperfeiçoamento técnico e querem aprender técnicas de alta precisão e naturalidade.</p>
+      </div>
+    </section>
 
-        <dl class="ficha">
+    <dl class="colofao">
           <div><dt>Nível</dt><dd>Avançado</dd></div>
           <div><dt>Duração</dt><dd>5 dias</dd></div>
           <div><dt>Módulos</dt><dd>2</dd></div>
-          <div><dt>Formato</dt><dd>Presencial, na casa da Academy</dd></div>
+          <div><dt>Onde</dt><dd>Campinas, SP</dd></div>
           <div><dt>Na formação</dt><dd>Demonstrações e prática em modelo</dd></div>
           <div><dt>Kit de produtos</dt><dd class="ouro">Incluso</dd></div>
-        </dl>
+    </dl>
 
-        <div class="acoes">
-          <!-- ⚠️ destino do CTA ainda não decidido (WhatsApp x âncora) — mesma
-               pendência dos "Ver formação" da LP. Por ora leva pro fechamento. -->
-          <a class="btn" href="/academy#comecar">Falar sobre esta formação</a>
-          <a class="btn btn--linha" href="/academy#formacoes">Ver as outras</a>
-        </div>
-      </div>
-    </article>
+    <div class="acoes">
+      <!-- ⚠️ destino do CTA ainda não decidido (WhatsApp x âncora) — mesma
+           pendência dos "Ver formação" da LP. Por ora leva pro fechamento. -->
+      <a class="btn" href="/academy#comecar">Falar sobre esta formação</a>
+      <a class="btn btn--linha" href="/academy#formacoes">Ver as outras</a>
+    </div>
 
     <footer>
       <span>Jay Academy · James Olaya</span>
