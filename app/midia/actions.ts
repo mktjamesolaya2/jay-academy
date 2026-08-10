@@ -1,6 +1,7 @@
 "use server";
 
 import { sincronizarMidiasDoRepositorio } from "@/lib/media-repo-sync";
+import { organizeImportedMediaByPage } from "@/lib/wp-localize";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { blobUpload } from "@/lib/storage";
@@ -202,13 +203,19 @@ export async function sincronizarRepositorioAction(): Promise<{
   novos?: number;
   consertados?: number;
   removidas?: number;
+  paginasWp?: number;
+  semImagem?: number;
   error?: string;
 }> {
   await requireAdmin();
   try {
     const r = await sincronizarMidiasDoRepositorio();
+    // Reconstrói também os álbuns das páginas do WordPress a partir do HTML
+    // guardado de cada uma — é o que devolve as páginas que só usavam imagem
+    // compartilhada e por isso apareciam vazias.
+    const wp = await organizeImportedMediaByPage();
     revalidatePath("/midia");
-    return { ok: true, ...r };
+    return { ok: true, ...r, paginasWp: wp.pages, semImagem: wp.semImagem };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Erro ao sincronizar" };
   }

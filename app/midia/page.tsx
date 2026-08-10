@@ -11,7 +11,11 @@ import { MediaPagesWorkspace } from "@/components/media-pages-workspace";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const MIGRATION_FLAG = "media:pages-migrated:v2";
+// v3: a v2 SOBRESCREVIA o álbum de cada imagem, então página que só usava
+// imagem compartilhada (logo, fundo, foto do professor) terminava vazia e
+// sumia da galeria — eram 76 páginas virando 46 álbuns. Agora soma, e por isso
+// precisa rodar de novo pra reconstruir os vínculos de todas.
+const MIGRATION_FLAG = "media:pages-migrated:v3";
 
 export default async function MediaLibraryPage() {
   const me = await getCurrentUser();
@@ -25,10 +29,10 @@ export default async function MediaLibraryPage() {
   // uma vez só — depois um flag impede repetir.
   if (canEdit(me)) {
     const migrated = await kvGet<boolean>(MIGRATION_FLAG);
-    const hasUnassignedWp = items.some(
-      (i) => !i.pageId && i.category === "Importadas do WP"
-    );
-    if (!migrated && hasUnassignedWp) {
+    // ⚠️ Sem condicionar a "existe imagem solta": as imagens JÁ tinham álbum —
+    // só tinham UM, o errado. A v2 só rodava quando havia órfã e por isso nunca
+    // consertaria isto sozinha.
+    if (!migrated) {
       await organizeImportedMediaByPage();
       await kvSet(MIGRATION_FLAG, true);
       items = await listMedia();

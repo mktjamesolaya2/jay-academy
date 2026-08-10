@@ -12,10 +12,21 @@ export type MediaItem = {
   contentType?: string;
   size?: number;
   uploadedAt: string;
-  /** Página/coleção a que essa mídia pertence (id de MediaPage). Sem isso, fica
-   * em "Sem página". As importadas do WP recebem a página da origem. */
+  /** Álbum principal (id de MediaPage) — é o que "Mover pra" escreve. Sem isso,
+   * a mídia fica em "Sem álbum". As importadas do WP recebem a da origem. */
   pageId?: string;
+  /**
+   * TODOS os álbuns a que essa mídia pertence.
+   *
+   * ⚠️ Existe porque a mesma foto aparece em várias páginas — o logo, o fundo,
+   * a foto do professor. Com um álbum só, a última página importada ficava com
+   * a foto e as outras ficavam VAZIAS; página cujas imagens eram todas
+   * compartilhadas sumia da galeria inteira (76 páginas → 46 álbuns). Como no
+   * app de Fotos: uma foto pode estar em quantos álbuns for.
+   */
+  albuns?: string[];
 };
+
 
 /** Página/coleção da biblioteca de mídia — agrupa mídias. */
 export type MediaPage = {

@@ -12,6 +12,31 @@ James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
 com vc as imagens não estão subindo p ca!"* e depois *"deixa como a galeria do
 iphone acho q ficaria bom"*.
 
+### Parte 6 — "76 páginas, 46 álbuns": uma foto agora vive em vários álbuns
+
+James contou os álbuns e viu que faltavam 30. Causa única, no modelo de dados:
+**uma mídia só podia pertencer a UM álbum**. Como a mesma foto serve dezenas de
+páginas (logo, fundo, foto do professor), cada importação *roubava* a foto da
+página anterior — e a página cujas imagens eram todas compartilhadas terminava
+com zero e sumia da galeria (álbum do WP vazio fica escondido).
+
+- `MediaItem.albuns?: string[]` — como no app de Fotos, uma foto está em quantos
+  álbuns for. `pageId` continua sendo o **álbum principal** (o que "Mover pra"
+  escreve); registro antigo sem `albuns` é lido como um álbum só.
+- As regras moram em **`lib/media-albuns.ts`** (fora do `media-store`, que é
+  `server-only`), com 11 testes — é a lógica que decide se uma foto aparece ou
+  some. `unirAlbuns` SOMA, `moverPara` substitui (mover é escolha do usuário),
+  `tirarAlbum` não tira a foto dos outros álbuns.
+- `organizeImportedMediaByPage` reconstrói tudo a partir do **HTML guardado de
+  cada página**, que é a fonte da verdade sobre quais imagens ela usa. Tinha um
+  segundo bug ali: o regex só pegava `https://…`, e depois da saída do Blob o
+  HTML foi reescrito pra caminho local (`/wpmirror/…`) — não casava nada.
+- Flag da migração foi pra **v3** e perdeu a condição "existe imagem solta": as
+  imagens já tinham álbum, só tinham UM, o errado. A v2 nunca consertaria isso.
+- O botão **Reconferir imagens** agora também reconstrói os álbuns do WP e diz
+  quantas páginas ficaram **sem nenhuma imagem na biblioteca** — essas são outro
+  caso (nunca tiveram os assets localizados), e agora dá pra ver quantas são.
+
 ### Parte 5 — "não quero imagens faltando" (1016 arquivos varridos, 941 na galeria)
 
 James: *"todas as imagens de todas as lps, e de todas as que ainda vão ser

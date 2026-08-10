@@ -3,8 +3,8 @@ import { createHash } from "node:crypto";
 import { kvGet, kvSet, blobUpload } from "./storage";
 import {
   addManyMedia,
-  assignMediaToPage,
-  assignMediaPagesBulk,
+  adicionarMidiasAoAlbum,
+  somarAlbuns,
   listMedia,
 } from "./media-store";
 import { ensureWpPage } from "./media-pages-store";
@@ -362,7 +362,7 @@ export async function localizePage(
         content.title,
         content.fetchedAt
       );
-      await assignMediaToPage(imageIds, pageId);
+      await adicionarMidiasAoAlbum(imageIds, pageId);
     }
   }
 
@@ -456,37 +456,48 @@ export async function relocatePage(
 }
 
 /**
- * Migração one-shot: organiza as imagens JÁ importadas do WP em páginas de mídia
- * pela origem. Não baixa nada — só lê o HTML guardado de cada página, garante a
- * página de mídia e atribui o pageId às imagens correspondentes (1 escrita final).
+ * Reconstrói os álbuns das páginas do WP a partir do HTML guardado de cada uma.
+ * Não baixa nada — lê o HTML, acha as imagens que já estão na biblioteca e soma
+ * a página aos álbuns delas (1 escrita final).
+ *
+ * O HTML da página É a fonte da verdade sobre quais imagens ela usa. Duas
+ * coisas quebravam isso e faziam página aparecer vazia (ou não aparecer):
+ *
+ * 1. A atribuição SOBRESCREVIA o álbum. Como a mesma foto serve várias páginas
+ *    (logo, fundo, foto do professor), cada página roubava a foto da anterior e
+ *    quem só usava imagem compartilhada terminava com zero. Agora SOMA.
+ * 2. O regex só pegava `https://…`. Depois da saída do Blob, o HTML foi
+ *    reescrito pra caminho local (`/wpmirror/…`) — e aí não casava nada.
  */
 export async function organizeImportedMediaByPage(): Promise<{
   pages: number;
   assigned: number;
+  semImagem: number;
 }> {
   const saved = await listSaved();
   const media = await listMedia();
-  // A mídia já localizada tem url do Blob; o HTML da página (também reescrito)
-  // contém essas mesmas urls do Blob. Então casamos a mídia pela URL presente no
-  // HTML da página — não pela url do WP (que já não existe mais no HTML).
   const urlToId = new Map<string, string>();
   for (const m of media) urlToId.set(m.url, m.id);
 
-  const urlRe = /https?:\/\/[^\s"'()<>\\]+/gi;
-  const idToPage: Record<string, string> = {};
+  // absoluta (http…) OU caminho local começando com / — as duas aparecem
+  const urlRe = /(?:https?:\/\/|\/)[^\s"'()<>\\]+/gi;
+  const porMidia: Record<string, string[]> = {};
   let pages = 0;
+  let semImagem = 0;
   for (const s of saved) {
     const content = await loadContent(s.domain, s.slug);
     if (!content) continue;
     const html = `${content.fullHtml || ""}\n${content.content || ""}`;
     const found = html.match(urlRe);
-    if (!found) continue;
-    const matchedIds: string[] = [];
-    for (const u of found) {
+    const matchedIds = new Set<string>();
+    for (const u of found ?? []) {
       const id = urlToId.get(u);
-      if (id) matchedIds.push(id);
+      if (id) matchedIds.add(id);
     }
-    if (matchedIds.length === 0) continue;
+    if (matchedIds.size === 0) {
+      semImagem++;
+      continue;
+    }
     const pageId = await ensureWpPage(
       content.domain,
       content.slug,
@@ -494,8 +505,8 @@ export async function organizeImportedMediaByPage(): Promise<{
       content.fetchedAt
     );
     pages++;
-    for (const id of matchedIds) idToPage[id] = pageId;
+    for (const id of matchedIds) (porMidia[id] ||= []).push(pageId);
   }
-  const assigned = await assignMediaPagesBulk(idToPage);
-  return { pages, assigned };
+  const assigned = await somarAlbuns(porMidia);
+  return { pages, assigned, semImagem };
 }

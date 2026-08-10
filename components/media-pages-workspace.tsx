@@ -32,6 +32,7 @@ import {
   deleteMediaAction,
 } from "@/app/midia/actions";
 import type { MediaItem, MediaPage } from "@/lib/media-types";
+import { albunsDa } from "@/lib/media-albuns";
 import { escolherCapa } from "@/lib/media-nomes";
 
 const NO_PAGE = "__none__";
@@ -53,12 +54,19 @@ export function MediaPagesWorkspace({
   const fileRef = useRef<HTMLInputElement>(null);
 
   const pageIds = useMemo(() => new Set(pages.map((p) => p.id)), [pages]);
-  const pageOf = (it: MediaItem) =>
-    it.pageId && pageIds.has(it.pageId) ? it.pageId : NO_PAGE;
+  /**
+   * Os álbuns de uma mídia. Uma foto pode estar em vários — o logo e a foto do
+   * professor aparecem em dezenas de páginas, e antes cada página nova roubava
+   * a foto da anterior. Álbum que sumiu do cadastro não conta.
+   */
+  const albunsDe = (it: MediaItem) => {
+    const todos = albunsDa(it).filter((a) => pageIds.has(a));
+    return todos.length ? todos : [NO_PAGE];
+  };
 
   const countByPage = useMemo(() => {
     const m: Record<string, number> = {};
-    for (const it of items) m[pageOf(it)] = (m[pageOf(it)] || 0) + 1;
+    for (const it of items) for (const a of albunsDe(it)) m[a] = (m[a] || 0) + 1;
     return m;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items, pageIds]);
@@ -68,7 +76,7 @@ export function MediaPagesWorkspace({
     // capa de ícone borrado (despertador, logo do PayPal) na maioria dos
     // grupos vindos do WP.
     const porGrupo: Record<string, MediaItem[]> = {};
-    for (const it of items) (porGrupo[pageOf(it)] ||= []).push(it);
+    for (const it of items) for (const a of albunsDe(it)) (porGrupo[a] ||= []).push(it);
     const m: Record<string, string> = {};
     for (const [k, lista] of Object.entries(porGrupo)) {
       const capa = escolherCapa(lista);
@@ -92,6 +100,9 @@ export function MediaPagesWorkspace({
       if (r.novos) partes.push(`${r.novos} novos`);
       if (r.consertados) partes.push(`${r.consertados} imagens recuperadas`);
       if (r.removidas) partes.push(`${r.removidas} que não existem mais saíram`);
+      if (r.paginasWp) partes.push(`${r.paginasWp} páginas do WordPress reconferidas`);
+      if (r.semImagem)
+        partes.push(`${r.semImagem} sem nenhuma imagem na biblioteca`);
       setAviso(partes.join(" · ") + ".");
     });
   }
@@ -273,7 +284,7 @@ export function MediaPagesWorkspace({
   // ─────────────────────────── DETALHE DE UMA PÁGINA ───────────────────────────
   const page = pages.find((p) => p.id === open) || null;
   const title = open === NO_PAGE ? "Sem álbum" : page?.name ?? "Álbum";
-  const pageItems = items.filter((it) => pageOf(it) === open);
+  const pageItems = items.filter((it) => albunsDe(it).includes(open));
   const movePages = pages.map((p) => ({ id: p.id, name: p.name }));
 
   return (

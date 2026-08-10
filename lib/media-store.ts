@@ -1,6 +1,7 @@
 import "server-only";
 import { kvGet, kvSet } from "./storage";
 import type { MediaItem } from "./media-types";
+import { unirAlbuns, tirarAlbum, moverPara } from "./media-albuns";
 
 export type { MediaItem, MediaType } from "./media-types";
 
@@ -105,54 +106,62 @@ export async function updateMedia(
   );
 }
 
-/** Move um conjunto de mídias pra uma página (ou pra "sem página" se pageId null). */
+/**
+ * MOVE um conjunto de mídias pra um álbum (ou pra "sem álbum" se pageId null).
+ *
+ * Mover é escolha do usuário e vale sobre tudo: a mídia passa a estar NAQUELE
+ * álbum e em mais nenhum. Pra só somar um álbum sem tirar os outros — que é o
+ * que a importação faz — use `adicionarMidiasAoAlbum`.
+ */
 export async function assignMediaToPage(
   ids: string[],
   pageId: string | null
 ): Promise<void> {
   if (ids.length === 0) return;
   const set = new Set(ids);
-  const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
-  let changed = false;
-  const next = items.map((i) => {
-    if (!set.has(i.id)) return i;
-    const target = pageId ?? undefined;
-    if (i.pageId === target) return i;
-    changed = true;
-    return { ...i, pageId: target };
-  });
-  if (changed) await kvSet(KEY, next);
+  await mapear((i) => (set.has(i.id) ? moverPara(i, pageId) : i));
 }
 
-/** Atribui páginas a várias mídias de uma vez (id → pageId) numa única escrita.
- * Usado pela migração das imagens já importadas do WP. */
-export async function assignMediaPagesBulk(
-  map: Record<string, string>
+/** Soma um álbum a várias mídias sem tirar os que elas já tinham. */
+export async function adicionarMidiasAoAlbum(
+  ids: string[],
+  pageId: string
 ): Promise<number> {
+  if (ids.length === 0) return 0;
+  return await somarAlbuns(Object.fromEntries(ids.map((id) => [id, [pageId]])));
+}
+
+/**
+ * Soma álbuns a várias mídias de uma vez (id → álbuns), numa escrita só.
+ *
+ * ⚠️ SOMA, não substitui. A versão anterior sobrescrevia, e como a mesma foto é
+ * usada por várias páginas, cada nova página roubava a foto da anterior — a
+ * última importada ficava com tudo e as outras ficavam vazias.
+ */
+export async function somarAlbuns(
+  map: Record<string, string[]>
+): Promise<number> {
+  return await mapear((i) => (map[i.id]?.length ? unirAlbuns(i, map[i.id]) : i));
+}
+
+/** Tira um álbum de todas as mídias (ao excluir o álbum). */
+export async function clearPageFromMedia(pageId: string): Promise<void> {
+  await mapear((i) => tirarAlbum(i, pageId));
+}
+
+/**
+ * Aplica `fn` a cada mídia numa leitura + no máximo uma escrita. As funções de
+ * lib/media-albuns.ts devolvem o MESMO objeto quando não mudam nada, então a
+ * comparação por identidade basta pra saber se vale gravar.
+ */
+async function mapear(fn: (m: MediaItem) => MediaItem): Promise<number> {
   const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
   let n = 0;
   const next = items.map((i) => {
-    const pid = map[i.id];
-    if (pid && i.pageId !== pid) {
-      n++;
-      return { ...i, pageId: pid };
-    }
-    return i;
+    const novo = fn(i);
+    if (novo !== i) n++;
+    return novo;
   });
   if (n) await kvSet(KEY, next);
   return n;
-}
-
-/** Remove o vínculo de página de todas as mídias de uma página (ao excluir a página). */
-export async function clearPageFromMedia(pageId: string): Promise<void> {
-  const items = (await kvGet<MediaItem[]>(KEY)) ?? [];
-  let changed = false;
-  const next = items.map((i) => {
-    if (i.pageId !== pageId) return i;
-    changed = true;
-    const { pageId: _drop, ...rest } = i;
-    void _drop;
-    return rest;
-  });
-  if (changed) await kvSet(KEY, next);
 }
