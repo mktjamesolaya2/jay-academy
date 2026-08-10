@@ -113,7 +113,9 @@ h1 b { display: block; font-weight: 500; }
 
 /* antes e depois: arquivos separados e etiquetados. Antes era uma composição
    só por modelo e não dava para saber qual metade era qual. */
-.resultados { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 1.6vw, 24px); }
+/* auto-fit porque nem todo curso tem 3 pares: com 3 colunas fixas a Nano,
+   que tem 2, ficava com uma célula vazia. */
+.resultados { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: clamp(12px, 1.6vw, 24px); }
 .resultados .par > div + div { margin-top: 7px; }
 .resultados img { aspect-ratio: 16/10; }
 .resultados small { display: block; margin-top: 7px; font-size: 8.5px; letter-spacing: .3em;

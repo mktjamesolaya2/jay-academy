@@ -1,0 +1,41 @@
+De onde veio cada foto desta pasta. Todas são material da casa.
+
+fio-desenho.webp
+  origem: lp/fio-a-fio-realista-v2/treinos/03.webp
+  mostra: Sobrancelha desenhada fio a fio no papel, exercício da formação
+
+fio-resultado.webp
+  origem: lp/fio-a-fio-realista-v2/resultados/13.webp
+  mostra: Resultado de sobrancelha fio a fio
+
+nano-resultado-1.webp
+  origem: lp/basic-nanofios/results/r4.webp
+  mostra: Resultado de nanopigmentação de sobrancelhas
+
+nano-resultado-2.webp
+  origem: lp/basic-nanofios/results/r9.webp
+  mostra: Resultado de nanopigmentação, em close
+
+shadow-degrade.jpg
+  origem: wpmirror/53e6cad05442-modulos-basic-shadow-1-09e3804e57.jpg
+  mostra: O degradê do shadow construído no papel
+
+shadow-pontilhado.jpg
+  origem: wpmirror/5428873f6c41-modulos-basic-shadow-4-2a3092ca07.jpg
+  mostra: A pontilhação com o dermógrafo, ponto a ponto
+
+labios-execucao.jpg
+  origem: wpmirror/f439966a2d2a-boca-a-boca-1e2c122983.jpg
+  mostra: James Olaya executando micropigmentação labial
+
+labios-resultado.jpg
+  origem: wpmirror/83a237210833-resultados-alunas-12-116799f381.jpg
+  mostra: Resultado de micropigmentação labial
+
+clinica.jpg
+  origem: lp/jamesolaya/clinic-slice.jpg
+  mostra: A clínica da Jay Academy durante os atendimentos
+
+produtos.jpg
+  origem: lp/jamesolaya/img25.jpg
+  mostra: Os dermocosméticos e pigmentos JAY.O
