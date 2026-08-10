@@ -8,7 +8,8 @@
     "start": "next start -p 4000",
     "lint": "next lint",
     "foto": "node scripts/foto.mjs",
-    "cortar": "node scripts/cortar.mjs"
+    "cortar": "node scripts/cortar.mjs",
+    "checar-modelos": "node scripts/checar-modelos.mjs"
   },
   "dependencies": {
     "@sparticuz/chromium": "^149.0.0",

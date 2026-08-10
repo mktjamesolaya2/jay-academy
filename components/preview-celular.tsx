@@ -56,27 +56,60 @@ export function PreviewCelular({ url, nome }: Props) {
     return () => window.removeEventListener("resize", ajustarZoom);
   }, [ajustarZoom, dobras.length]);
 
-  /** Lê as dobras de dentro do iframe. Mesma origem, então dá pra ler direto. */
-  const lerDobras = useCallback(() => {
+  /**
+   * Lê as dobras de dentro do iframe. Mesma origem, então dá pra ler direto.
+   * Devolve quantas achou — quem chama usa isso pra saber se já vale parar
+   * de tentar.
+   */
+  const lerDobras = useCallback((): number => {
     try {
       const doc = tela.current?.contentDocument;
-      if (!doc) return;
+      if (!doc) return 0;
       const achadas: Dobra[] = [];
       for (const [id, sel] of [["abertura", ".abertura"], ["hero", ".hero"]] as const) {
         const el = doc.querySelector<HTMLElement>(sel);
         if (el) achadas.push({ id, nome: APELIDOS[id] ?? id, topo: el.offsetTop });
       }
       doc.querySelectorAll<HTMLElement>("section[id]").forEach((el) => {
+        // Nas LPs os ids são escritos à mão ("hero", "metodo"); nas páginas
+        // migradas do WP são gerados por máquina ("mwAQ", "s7-b12") e viravam
+        // chip sem significado nenhum. Só entra id que pareça palavra.
+        if (!APELIDOS[el.id] && !/^[a-z][a-z0-9-]{3,}$/.test(el.id)) return;
         achadas.push({ id: el.id, nome: APELIDOS[el.id] ?? el.id, topo: el.offsetTop });
       });
       setDobras(achadas.sort((a, b) => a.topo - b.topo));
       setBloqueado(false);
+      return achadas.length;
     } catch {
       // página de outro domínio: o navegador barra a leitura. O preview
       // continua funcionando, só sem os atalhos.
       setBloqueado(true);
+      return 0;
     }
   }, []);
+
+  /**
+   * ⚠️ O `onLoad` do React não basta. Quando o iframe termina de carregar
+   * antes do React pendurar o handler — que é o caso comum, porque o `src` já
+   * vai no primeiro render — o evento simplesmente não chega, e os atalhos por
+   * dobra nunca apareciam: só surgiam depois de clicar em "Recarregar", que
+   * força um segundo load com o handler já no lugar.
+   *
+   * Aqui a leitura é tentada de novo por alguns instantes até achar alguma
+   * dobra, e para assim que acha. Não substituir por um `onLoad` só.
+   */
+  useEffect(() => {
+    let vivo = true;
+    let tentativas = 0;
+    const tentar = () => {
+      if (!vivo) return;
+      if (lerDobras() > 0) return;
+      if (++tentativas > 20) return; // ~5s e desiste: página sem seção
+      setTimeout(tentar, 250);
+    };
+    tentar();
+    return () => { vivo = false; };
+  }, [lerDobras]);
 
   const rolarPara = (d: Dobra) => {
     try {

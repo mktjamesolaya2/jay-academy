@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
+import { MODEL_CHAIN } from "@/lib/chat-models";
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 const APP_URL = process.env.APP_URL || "https://jay-academy.vercel.app";
 const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
-
-const MODEL_CHAIN = [
-  "deepseek/deepseek-v4-flash:free",
-  "meta-llama/llama-3.3-70b-instruct:free",
-  "google/gemma-4-31b-it:free",
-  "openrouter/free",
-];
 
 type ChatMessage = {
   role: "system" | "user" | "assistant";
@@ -83,7 +77,19 @@ export async function POST(req: Request) {
           };
           const message = errBody?.error?.message || `Status ${r.status}`;
           errors.push({ model, status: r.status, message });
-          console.warn(`[OpenRouter] ${model} falhou: ${r.status} ${message}`);
+          /**
+           * ID de modelo que não existe mais era o bug de 17/07: falhava em
+           * silêncio, o catch engolia e o visitante só sentia lentidão. Este
+           * caso vai pro log como ERRO, não warn, e diz o que fazer.
+           */
+          if (r.status === 400 || r.status === 404) {
+            console.error(
+              `[OpenRouter] modelo "${model}" foi recusado (${r.status}: ${message}). ` +
+                `Pode ter sido aposentado — rodar "npm run checar-modelos" e corrigir lib/chat-models.ts.`
+            );
+          } else {
+            console.warn(`[OpenRouter] ${model} falhou: ${r.status} ${message}`);
+          }
           continue;
         }
 

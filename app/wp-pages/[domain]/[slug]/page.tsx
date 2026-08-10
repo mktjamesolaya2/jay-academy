@@ -9,6 +9,7 @@ import {
   X,
   Eye,
   Pencil,
+  Smartphone,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { Sidebar } from "@/components/sidebar";
@@ -69,6 +70,7 @@ export default async function WpPageDetailPage({
   const encSlug = encodeURIComponent(content.slug);
   const editHref = `/wp-pages/${content.domain}/${encSlug}/edit`;
   const previewHref = `/wp-pages/${content.domain}/${encSlug}/preview`;
+  const celularHref = `/wp-pages/${content.domain}/${encSlug}/celular`;
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -178,6 +180,14 @@ export default async function WpPageDetailPage({
                     sub={`/${publicSlug}`}
                     href={`/${publicSlug}`}
                     external
+                  />
+                  {/* Sugestão "MOBILE" (06/08): faltava em TODA página WP —
+                      tanto aqui (publicada) quanto na tela de não publicada. */}
+                  <ActionRow
+                    icon={Smartphone}
+                    label="Ver no celular"
+                    sub="Num iPhone 13, com atalho por dobra"
+                    href={celularHref}
                   />
                   {userCanEdit && (
                     <ActionRow
@@ -449,6 +459,24 @@ export default async function WpPageDetailPage({
                     <ExternalLink size={13} strokeWidth={2.2} />
                   </span>
                 </a>
+                {/* Sugestão "MOBILE" (06/08): as páginas WP não tinham como
+                    ver no celular. Mesmo preview das LPs. */}
+                <Link
+                  href={celularHref}
+                  className="flex items-center justify-between gap-4 bg-[#0f0f0f] border border-[#1f1f1f] hover:border-neutral-700 rounded-2xl px-6 py-5 transition group"
+                >
+                  <div>
+                    <p className="text-white font-semibold text-[15px]">
+                      Ver no celular
+                    </p>
+                    <p className="text-xs text-neutral-500 mt-0.5 font-medium">
+                      A página rodando num iPhone 13, com atalho por dobra
+                    </p>
+                  </div>
+                  <span className="flex items-center gap-2 text-sm font-semibold text-white group-hover:translate-x-0.5 transition">
+                    <Smartphone size={15} strokeWidth={2.2} />
+                  </span>
+                </Link>
               </div>
             </section>
           </>
