@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
-import { leadDeFormulario } from "@/lib/lead-de-formulario";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 import { getLpFormConfig } from "@/lib/lp-form-config";
 
@@ -116,32 +115,15 @@ export async function POST(req: Request) {
       }
     }
 
-    // Destinos cadastrados (o CRM novo). Somam ao webhook da LP, não trocam:
-    // o Clint continua recebendo enquanto a transição não acaba.
-    const leadId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const lead = leadDeFormulario({
-      id: leadId,
-      nome: name || "",
-      email: email || "",
-      telefone: whatsapp || "",
-      origem: slug,
-      url: referer || undefined,
-      extras: fields,
-    });
-    // O lead fica guardado no portal. Pra ele seguir pro CRM, o formulário
-    // desta página tem que apontar pro link da integração (/api/receber/<id>)
-    // — é lá que o mapeamento, as tags e a etapa são aplicados.
-
     await addSubmission({
-      id: leadId,
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       formId: `wp:${slug}`,
       name: name || "(sem nome)",
       whatsapp: whatsapp || "",
       email: email || "",
-      submittedAt: lead.enviado_em,
+      submittedAt: new Date().toISOString(),
       webhookStatus,
       webhookError,
-      lead,
     });
 
     await logAnonymousActivity(

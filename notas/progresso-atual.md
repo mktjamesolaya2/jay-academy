@@ -12,134 +12,64 @@ James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
 com vc as imagens não estão subindo p ca!"* e depois *"deixa como a galeria do
 iphone acho q ficaria bom"*.
 
-## 🔌 Sessão 2026-08-11 — integração de lead (CRM do Lucas)
+## 🔌 Sessão 2026-08-11 — integração com o CRM: construída e DESFEITA
 
-O Lucas está fazendo um CRM próprio pra **sair do Clint**. Ele ainda não mandou
-o endpoint — isto é a base, pra no dia só preencher o endereço.
+Terminou em nada de código, e é assim que tinha que ser. Fica registrado pra
+ninguém refazer.
 
-### 11/08 (parte 2) — instruções do Lucas + o zip: adaptado ao JAY.O CRM
+### O que aconteceu
 
-Chegaram as instruções de operação do Lucas e o `jayo-crm-0.3.17.zip`.
+Passei o dia construindo um sistema de integração dentro do portal, em três
+versões, cada uma corrigindo a anterior:
 
-**O zip NÃO é o CRM** — é uma **extensão do Chrome** (JAY.O CRM Companion) que
-mostra o cliente ao lado da conversa no WhatsApp Web. Tem painel lateral,
-mensagem agendada, e usa token pessoal por atendente
-(Configurações → Segurança → Tokens de API, aparece uma vez só).
+1. **Saída** (portal → CRM), com destinos cadastrados. James: *"a intenção é
+   sair do Clint, a webhook tem que ser NOSSA"*.
+2. **Entrada + saída**, dois conceitos. James: *"faz um negócio só, não cria
+   dois não"* — e mandou ler a documentação do Clint.
+3. **Uma coisa só**, no fluxo do Clint, e depois adaptada ao formato real do
+   JAY.O (chave `pk_`, telefone obrigatório, erros traduzidos).
 
-**O CRM está no ar e conferi:** `crm.sistemajayo.com` responde, e
-`www.sistemajayo.com/api/integrations/site/lead/pk_…` devolve 405 no GET e
-404 `{"ok":false}` com chave errada — igual à documentação. Pela extensão dá
-pra ver que existe uma **API completa** por trás
-(`/api/crm/contacts`, `/leads`, `/notes`, `/tags`, `/pipeline`, `/stage`,
-`/status`, `/owner`), autenticada com `Authorization: Bearer <token>`. Serve
-pra muito mais que jogar lead — fica anotado pra depois.
+Aí o James falou com o Lucas e a conclusão foi outra: **o CRM é quem cria e
+administra os webhooks**. O portal não precisa de tela, nem de rota, nem de
+chave guardada. Só precisa **mandar o lead pra URL que o CRM der**.
 
-**Decisão do James: passar pelo portal** (Caso C do Lucas, envio pelo servidor)
-em vez de a página postar direto no CRM. Assim a chave não fica exposta no HTML
-da página, e a gente continua dono dos leads.
+**E isso já existia e já funcionava** — é o mesmo campo que hoje aponta pro
+Clint:
 
-#### O que mudou aqui
+- `/forms/[id]` — formulários do portal
+- `/leads`, seção **"Webhooks das LPs"** — as LPs de `lp-html/`
 
-- O repasse virou o **formato do Lucas**: `nome`, `telefone`, `email` +
-  qualquer campo a mais (que no CRM vira nota), e `utm_source` vira a origem.
-- **Sumiram** da nossa tela: Negócio/Contato, Criar/Atualizar, etapa, status.
-  Quem guarda isso é a **chave `pk_`**, configurada no CRM. Ter nos dois
-  lugares seria ter duas verdades. ⚠️ Não trazer de volta.
-- O assistente tem **2 etapas**: Criação (nome → link) e Campos (mapeamento +
-  tags).
-- **Telefone com DDD é barrado antes de sair** — sem ele o CRM devolve 422 e
-  ainda queimaria uma das 20 chamadas/hora por IP.
-- Cada erro do CRM vira instrução: 422 → telefone; 404 → chave; 403 → lista de
-  domínios tem que estar VAZIA; 429 → limite.
-- A isca de robô (`_gotcha`) nunca viaja pro CRM.
+Trocar a URL do Clint pela do JAY.O é o trabalho inteiro.
 
-#### Achados que valem ouro
+### Tudo foi apagado
 
-- As **4 LPs no ar já mandam `nome`, `email` e `whatsapp`** + os 5 utm. São
-  nomes que o CRM aceita: **não precisa renomear campo nenhum.** Por isso o
-  mapeamento inicial usa `whatsapp`.
-- 🐛 **Bug meu, consertado**: `addSubmission` empilhava, e como a rota grava o
-  lead antes e depois do repasse, **todo lead aparecia duas vezes** na lista.
-  Agora faz upsert por id.
+`lib/integracoes*`, `lib/campos-recebidos*`, `lib/lead-campos`,
+`lib/lead-de-formulario`, `app/api/receber/`, `app/settings/integracoes/`,
+`components/integracoes-workspace`. Os arquivos que eu tinha tocado
+(`forms-store`, os 3 caminhos de formulário, `settings/page`) voltaram por
+`git checkout 60bcea9`. Zero resíduo.
 
-#### ⚠️ PENDENTE COM O LUCAS — trava campanha
+### O que sobrou de útil (fatos verificados, não código)
 
-> "Limite: 20 envios por hora do mesmo IP."
+- **As 4 LPs no ar já mandam `nome`, `email` e `whatsapp`** — nomes que o
+  endpoint do JAY.O aceita. Não precisa renomear campo nenhum.
+- ⚠️ **Os `utm_*` das LPs Elementor vão aninhados dentro de `raw`.** Se o CRM
+  precisar do `utm_source` como origem do negócio, é preciso subir eles pro
+  topo do payload em `api/elementor-form`. **É a única mudança de código que
+  pode ser necessária.**
+- O JAY.O CRM está no ar (`crm.sistemajayo.com`) e tem uma **API completa** por
+  trás (`/api/crm/contacts`, `/leads`, `/notes`, `/tags`, `/pipeline`,
+  `/stage`, `/status`, `/owner`) com `Authorization: Bearer`. Dá pra puxar
+  dados do CRM pro portal um dia — não é o assunto de agora.
+- O `jayo-crm-0.3.17.zip` é uma **extensão do Chrome** pro WhatsApp Web, não o
+  CRM. Assunto separado.
+- 🐛 Achei e consertei (e depois revertei junto) um detalhe do `addSubmission`:
+  ele empilha sem checar id. Não é problema hoje porque cada lead grava uma vez.
 
-Com envio pelo servidor, **todo lead sai do mesmo IP**. 20/hora estoura em
-campanha boa. Perguntar se dá pra liberar o nosso servidor ou valer só o teto
-de 300/hora por chave. **Sem essa resposta, não subir campanha por este
-caminho.**
+### A lição
 
-Falta também a chave `pk_` de verdade (e ela precisa nascer no CRM com
-**Domínios liberados vazio**).
-
-### ⚠️ Eu errei duas vezes antes de acertar
-
-1. Fiz só a **saída** (portal → CRM), que depende de alguém de fora gerar o
-   link. James: *"a intenção é sair do Clint, então o Clint não vai mais
-   precisar criar o webhook. A webhook tem que ser NOSSA."*
-2. Consertei criando um segundo conceito (webhook de entrada + destinos de
-   saída). James: *"faz um negócio só, não cria dois não, pra não ficar
-   perdido"*. E mandou ler a documentação do Clint — **ordem, não pedido**.
-
-**A documentação lida** (ajuda.clint.digital, "Como integrar a Clint com outras
-plataformas via webhook") resolveu a discussão: no Clint é UM objeto só, e o
-caminho é dar o nome → ele gera o link → colar no formulário. Dela também vieram
-regras que copiei:
-
-- **Negócio x Contato**: contato é a pessoa; negócio é a oportunidade dela.
-- **Criar / Atualizar / Criar ou atualizar** — o que fazer se o contato já
-  existe; identificação por **e-mail e/ou telefone** (por isso a tela avisa que
-  mapear um dos dois é o que deixa o CRM reconhecer quem já é cliente).
-- **Mapeamento**: esquerda = nome do campo na ferramenta de fora, direita =
-  campo do CRM. ⚠️ É NESTA direção. Eu tinha feito ao contrário.
-- **Configuração**: tags, etapa para criação, etapa para atualização, status.
-- **Webhook que falha 3 vezes seguidas é desativado** — copiado.
-
-### Como ficou
-
-**Uma** entidade: `lib/integracoes.ts`. Assistente de 3 etapas (Criação ·
-Mapeamento · Configuração), igual ao Clint. O link nasce ao salvar o nome.
-
-```
-POST /api/receber/<token>
-  → aplica o mapeamento
-  → guarda o lead no portal
-  → manda pro CRM com tipo, ação, tags, etapa e status
-```
-
-- Aceita **JSON, formulário comum e o formato do Elementor**, e reconhece
-  nome/e-mail/telefone com qualquer nome de campo. Exigir um formato faria o
-  link só funcionar onde a gente mesmo montou o formulário.
-- **CORS liberado** — o formulário pode estar em outro domínio.
-- **Guarda antes de repassar**: CRM fora do ar não faz lead sumir.
-- Link errado e link desligado dão a MESMA resposta.
-- O endereço do CRM é **um só pra casa**, no rodapé da tela. Vazio = os leads
-  só ficam guardados no portal.
-
-### O que NÃO fazer de novo
-
-- Não quebrar a integração em dois conceitos.
-- Não escrever texto explicando o que é webhook na tela: *"isso é um site
-  nosso, não precisa explicar nada dessas coisas"*.
-- Os 3 caminhos antigos de formulário só guardam o lead. Quem manda pro CRM é o
-  link da integração, colado no formulário.
-
-### Verificado de ponta a ponta
-
-Formulário postou no link → lead guardado → CRM (de mentira) recebeu:
-
-```json
-{ "tipo": "negocio", "acao": "criar_ou_atualizar", "integracao": "LP Basic NanoFios",
-  "nome": "Maria Silva", "email": "…", "telefone": "…", "cidade": "Recife",
-  "tags": ["LP Basic NanoFios", "nanofios"], "etapa_criacao": "Base", "status": "Aberto" }
-```
-
-### Esperando o Lucas
-
-Endereço do CRM, se pede senha (cabeçalho + token), os nomes dos campos que ele
-espera, e se ele deduplica (mandamos um `id` único em todo lead).
+Antes de construir, perguntar **quem é o dono da peça**. O webhook é do CRM.
+Três reconstruções aconteceram porque eu assumi que era nosso.
 
 ---
 

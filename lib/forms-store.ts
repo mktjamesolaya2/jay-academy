@@ -1,7 +1,5 @@
 import "server-only";
 import { kvDel, kvGet, kvKeys, kvSet } from "./storage";
-import type { Entrega } from "./integracoes-core";
-import type { Lead } from "./lead-campos";
 
 export type FormConfig = {
   id: string;
@@ -24,17 +22,8 @@ export type FormSubmission = {
   whatsapp: string;
   email: string;
   submittedAt: string;
-  /** webhook antigo, o campo de url que mora em cada formulário (hoje: Clint) */
   webhookStatus?: "sent" | "failed" | "skipped";
   webhookError?: string;
-  /**
-   * Entregas nos destinos cadastrados em /settings/integracoes — uma por
-   * destino. O `webhookStatus` acima é um só e não diz ONDE falhou; com dois
-   * CRMs ao mesmo tempo, isso vira lead sumido sem ninguém perceber.
-   */
-  entregas?: Entrega[];
-  /** o lead inteiro, pra dar pra reenviar sem depender do formulário original */
-  lead?: Lead;
 };
 
 const FORMS_KEY = "forms:all";
@@ -126,24 +115,12 @@ export async function countSubmissions(formId: string): Promise<number> {
   return entries.length;
 }
 
-/**
- * Grava um lead. Se já existir um com o MESMO id, substitui em vez de duplicar.
- *
- * ⚠️ O upsert não é luxo: o caminho da integração grava o lead ANTES de tentar
- * o CRM (pra não perder nada se o CRM estiver fora do ar) e grava de novo
- * depois, com o resultado do repasse. Sem isto, todo lead aparecia duas vezes
- * na lista.
- */
 export async function addSubmission(
   submission: FormSubmission
 ): Promise<void> {
   const existing =
     (await kvGet<FormSubmission[]>(submissionsKey(submission.formId))) || [];
-  const n = existing.findIndex((s) => s.id === submission.id);
-  const next =
-    n >= 0
-      ? existing.map((s, i) => (i === n ? { ...s, ...submission } : s))
-      : [submission, ...existing].slice(0, 500); // mantém últimas 500
+  const next = [submission, ...existing].slice(0, 500); // mantém últimas 500
   await kvSet(submissionsKey(submission.formId), next);
 }
 

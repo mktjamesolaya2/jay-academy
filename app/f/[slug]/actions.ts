@@ -6,7 +6,6 @@ import {
   getFormBySlug,
   type FormSubmission,
 } from "@/lib/forms-store";
-import { leadDeFormulario } from "@/lib/lead-de-formulario";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { rateLimitByIp, clientIpFromHeaders } from "@/lib/rate-limit";
 
@@ -96,33 +95,15 @@ export async function submitFormAction(
     }
   }
 
-  // Destinos cadastrados (o CRM novo) — somam ao webhook antigo do formulário,
-  // não substituem: o Clint continua recebendo pelo caminho de sempre enquanto
-  // a transição não termina. Nunca lança, então lead nenhum se perde por causa
-  // de CRM fora do ar.
-  const leadId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const lead = leadDeFormulario({
-    id: leadId,
-    nome: name,
-    email,
-    telefone: whatsapp,
-    origem: form.slug,
-    extras: Object.fromEntries(formData.entries()),
-  });
-  // O lead fica guardado no portal. Pra ele seguir pro CRM, o formulário
-  // desta página tem que apontar pro link da integração (/api/receber/<id>)
-  // — é lá que o mapeamento, as tags e a etapa são aplicados.
-
   await addSubmission({
-    id: leadId,
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     formId: form.id,
     name,
     whatsapp,
     email,
-    submittedAt: lead.enviado_em,
+    submittedAt: new Date().toISOString(),
     webhookStatus,
     webhookError,
-    lead,
   });
 
   await logAnonymousActivity(
