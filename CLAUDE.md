@@ -39,7 +39,7 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
 - `paginas` — lista/filtra o catálogo de TODAS as páginas (chips por fonte).
 - `wp-pages` — gestão das páginas migradas do WP (+`[domain]/[slug]/{edit,preview}`).
 - `leads` — inbox de submissões (+`leads/export` CSV). `forms` — CRUD de forms (+`new`, `[id]`).
-- `websites` — páginas tipo website. `lps` — LPs de venda (+`[slug]/{build,edit-visual}`, `new`).
+- `lps/[slug]` — ficha da página (+`{build,edit-visual,celular}`). `websites` existe mas saiu do menu.
 - `analytics` — visitas por página. `midia` — biblioteca de mídia. `sugestoes` — sugestões+upvote.
 - `settings` (+`users` roles, +`backup` do KV). `lixeira` — trash restaurável.
   **Código do CRM por página**: o CRM entrega um BLOCO DE CÓDIGO (formulário + script, ou só o
@@ -47,6 +47,12 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
   do CRM" em `/lps/<slug>`, e injetado antes de `</body>` por `lib/serve-lp.ts` — por último, pra
   achar o formulário já montado. Os formulários do portal seguem com o campo de webhook em
   `/forms/[id]`.
+  ⚠️ **UMA lista de páginas** (`/paginas`). O "tipo" (website/lp/form) não muda nada no código —
+  não voltar a ter uma lista por tipo. Editor: `EditorShell` serve LPs do KV, páginas do WP e as de
+  `lp-html/` (via `resolveLpHtml`, override no KV passa na frente do arquivo). **Export do Elementor
+  NÃO entra no editor visual** (`ehExportElementor`) — 60-80 scripts montam o formulário depois do
+  load e salvar corromperia. Override é silencioso: a tela mostra "Versão no ar" + "Voltar pro
+  original".
   ⚠️ **`/lps/[slug]` cai no `lp-html-registry` quando o KV não tem a LP.** Sem isso, 8 páginas
   (incl. as 4 que mais trazem lead) davam 404 e não tinham onde configurar nada.
   ⚠️ **Não construir sistema de integração dentro do portal.** Já foi feito e desfeito em 11/08 —

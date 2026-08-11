@@ -68,6 +68,48 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### 11/08 (parte 4) — unificação: uma lista, um webhook, um editor
+
+James: *"faça tudo"* e *"todas têm que ter o editor exatamente igual"*.
+
+#### Uma lista de páginas
+
+A barra lateral tinha 5 entradas. Fui ver o que o "tipo"
+(website / landing page / formulário) muda no código: **nada**. Nem publicação,
+nem serving, nem edição — só decidia em qual lista a página aparecia. Por isso
+publicar com o tipo errado fazia a página **sumir** da lista onde ele procurava,
+e ele lia isso como bug de publicação. Agora: **Todas as páginas** +
+**Formulários** (que é outra ferramenta — ali se CRIA um formulário).
+
+#### Webhook em toda página
+
+Mesmo componente e **mesmo store** (`lp-form-config:<slug>`) nas LPs e nas
+páginas do WP — não existe "o webhook da LP" e "o da página do WP". Injetado
+antes de `</body>` nos dois caminhos de servir (`serve-lp.ts` e
+`app/p/[slug]/route.ts`).
+
+#### Editor: agora alcança as páginas do repositório
+
+`EditorShell` já era o mesmo pras LPs do KV e pras páginas do WP. O que faltava
+era chegar nas de `lp-html/`. Agora chega: `resolveLpHtml()` faz a versão
+editada no painel passar na frente do arquivo do repositório.
+
+⚠️ **As 4 do Elementor ficam de fora, de propósito.** `ehExportElementor()`
+detecta (>50 ocorrências de "elementor" no HTML) e desvia. Motivo: elas têm
+**60–80 scripts** que montam carrossel, popup e o próprio formulário DEPOIS do
+carregamento. O editor salva o corpo como está no momento — o estado já mexido
+pelo JS — e recarregar isso duplica elemento e mata o formulário. Numa página de
+venda, é perder lead. A tela explica isso em vez de só esconder o botão.
+
+⚠️ **O override é silencioso e precisa de aviso.** Depois de salvar pelo editor,
+mexer no arquivo e dar push **não muda mais nada** na página no ar. Por isso o
+bloco **"Versão no ar"** aparece com o alerta e o botão **"Voltar pro original
+do repositório"** (`voltarProOriginalAction` → `resetEmbeddedHtml`).
+
+Conferido de ponta a ponta: editor abre nas 4 de HTML limpo (200) e desvia nas 4
+do Elementor (307); gravar override muda a página servida; "voltar pro original"
+devolve o arquivo do repositório.
+
 ### ⚠️ Incidente 11/08 — limpeza de disco apagou arquivo do projeto
 
 O PC estava com **0 MB livre** (de 237 GB) e eu rodei uma limpeza de caches. No

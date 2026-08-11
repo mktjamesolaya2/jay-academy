@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { withTracking, buildVisitBeacon } from "@/lib/meta-tracking";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
-import { resolveEmbeddedHtml } from "@/lib/embedded-html-store";
+import { resolveEmbeddedHtml, resolveLpHtml } from "@/lib/embedded-html-store";
 import { getLpFormConfig } from "@/lib/lp-form-config";
 
 // Serving unificado das LPs custom (antes eram ~10 route handlers quase
@@ -82,10 +82,13 @@ export async function serveLp(
     cacheControl = EMBEDDED_CACHE_CONTROL;
     slug = opts.embedded;
   } else {
-    raw = await readLpFile(opts.file);
+    slug = opts.file.replace(/\.html$/i, "");
+    // Versão editada no painel passa na frente do arquivo do repositório —
+    // é o que dá editor visual pras LPs de lp-html/. Sem override, lê o
+    // arquivo do jeito de sempre.
+    raw = await resolveLpHtml(slug, opts.file);
     delazy = opts.delazy ?? false;
     cacheControl = DISK_CACHE_CONTROL;
-    slug = opts.file.replace(/\.html$/i, "");
   }
 
   if (!raw) {

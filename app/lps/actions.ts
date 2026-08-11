@@ -272,3 +272,28 @@ export async function salvarCodigoCrmAction(
     return { ok: false, error: e instanceof Error ? e.message : "Erro ao salvar" };
   }
 }
+
+/**
+ * Devolve a página pro arquivo do repositório, apagando a versão editada no
+ * painel.
+ *
+ * Existe porque o override é silencioso: depois de salvar pelo editor, mexer no
+ * arquivo e dar push não muda mais nada na página. Sem este botão, a pessoa
+ * ficaria editando o repositório sem entender por que não acontece nada.
+ */
+export async function voltarProOriginalAction(
+  formData: FormData
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    await requireAdmin();
+    const slug = (formData.get("slug")?.toString() ?? "").trim();
+    if (!slug) return { ok: false, error: "Página não identificada" };
+    await resetEmbeddedHtml(slug);
+    await logActivity("wp.edit", slug, "voltou pro HTML do repositório");
+    revalidatePath(`/lps/${slug}`);
+    revalidatePath(`/${slug}`);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro" };
+  }
+}

@@ -21,6 +21,12 @@ import { CrmCodigoForm } from "@/components/crm-codigo-form";
 import { getCurrentUser, canEdit } from "@/lib/auth";
 import { getLpFormConfig } from "@/lib/lp-form-config";
 import { getLpHtmlEntry } from "@/lib/lp-html-registry";
+import {
+  temVersaoEditada,
+  resolveLpHtml,
+  ehExportElementor,
+} from "@/lib/embedded-html-store";
+import { VoltarOriginal } from "@/components/voltar-original";
 import type { LandingPage } from "@/lib/landing-pages";
 
 type Params = Promise<{ slug: string }>;
@@ -63,10 +69,18 @@ export default async function LpDetailPage({ params }: { params: Params }) {
   const style = statusColors[lp.status];
   const isProduction = process.env.VERCEL_ENV === "production" || !!process.env.VERCEL;
   const hasBuilder = await isBuilderPage(slug);
-  const [me, formConfig] = await Promise.all([
+  const entradaHtml = getLpHtmlEntry(slug);
+  const [me, formConfig, editada, htmlBase] = await Promise.all([
     getCurrentUser(),
     getLpFormConfig(slug),
+    temVersaoEditada(slug),
+    entradaHtml
+      ? resolveLpHtml(slug, entradaHtml.htmlFile.split("/").pop()!)
+      : Promise.resolve(null),
   ]);
+  // Export do Elementor não pode entrar no editor visual — ver
+  // ehExportElementor em lib/embedded-html-store.ts.
+  const ehElementor = !!htmlBase && ehExportElementor(htmlBase);
   const userCanEdit = canEdit(me);
   const publicUrl = publicUrlFor(lp);
   // Fonte de conteúdo: campo contentSource com fallback heurístico pra LPs
@@ -216,6 +230,12 @@ export default async function LpDetailPage({ params }: { params: Params }) {
               </Block>
             )}
 
+            {userCanEdit && editada && (
+              <Block title="Versão no ar">
+                <VoltarOriginal slug={lp.slug} />
+              </Block>
+            )}
+
             <Block title="Atalhos">
               <div className="space-y-2">
                 {publicUrl && (
@@ -267,10 +287,31 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                     href={`/lps/${lp.slug}/build`}
                   />
                 )}
+                {/* Editor visual também nas páginas do repositório — é o mesmo
+                    EditorShell das páginas do WP. Menos nas do Elementor, que
+                    ele corromperia (ver ehExportElementor). */}
+                {source === "lp-html" && !ehElementor && (
+                  <ActionRow
+                    icon={Pencil}
+                    label="Editar visualmente"
+                    sub="Trocar texto e imagem sem mexer no código"
+                    href={`/lps/${lp.slug}/edit-visual`}
+                  />
+                )}
                 {source === "lp-html" && (
                   <div className="px-3 py-3 rounded-lg border border-dashed border-[#262626] text-xs text-neutral-500 leading-relaxed">
-                    Página editada <span className="text-violet-300 font-semibold">no repositório</span>{" "}
-                    (lp-html/{lp.slug}.html) — alterações entram no ar via commit + push.
+                    {ehElementor ? (
+                      <>
+                        Página vinda do <span className="text-violet-300 font-semibold">Elementor</span>{" "}
+                        — o editor visual quebraria o formulário e os carrosséis
+                        dela. Alterações entram por commit + push.
+                      </>
+                    ) : (
+                      <>
+                        Página editada <span className="text-violet-300 font-semibold">no repositório</span>{" "}
+                        (lp-html/{lp.slug}.html) — alterações entram no ar via commit + push.
+                      </>
+                    )}
                   </div>
                 )}
                 {/* Atalhos de dev local — só aparecem se ainda não tem URL pública */}
