@@ -68,6 +68,26 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### ⚠️ Incidente 11/08 — limpeza de disco apagou arquivo do projeto
+
+O PC estava com **0 MB livre** (de 237 GB) e eu rodei uma limpeza de caches. No
+comando que apagava pastas de build eu incluí `dist` — e `dist` existe DENTRO
+de cada pacote do `node_modules` **e** dentro de
+`public/lp/profissao-remove/wp-includes/js/dist/`.
+
+Estragou duas coisas:
+
+1. **node_modules do portal** — reinstalado, build e 128 testes de volta ao
+   normal. Os outros projetos da Desktop podem estar iguais: `npm install` na
+   pasta resolve.
+2. **`hooks.min.js` e `i18n.min.js` da LP Profissão Remove**, que está NO AR.
+   Restaurados com `git checkout`. Árvore limpa, nada foi commitado quebrado.
+
+⚠️ **Regra que fica**: nunca apagar por NOME de pasta (`dist`, `build`, `cache`)
+numa varredura recursiva. Esses nomes existem dentro de dependências e dentro de
+assets de página. Limpar só caminho conhecido e explícito, e conferir
+`git status` depois — foi ele que mostrou o estrago.
+
 ## 🔌 Sessão 2026-08-11 — integração com o CRM: construída e DESFEITA
 
 Terminou em nada de código, e é assim que tinha que ser. Fica registrado pra
