@@ -10,6 +10,7 @@ import { renderBuilderPageHtml } from "@/lib/builder-html-render";
 import { loadEditedEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
 import { withTracking } from "@/lib/meta-tracking";
+import { getLpFormConfig } from "@/lib/lp-form-config";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 
 function escapeHtml(s: string): string {
@@ -177,6 +178,20 @@ ${cleaned}
     eventSourceUrl: req.url,
     req,
   });
+
+  // Webhook colado no painel. MESMO store das outras páginas
+  // (`lp-form-config:<slug>`), pra não existir "o webhook da LP" e "o webhook
+  // da página do WP" como duas coisas. Vai por último, antes de </body>, pra
+  // achar o formulário já montado.
+  const cfgCrm = await getLpFormConfig(content.publicSlug || content.slug).catch(
+    () => null
+  );
+  if (cfgCrm?.codigoCrm) {
+    const bloco = `\n<!-- Webhook (colado no painel) -->\n${cfgCrm.codigoCrm}\n`;
+    html = /<\/body>/i.test(html)
+      ? html.replace(/<\/body>/i, `${bloco}</body>`)
+      : html + bloco;
+  }
 
   return new NextResponse(html, {
     headers: {

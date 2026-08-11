@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { CrmCodigoForm } from "@/components/crm-codigo-form";
+import { getLpFormConfig } from "@/lib/lp-form-config";
 import {
   ArrowLeft,
   ExternalLink,
@@ -62,6 +64,9 @@ export default async function WpPageDetailPage({
   ]);
   if (!content) notFound();
   const userCanEdit = canEdit(me);
+  const formConfig = await getLpFormConfig(
+    content.publicSlug || content.slug
+  ).catch(() => null);
 
   const isPublished = !!content.published;
   const isForm = content.placed === "form";
@@ -172,6 +177,20 @@ export default async function WpPageDetailPage({
             </div>
 
             <aside className="space-y-5">
+              {/* ⚠️ Webhook em TODA página, não só nas que têm formulário.
+                  James: "a webhook serviria pra tudo, pra todo tipo de página".
+                  Mesmo componente e MESMO store das LPs (lp-form-config), pra
+                  não existir "o webhook da LP" e "o da página do WP" como duas
+                  coisas diferentes. */}
+              {userCanEdit && (
+                <Block title="Webhook">
+                  <CrmCodigoForm
+                    slug={content.publicSlug || content.slug}
+                    codigo={formConfig?.codigoCrm}
+                  />
+                </Block>
+              )}
+
               <Block title="Atalhos">
                 <div className="space-y-2">
                   <ActionRow

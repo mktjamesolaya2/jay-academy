@@ -26,12 +26,24 @@ import { clsx } from "clsx";
 import { UserMenu } from "./user-menu";
 import type { SessionUser } from "@/lib/auth";
 
+/**
+ * ⚠️ UMA lista de páginas, não cinco.
+ *
+ * Antes isto era Websites / Landing Pages / Páginas copiadas, cada uma
+ * filtrando por um "tipo" que **não muda nada** no código — nem como publica,
+ * nem como serve, nem como edita. Só decidia em qual lista a página aparecia.
+ * Resultado: publicar com o tipo errado fazia a página SUMIR da lista onde o
+ * James tinha ido procurar, e ele lia isso como bug de publicação.
+ *
+ * `/paginas` já mostra tudo, com filtro por fonte. Não voltar a ter uma lista
+ * por tipo — se precisar separar, é filtro dentro dela.
+ *
+ * `Formulários` continua à parte porque é outra ferramenta: ali se CRIA um
+ * formulário, não se publica uma página.
+ */
 const URL_CHILDREN = [
   { href: "/paginas", label: "Todas as páginas", icon: LayoutGrid },
-  { href: "/websites", label: "Websites", icon: Globe },
-  { href: "/lps", label: "Landing Pages", icon: Layout },
   { href: "/forms", label: "Formulários", icon: FileText },
-  { href: "/wp-pages", label: "Páginas copiadas", icon: FileStack },
 ];
 
 export function SidebarShell({ user }: { user: SessionUser | null }) {
