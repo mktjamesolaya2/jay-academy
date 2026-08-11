@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { Check, Loader2, Code2, Trash2 } from "lucide-react";
 import { salvarCodigoCrmAction } from "@/app/lps/actions";
-import { temMarcacaoVisivel, somenteScript } from "@/lib/webhook-codigo";
+import { extrairChave } from "@/lib/webhook-codigo";
 
 /**
  * Onde se cola o código que o CRM gera pra página.
@@ -76,23 +76,22 @@ export function CrmCodigoForm({
           e viu o formulário aparecer solto no rodapé da página: "NÃO QUERO ISSO
           APARECENDO". A parte visível é descartada de qualquer jeito — o aviso
           existe pra ele não achar que o formulário do CRM vai aparecer. */}
-      {temMarcacaoVisivel(valor) && (
-        <p className="rounded-md border border-rose-500/25 bg-rose-500/10 px-3 py-2.5 text-[12px] leading-relaxed text-rose-200">
-          Esse código traz um <strong className="font-semibold">formulário junto</strong> —
-          ele apareceria solto no rodapé da página, sem estilo. Peça ao CRM a
-          variante <strong className="font-semibold">só o envio</strong>: ela se
-          liga no formulário que a página já tem, e nada novo aparece.
+      {valor.trim() && extrairChave(valor) && (
+        <p className="rounded-md border border-emerald-500/25 bg-emerald-500/10 px-3 py-2.5 text-[12px] leading-relaxed text-emerald-200">
+          Chave encontrada: <code className="font-semibold">{extrairChave(valor)}</code>.
+          O envio é montado pelo portal e se liga no formulário que a página já
+          tem — nada novo aparece na página.
         </p>
       )}
-      {valor.trim() && !somenteScript(valor) && (
+      {valor.trim() && !extrairChave(valor) && (
         <p className="rounded-md border border-rose-500/25 bg-rose-500/10 px-3 py-2.5 text-[12px] leading-relaxed text-rose-200">
-          Não achei nenhum script nesse código. Copie no CRM o trecho que vem
-          com <code>&lt;script&gt;</code> dentro.
+          Não achei a chave (<code>pk_…</code>) nesse texto. Cole o código que o
+          CRM gerou — ou só a chave, se preferir.
         </p>
       )}
       <p className="text-[11.5px] leading-relaxed text-neutral-500">
-        Entra no fim da página, antes do <code className="text-neutral-400">&lt;/body&gt;</code>,
-        e se liga no formulário que a página já tem.
+        Pode colar o código inteiro do CRM. O portal usa só a chave e escreve o
+        envio, então formulário nenhum é desenhado na página.
       </p>
       {erro && (
         <p className="rounded-md border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-[12px] font-medium text-rose-300">

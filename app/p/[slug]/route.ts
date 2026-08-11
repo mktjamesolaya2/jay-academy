@@ -11,7 +11,7 @@ import { loadEditedEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
 import { withTracking } from "@/lib/meta-tracking";
 import { getLpFormConfig } from "@/lib/lp-form-config";
-import { somenteScript, temMarcacaoVisivel } from "@/lib/webhook-codigo";
+import { extrairChave, montarScriptDeEnvio } from "@/lib/webhook-codigo";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 
 function escapeHtml(s: string): string {
@@ -187,8 +187,11 @@ ${cleaned}
   const cfgCrm = await getLpFormConfig(content.publicSlug || content.slug).catch(
     () => null
   );
-  if (cfgCrm?.codigoCrm) {
-    const bloco = `\n<!-- Webhook (colado no painel) -->\n${cfgCrm.codigoCrm}\n`;
+  // Do código colado usamos só a CHAVE, e montamos o envio aqui — nada do que
+  // veio junto entra na página.
+  const chaveCrm = cfgCrm?.codigoCrm ? extrairChave(cfgCrm.codigoCrm) : null;
+  if (chaveCrm) {
+    const bloco = `\n<!-- Webhook (colado no painel) -->\n${montarScriptDeEnvio(chaveCrm)}\n`;
     html = /<\/body>/i.test(html)
       ? html.replace(/<\/body>/i, `${bloco}</body>`)
       : html + bloco;

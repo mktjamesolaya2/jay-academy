@@ -16,7 +16,7 @@ import {
 import type { LandingPage } from "@/lib/landing-pages";
 import { deleteBuilderPage, emptyPage, saveBuilderPage } from "@/lib/page-builder-store";
 import { resetEmbeddedHtml } from "@/lib/embedded-html-store";
-import { temMarcacaoVisivel, somenteScript } from "@/lib/webhook-codigo";
+import { extrairChave } from "@/lib/webhook-codigo";
 
 function slugify(input: string): string {
   return input
@@ -259,25 +259,14 @@ export async function salvarCodigoCrmAction(
       return { ok: false, error: "Código grande demais — confira se colou só o trecho do CRM." };
     }
 
-    // ⚠️ Recusa a variante "formulário pronto".
-    //
-    // Ela traz form + script. Injetada aqui, o formulário aparecia solto no
-    // rodapé, sem estilo — James: "NÃO QUERO ISSO APARECENDO". E não adianta
-    // só descartar o formulário: o script dela procura o formulário DELA
-    // (getElementById("form-jayo")) e quebraria a página com erro de
-    // JavaScript. A variante certa pras nossas páginas é a "só o envio", que
-    // se liga no formulário que a página já tem.
-    if (codigo.trim() && temMarcacaoVisivel(codigo)) {
+    // Só precisa ter a chave dentro. O código pode vir de qualquer variante do
+    // CRM — a gente monta o envio a partir dela (ver montarScriptDeEnvio), e
+    // nada do que veio junto é injetado na página.
+    if (codigo.trim() && !extrairChave(codigo)) {
       return {
         ok: false,
         error:
-          "Esse é o código com formulário junto. Peça ao CRM a variante \"só o envio\" — as páginas daqui já têm o formulário delas.",
-      };
-    }
-    if (codigo.trim() && !somenteScript(codigo)) {
-      return {
-        ok: false,
-        error: "Não achei nenhum <script> nesse código. Copie no CRM o trecho do envio.",
+          "Não achei a chave (pk_...) nesse texto. Cole o código que o CRM gerou, ou só a chave.",
       };
     }
 

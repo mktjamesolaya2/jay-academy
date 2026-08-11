@@ -68,38 +68,42 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
-### ⚠️ 11/08 — o webhook não pode sujar a página
+### ⚠️ 11/08 — o portal monta o envio a partir da CHAVE
 
-James colou a variante **"formulário pronto"** do CRM (form + script) e viu o
-formulário aparecer **solto no rodapé, sem estilo**: *"NÃO QUERO ISSO
-APARECENDO"*. (Era um teste meu no localhost dele, não algo que ele tinha feito
-— mas o problema era real.)
+James colou a variante "formulário pronto" do CRM e viu o formulário aparecer
+**solto no rodapé, sem estilo**: *"NÃO QUERO ISSO APARECENDO"*. Depois, quando
+eu disse pra pedir outra variante ao Lucas: *"pra que eu preciso pedir algo pro
+Lucas? Eu pedi pra você ajustar"*. **Ele estava certo** — a chave `pk_…` já
+vinha dentro do código que ele colou. Com ela, dá pra escrever o envio aqui.
 
-Duas tentativas até acertar:
+`lib/webhook-codigo.ts` (12 testes):
 
-1. **Descartar só o formulário e injetar o script** — não serve: o script da
-   variante completa procura o formulário DELA
-   (`getElementById("form-jayo")`), que a gente acabou de descartar. Resultado
-   seria erro de JavaScript na página.
-2. **Recusar a variante inteira** — é o certo. As páginas daqui já têm o
-   formulário delas; o que falta é o envio.
+- `extrairChave()` — acha o `pk_…` em qualquer coisa: código inteiro, URL, ou
+  a chave sozinha.
+- `montarScriptDeEnvio()` — gera o script. **Nada visível entra na página.**
 
-`lib/webhook-codigo.ts` (6 testes): `temMarcacaoVisivel()` detecta form/div/
-input fora de `<script>`, e `somenteScript()` extrai os blocos de script.
+Três decisões que evitam quebrar página que já funciona:
 
-- **Salvar recusa** a variante com formulário, com o texto explicando qual pedir.
-- **A injeção também recusa** (`serve-lp.ts` e `app/p/[slug]/route.ts`) —
-  defesa pra dado que já esteja gravado.
-- A tela avisa **enquanto digita**, antes de salvar.
+1. **Manda uma cópia, não sequestra o envio.** Se outro script já tratou o
+   submit (Elementor faz), a gente só manda a cópia e deixa o fluxo seguir.
+2. **Só segura o envio quando ele iria pro vazio** — formulário sem `action`
+   faz POST na própria URL, e os route handlers das LPs só têm GET: era esse o
+   **HTTP 405** que ele viu.
+3. **`keepalive`**, pra requisição sobreviver à navegação.
 
-⚠️ **Regra**: o portal só instala a variante **"só o envio"**. Nada que o CRM
-gere pode desenhar coisa na página.
+Normaliza `form_fields[nome]` do Elementor, exige telefone com DDD e nunca
+envia o `_gotcha`.
 
-Sobre o **HTTP 405** que ele viu ao enviar: é o sintoma de o formulário ter
-feito envio nativo (POST na própria URL) em vez de rodar o script — os route
-handlers das LPs só têm GET. Com a variante certa instalada, o script chama
-`preventDefault` e isso não acontece. **Confirmar com ele depois de instalar a
-variante certa.**
+Conferido no navegador, com o código dele colado:
+
+```
+url   : https://www.sistemajayo.com/api/integrations/site/lead/pk_GFNMm_kOuM_H0kto
+corpo : {"nome":"Maria Teste","whatsapp":"11999998888","email":"m@e.com","pagina":"…"}
+        (_gotcha ficou de fora, e a página não navegou — sem 405)
+```
+
+⚠️ **Regra**: colar QUALQUER coisa que tenha a chave dentro tem que funcionar.
+Não mandar o James pedir variante pro Lucas — o portal se vira com a chave.
 
 ### 11/08 (parte 4) — unificação: uma lista, um webhook, um editor
 
