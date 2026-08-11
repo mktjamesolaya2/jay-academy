@@ -1,14 +1,11 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { getCurrentUser, canEdit } from "@/lib/auth";
-import { listarDestinos } from "@/lib/lead-destinos";
-import { listForms } from "@/lib/forms-store";
-import { listarWebhooks } from "@/lib/webhooks-entrada";
+import { listarIntegracoes, getCrm } from "@/lib/integracoes";
 import { IntegracoesWorkspace } from "@/components/integracoes-workspace";
-import { WebhooksEntradaPainel } from "@/components/webhooks-entrada-painel";
 
 export const dynamic = "force-dynamic";
 
@@ -36,14 +33,10 @@ export default async function IntegracoesPage() {
     );
   }
 
-  const [destinos, forms, webhooks] = await Promise.all([
-    listarDestinos(),
-    listForms(),
-    listarWebhooks(),
-  ]);
+  const [integracoes, crm] = await Promise.all([listarIntegracoes(), getCrm()]);
 
-  // O link tem que sair com o domínio de verdade (é ele que vai ser colado nas
-  // páginas), então lê do host da requisição em vez de chutar.
+  // O link tem que sair com o domínio de verdade — é ele que vai ser colado
+  // nos formulários —, então lê do host da requisição em vez de chutar.
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "jayacademy.com.br";
   const base = `${host.startsWith("localhost") ? "http" : "https"}://${host}`;
@@ -64,32 +57,13 @@ export default async function IntegracoesPage() {
             Integrações de lead
           </h2>
           <p className="mt-1.5 max-w-2xl text-[15px] text-neutral-400">
-            O caminho do lead, de ponta a ponta: ele <strong className="font-semibold text-neutral-200">chega</strong> pelo
-            nosso webhook e, se você quiser, <strong className="font-semibold text-neutral-200">segue</strong> pro
-            CRM. Sem depender de link de ninguém pra receber.
+            Cada integração gera um link. Cole o link no formulário e o lead
+            chega aqui e segue pro CRM.
           </p>
         </header>
 
-        <div className="space-y-10 px-5 py-6 lg:px-10 lg:py-8">
-          <WebhooksEntradaPainel webhooks={webhooks} base={base} />
-
-          <section>
-            <div className="mb-4 border-t border-[#1f1f1f] pt-6">
-              <h3 className="flex items-center gap-2 text-[17px] font-semibold text-white">
-                <ArrowRight size={16} strokeWidth={2.2} className="text-sky-400" />
-                Depois de chegar, mandar pra onde
-              </h3>
-              <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-neutral-400">
-                Opcional. Todo lead que entra é repassado pros destinos daqui —
-                é onde o CRM do Lucas entra quando ficar pronto. Sem nenhum
-                destino, o lead simplesmente fica guardado no portal.
-              </p>
-            </div>
-            <IntegracoesWorkspace
-              destinos={destinos}
-              origens={forms.map((f) => f.slug)}
-            />
-          </section>
+        <div className="px-5 py-6 lg:px-10 lg:py-8">
+          <IntegracoesWorkspace integracoes={integracoes} crm={crm} base={base} />
         </div>
       </main>
     </div>

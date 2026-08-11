@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
-import { entregarLead } from "@/lib/lead-destinos";
 import { leadDeFormulario } from "@/lib/lead-de-formulario";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 import { getLpFormConfig } from "@/lib/lp-form-config";
@@ -129,7 +128,9 @@ export async function POST(req: Request) {
       url: referer || undefined,
       extras: fields,
     });
-    const entregas = await entregarLead(lead, slug);
+    // O lead fica guardado no portal. Pra ele seguir pro CRM, o formulário
+    // desta página tem que apontar pro link da integração (/api/receber/<id>)
+    // — é lá que o mapeamento, as tags e a etapa são aplicados.
 
     await addSubmission({
       id: leadId,
@@ -140,7 +141,6 @@ export async function POST(req: Request) {
       submittedAt: lead.enviado_em,
       webhookStatus,
       webhookError,
-      entregas,
       lead,
     });
 

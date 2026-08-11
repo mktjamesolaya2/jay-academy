@@ -4,96 +4,126 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { logActivity } from "@/lib/activity-log";
 import {
-  listarDestinos,
-  salvarDestino,
-  excluirDestino,
-  testarDestino,
-  type Destino,
-} from "@/lib/lead-destinos";
-import { mapeamentoSugerido } from "@/lib/lead-campos";
-import { urlSegura } from "@/lib/lead-destinos-core";
-import {
   novoToken,
-  salvarWebhook,
-  acharWebhook,
-  excluirWebhook,
-} from "@/lib/webhooks-entrada";
+  mapeamentoInicial,
+  listarIntegracoes,
+  acharIntegracao,
+  salvarIntegracao,
+  excluirIntegracao,
+  getCrm,
+  setCrm,
+  type Integracao,
+  type ParDeCampo,
+} from "@/lib/integracoes";
+import { corpoParaOCrm } from "@/lib/integracoes-core";
 
-function novoId(): string {
-  return "dst-" + Math.random().toString(36).slice(2, 10);
+/** Lê as linhas do mapeamento (pares campo-do-formulário → campo-do-CRM). */
+function lerMapeamento(fd: FormData): ParDeCampo[] {
+  const de = fd.getAll("mapDe").map((v) => v.toString().trim());
+  const para = fd.getAll("mapPara").map((v) => v.toString().trim());
+  return de
+    .map((d, i) => ({ doFormulario: d, paraOCrm: para[i] ?? "" }))
+    .filter((p) => p.doFormulario && p.paraOCrm);
 }
 
-/** Aceita só http(s) — evita file://, javascript: e afins vindos do formulário. */
-function urlValida(u: string): boolean {
+function lerTags(fd: FormData): string[] {
+  return (fd.get("tags")?.toString() ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Cria ou salva a integração. O link nasce junto com ela — igual ao Clint, onde
+ * dar o nome já devolve o "Link de integração".
+ */
+export async function salvarIntegracaoAction(
+  fd: FormData
+): Promise<{ ok: boolean; id?: string; error?: string }> {
   try {
-    const p = new URL(u);
-    return p.protocol === "http:" || p.protocol === "https:";
-  } catch {
-    return false;
+    await requireAdmin();
+    const nome = (fd.get("nome")?.toString() ?? "").trim();
+    if (!nome) return { ok: false, error: "Dê um nome pra integração" };
+
+    const id = fd.get("id")?.toString() || novoToken();
+    const anterior = await acharIntegracao(id);
+    const mapeamento = lerMapeamento(fd);
+
+    const integracao: Integracao = {
+      id,
+      nome,
+      tipo: fd.get("tipo")?.toString() === "contato" ? "contato" : "negocio",
+      acao:
+        fd.get("acao")?.toString() === "criar"
+          ? "criar"
+          : fd.get("acao")?.toString() === "atualizar"
+          ? "atualizar"
+          : "criar_ou_atualizar",
+      mapeamento: mapeamento.length ? mapeamento : mapeamentoInicial(),
+      tags: lerTags(fd),
+      etapaCriacao: (fd.get("etapaCriacao")?.toString() ?? "").trim() || undefined,
+      etapaAtualizacao: (fd.get("etapaAtualizacao")?.toString() ?? "").trim() || undefined,
+      status: (fd.get("status")?.toString() ?? "").trim() || undefined,
+      ativo: anterior ? anterior.ativo : true,
+      criadoEm: anterior?.criadoEm ?? new Date().toISOString(),
+      recebidos: anterior?.recebidos,
+      ultimoEm: anterior?.ultimoEm,
+      // salvar reabilita: se foi desligada por 3 falhas, mexer nela é a chance
+      // de ter consertado o que estava errado
+      falhasSeguidas: 0,
+    };
+
+    await salvarIntegracao({ ...integracao, ativo: true });
+    await logActivity("wp.edit", nome, anterior ? "integração salva" : "integração criada");
+    revalidatePath("/settings/integracoes");
+    return { ok: true, id };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro ao salvar" };
   }
 }
 
-function lerMapeamento(fd: FormData): Record<string, string> {
-  const m: Record<string, string> = {};
-  for (const [k, v] of fd.entries()) {
-    const campo = k.match(/^map\[(.+)\]$/)?.[1];
-    if (!campo) continue;
-    const nome = v.toString().trim();
-    // vazio = "não mande este campo pra este destino"
-    if (nome) m[campo] = nome;
+export async function alternarIntegracaoAction(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const id = fd.get("id")?.toString() ?? "";
+  const i = await acharIntegracao(id);
+  if (i) await salvarIntegracao({ ...i, ativo: !i.ativo, falhasSeguidas: 0 });
+  revalidatePath("/settings/integracoes");
+}
+
+export async function excluirIntegracaoAction(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const id = fd.get("id")?.toString() ?? "";
+  if (id) {
+    await excluirIntegracao(id);
+    await logActivity("wp.edit", id, "integração excluída");
   }
-  return m;
+  revalidatePath("/settings/integracoes");
 }
 
-function lerExtras(fd: FormData): Record<string, string> {
-  const extras: Record<string, string> = {};
-  const chaves = fd.getAll("extraChave").map((v) => v.toString().trim());
-  const valores = fd.getAll("extraValor").map((v) => v.toString().trim());
-  chaves.forEach((c, i) => {
-    if (c && valores[i]) extras[c] = valores[i];
-  });
-  return extras;
-}
-
-export async function salvarDestinoAction(
+/** Onde fica o CRM — um só pra casa inteira. */
+export async function salvarCrmAction(
   fd: FormData
 ): Promise<{ ok: boolean; error?: string }> {
   try {
     await requireAdmin();
-    const nome = (fd.get("nome")?.toString() ?? "").trim();
-    const url = (fd.get("url")?.toString() ?? "").trim();
-    if (!nome) return { ok: false, error: "Dê um nome pra integração" };
-    if (!urlValida(url)) return { ok: false, error: "Link inválido — tem que começar com https://" };
-
-    const tipoAuth = fd.get("authTipo")?.toString() ?? "nenhuma";
-    const valorAuth = (fd.get("authValor")?.toString() ?? "").trim();
-    const headerAuth = (fd.get("authHeader")?.toString() ?? "").trim();
-
-    const destino: Destino = {
-      id: fd.get("id")?.toString() || novoId(),
-      nome,
+    const url = (fd.get("crmUrl")?.toString() ?? "").trim();
+    if (!url) {
+      await setCrm(null);
+      revalidatePath("/settings/integracoes");
+      return { ok: true };
+    }
+    try {
+      const p = new URL(url);
+      if (p.protocol !== "https:" && p.protocol !== "http:") throw new Error();
+    } catch {
+      return { ok: false, error: "Endereço inválido — tem que começar com https://" };
+    }
+    await setCrm({
       url,
-      ativo: fd.get("ativo") === "on",
-      auth:
-        tipoAuth === "bearer" && valorAuth
-          ? { tipo: "bearer", valor: valorAuth }
-          : tipoAuth === "header" && headerAuth && valorAuth
-          ? { tipo: "header", header: headerAuth, valor: valorAuth }
-          : { tipo: "nenhuma" },
-      mapeamento: lerMapeamento(fd),
-      tagsFixas: (fd.get("tags")?.toString() ?? "")
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-      extras: lerExtras(fd),
-      somenteDe: (fd.get("somenteDe")?.toString() ?? "")
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-    };
-
-    await salvarDestino(destino);
-    await logActivity("wp.edit", destino.nome, `integração salva (${urlSegura(destino.url)})`);
+      header: (fd.get("crmHeader")?.toString() ?? "").trim() || undefined,
+      token: (fd.get("crmToken")?.toString() ?? "").trim() || undefined,
+    });
+    await logActivity("wp.edit", "CRM", "endereço do CRM salvo");
     revalidatePath("/settings/integracoes");
     return { ok: true };
   } catch (e) {
@@ -101,95 +131,61 @@ export async function salvarDestinoAction(
   }
 }
 
-export async function excluirDestinoAction(fd: FormData): Promise<void> {
-  await requireAdmin();
-  const id = fd.get("id")?.toString() ?? "";
-  if (id) {
-    await excluirDestino(id);
-    await logActivity("wp.edit", id, "integração excluída");
-  }
-  revalidatePath("/settings/integracoes");
-}
-
 /**
- * Dispara um lead de mentira e devolve a resposta crua.
- *
- * É o que evita usar lead de verdade como cobaia no dia que o Lucas mandar o
- * endpoint: dá pra ver na hora se o token está certo e se ele aceitou o
- * formato, antes de qualquer campanha estar no ar.
+ * Manda um lead de mentira pelo caminho inteiro e devolve a resposta crua.
+ * É o que evita usar lead de verdade como cobaia quando o CRM chegar.
  */
-export async function testarDestinoAction(
-  id: string
-): Promise<{
+export async function testarIntegracaoAction(id: string): Promise<{
   ok: boolean;
-  status?: string;
   http?: number;
   erro?: string;
   enviado?: string;
-  url?: string;
+  semCrm?: boolean;
 }> {
   await requireAdmin();
-  const destino = (await listarDestinos()).find((d) => d.id === id);
-  if (!destino) return { ok: false, erro: "Integração não encontrada" };
-  const r = await testarDestino(destino);
-  return {
-    ok: r.entrega.status === "ok",
-    status: r.entrega.status,
-    http: r.entrega.http,
-    erro: r.entrega.erro,
-    enviado: JSON.stringify(r.enviado, null, 2),
-    url: r.url,
-  };
-}
+  const integracao = (await listarIntegracoes()).find((i) => i.id === id);
+  if (!integracao) return { ok: false, erro: "Integração não encontrada" };
 
-/* ── Webhook de ENTRADA — o endereço que é nosso ────────────────────────── */
+  const campos = { nome: "Teste Jay Academy", email: "teste@jayacademy.com.br", telefone: "11999999999" };
+  const corpo = corpoParaOCrm(
+    integracao,
+    {
+      id: `teste-${Date.now()}`,
+      nome: campos.nome,
+      email: campos.email,
+      telefone: campos.telefone,
+      enviado_em: new Date().toISOString(),
+      tags: [],
+      campos: {},
+    },
+    campos
+  );
 
-export async function criarWebhookAction(
-  fd: FormData
-): Promise<{ ok: boolean; id?: string; error?: string }> {
+  const crm = await getCrm();
+  if (!crm?.url) {
+    return { ok: true, semCrm: true, enviado: JSON.stringify(corpo, null, 2) };
+  }
   try {
-    await requireAdmin();
-    const nome = (fd.get("nome")?.toString() ?? "").trim();
-    if (!nome) return { ok: false, error: "Dê um nome pro webhook" };
-    const w = {
-      id: novoToken(),
-      nome,
-      ativo: true,
-      criadoEm: new Date().toISOString(),
-      tags: (fd.get("tags")?.toString() ?? "")
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
+    const cabecalhos: Record<string, string> = { "Content-Type": "application/json" };
+    if (crm.header && crm.token) cabecalhos[crm.header] = crm.token;
+    const r = await fetch(crm.url, {
+      method: "POST",
+      headers: cabecalhos,
+      body: JSON.stringify(corpo),
+      signal: AbortSignal.timeout(8000),
+    });
+    const texto = await r.text().catch(() => "");
+    return {
+      ok: r.ok,
+      http: r.status,
+      erro: r.ok ? undefined : texto.slice(0, 300),
+      enviado: JSON.stringify(corpo, null, 2),
     };
-    await salvarWebhook(w);
-    await logActivity("wp.edit", nome, "webhook de entrada criado");
-    revalidatePath("/settings/integracoes");
-    return { ok: true, id: w.id };
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Erro ao criar" };
+    return {
+      ok: false,
+      erro: e instanceof Error ? e.message : "Erro de rede",
+      enviado: JSON.stringify(corpo, null, 2),
+    };
   }
-}
-
-export async function alternarWebhookAction(fd: FormData): Promise<void> {
-  await requireAdmin();
-  const id = fd.get("id")?.toString() ?? "";
-  const w = await acharWebhook(id);
-  if (w) await salvarWebhook({ ...w, ativo: !w.ativo });
-  revalidatePath("/settings/integracoes");
-}
-
-export async function excluirWebhookAction(fd: FormData): Promise<void> {
-  await requireAdmin();
-  const id = fd.get("id")?.toString() ?? "";
-  if (id) {
-    await excluirWebhook(id);
-    await logActivity("wp.edit", id, "webhook de entrada excluído");
-  }
-  revalidatePath("/settings/integracoes");
-}
-
-/** Mapeamento inicial pra um destino novo (a tela começa preenchida). */
-export async function sugestaoDeMapeamentoAction(): Promise<Record<string, string>> {
-  await requireAdmin();
-  return mapeamentoSugerido();
 }

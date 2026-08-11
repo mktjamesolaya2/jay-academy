@@ -12,102 +12,77 @@ James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
 com vc as imagens não estão subindo p ca!"* e depois *"deixa como a galeria do
 iphone acho q ficaria bom"*.
 
-## 🔌 Sessão 2026-08-11 — base da integração com o CRM do Lucas
+## 🔌 Sessão 2026-08-11 — integração de lead (CRM do Lucas)
 
-Projeto novo. O Lucas (gerente) está fazendo um CRM próprio pra **sair do
-Clint**. Enquanto ele não fica pronto, o Clint continua recebendo (tem campanha
-no ar). Ele ainda não mandou o endpoint — isto aqui é a base, pra no dia só
-preencher URL e token.
+O Lucas está fazendo um CRM próprio pra **sair do Clint**. Ele ainda não mandou
+o endpoint — isto é a base, pra no dia só preencher o endereço.
 
-### ⚠️ A correção do James: o webhook tem que ser NOSSO
+### ⚠️ Eu errei duas vezes antes de acertar
 
-Eu tinha construído só a **saída** (portal → CRM), que dependia de alguém de
-fora gerar o link. James: *"a intenção é a gente sair do Clint, então o Clint
-não vai mais precisar criar o webhook. A gente tem que criar a webhook, e a
-webhook que a gente criar, a gente integra nas páginas. Os dados têm que vir
-pra gente."*
+1. Fiz só a **saída** (portal → CRM), que depende de alguém de fora gerar o
+   link. James: *"a intenção é sair do Clint, então o Clint não vai mais
+   precisar criar o webhook. A webhook tem que ser NOSSA."*
+2. Consertei criando um segundo conceito (webhook de entrada + destinos de
+   saída). James: *"faz um negócio só, não cria dois não, pra não ficar
+   perdido"*. E mandou ler a documentação do Clint — **ordem, não pedido**.
 
-São **dois webhooks, em direções opostas** — e é aqui que dá nó:
+**A documentação lida** (ajuda.clint.digital, "Como integrar a Clint com outras
+plataformas via webhook") resolveu a discussão: no Clint é UM objeto só, e o
+caminho é dar o nome → ele gera o link → colar no formulário. Dela também vieram
+regras que copiei:
+
+- **Negócio x Contato**: contato é a pessoa; negócio é a oportunidade dela.
+- **Criar / Atualizar / Criar ou atualizar** — o que fazer se o contato já
+  existe; identificação por **e-mail e/ou telefone** (por isso a tela avisa que
+  mapear um dos dois é o que deixa o CRM reconhecer quem já é cliente).
+- **Mapeamento**: esquerda = nome do campo na ferramenta de fora, direita =
+  campo do CRM. ⚠️ É NESTA direção. Eu tinha feito ao contrário.
+- **Configuração**: tags, etapa para criação, etapa para atualização, status.
+- **Webhook que falha 3 vezes seguidas é desativado** — copiado.
+
+### Como ficou
+
+**Uma** entidade: `lib/integracoes.ts`. Assistente de 3 etapas (Criação ·
+Mapeamento · Configuração), igual ao Clint. O link nasce ao salvar o nome.
 
 ```
-ENTRADA (nosso)   página/ferramenta  →  portal     ← é o que ele pediu
-SAÍDA (destinos)       portal        →  CRM
+POST /api/receber/<token>
+  → aplica o mapeamento
+  → guarda o lead no portal
+  → manda pro CRM com tipo, ação, tags, etapa e status
 ```
 
-- **`app/api/receber/[token]/route.ts`** — o endereço nosso.
-  `POST /api/receber/wh_<token>`. O token é sorteado (18 bytes) e **é a senha**:
-  quem tem o link manda lead. Dá pra desligar e apagar.
-- Aceita **JSON, formulário comum e o formato do Elementor**, e acha
-  nome/e-mail/telefone com qualquer nome de campo (`your-name`,
-  `form_fields[email]`, payload aninhado, lista `{name,value}`). Exigir um
-  formato faria o link só funcionar onde a gente mesmo montou o formulário — e
-  aí não serve de webhook. Regra em **`lib/campos-recebidos.ts`**, 8 testes.
-- **CORS liberado** — o formulário que posta pode estar em outro domínio, e sem
-  isso o navegador barra antes de sair.
-- Guarda o lead **antes** de repassar: CRM fora do ar não faz o lead sumir.
-- Token errado e token desligado dão a MESMA resposta — quem sonda não descobre
-  se o endereço existe.
+- Aceita **JSON, formulário comum e o formato do Elementor**, e reconhece
+  nome/e-mail/telefone com qualquer nome de campo. Exigir um formato faria o
+  link só funcionar onde a gente mesmo montou o formulário.
+- **CORS liberado** — o formulário pode estar em outro domínio.
+- **Guarda antes de repassar**: CRM fora do ar não faz lead sumir.
+- Link errado e link desligado dão a MESMA resposta.
+- O endereço do CRM é **um só pra casa**, no rodapé da tela. Vazio = os leads
+  só ficam guardados no portal.
 
-Testado com 5 formatos: JSON, formulário, Elementor, token errado (404) e
-payload sem contato (400). Os 3 válidos caíram no portal com as tags certas.
+### O que NÃO fazer de novo
 
-### O que estava no caminho
-
-Cada formulário guardava **UMA** url de webhook, e o disparo estava escrito em
-**três lugares**: `app/f/[slug]/actions.ts` (formulários do portal),
-`app/api/elementor-form/route.ts` (LPs) e `app/api/wp-form-submit/route.ts`
-(páginas WP). Mandar pro Clint E pro CRM ao mesmo tempo exigiria editar
-formulário por formulário e mexer nos três arquivos. Pior: `webhookStatus` é um
-campo só — falhar num destino e funcionar no outro ficava invisível.
-
-⚠️ **O caminho Elementor NÃO está morto.** São **27 referências a
-`/api/elementor-form` em 4 LPs vivas** (basic-nanofios,
-curso-online-profissao-remove, fio-a-fio-realista-by-james-olaya,
-pdv-lips-sense-technique). É por onde entra a maior parte dos leads hoje.
-
-### O que foi feito
-
-- **`lib/lead-campos.ts`** — o catálogo completo de campos (a lista que o James
-  ditou do Clint + utm/anúncio). Fonte única: o que o portal guarda, o que a
-  tela de mapeamento oferece e o que sai no payload. ⚠️ Cada campo diz de onde
-  nasce (`formulario` / `automatico` / `conversa`) — os formulários pedem só
-  nome, WhatsApp e e-mail; barreira, perfil e afins vêm do atendimento.
-- **`lib/lead-destinos-core.ts`** (puro, 13 testes) + **`lead-destinos.ts`** (KV
-  + disparo). Vários destinos, cada um com o **nome dos campos dele**, tags
-  fixas, campos fixos (etapa/status), autenticação (Bearer / cabeçalho próprio)
-  e filtro por página. Disparo **em paralelo** — em série, dois CRMs lentos
-  viram 16s de espera pro visitante.
-- **`lib/lead-de-formulario.ts`** — monta o lead completo. Antes o payload levava
-  4 campos e jogava fora **utm, campanha, fbclid e a URL de origem**: informação
-  de venda indo pro lixo em todo lead.
-- **Status por destino** (`entregas[]`) + o lead inteiro guardado, pra dar pra
-  reenviar depois. `reenviarFalhas()` já existe; o botão em `/leads` fica pra
-  quando o endpoint chegar.
-- **Tela: `/settings/integracoes`** (card em Configurações). Seções com o
-  vocabulário do Clint, que é o que o James conhece: Geral · Mapeamento ·
-  Configuração. Tem **Testar**, que dispara um lead de mentira e mostra a
-  resposta crua — pra não usar lead de verdade como cobaia.
-- A url nunca aparece inteira na tela nem no log (`urlSegura`): **no Clint o
-  link É a senha**.
+- Não quebrar a integração em dois conceitos.
+- Não escrever texto explicando o que é webhook na tela: *"isso é um site
+  nosso, não precisa explicar nada dessas coisas"*.
+- Os 3 caminhos antigos de formulário só guardam o lead. Quem manda pro CRM é o
+  link da integração, colado no formulário.
 
 ### Verificado de ponta a ponta
 
-Com um CRM de mentira exigindo token, um lead pela rota das LPs caiu nos **dois
-destinos ao mesmo tempo**, cada um com os nomes dele:
+Formulário postou no link → lead guardado → CRM (de mentira) recebeu:
 
+```json
+{ "tipo": "negocio", "acao": "criar_ou_atualizar", "integracao": "LP Basic NanoFios",
+  "nome": "Maria Silva", "email": "…", "telefone": "…", "cidade": "Recife",
+  "tags": ["LP Basic NanoFios", "nanofios"], "etapa_criacao": "Base", "status": "Aberto" }
 ```
-CRM:   nome_completo, celular, campanha, etapa=Base, status=Aberto, tags=[basic-nanofios, site]
-Clint: name, phone, utm_campaign, tags=[basic-nanofios, clint]
-```
-
-Com o CRM fora do ar: visitante recebeu 200, lead guardado, Clint entregue,
-CRM marcado `falhou · fetch failed`. **Nada se perde.** Acento sobrevive.
 
 ### Esperando o Lucas
 
-URL (produção e teste), autenticação, nomes dos campos, o que ele responde, se
-deduplica (mandamos um `id` único em todo lead), limite de requisições, e se
-volta alguma coisa do CRM pro portal.
+Endereço do CRM, se pede senha (cabeçalho + token), os nomes dos campos que ele
+espera, e se ele deduplica (mandamos um `id` único em todo lead).
 
 ---
 

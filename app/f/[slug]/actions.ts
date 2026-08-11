@@ -6,7 +6,6 @@ import {
   getFormBySlug,
   type FormSubmission,
 } from "@/lib/forms-store";
-import { entregarLead } from "@/lib/lead-destinos";
 import { leadDeFormulario } from "@/lib/lead-de-formulario";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { rateLimitByIp, clientIpFromHeaders } from "@/lib/rate-limit";
@@ -110,7 +109,9 @@ export async function submitFormAction(
     origem: form.slug,
     extras: Object.fromEntries(formData.entries()),
   });
-  const entregas = await entregarLead(lead, form.slug);
+  // O lead fica guardado no portal. Pra ele seguir pro CRM, o formulário
+  // desta página tem que apontar pro link da integração (/api/receber/<id>)
+  // — é lá que o mapeamento, as tags e a etapa são aplicados.
 
   await addSubmission({
     id: leadId,
@@ -121,7 +122,6 @@ export async function submitFormAction(
     submittedAt: lead.enviado_em,
     webhookStatus,
     webhookError,
-    entregas,
     lead,
   });
 

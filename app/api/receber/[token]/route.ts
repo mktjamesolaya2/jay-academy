@@ -2,24 +2,25 @@ import { NextResponse } from "next/server";
 import { addSubmission } from "@/lib/forms-store";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
-import { acharWebhook, registrarRecebimento } from "@/lib/webhooks-entrada";
+import { acharIntegracao, registrarEntrada, getCrm } from "@/lib/integracoes";
+import { aplicarMapeamento, corpoParaOCrm } from "@/lib/integracoes-core";
 import { achatar, acharCampo } from "@/lib/campos-recebidos";
 import { leadDeFormulario } from "@/lib/lead-de-formulario";
-import { entregarLead } from "@/lib/lead-destinos";
 
 /**
- * O NOSSO webhook. É este endereço que a gente cola nas páginas.
+ * O link da integração. É este endereço que a gente cola no formulário.
  *
- * `POST /api/receber/<token>` — o token é o que a tela de integrações gera.
- * O lead cai direto no portal, sem passar por Clint nem por ninguém.
+ * `POST /api/receber/<token>` — o token nasce junto com a integração, na tela
+ * de Integrações de lead. O caminho inteiro é: o formulário posta aqui, o lead
+ * é guardado no portal, e daqui segue pro CRM já com o mapeamento, as tags, a
+ * etapa e o status daquela integração.
  *
- * Aceita JSON, formulário comum e o formato do Elementor, porque o link vai
- * ser colado em lugares que a gente não controla. Exigir um formato só faria
- * o link funcionar apenas onde a gente mesmo montou o formulário — e aí não
- * serviria de webhook.
+ * Aceita JSON, formulário comum e o formato do Elementor, porque o link vai ser
+ * colado em lugares diferentes. Exigir um formato só faria ele funcionar apenas
+ * onde a gente mesmo montou o formulário — e aí não serve de webhook.
  *
- * Responde com CORS liberado: o formulário que posta pode estar em outro
- * domínio, e sem isso o navegador bloqueia antes mesmo de sair.
+ * CORS liberado: o formulário que posta pode estar em outro domínio, e sem isso
+ * o navegador bloqueia antes de sair.
  */
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,6 @@ async function lerCorpo(req: Request): Promise<Record<string, string>> {
   if (tipo.includes("application/json")) {
     return achatar(await req.json().catch(() => ({})));
   }
-  // multipart e urlencoded — formulário de página, Elementor, etc.
   const fd = await req.formData().catch(() => null);
   if (!fd) return {};
   const cru: Record<string, string> = {};
@@ -62,18 +62,22 @@ export async function POST(
     return r;
   }
 
-  const webhook = await acharWebhook(token);
-  // Mesma resposta pra token errado e token desligado: quem está sondando não
-  // descobre se o endereço existe.
-  if (!webhook || !webhook.ativo) {
-    return NextResponse.json({ ok: false, erro: "Webhook não encontrado" }, { status: 404, headers: CORS });
+  const integracao = await acharIntegracao(token);
+  // Mesma resposta pra link errado e link desligado: quem sonda não descobre
+  // se o endereço existe.
+  if (!integracao || !integracao.ativo) {
+    return NextResponse.json({ ok: false, erro: "Integração não encontrada" }, { status: 404, headers: CORS });
   }
 
   try {
-    const campos = await lerCorpo(req);
-    const nome = acharCampo(campos, "nome");
-    const email = acharCampo(campos, "email");
-    const telefone = acharCampo(campos, "telefone");
+    const recebido = await lerCorpo(req);
+    const campos = aplicarMapeamento(recebido, integracao.mapeamento);
+
+    // Identificação: procura no que JÁ foi mapeado; se a pessoa não mapeou
+    // nada, cai no reconhecimento automático pelo nome/formato do campo.
+    const nome = campos.nome || acharCampo(recebido, "nome");
+    const email = campos.email || acharCampo(recebido, "email");
+    const telefone = campos.telefone || acharCampo(recebido, "telefone");
 
     if (!nome && !email && !telefone) {
       return NextResponse.json(
@@ -88,44 +92,52 @@ export async function POST(
       nome,
       email,
       telefone,
-      origem: webhook.nome,
-      url: campos.url || req.headers.get("referer") || undefined,
+      origem: integracao.nome,
+      url: campos.url || recebido.url || req.headers.get("referer") || undefined,
       extras: campos,
-      tags: webhook.tags,
+      tags: integracao.tags,
     });
 
     // Guarda ANTES de repassar: se o CRM estiver fora do ar, o lead já é nosso.
     await addSubmission({
       id: leadId,
-      formId: `wh:${webhook.id}`,
+      formId: `wh:${integracao.id}`,
       name: nome || "(sem nome)",
       whatsapp: telefone,
       email,
       submittedAt: lead.enviado_em,
       lead,
     });
-    await registrarRecebimento(webhook.id);
 
-    // Repassa pros destinos de saída (o CRM), se houver algum cadastrado.
-    const entregas = await entregarLead(lead, webhook.nome);
-    if (entregas.length) {
+    const repasse = await mandarProCrm(integracao, lead, campos);
+    await registrarEntrada(integracao.id, repasse);
+
+    if (repasse !== null) {
       await addSubmission({
         id: leadId,
-        formId: `wh:${webhook.id}`,
+        formId: `wh:${integracao.id}`,
         name: nome || "(sem nome)",
         whatsapp: telefone,
         email,
         submittedAt: lead.enviado_em,
         lead,
-        entregas,
+        entregas: [
+          {
+            destinoId: "crm",
+            destinoNome: "CRM",
+            status: repasse ? "ok" : "falhou",
+            em: new Date().toISOString(),
+            tentativas: 1,
+          },
+        ],
       });
     }
 
     await logAnonymousActivity(
       "form.submission",
       nome || email || telefone || "anônimo",
-      webhook.nome,
-      "pelo nosso webhook"
+      integracao.nome,
+      repasse === null ? "guardado no portal" : repasse ? "enviado pro CRM" : "CRM não respondeu"
     );
 
     return NextResponse.json({ ok: true, id: leadId }, { headers: CORS });
@@ -136,5 +148,28 @@ export async function POST(
       { ok: false, erro: e instanceof Error ? e.message : "Erro interno" },
       { status: 500, headers: CORS }
     );
+  }
+}
+
+/** Repassa pro CRM. `null` = não há CRM configurado ainda. */
+async function mandarProCrm(
+  integracao: Awaited<ReturnType<typeof acharIntegracao>>,
+  lead: Parameters<typeof corpoParaOCrm>[1],
+  campos: Record<string, string>
+): Promise<boolean | null> {
+  const crm = await getCrm();
+  if (!crm?.url || !integracao) return null;
+  try {
+    const cabecalhos: Record<string, string> = { "Content-Type": "application/json" };
+    if (crm.header && crm.token) cabecalhos[crm.header] = crm.token;
+    const r = await fetch(crm.url, {
+      method: "POST",
+      headers: cabecalhos,
+      body: JSON.stringify(corpoParaOCrm(integracao, lead, campos)),
+      signal: AbortSignal.timeout(8000),
+    });
+    return r.ok;
+  } catch {
+    return false;
   }
 }

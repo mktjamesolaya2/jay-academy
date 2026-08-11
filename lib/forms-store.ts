@@ -1,6 +1,6 @@
 import "server-only";
 import { kvDel, kvGet, kvKeys, kvSet } from "./storage";
-import type { Entrega } from "./lead-destinos-core";
+import type { Entrega } from "./integracoes-core";
 import type { Lead } from "./lead-campos";
 
 export type FormConfig = {
