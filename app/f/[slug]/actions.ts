@@ -6,6 +6,8 @@ import {
   getFormBySlug,
   type FormSubmission,
 } from "@/lib/forms-store";
+import { entregarLead } from "@/lib/lead-destinos";
+import { leadDeFormulario } from "@/lib/lead-de-formulario";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { rateLimitByIp, clientIpFromHeaders } from "@/lib/rate-limit";
 
@@ -95,15 +97,32 @@ export async function submitFormAction(
     }
   }
 
+  // Destinos cadastrados (o CRM novo) — somam ao webhook antigo do formulário,
+  // não substituem: o Clint continua recebendo pelo caminho de sempre enquanto
+  // a transição não termina. Nunca lança, então lead nenhum se perde por causa
+  // de CRM fora do ar.
+  const leadId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const lead = leadDeFormulario({
+    id: leadId,
+    nome: name,
+    email,
+    telefone: whatsapp,
+    origem: form.slug,
+    extras: Object.fromEntries(formData.entries()),
+  });
+  const entregas = await entregarLead(lead, form.slug);
+
   await addSubmission({
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    id: leadId,
     formId: form.id,
     name,
     whatsapp,
     email,
-    submittedAt: new Date().toISOString(),
+    submittedAt: lead.enviado_em,
     webhookStatus,
     webhookError,
+    entregas,
+    lead,
   });
 
   await logAnonymousActivity(

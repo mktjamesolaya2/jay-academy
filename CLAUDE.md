@@ -41,7 +41,11 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
 - `leads` — inbox de submissões (+`leads/export` CSV). `forms` — CRUD de forms (+`new`, `[id]`).
 - `websites` — páginas tipo website. `lps` — LPs de venda (+`[slug]/{build,edit-visual}`, `new`).
 - `analytics` — visitas por página. `midia` — biblioteca de mídia. `sugestoes` — sugestões+upvote.
-- `settings` (+`users` roles, +`backup` do KV). `lixeira` — trash restaurável.
+- `settings` (+`users` roles, +`backup` do KV, +`integracoes` destinos de lead). `lixeira` — trash.
+  ⚠️ **Lead sai por 3 caminhos** (`app/f/[slug]/actions.ts`, `api/elementor-form`, `api/wp-form-submit`)
+  — os três chamam `entregarLead()` de `lib/lead-destinos.ts`. Campo novo entra em `lib/lead-campos.ts`
+  e aparece sozinho no payload e na tela de mapeamento. O webhook antigo por formulário (Clint)
+  continua rodando em paralelo até a saída dele.
 - `wordpress` — importação DESATIVADA (migração concluída); redireciona pra `/wp-pages`.
 - `login`; `f/[slug]` — render público de form standalone.
 
@@ -128,7 +132,7 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 - Comentários e docs de projeto (README, `notas/`) em português — manter o padrão.
 - Editar LPs de `lp-html/` como HTML puro, commit por página.
 - **Testes**: `npm test` (5 arquivos: page-catalog, rate-limit, wp-localize-core, media-nomes,
-  variantes, media-albuns; 128 casos).
+  variantes, media-albuns, lead-destinos-core; 141 casos).
 - Scripts: `npm run dev|build|start`. ⚠️ **`npm run lint` NÃO funciona** — `next lint` saiu no Next 16 e
   o projeto não tem `eslint.config.js` nem dependência de eslint. Vale `npx tsc --noEmit`, que passa limpo.
   `npm run checar-modelos` valida a cadeia de IA do chat contra o catálogo público da OpenRouter.

@@ -12,6 +12,73 @@ James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
 com vc as imagens não estão subindo p ca!"* e depois *"deixa como a galeria do
 iphone acho q ficaria bom"*.
 
+## 🔌 Sessão 2026-08-11 — base da integração com o CRM do Lucas
+
+Projeto novo. O Lucas (gerente) está fazendo um CRM próprio pra **sair do
+Clint**. Enquanto ele não fica pronto, o Clint continua recebendo (tem campanha
+no ar). Ele ainda não mandou o endpoint — isto aqui é a base, pra no dia só
+preencher URL e token.
+
+### O que estava no caminho
+
+Cada formulário guardava **UMA** url de webhook, e o disparo estava escrito em
+**três lugares**: `app/f/[slug]/actions.ts` (formulários do portal),
+`app/api/elementor-form/route.ts` (LPs) e `app/api/wp-form-submit/route.ts`
+(páginas WP). Mandar pro Clint E pro CRM ao mesmo tempo exigiria editar
+formulário por formulário e mexer nos três arquivos. Pior: `webhookStatus` é um
+campo só — falhar num destino e funcionar no outro ficava invisível.
+
+⚠️ **O caminho Elementor NÃO está morto.** São **27 referências a
+`/api/elementor-form` em 4 LPs vivas** (basic-nanofios,
+curso-online-profissao-remove, fio-a-fio-realista-by-james-olaya,
+pdv-lips-sense-technique). É por onde entra a maior parte dos leads hoje.
+
+### O que foi feito
+
+- **`lib/lead-campos.ts`** — o catálogo completo de campos (a lista que o James
+  ditou do Clint + utm/anúncio). Fonte única: o que o portal guarda, o que a
+  tela de mapeamento oferece e o que sai no payload. ⚠️ Cada campo diz de onde
+  nasce (`formulario` / `automatico` / `conversa`) — os formulários pedem só
+  nome, WhatsApp e e-mail; barreira, perfil e afins vêm do atendimento.
+- **`lib/lead-destinos-core.ts`** (puro, 13 testes) + **`lead-destinos.ts`** (KV
+  + disparo). Vários destinos, cada um com o **nome dos campos dele**, tags
+  fixas, campos fixos (etapa/status), autenticação (Bearer / cabeçalho próprio)
+  e filtro por página. Disparo **em paralelo** — em série, dois CRMs lentos
+  viram 16s de espera pro visitante.
+- **`lib/lead-de-formulario.ts`** — monta o lead completo. Antes o payload levava
+  4 campos e jogava fora **utm, campanha, fbclid e a URL de origem**: informação
+  de venda indo pro lixo em todo lead.
+- **Status por destino** (`entregas[]`) + o lead inteiro guardado, pra dar pra
+  reenviar depois. `reenviarFalhas()` já existe; o botão em `/leads` fica pra
+  quando o endpoint chegar.
+- **Tela: `/settings/integracoes`** (card em Configurações). Seções com o
+  vocabulário do Clint, que é o que o James conhece: Geral · Mapeamento ·
+  Configuração. Tem **Testar**, que dispara um lead de mentira e mostra a
+  resposta crua — pra não usar lead de verdade como cobaia.
+- A url nunca aparece inteira na tela nem no log (`urlSegura`): **no Clint o
+  link É a senha**.
+
+### Verificado de ponta a ponta
+
+Com um CRM de mentira exigindo token, um lead pela rota das LPs caiu nos **dois
+destinos ao mesmo tempo**, cada um com os nomes dele:
+
+```
+CRM:   nome_completo, celular, campanha, etapa=Base, status=Aberto, tags=[basic-nanofios, site]
+Clint: name, phone, utm_campaign, tags=[basic-nanofios, clint]
+```
+
+Com o CRM fora do ar: visitante recebeu 200, lead guardado, Clint entregue,
+CRM marcado `falhou · fetch failed`. **Nada se perde.** Acento sobrevive.
+
+### Esperando o Lucas
+
+URL (produção e teste), autenticação, nomes dos campos, o que ele responde, se
+deduplica (mandamos um `id` único em todo lead), limite de requisições, e se
+volta alguma coisa do CRM pro portal.
+
+---
+
 ### Parte 7 — Baixar a imagem pelo visualizador
 
 Botão **Baixar** no visualizador, e o cabeçalho agora mostra a **medida real** do

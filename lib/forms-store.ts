@@ -1,5 +1,7 @@
 import "server-only";
 import { kvDel, kvGet, kvKeys, kvSet } from "./storage";
+import type { Entrega } from "./lead-destinos-core";
+import type { Lead } from "./lead-campos";
 
 export type FormConfig = {
   id: string;
@@ -22,8 +24,17 @@ export type FormSubmission = {
   whatsapp: string;
   email: string;
   submittedAt: string;
+  /** webhook antigo, o campo de url que mora em cada formulário (hoje: Clint) */
   webhookStatus?: "sent" | "failed" | "skipped";
   webhookError?: string;
+  /**
+   * Entregas nos destinos cadastrados em /settings/integracoes — uma por
+   * destino. O `webhookStatus` acima é um só e não diz ONDE falhou; com dois
+   * CRMs ao mesmo tempo, isso vira lead sumido sem ninguém perceber.
+   */
+  entregas?: Entrega[];
+  /** o lead inteiro, pra dar pra reenviar sem depender do formulário original */
+  lead?: Lead;
 };
 
 const FORMS_KEY = "forms:all";

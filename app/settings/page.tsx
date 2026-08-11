@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Trash2, ChevronRight, Users, DatabaseBackup } from "lucide-react";
+import { Trash2, ChevronRight, Users, DatabaseBackup, Share2 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { loadLps } from "@/lib/lp-store";
@@ -126,6 +126,34 @@ export default async function SettingsPage() {
                 value="Publicação agendada diária às 9h (/api/cron/publish)"
               />
             </Section>
+
+            <Link
+              href="/settings/integracoes"
+              className="lg:col-span-2 bg-gradient-to-r from-sky-500/5 to-transparent border border-sky-500/30 hover:border-sky-500/50 rounded-2xl p-6 flex items-center justify-between gap-4 transition group"
+            >
+              <div className="flex items-center gap-4">
+                <span className="w-11 h-11 rounded-lg bg-sky-500/15 ring-1 ring-sky-500/30 flex items-center justify-center">
+                  <Share2 size={16} strokeWidth={2} className="text-sky-300" />
+                </span>
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-sky-300 font-semibold">
+                    Leads
+                  </p>
+                  <h3 className="font-semibold text-base text-white tracking-tight mt-0.5">
+                    Integrações de lead (CRM)
+                  </h3>
+                  <p className="text-xs text-neutral-400 mt-0.5">
+                    Pra onde vai cada lead dos formulários — mais de um destino
+                    ao mesmo tempo, com mapeamento de campos e teste
+                  </p>
+                </div>
+              </div>
+              <ChevronRight
+                size={16}
+                strokeWidth={2}
+                className="text-neutral-500 group-hover:text-white group-hover:translate-x-0.5 transition"
+              />
+            </Link>
 
             {isSenior && (
               <Link

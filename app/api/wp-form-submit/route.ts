@@ -5,6 +5,8 @@ import {
   addSubmission,
   type FormSubmission,
 } from "@/lib/forms-store";
+import { entregarLead } from "@/lib/lead-destinos";
+import { leadDeFormulario } from "@/lib/lead-de-formulario";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 
 type Incoming = {
@@ -124,15 +126,31 @@ export async function POST(req: Request) {
     // Usa o próprio publicSlug como "formId virtual" pra agrupar submissões
     // de páginas WP — fica em form-submissions:wp:<slug>
     const virtualFormId = `wp:${publicSlug}`;
+
+    // Destinos cadastrados (o CRM novo). Somam ao webhook da página, não trocam.
+    const leadId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const lead = leadDeFormulario({
+      id: leadId,
+      nome: name || "",
+      email: email || "",
+      telefone: whatsapp || "",
+      origem: publicSlug,
+      url: req.headers.get("referer") || undefined,
+      extras: fields,
+    });
+    const entregas = await entregarLead(lead, publicSlug);
+
     await addSubmission({
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: leadId,
       formId: virtualFormId,
       name: name || "(sem nome)",
       whatsapp: whatsapp || "",
       email: email || "",
-      submittedAt: new Date().toISOString(),
+      submittedAt: lead.enviado_em,
       webhookStatus,
       webhookError,
+      entregas,
+      lead,
     });
 
     await logAnonymousActivity(

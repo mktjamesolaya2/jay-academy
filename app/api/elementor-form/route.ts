@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
+import { entregarLead } from "@/lib/lead-destinos";
+import { leadDeFormulario } from "@/lib/lead-de-formulario";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 import { getLpFormConfig } from "@/lib/lp-form-config";
 
@@ -115,15 +117,31 @@ export async function POST(req: Request) {
       }
     }
 
+    // Destinos cadastrados (o CRM novo). Somam ao webhook da LP, não trocam:
+    // o Clint continua recebendo enquanto a transição não acaba.
+    const leadId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const lead = leadDeFormulario({
+      id: leadId,
+      nome: name || "",
+      email: email || "",
+      telefone: whatsapp || "",
+      origem: slug,
+      url: referer || undefined,
+      extras: fields,
+    });
+    const entregas = await entregarLead(lead, slug);
+
     await addSubmission({
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: leadId,
       formId: `wp:${slug}`,
       name: name || "(sem nome)",
       whatsapp: whatsapp || "",
       email: email || "",
-      submittedAt: new Date().toISOString(),
+      submittedAt: lead.enviado_em,
       webhookStatus,
       webhookError,
+      entregas,
+      lead,
     });
 
     await logAnonymousActivity(
