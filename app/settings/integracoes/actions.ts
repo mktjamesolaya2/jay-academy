@@ -12,6 +12,12 @@ import {
 } from "@/lib/lead-destinos";
 import { mapeamentoSugerido } from "@/lib/lead-campos";
 import { urlSegura } from "@/lib/lead-destinos-core";
+import {
+  novoToken,
+  salvarWebhook,
+  acharWebhook,
+  excluirWebhook,
+} from "@/lib/webhooks-entrada";
 
 function novoId(): string {
   return "dst-" + Math.random().toString(36).slice(2, 10);
@@ -134,6 +140,52 @@ export async function testarDestinoAction(
     enviado: JSON.stringify(r.enviado, null, 2),
     url: r.url,
   };
+}
+
+/* ── Webhook de ENTRADA — o endereço que é nosso ────────────────────────── */
+
+export async function criarWebhookAction(
+  fd: FormData
+): Promise<{ ok: boolean; id?: string; error?: string }> {
+  try {
+    await requireAdmin();
+    const nome = (fd.get("nome")?.toString() ?? "").trim();
+    if (!nome) return { ok: false, error: "Dê um nome pro webhook" };
+    const w = {
+      id: novoToken(),
+      nome,
+      ativo: true,
+      criadoEm: new Date().toISOString(),
+      tags: (fd.get("tags")?.toString() ?? "")
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+    };
+    await salvarWebhook(w);
+    await logActivity("wp.edit", nome, "webhook de entrada criado");
+    revalidatePath("/settings/integracoes");
+    return { ok: true, id: w.id };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro ao criar" };
+  }
+}
+
+export async function alternarWebhookAction(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const id = fd.get("id")?.toString() ?? "";
+  const w = await acharWebhook(id);
+  if (w) await salvarWebhook({ ...w, ativo: !w.ativo });
+  revalidatePath("/settings/integracoes");
+}
+
+export async function excluirWebhookAction(fd: FormData): Promise<void> {
+  await requireAdmin();
+  const id = fd.get("id")?.toString() ?? "";
+  if (id) {
+    await excluirWebhook(id);
+    await logActivity("wp.edit", id, "webhook de entrada excluído");
+  }
+  revalidatePath("/settings/integracoes");
 }
 
 /** Mapeamento inicial pra um destino novo (a tela começa preenchida). */

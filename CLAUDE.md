@@ -42,6 +42,8 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
 - `websites` — páginas tipo website. `lps` — LPs de venda (+`[slug]/{build,edit-visual}`, `new`).
 - `analytics` — visitas por página. `midia` — biblioteca de mídia. `sugestoes` — sugestões+upvote.
 - `settings` (+`users` roles, +`backup` do KV, +`integracoes` destinos de lead). `lixeira` — trash.
+  ⚠️ **Webhook tem DUAS direções**: ENTRADA `POST /api/receber/<token>` é o endereço NOSSO (a gente
+  gera e cola nas páginas — `lib/webhooks-entrada.ts`); SAÍDA são os destinos (portal → CRM).
   ⚠️ **Lead sai por 3 caminhos** (`app/f/[slug]/actions.ts`, `api/elementor-form`, `api/wp-form-submit`)
   — os três chamam `entregarLead()` de `lib/lead-destinos.ts`. Campo novo entra em `lib/lead-campos.ts`
   e aparece sozinho no payload e na tela de mapeamento. O webhook antigo por formulário (Clint)
@@ -132,7 +134,7 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 - Comentários e docs de projeto (README, `notas/`) em português — manter o padrão.
 - Editar LPs de `lp-html/` como HTML puro, commit por página.
 - **Testes**: `npm test` (5 arquivos: page-catalog, rate-limit, wp-localize-core, media-nomes,
-  variantes, media-albuns, lead-destinos-core; 141 casos).
+  variantes, media-albuns, lead-destinos-core, campos-recebidos; 149 casos).
 - Scripts: `npm run dev|build|start`. ⚠️ **`npm run lint` NÃO funciona** — `next lint` saiu no Next 16 e
   o projeto não tem `eslint.config.js` nem dependência de eslint. Vale `npx tsc --noEmit`, que passa limpo.
   `npm run checar-modelos` valida a cadeia de IA do chat contra o catálogo público da OpenRouter.

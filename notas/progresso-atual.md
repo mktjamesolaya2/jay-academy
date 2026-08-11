@@ -19,6 +19,38 @@ Clint**. Enquanto ele não fica pronto, o Clint continua recebendo (tem campanha
 no ar). Ele ainda não mandou o endpoint — isto aqui é a base, pra no dia só
 preencher URL e token.
 
+### ⚠️ A correção do James: o webhook tem que ser NOSSO
+
+Eu tinha construído só a **saída** (portal → CRM), que dependia de alguém de
+fora gerar o link. James: *"a intenção é a gente sair do Clint, então o Clint
+não vai mais precisar criar o webhook. A gente tem que criar a webhook, e a
+webhook que a gente criar, a gente integra nas páginas. Os dados têm que vir
+pra gente."*
+
+São **dois webhooks, em direções opostas** — e é aqui que dá nó:
+
+```
+ENTRADA (nosso)   página/ferramenta  →  portal     ← é o que ele pediu
+SAÍDA (destinos)       portal        →  CRM
+```
+
+- **`app/api/receber/[token]/route.ts`** — o endereço nosso.
+  `POST /api/receber/wh_<token>`. O token é sorteado (18 bytes) e **é a senha**:
+  quem tem o link manda lead. Dá pra desligar e apagar.
+- Aceita **JSON, formulário comum e o formato do Elementor**, e acha
+  nome/e-mail/telefone com qualquer nome de campo (`your-name`,
+  `form_fields[email]`, payload aninhado, lista `{name,value}`). Exigir um
+  formato faria o link só funcionar onde a gente mesmo montou o formulário — e
+  aí não serve de webhook. Regra em **`lib/campos-recebidos.ts`**, 8 testes.
+- **CORS liberado** — o formulário que posta pode estar em outro domínio, e sem
+  isso o navegador barra antes de sair.
+- Guarda o lead **antes** de repassar: CRM fora do ar não faz o lead sumir.
+- Token errado e token desligado dão a MESMA resposta — quem sonda não descobre
+  se o endereço existe.
+
+Testado com 5 formatos: JSON, formulário, Elementor, token errado (404) e
+payload sem contato (400). Os 3 válidos caíram no portal com as tags certas.
+
 ### O que estava no caminho
 
 Cada formulário guardava **UMA** url de webhook, e o disparo estava escrito em
