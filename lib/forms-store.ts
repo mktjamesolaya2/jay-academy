@@ -126,12 +126,24 @@ export async function countSubmissions(formId: string): Promise<number> {
   return entries.length;
 }
 
+/**
+ * Grava um lead. Se já existir um com o MESMO id, substitui em vez de duplicar.
+ *
+ * ⚠️ O upsert não é luxo: o caminho da integração grava o lead ANTES de tentar
+ * o CRM (pra não perder nada se o CRM estiver fora do ar) e grava de novo
+ * depois, com o resultado do repasse. Sem isto, todo lead aparecia duas vezes
+ * na lista.
+ */
 export async function addSubmission(
   submission: FormSubmission
 ): Promise<void> {
   const existing =
     (await kvGet<FormSubmission[]>(submissionsKey(submission.formId))) || [];
-  const next = [submission, ...existing].slice(0, 500); // mantém últimas 500
+  const n = existing.findIndex((s) => s.id === submission.id);
+  const next =
+    n >= 0
+      ? existing.map((s, i) => (i === n ? { ...s, ...submission } : s))
+      : [submission, ...existing].slice(0, 500); // mantém últimas 500
   await kvSet(submissionsKey(submission.formId), next);
 }
 

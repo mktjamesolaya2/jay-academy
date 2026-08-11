@@ -14,8 +14,6 @@ import {
   Check,
   ChevronRight,
   ChevronLeft,
-  Briefcase,
-  User,
 } from "lucide-react";
 import {
   salvarIntegracaoAction,
@@ -29,7 +27,7 @@ import { CAMPOS_LEAD } from "@/lib/lead-campos";
 
 type Resultado = Awaited<ReturnType<typeof testarIntegracaoAction>>;
 
-const ETAPAS = ["Criação", "Mapeamento", "Configuração"] as const;
+const ETAPAS = ["Criação", "Campos"] as const;
 
 /**
  * Sugestões de campo do CRM — a lista completa que o James ditou (documento,
@@ -119,9 +117,6 @@ export function IntegracoesWorkspace({
                       className={`h-2 w-2 shrink-0 rounded-full ${i.ativo ? "bg-emerald-400" : "bg-neutral-600"}`}
                     />
                     <h3 className="truncate text-[15px] font-semibold text-white">{i.nome}</h3>
-                    <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                      {i.tipo}
-                    </span>
                     {!i.ativo && (
                       <span className="rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-rose-300">
                         desligada
@@ -133,7 +128,6 @@ export function IntegracoesWorkspace({
                       ? `${i.recebidos} lead${i.recebidos === 1 ? "" : "s"}`
                       : "nenhum lead ainda"}
                     {i.tags.length ? ` · tags: ${i.tags.join(", ")}` : ""}
-                    {i.etapaCriacao ? ` · etapa: ${i.etapaCriacao}` : ""}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
@@ -255,8 +249,6 @@ function Assistente({
   const [copiado, setCopiado] = useState(false);
   const [pendente, startTransition] = useTransition();
 
-  const [tipo, setTipo] = useState(integracao?.tipo ?? "negocio");
-  const [acao, setAcao] = useState(integracao?.acao ?? "criar_ou_atualizar");
   const [nome, setNome] = useState(integracao?.nome ?? "");
   const [pares, setPares] = useState<ParDeCampo[]>(
     integracao?.mapeamento ?? [
@@ -325,49 +317,6 @@ function Assistente({
       {/* Os campos das outras etapas continuam no formulário mesmo escondidos —
           é o que permite salvar tudo de uma vez em qualquer etapa. */}
       <div className={etapa === 0 ? "space-y-5" : "hidden"}>
-        <p className="text-[13px] text-neutral-400">
-          O que criar quando esse lead chegar?
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Escolha
-            marcado={tipo === "negocio"}
-            onClick={() => setTipo("negocio")}
-            icone={<Briefcase size={18} strokeWidth={1.8} />}
-            titulo="Negócio"
-            texto="A oportunidade de venda daquela pessoa."
-          />
-          <Escolha
-            marcado={tipo === "contato"}
-            onClick={() => setTipo("contato")}
-            icone={<User size={18} strokeWidth={1.8} />}
-            titulo="Contato"
-            texto="Só os dados da pessoa, sem oportunidade."
-          />
-        </div>
-        <input type="hidden" name="tipo" value={tipo} />
-
-        <div className="flex flex-wrap gap-2">
-          {[
-            ["criar", "Criar"],
-            ["atualizar", "Atualizar"],
-            ["criar_ou_atualizar", "Criar ou atualizar"],
-          ].map(([v, r]) => (
-            <button
-              key={v}
-              type="button"
-              onClick={() => setAcao(v as typeof acao)}
-              className={`rounded-lg border px-4 py-2 text-[12.5px] font-semibold transition ${acao === v ? "border-white bg-white text-[#0a0a0a]" : "border-[#262626] text-neutral-300 hover:border-neutral-600"}`}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-        <p className="text-[12px] text-neutral-500">
-          Se a pessoa já existir no CRM, ela é reconhecida pelo e-mail ou pelo
-          telefone.
-        </p>
-        <input type="hidden" name="acao" value={acao} />
-
         <label className="block">
           <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
             Nome da integração
@@ -458,45 +407,21 @@ function Assistente({
           ))}
         </datalist>
         <p className="text-[12px] leading-relaxed text-neutral-500">
-          O que não estiver aqui passa direto, com o nome original. Mapear
-          <strong className="font-semibold text-neutral-300"> e-mail ou telefone </strong>
-          é o que deixa o CRM reconhecer quem já é cliente.
+          O que não estiver aqui passa direto e vira nota no negócio.
+          <strong className="font-semibold text-neutral-300"> Telefone é obrigatório</strong> —
+          é por ele que o CRM reconhece quem já é cliente. Sem DDD, o lead é
+          recusado.
         </p>
-      </div>
-
-      <div className={etapa === 2 ? "space-y-4" : "hidden"}>
-        <Campo rotulo="Tags" ajuda="Separadas por vírgula. Todo lead desta integração recebe.">
-          <input
-            name="tags"
-            defaultValue={integracao?.tags.join(", ")}
-            placeholder="nanofios, instagram"
-            className={entrada}
-          />
-        </Campo>
-        <Campo rotulo="Etapa para criação" ajuda="Onde o lead entra quando é novo.">
-          <input
-            name="etapaCriacao"
-            defaultValue={integracao?.etapaCriacao}
-            placeholder="Base"
-            className={entrada}
-          />
-        </Campo>
-        <Campo rotulo="Etapa para atualização" ajuda="Deixe em branco pra manter a etapa em que ele já está.">
-          <input
-            name="etapaAtualizacao"
-            defaultValue={integracao?.etapaAtualizacao}
-            placeholder="manter a etapa"
-            className={entrada}
-          />
-        </Campo>
-        <Campo rotulo="Status">
-          <input
-            name="status"
-            defaultValue={integracao?.status}
-            placeholder="Aberto"
-            className={entrada}
-          />
-        </Campo>
+        <div className="border-t border-[#1f1f1f] pt-4">
+          <Campo rotulo="Tags" ajuda="Separadas por vírgula. Vão como campo a mais e aparecem na nota do negócio.">
+            <input
+              name="tags"
+              defaultValue={integracao?.tags.join(", ")}
+              placeholder="nanofios, instagram"
+              className={entrada}
+            />
+          </Campo>
+        </div>
       </div>
 
       <div className="flex items-center gap-3 border-t border-[#1f1f1f] pt-5">
@@ -583,11 +508,11 @@ function ConfigCrm({ crm }: { crm: Crm | null }) {
         className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left sm:px-5"
       >
         <div className="min-w-0">
-          <p className="text-[13.5px] font-semibold text-white">Endereço do CRM</p>
+          <p className="text-[13.5px] font-semibold text-white">Chave do CRM</p>
           <p className="mt-0.5 truncate text-[12px] text-neutral-500">
-            {crm?.url
-              ? "Configurado — todo lead é enviado pra lá"
-              : "Ainda não configurado — os leads ficam guardados no portal"}
+            {crm?.chave
+              ? "Configurada — todo lead é enviado pro JAY.O CRM"
+              : "Ainda não configurada — os leads ficam guardados no portal"}
           </p>
         </div>
         <ChevronRight
@@ -598,32 +523,25 @@ function ConfigCrm({ crm }: { crm: Crm | null }) {
       </button>
       {aberto && (
         <form action={salvar} className="space-y-3.5 border-t border-[#1f1f1f] p-4 sm:p-5">
-          <Campo rotulo="Endereço" ajuda="O endereço que o Lucas passar. Em branco = os leads só ficam no portal.">
+          <Campo
+            rotulo="Chave pk_"
+            ajuda="A chave que o Lucas gera no CRM (Configurações → origem → Integrações → Novo webhook). Em branco = os leads só ficam no portal."
+          >
             <input
-              name="crmUrl"
-              defaultValue={crm?.url}
-              placeholder="https://…"
+              name="crmChave"
+              defaultValue={crm?.chave}
+              placeholder="pk_…"
               className={`${entrada} font-mono text-[12.5px]`}
             />
           </Campo>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Campo rotulo="Cabeçalho (se pedir senha)">
-              <input
-                name="crmHeader"
-                defaultValue={crm?.header}
-                placeholder="x-api-key"
-                className={`${entrada} font-mono text-[12.5px]`}
-              />
-            </Campo>
-            <Campo rotulo="Token">
-              <input
-                name="crmToken"
-                type="password"
-                defaultValue={crm?.token}
-                className={`${entrada} font-mono text-[12.5px]`}
-              />
-            </Campo>
-          </div>
+          {/* Não é detalhe: o envio sai do nosso servidor, e requisição de
+              servidor não manda cabeçalho de origem. Com domínio na lista, o
+              CRM devolve 403 e nenhum lead entra. */}
+          <p className="rounded-lg border border-amber-500/25 bg-amber-500/5 px-3 py-2.5 text-[12px] leading-relaxed text-amber-100/90">
+            No CRM, essa chave tem que ficar com <strong className="font-semibold">Domínios
+            liberados VAZIO</strong> — o envio sai do nosso servidor, e aí não vai
+            cabeçalho de origem. É o Caso C da documentação do Lucas.
+          </p>
           {erro && <p className="text-[12.5px] font-medium text-rose-300">{erro}</p>}
           <button
             type="submit"
@@ -631,7 +549,7 @@ function ConfigCrm({ crm }: { crm: Crm | null }) {
             className="inline-flex items-center gap-2 rounded-lg border border-[#262626] px-4 py-2.5 text-[13px] font-semibold text-neutral-200 transition hover:border-neutral-600 hover:text-white disabled:opacity-60"
           >
             {pendente && <Loader2 size={13} strokeWidth={2.4} className="animate-spin" />}
-            {salvo ? "Salvo" : "Salvar endereço"}
+            {salvo ? "Salvo" : "Salvar chave"}
           </button>
         </form>
       )}

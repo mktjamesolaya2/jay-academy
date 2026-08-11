@@ -21,21 +21,43 @@ export type Entrega = {
 
 export type ConfigIntegracao = {
   nome: string;
-  tipo: "negocio" | "contato";
-  acao: "criar" | "atualizar" | "criar_ou_atualizar";
   mapeamento: ParDeCampo[];
+  /** viajam como campo a mais — no CRM do Lucas isso vira nota do negócio */
   tags: string[];
-  etapaCriacao?: string;
-  etapaAtualizacao?: string;
-  status?: string;
 };
+
+/**
+ * Endereço do endpoint público de lead do JAY.O CRM.
+ *
+ * ⚠️ Com `www`, e não é capricho: sem ele a URL responde com redirecionamento,
+ * e requisição POST não é repetida depois de redirecionar — o lead sumiria em
+ * silêncio. Está na documentação do Lucas e vale pro nosso envio também.
+ */
+export const BASE_CRM = "https://www.sistemajayo.com/api/integrations/site/lead/";
+
+/** Aceita colar a chave sozinha (`pk_…`) ou a URL inteira. Devolve a URL. */
+export function urlDoCrm(chaveOuUrl: string): string | null {
+  const t = chaveOuUrl.trim().replace(/\s+/g, "");
+  if (!t) return null;
+  if (/^https?:\/\//i.test(t)) return t.replace(/\/+$/, "");
+  if (/^pk_[A-Za-z0-9_-]+$/.test(t)) return BASE_CRM + t;
+  return null;
+}
+
+/** Mostra a chave sem entregá-la inteira em tela ou log. */
+export function chaveSegura(chaveOuUrl: string): string {
+  const t = chaveOuUrl.trim();
+  const chave = t.split("/").pop() ?? t;
+  return chave.length > 12 ? `${chave.slice(0, 7)}…${chave.slice(-4)}` : "…";
+}
 
 /**
  * Aplica o mapeamento no que chegou do formulário.
  *
- * Direção igual à do Clint: a chave é o nome do campo NO FORMULÁRIO, o valor é
- * o campo do CRM. O que não estiver mapeado passa direto com o nome original —
- * campo a mais nunca é motivo pra perder informação.
+ * Direção igual à do Clint e à do JAY.O: a chave é o nome do campo NO
+ * FORMULÁRIO, o valor é o campo do CRM. O que não estiver mapeado passa direto
+ * com o nome original — no CRM do Lucas todo campo a mais vira nota do negócio,
+ * então perder campo é perder informação de graça.
  *
  * Comparação sem diferenciar maiúscula, e aceitando `form_fields[name]` como
  * `name`, porque é assim que o Elementor manda.
@@ -53,8 +75,9 @@ export function aplicarMapeamento(
   const saida: Record<string, string> = {};
   for (const [chave, valor] of Object.entries(recebido)) {
     if (valor === undefined || valor === null || `${valor}`.trim() === "") continue;
-    const destino = regras.get(normalizar(chave));
-    saida[destino ?? chave] = `${valor}`.trim();
+    // a isca de robô nunca viaja: o CRM não tem o que fazer com ela
+    if (normalizar(chave) === "_gotcha") continue;
+    saida[regras.get(normalizar(chave)) ?? chave] = `${valor}`.trim();
   }
   return saida;
 }
@@ -67,40 +90,48 @@ function normalizar(chave: string): string {
 }
 
 /**
- * O corpo que vai pro CRM.
- *
- * Leva junto o que a integração define — tipo de registro, o que fazer se já
- * existir, tags, etapa e status —, que é justamente o que o CRM precisa saber
- * pra colocar o lead no lugar certo, e não só quem é a pessoa.
+ * O corpo que vai pro CRM, no formato que o endpoint do Lucas espera:
+ * `nome`, `telefone`, `email` e o que mais vier — campo a mais vira nota, e
+ * `utm_source` vira a origem do negócio. Etapa, responsável e rótulo de origem
+ * NÃO vão aqui: eles ficam guardados na própria chave, configurados no CRM.
  */
 export function corpoParaOCrm(
   cfg: ConfigIntegracao,
   lead: Lead,
   campos: Record<string, string>
-): Record<string, unknown> {
-  const tags = [...new Set([...(lead.tags ?? []), ...(cfg.tags ?? [])])];
-  const corpo: Record<string, unknown> = {
-    id: lead.id,
-    tipo: cfg.tipo,
-    acao: cfg.acao,
-    integracao: cfg.nome,
-    recebido_em: lead.enviado_em,
+): Record<string, string> {
+  const corpo: Record<string, string> = {
     ...campos,
+    nome: campos.nome || lead.nome,
+    telefone: campos.telefone || lead.telefone,
   };
-  if (tags.length) corpo.tags = tags;
-  if (cfg.etapaCriacao) corpo.etapa_criacao = cfg.etapaCriacao;
-  if (cfg.etapaAtualizacao) corpo.etapa_atualizacao = cfg.etapaAtualizacao;
-  if (cfg.status) corpo.status = cfg.status;
+  const email = campos.email || lead.email;
+  if (email) corpo.email = email;
+  if (cfg.tags.length) corpo.tags = cfg.tags.join(", ");
+  // dá pra reconhecer no CRM de qual página veio, mesmo sem utm
+  if (!corpo.origem_formulario) corpo.origem_formulario = cfg.nome;
+  for (const [k, v] of Object.entries(corpo)) if (!v) delete corpo[k];
   return corpo;
 }
 
 /**
- * A integração consegue identificar a pessoa?
- *
- * O Clint exige e-mail e/ou telefone mapeados — é por eles que ele sabe se o
- * contato já existe. Sem isso, "atualizar" não tem como funcionar.
+ * Telefone é o que identifica a pessoa no CRM — sem ele a resposta é 422 e
+ * nada é criado. Melhor saber disso ANTES de gastar a requisição.
  */
-export function identificaContato(mapeamento: ParDeCampo[]): boolean {
-  const alvos = mapeamento.map((p) => p.paraOCrm.trim().toLowerCase());
-  return alvos.includes("email") || alvos.includes("telefone");
+export function temTelefone(corpo: Record<string, string>): boolean {
+  const t = (corpo.telefone ?? "").replace(/\D/g, "");
+  return t.length >= 10;
+}
+
+/** Traduz a resposta do CRM pro que a pessoa precisa fazer. */
+export function explicarResposta(http: number, corpo?: string): string {
+  if (http === 422)
+    return "O CRM recusou: telefone faltando ou sem DDD. Deixe o campo de telefone obrigatório na página.";
+  if (http === 404)
+    return "Chave não encontrada — o webhook foi desativado no CRM, ou a chave está errada.";
+  if (http === 403)
+    return "O CRM barrou a origem. Para envio pelo servidor, a lista de domínios liberados precisa ficar VAZIA no CRM.";
+  if (http === 429)
+    return "Limite de envios do CRM atingido (20/h por IP, 300/h por chave). Falar com o Lucas antes de subir campanha.";
+  return corpo?.slice(0, 300) || `O CRM respondeu ${http}.`;
 }

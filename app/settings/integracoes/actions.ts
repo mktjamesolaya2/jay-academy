@@ -15,7 +15,13 @@ import {
   type Integracao,
   type ParDeCampo,
 } from "@/lib/integracoes";
-import { corpoParaOCrm } from "@/lib/integracoes-core";
+import {
+  corpoParaOCrm,
+  urlDoCrm,
+  chaveSegura,
+  temTelefone,
+  explicarResposta,
+} from "@/lib/integracoes-core";
 
 /** Lê as linhas do mapeamento (pares campo-do-formulário → campo-do-CRM). */
 function lerMapeamento(fd: FormData): ParDeCampo[] {
@@ -52,18 +58,8 @@ export async function salvarIntegracaoAction(
     const integracao: Integracao = {
       id,
       nome,
-      tipo: fd.get("tipo")?.toString() === "contato" ? "contato" : "negocio",
-      acao:
-        fd.get("acao")?.toString() === "criar"
-          ? "criar"
-          : fd.get("acao")?.toString() === "atualizar"
-          ? "atualizar"
-          : "criar_ou_atualizar",
       mapeamento: mapeamento.length ? mapeamento : mapeamentoInicial(),
       tags: lerTags(fd),
-      etapaCriacao: (fd.get("etapaCriacao")?.toString() ?? "").trim() || undefined,
-      etapaAtualizacao: (fd.get("etapaAtualizacao")?.toString() ?? "").trim() || undefined,
-      status: (fd.get("status")?.toString() ?? "").trim() || undefined,
       ativo: anterior ? anterior.ativo : true,
       criadoEm: anterior?.criadoEm ?? new Date().toISOString(),
       recebidos: anterior?.recebidos,
@@ -106,24 +102,20 @@ export async function salvarCrmAction(
 ): Promise<{ ok: boolean; error?: string }> {
   try {
     await requireAdmin();
-    const url = (fd.get("crmUrl")?.toString() ?? "").trim();
-    if (!url) {
+    const chave = (fd.get("crmChave")?.toString() ?? "").trim();
+    if (!chave) {
       await setCrm(null);
       revalidatePath("/settings/integracoes");
       return { ok: true };
     }
-    try {
-      const p = new URL(url);
-      if (p.protocol !== "https:" && p.protocol !== "http:") throw new Error();
-    } catch {
-      return { ok: false, error: "Endereço inválido — tem que começar com https://" };
+    if (!urlDoCrm(chave)) {
+      return {
+        ok: false,
+        error: "Não parece uma chave do CRM. Cole a chave que começa com pk_ ou o link inteiro.",
+      };
     }
-    await setCrm({
-      url,
-      header: (fd.get("crmHeader")?.toString() ?? "").trim() || undefined,
-      token: (fd.get("crmToken")?.toString() ?? "").trim() || undefined,
-    });
-    await logActivity("wp.edit", "CRM", "endereço do CRM salvo");
+    await setCrm({ chave });
+    await logActivity("wp.edit", "CRM", `chave do CRM salva (${chaveSegura(chave)})`);
     revalidatePath("/settings/integracoes");
     return { ok: true };
   } catch (e) {
@@ -161,16 +153,20 @@ export async function testarIntegracaoAction(id: string): Promise<{
     campos
   );
 
+  const enviado = JSON.stringify(corpo, null, 2);
   const crm = await getCrm();
-  if (!crm?.url) {
-    return { ok: true, semCrm: true, enviado: JSON.stringify(corpo, null, 2) };
+  const url = crm?.chave ? urlDoCrm(crm.chave) : null;
+  if (!url) return { ok: true, semCrm: true, enviado };
+
+  // ⚠️ O teste GASTA uma das 20 chamadas por hora que o CRM permite por IP.
+  // Melhor barrar aqui do que descobrir no meio de uma campanha.
+  if (!temTelefone(corpo)) {
+    return { ok: false, erro: "O lead de teste ficou sem telefone com DDD.", enviado };
   }
   try {
-    const cabecalhos: Record<string, string> = { "Content-Type": "application/json" };
-    if (crm.header && crm.token) cabecalhos[crm.header] = crm.token;
-    const r = await fetch(crm.url, {
+    const r = await fetch(url, {
       method: "POST",
-      headers: cabecalhos,
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(corpo),
       signal: AbortSignal.timeout(8000),
     });
@@ -178,14 +174,10 @@ export async function testarIntegracaoAction(id: string): Promise<{
     return {
       ok: r.ok,
       http: r.status,
-      erro: r.ok ? undefined : texto.slice(0, 300),
-      enviado: JSON.stringify(corpo, null, 2),
+      erro: r.ok ? undefined : explicarResposta(r.status, texto),
+      enviado,
     };
   } catch (e) {
-    return {
-      ok: false,
-      erro: e instanceof Error ? e.message : "Erro de rede",
-      enviado: JSON.stringify(corpo, null, 2),
-    };
+    return { ok: false, erro: e instanceof Error ? e.message : "Erro de rede", enviado };
   }
 }

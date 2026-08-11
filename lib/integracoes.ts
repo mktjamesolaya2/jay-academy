@@ -3,28 +3,24 @@ import { randomBytes } from "node:crypto";
 import { kvGet, kvSet } from "./storage";
 
 /**
- * Integração de lead — UMA coisa só, no mesmo fluxo do Clint.
+ * Integração de lead — UMA coisa só. James: *"faz um negócio só, não cria dois
+ * não, pra não ficar perdido"*.
  *
- * Antes eu tinha quebrado isto em dois (um "webhook de entrada" e uma lista de
- * "destinos de saída"). James: *"faz um negócio só, não cria dois não, pra não
- * ficar perdido"*. E ele está certo: no Clint é um objeto só, e o caminho é
+ *   dá o nome  →  gera o link  →  cola no formulário
+ *              →  o lead chega e é guardado  →  segue pro CRM
  *
- *   dá o nome  →  ele gera o link  →  você cola no formulário
- *              →  o lead chega     →  vai pro CRM
+ * ⚠️ O QUE NÃO MORA AQUI. Pelas instruções do Lucas (11/08), quem guarda
+ * **etapa de entrada, responsável e rótulo de origem** é a própria chave
+ * `pk_…`, configurada no CRM. Ter esses campos nos dois lugares seria ter duas
+ * verdades — e um dia elas se contradizem. Não trazer de volta.
  *
- * Documentação lida (ajuda.clint.digital, "Como integrar a Clint com outras
- * plataformas via webhook"):
- *  - Negócio x Contato: contato é a pessoa; negócio é a oportunidade dela.
- *  - Criar / Atualizar / Criar ou atualizar: o que fazer quando o contato já
- *    existe. Identificação por e-mail e/ou telefone.
- *  - Mapeamento: coluna da ESQUERDA é o nome do campo na ferramenta de fora,
- *    a da DIREITA é o campo do CRM. ⚠️ É nesta direção, não na inversa.
- *  - Configuração: tags, etapa para criação, etapa para atualização e status.
- *  - Webhook que falha 3 vezes seguidas é desativado (copiamos essa regra).
+ * Também não existe mais "Negócio x Contato" nem "Criar / Atualizar": o CRM do
+ * Lucas reconhece a pessoa **pelo telefone** e decide sozinho. Deixar a escolha
+ * na tela seria um botão que não faz nada.
+ *
+ * O que sobra aqui é o que é nosso mesmo: o nome, o link, e como os campos do
+ * nosso formulário se chamam do outro lado.
  */
-
-export type TipoRegistro = "negocio" | "contato";
-export type AcaoIntegracao = "criar" | "atualizar" | "criar_ou_atualizar";
 
 /** Uma linha do mapeamento: o nome no formulário → o campo do CRM. */
 export type ParDeCampo = {
@@ -38,13 +34,8 @@ export type Integracao = {
   /** também é o token do link — sorteado, e é ele que autoriza o envio */
   id: string;
   nome: string;
-  tipo: TipoRegistro;
-  acao: AcaoIntegracao;
   mapeamento: ParDeCampo[];
   tags: string[];
-  etapaCriacao?: string;
-  etapaAtualizacao?: string;
-  status?: string;
   ativo: boolean;
   criadoEm: string;
   /** contadores — é o que mostra na tela que o link está vivo */
@@ -55,14 +46,20 @@ export type Integracao = {
 };
 
 /**
- * Onde fica o CRM. É UM só pra casa inteira — o CRM do Lucas —, por isso não
- * vira lista nem se repete em cada integração.
+ * A ligação com o CRM: uma chave só pra casa inteira.
+ *
+ * É a `pk_…` que o Lucas gera no CRM (Configurações → origem → Integrações →
+ * Novo webhook). Etapa de entrada, responsável e rótulo de origem ficam
+ * guardados NELA, lá no CRM — por isso não se repetem aqui.
+ *
+ * ⚠️ Como o envio sai do NOSSO servidor, e não do navegador de quem preencheu,
+ * a lista de "Domínios liberados" da chave tem que ficar VAZIA no CRM: não vai
+ * cabeçalho de origem numa requisição de servidor. É o Caso C da documentação
+ * do Lucas.
  */
 export type Crm = {
-  url: string;
-  /** cabeçalho de autenticação, se o CRM pedir */
-  header?: string;
-  token?: string;
+  /** a chave `pk_…` ou a URL inteira; guardamos como veio */
+  chave: string;
 };
 
 const KEY = "integracoes:all";
@@ -72,12 +69,18 @@ export function novoToken(): string {
   return "wh_" + randomBytes(18).toString("hex");
 }
 
-/** O que toda integração já nasce sabendo mapear. */
+/**
+ * O que toda integração já nasce sabendo mapear.
+ *
+ * `whatsapp` é o primeiro de propósito: é o nome que as 4 LPs no ar já usam
+ * (basic-nanofios, profissao-remove, fio-a-fio, lips-sense), então elas
+ * funcionam sem ninguém mexer em campo nenhum.
+ */
 export function mapeamentoInicial(): ParDeCampo[] {
   return [
-    { doFormulario: "name", paraOCrm: "nome" },
+    { doFormulario: "nome", paraOCrm: "nome" },
+    { doFormulario: "whatsapp", paraOCrm: "telefone" },
     { doFormulario: "email", paraOCrm: "email" },
-    { doFormulario: "phone", paraOCrm: "telefone" },
   ];
 }
 

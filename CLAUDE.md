@@ -44,9 +44,13 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
 - `settings` (+`users` roles, +`backup` do KV, +`integracoes` de lead). `lixeira` — trash.
   ⚠️ **Integração de lead é UMA coisa só** (`lib/integracoes.ts`), no fluxo do Clint: dá o nome →
   gera o link `POST /api/receber/<token>` → cola no formulário → o lead chega no portal e segue
-  pro CRM já com mapeamento, tags, etapa e status. **Não voltar a quebrar isso em dois** (entrada
-  + destinos); James: *"faz um negócio só, não cria dois não, pra não ficar perdido"*.
-  Endereço do CRM é UM só pra casa (`integracoes:crm`). Regras puras testadas em
+  pro CRM com o mapeamento. **Não voltar a quebrar isso em dois** (entrada + destinos);
+  James: *"faz um negócio só, não cria dois não, pra não ficar perdido"*.
+  A ligação com o CRM é UMA chave `pk_` pra casa (`integracoes:crm`) — o endpoint é
+  `www.sistemajayo.com/api/integrations/site/lead/pk_…` (com www, senão o POST se perde no redirect).
+  Etapa/responsável/origem moram NA CHAVE, no CRM do Lucas — não duplicar aqui.
+  ⚠️ Envio sai do nosso servidor → no CRM a chave tem que ter "Domínios liberados" VAZIO,
+  e o limite de 20 envios/h por IP é o risco a checar com o Lucas antes de campanha. Regras puras testadas em
   `lib/integracoes-core.ts`; reconhecimento de campo em `lib/campos-recebidos.ts`. Webhook que
   falha 3x seguidas é desligado (regra do próprio Clint).
   Os 3 caminhos antigos de formulário (`app/f/[slug]/actions.ts`, `api/elementor-form`,
@@ -137,7 +141,7 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 - Comentários e docs de projeto (README, `notas/`) em português — manter o padrão.
 - Editar LPs de `lp-html/` como HTML puro, commit por página.
 - **Testes**: `npm test` (5 arquivos: page-catalog, rate-limit, wp-localize-core, media-nomes,
-  variantes, media-albuns, campos-recebidos, integracoes-core; 145 casos).
+  variantes, media-albuns, campos-recebidos, integracoes-core; 147 casos).
 - Scripts: `npm run dev|build|start`. ⚠️ **`npm run lint` NÃO funciona** — `next lint` saiu no Next 16 e
   o projeto não tem `eslint.config.js` nem dependência de eslint. Vale `npx tsc --noEmit`, que passa limpo.
   `npm run checar-modelos` valida a cadeia de IA do chat contra o catálogo público da OpenRouter.

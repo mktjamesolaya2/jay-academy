@@ -3,7 +3,13 @@ import { addSubmission } from "@/lib/forms-store";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 import { acharIntegracao, registrarEntrada, getCrm } from "@/lib/integracoes";
-import { aplicarMapeamento, corpoParaOCrm } from "@/lib/integracoes-core";
+import {
+  aplicarMapeamento,
+  corpoParaOCrm,
+  urlDoCrm,
+  temTelefone,
+  explicarResposta,
+} from "@/lib/integracoes-core";
 import { achatar, acharCampo } from "@/lib/campos-recebidos";
 import { leadDeFormulario } from "@/lib/lead-de-formulario";
 
@@ -110,9 +116,9 @@ export async function POST(
     });
 
     const repasse = await mandarProCrm(integracao, lead, campos);
-    await registrarEntrada(integracao.id, repasse);
+    await registrarEntrada(integracao.id, repasse ? repasse.ok : null);
 
-    if (repasse !== null) {
+    if (repasse) {
       await addSubmission({
         id: leadId,
         formId: `wh:${integracao.id}`,
@@ -124,8 +130,9 @@ export async function POST(
         entregas: [
           {
             destinoId: "crm",
-            destinoNome: "CRM",
-            status: repasse ? "ok" : "falhou",
+            destinoNome: "JAY.O CRM",
+            status: repasse.ok ? "ok" : "falhou",
+            erro: repasse.motivo,
             em: new Date().toISOString(),
             tentativas: 1,
           },
@@ -137,7 +144,11 @@ export async function POST(
       "form.submission",
       nome || email || telefone || "anônimo",
       integracao.nome,
-      repasse === null ? "guardado no portal" : repasse ? "enviado pro CRM" : "CRM não respondeu"
+      !repasse
+        ? "guardado no portal (sem chave do CRM)"
+        : repasse.ok
+        ? "enviado pro CRM"
+        : `CRM recusou: ${repasse.motivo ?? "erro"}`
     );
 
     return NextResponse.json({ ok: true, id: leadId }, { headers: CORS });
@@ -151,25 +162,37 @@ export async function POST(
   }
 }
 
-/** Repassa pro CRM. `null` = não há CRM configurado ainda. */
+/**
+ * Repassa pro CRM do Lucas. `null` = ainda não tem chave configurada.
+ *
+ * Não gasta a requisição quando o telefone não presta: sem telefone com DDD o
+ * CRM devolve 422 e não cria nada — e a gente ainda queimaria uma das 20
+ * chamadas por hora que ele permite por IP.
+ */
 async function mandarProCrm(
-  integracao: Awaited<ReturnType<typeof acharIntegracao>>,
+  integracao: NonNullable<Awaited<ReturnType<typeof acharIntegracao>>>,
   lead: Parameters<typeof corpoParaOCrm>[1],
   campos: Record<string, string>
-): Promise<boolean | null> {
+): Promise<{ ok: boolean; motivo?: string } | null> {
   const crm = await getCrm();
-  if (!crm?.url || !integracao) return null;
+  const url = crm?.chave ? urlDoCrm(crm.chave) : null;
+  if (!url) return null;
+
+  const corpo = corpoParaOCrm(integracao, lead, campos);
+  if (!temTelefone(corpo)) {
+    return { ok: false, motivo: "Sem telefone com DDD — o CRM recusaria (422)." };
+  }
   try {
-    const cabecalhos: Record<string, string> = { "Content-Type": "application/json" };
-    if (crm.header && crm.token) cabecalhos[crm.header] = crm.token;
-    const r = await fetch(crm.url, {
+    const r = await fetch(url, {
       method: "POST",
-      headers: cabecalhos,
-      body: JSON.stringify(corpoParaOCrm(integracao, lead, campos)),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(corpo),
       signal: AbortSignal.timeout(8000),
     });
-    return r.ok;
-  } catch {
-    return false;
+    if (r.ok) return { ok: true };
+    const texto = await r.text().catch(() => "");
+    return { ok: false, motivo: explicarResposta(r.status, texto) };
+  } catch (e) {
+    return { ok: false, motivo: e instanceof Error ? e.message : "Erro de rede" };
   }
 }

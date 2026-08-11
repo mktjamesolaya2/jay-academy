@@ -17,6 +17,63 @@ iphone acho q ficaria bom"*.
 O Lucas está fazendo um CRM próprio pra **sair do Clint**. Ele ainda não mandou
 o endpoint — isto é a base, pra no dia só preencher o endereço.
 
+### 11/08 (parte 2) — instruções do Lucas + o zip: adaptado ao JAY.O CRM
+
+Chegaram as instruções de operação do Lucas e o `jayo-crm-0.3.17.zip`.
+
+**O zip NÃO é o CRM** — é uma **extensão do Chrome** (JAY.O CRM Companion) que
+mostra o cliente ao lado da conversa no WhatsApp Web. Tem painel lateral,
+mensagem agendada, e usa token pessoal por atendente
+(Configurações → Segurança → Tokens de API, aparece uma vez só).
+
+**O CRM está no ar e conferi:** `crm.sistemajayo.com` responde, e
+`www.sistemajayo.com/api/integrations/site/lead/pk_…` devolve 405 no GET e
+404 `{"ok":false}` com chave errada — igual à documentação. Pela extensão dá
+pra ver que existe uma **API completa** por trás
+(`/api/crm/contacts`, `/leads`, `/notes`, `/tags`, `/pipeline`, `/stage`,
+`/status`, `/owner`), autenticada com `Authorization: Bearer <token>`. Serve
+pra muito mais que jogar lead — fica anotado pra depois.
+
+**Decisão do James: passar pelo portal** (Caso C do Lucas, envio pelo servidor)
+em vez de a página postar direto no CRM. Assim a chave não fica exposta no HTML
+da página, e a gente continua dono dos leads.
+
+#### O que mudou aqui
+
+- O repasse virou o **formato do Lucas**: `nome`, `telefone`, `email` +
+  qualquer campo a mais (que no CRM vira nota), e `utm_source` vira a origem.
+- **Sumiram** da nossa tela: Negócio/Contato, Criar/Atualizar, etapa, status.
+  Quem guarda isso é a **chave `pk_`**, configurada no CRM. Ter nos dois
+  lugares seria ter duas verdades. ⚠️ Não trazer de volta.
+- O assistente tem **2 etapas**: Criação (nome → link) e Campos (mapeamento +
+  tags).
+- **Telefone com DDD é barrado antes de sair** — sem ele o CRM devolve 422 e
+  ainda queimaria uma das 20 chamadas/hora por IP.
+- Cada erro do CRM vira instrução: 422 → telefone; 404 → chave; 403 → lista de
+  domínios tem que estar VAZIA; 429 → limite.
+- A isca de robô (`_gotcha`) nunca viaja pro CRM.
+
+#### Achados que valem ouro
+
+- As **4 LPs no ar já mandam `nome`, `email` e `whatsapp`** + os 5 utm. São
+  nomes que o CRM aceita: **não precisa renomear campo nenhum.** Por isso o
+  mapeamento inicial usa `whatsapp`.
+- 🐛 **Bug meu, consertado**: `addSubmission` empilhava, e como a rota grava o
+  lead antes e depois do repasse, **todo lead aparecia duas vezes** na lista.
+  Agora faz upsert por id.
+
+#### ⚠️ PENDENTE COM O LUCAS — trava campanha
+
+> "Limite: 20 envios por hora do mesmo IP."
+
+Com envio pelo servidor, **todo lead sai do mesmo IP**. 20/hora estoura em
+campanha boa. Perguntar se dá pra liberar o nosso servidor ou valer só o teto
+de 300/hora por chave. **Sem essa resposta, não subir campanha por este
+caminho.**
+
+Falta também a chave `pk_` de verdade (e ela precisa nascer no CRM com
+**Domínios liberados vazio**).
+
 ### ⚠️ Eu errei duas vezes antes de acertar
 
 1. Fiz só a **saída** (portal → CRM), que depende de alguém de fora gerar o
