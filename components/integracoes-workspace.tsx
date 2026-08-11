@@ -10,18 +10,26 @@ import {
   Send,
   Pencil,
   Power,
+  ChevronRight,
 } from "lucide-react";
 import {
   salvarDestinoAction,
   excluirDestinoAction,
   testarDestinoAction,
 } from "@/app/settings/integracoes/actions";
-import { CAMPOS_LEAD, mapeamentoSugerido } from "@/lib/lead-campos";
+import { CAMPOS_LEAD, CAMPO_POR_ID, mapeamentoSugerido } from "@/lib/lead-campos";
 import { urlSegura, type Destino } from "@/lib/lead-destinos-core";
 
 type Resultado = Awaited<ReturnType<typeof testarDestinoAction>>;
 
 const GRUPOS = ["Contato", "Empresa", "Origem", "Qualificação", "Formação"] as const;
+
+/**
+ * Os únicos campos que TODO formulário do site tem. São os que ficam à mostra.
+ * O resto do catálogo continua ali, mas dobrado — 34 caixas abertas de cara
+ * fazem parecer difícil uma coisa que é colar um link.
+ */
+const BASICOS = ["nome", "email", "telefone"];
 
 /** Etiqueta de onde o valor daquele campo nasce — evita promessa falsa. */
 const DE_ROTULO: Record<string, string> = {
@@ -237,9 +245,19 @@ function Editor({
         </p>
       )}
 
-      {/* ── Geral ─────────────────────────────────────────────────────── */}
-      <Secao titulo="Geral" descricao="Quem é e pra onde manda.">
-        <Campo rotulo="Nome da integração">
+      {/* Explica a DIREÇÃO do webhook. O James leu a tela achando que o portal
+          ia GERAR o link — quem gera é sempre quem RECEBE (Clint, CRM). */}
+      <div className="rounded-xl border border-sky-500/25 bg-sky-500/5 px-4 py-3.5">
+        <p className="text-[13px] leading-relaxed text-sky-100/90">
+          O link é sempre <strong className="font-semibold">criado por quem recebe</strong>:
+          o Clint cria um, o CRM do Lucas vai criar outro. Você cola aqui uma
+          vez e vale pra todos os formulários do site — não precisa colar em
+          cada LP.
+        </p>
+      </div>
+
+      <Secao titulo="Geral" descricao="O básico pra começar a receber.">
+        <Campo rotulo="Nome da integração" ajuda="Só pra você reconhecer aqui na lista.">
           <input
             name="nome"
             defaultValue={destino?.nome}
@@ -249,8 +267,8 @@ function Editor({
           />
         </Campo>
         <Campo
-          rotulo="Link do webhook"
-          ajuda="O endereço que o CRM te dá pra receber os leads."
+          rotulo="Link que o CRM te deu"
+          ajuda="No Clint é o campo 'Link de integração'. Copie lá e cole aqui."
         >
           <input
             name="url"
@@ -260,40 +278,14 @@ function Editor({
             className={`${entrada} font-mono text-[12.5px]`}
           />
         </Campo>
-        <Campo rotulo="Autenticação" ajuda="Deixe em 'nenhuma' se o segredo já está no link (é o caso do Clint).">
-          <select
-            name="authTipo"
-            value={authTipo}
-            onChange={(e) => setAuthTipo(e.target.value as typeof authTipo)}
+        <Campo rotulo="Tags" ajuda="Separadas por vírgula. Todo lead recebe, além da tag da própria página.">
+          <input
+            name="tags"
+            defaultValue={destino?.tagsFixas?.join(", ")}
+            placeholder="site, jayacademy"
             className={entrada}
-          >
-            <option value="nenhuma">Nenhuma — o link já é o segredo</option>
-            <option value="bearer">Token Bearer</option>
-            <option value="header">Cabeçalho próprio</option>
-          </select>
+          />
         </Campo>
-        {authTipo === "header" && (
-          <Campo rotulo="Nome do cabeçalho">
-            <input
-              name="authHeader"
-              defaultValue={destino?.auth?.tipo === "header" ? destino.auth.header : ""}
-              placeholder="x-api-key"
-              className={`${entrada} font-mono text-[12.5px]`}
-            />
-          </Campo>
-        )}
-        {authTipo !== "nenhuma" && (
-          <Campo rotulo="Token">
-            <input
-              name="authValor"
-              type="password"
-              defaultValue={
-                destino?.auth && destino.auth.tipo !== "nenhuma" ? destino.auth.valor : ""
-              }
-              className={`${entrada} font-mono text-[12.5px]`}
-            />
-          </Campo>
-        )}
         <label className="flex items-center gap-2.5 pt-1">
           <input
             type="checkbox"
@@ -308,95 +300,145 @@ function Editor({
         </label>
       </Secao>
 
-      {/* ── Mapeamento ────────────────────────────────────────────────── */}
+      {/* ── Campos ────────────────────────────────────────────────────────
+          Só os três que todo formulário tem ficam à mostra. O resto continua
+          existindo (a lista inteira do Clint), mas dobrado: 34 caixas abertas
+          de cara fazem parecer difícil uma coisa que é colar um link. */}
       <Secao
-        titulo="Mapeamento"
-        descricao="Como cada campo se chama lá do outro lado. Campo em branco não é enviado."
+        titulo="Campos"
+        descricao="Como cada campo se chama lá do outro lado. Em branco = vai com o nome padrão."
       >
-        {GRUPOS.map((grupo) => (
-          <div key={grupo} className="pt-1">
-            <p className="mb-2 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
-              {grupo}
-            </p>
-            <div className="grid gap-2">
-              {CAMPOS_LEAD.filter((c) => c.grupo === grupo).map((c) => (
-                <div
-                  key={c.id}
-                  className="grid grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
-                >
-                  <span className="truncate text-[13px] text-neutral-300">
-                    {c.rotulo}
-                    <span className="ml-1.5 text-[11px] text-neutral-600">
-                      {DE_ROTULO[c.de]}
-                    </span>
-                  </span>
-                  <input
-                    name={`map[${c.id}]`}
-                    defaultValue={mapa[c.id] ?? ""}
-                    placeholder={sugestao[c.id]}
-                    className={`${entrada} py-2 font-mono text-[12px]`}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </Secao>
+        {BASICOS.map((id) => {
+          const c = CAMPO_POR_ID.get(id);
+          return c ? (
+            <Linha key={id} campo={c} valor={mapa[id]} padrao={sugestao[id]} />
+          ) : null;
+        })}
 
-      {/* ── Configuração ──────────────────────────────────────────────── */}
-      <Secao
-        titulo="Configuração"
-        descricao="Tags, etapa e status — o que o CRM precisa saber além dos dados da pessoa."
-      >
-        <Campo
-          rotulo="Tags fixas"
-          ajuda="Separadas por vírgula. Todo lead deste destino recebe, além da tag da própria página."
-        >
-          <input
-            name="tags"
-            defaultValue={destino?.tagsFixas?.join(", ")}
-            placeholder="site, jayacademy"
-            className={entrada}
-          />
-        </Campo>
-        <Campo
-          rotulo="Campos fixos"
-          ajuda="Etapa, status, tipo de registro — o que o CRM exige em todo lead."
-        >
-          <div className="space-y-2">
-            {[0, 1, 2].map((i) => {
-              const pares = Object.entries(destino?.extras ?? {});
+        <details className="group pt-1">
+          <summary className="inline-flex cursor-pointer items-center gap-1.5 text-[12.5px] font-semibold text-neutral-400 transition hover:text-white">
+            <ChevronRight
+              size={13}
+              strokeWidth={2.6}
+              className="transition group-open:rotate-90"
+            />
+            Mais campos ({CAMPOS_LEAD.length - BASICOS.length})
+          </summary>
+          <div className="mt-3 space-y-4 border-l border-[#1f1f1f] pl-3">
+            <p className="text-[12px] leading-relaxed text-neutral-500">
+              Campanha, cidade, perfil, barreira — a lista inteira que o Clint
+              tem. Preencha só o que o CRM pedir.
+            </p>
+            {GRUPOS.map((grupo) => {
+              const lista = CAMPOS_LEAD.filter(
+                (c) => c.grupo === grupo && !BASICOS.includes(c.id)
+              );
+              if (!lista.length) return null;
               return (
-                <div key={i} className="grid grid-cols-2 gap-2">
-                  <input
-                    name="extraChave"
-                    defaultValue={pares[i]?.[0] ?? ""}
-                    placeholder={i === 0 ? "etapa" : i === 1 ? "status" : "campo"}
-                    className={`${entrada} py-2 font-mono text-[12px]`}
-                  />
-                  <input
-                    name="extraValor"
-                    defaultValue={pares[i]?.[1] ?? ""}
-                    placeholder={i === 0 ? "Base" : i === 1 ? "Aberto" : "valor"}
-                    className={`${entrada} py-2 font-mono text-[12px]`}
-                  />
+                <div key={grupo}>
+                  <p className="mb-2 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+                    {grupo}
+                  </p>
+                  <div className="grid gap-2">
+                    {lista.map((c) => (
+                      <Linha key={c.id} campo={c} valor={mapa[c.id]} padrao={sugestao[c.id]} />
+                    ))}
+                  </div>
                 </div>
               );
             })}
           </div>
-        </Campo>
-        <Campo
-          rotulo="Receber só destas páginas"
-          ajuda={`Separadas por vírgula. Em branco = recebe de todas.${origens.length ? ` Ex: ${origens.slice(0, 3).join(", ")}` : ""}`}
-        >
-          <input
-            name="somenteDe"
-            defaultValue={destino?.somenteDe?.join(", ")}
-            placeholder="em branco = todas"
-            className={entrada}
-          />
-        </Campo>
+        </details>
       </Secao>
+
+      {/* ── Avançado ──────────────────────────────────────────────────────
+          Nada aqui é preciso pro Clint. Por isso nasce fechado. */}
+      <details className="group rounded-xl border border-[#1f1f1f] bg-[#0d0d0d]">
+        <summary className="flex cursor-pointer items-center gap-1.5 px-4 py-3.5 text-[13px] font-semibold text-neutral-400 transition hover:text-white sm:px-5">
+          <ChevronRight
+            size={13}
+            strokeWidth={2.6}
+            className="transition group-open:rotate-90"
+          />
+          Avançado — senha, etapa e filtro
+        </summary>
+        <div className="space-y-3.5 border-t border-[#1f1f1f] p-4 sm:p-5">
+          <Campo
+            rotulo="Senha do CRM"
+            ajuda="Deixe em 'nenhuma' se o segredo já está no link — é o caso do Clint."
+          >
+            <select
+              name="authTipo"
+              value={authTipo}
+              onChange={(e) => setAuthTipo(e.target.value as typeof authTipo)}
+              className={entrada}
+            >
+              <option value="nenhuma">Nenhuma — o link já é o segredo</option>
+              <option value="bearer">Token Bearer</option>
+              <option value="header">Cabeçalho próprio</option>
+            </select>
+          </Campo>
+          {authTipo === "header" && (
+            <Campo rotulo="Nome do cabeçalho">
+              <input
+                name="authHeader"
+                defaultValue={destino?.auth?.tipo === "header" ? destino.auth.header : ""}
+                placeholder="x-api-key"
+                className={`${entrada} font-mono text-[12.5px]`}
+              />
+            </Campo>
+          )}
+          {authTipo !== "nenhuma" && (
+            <Campo rotulo="Token">
+              <input
+                name="authValor"
+                type="password"
+                defaultValue={
+                  destino?.auth && destino.auth.tipo !== "nenhuma" ? destino.auth.valor : ""
+                }
+                className={`${entrada} font-mono text-[12.5px]`}
+              />
+            </Campo>
+          )}
+          <Campo
+            rotulo="Etapa e status"
+            ajuda="Se o CRM exige que todo lead chegue numa etapa (ex: etapa = Base)."
+          >
+            <div className="space-y-2">
+              {[0, 1, 2].map((i) => {
+                const pares = Object.entries(destino?.extras ?? {});
+                return (
+                  <div key={i} className="grid grid-cols-2 gap-2">
+                    <input
+                      name="extraChave"
+                      defaultValue={pares[i]?.[0] ?? ""}
+                      placeholder={i === 0 ? "etapa" : i === 1 ? "status" : "campo"}
+                      className={`${entrada} py-2 font-mono text-[12px]`}
+                    />
+                    <input
+                      name="extraValor"
+                      defaultValue={pares[i]?.[1] ?? ""}
+                      placeholder={i === 0 ? "Base" : i === 1 ? "Aberto" : "valor"}
+                      className={`${entrada} py-2 font-mono text-[12px]`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </Campo>
+          <Campo
+            rotulo="Receber só destas páginas"
+            ajuda={`Em branco = recebe de todas.${origens.length ? ` Ex: ${origens.slice(0, 3).join(", ")}` : ""}`}
+          >
+            <input
+              name="somenteDe"
+              defaultValue={destino?.somenteDe?.join(", ")}
+              placeholder="em branco = todas"
+              className={entrada}
+            />
+          </Campo>
+        </div>
+      </details>
 
       <div className="flex items-center gap-3 border-t border-[#1f1f1f] pt-5">
         <button
@@ -441,6 +483,34 @@ function Secao({
         {children}
       </div>
     </section>
+  );
+}
+
+/** Uma linha do mapeamento: nosso rótulo à esquerda, o nome deles à direita. */
+function Linha({
+  campo,
+  valor,
+  padrao,
+}: {
+  campo: { id: string; rotulo: string; de: string };
+  valor?: string;
+  padrao: string;
+}) {
+  return (
+    <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <span className="truncate text-[13px] text-neutral-300">
+        {campo.rotulo}
+        <span className="ml-1.5 text-[11px] text-neutral-600">
+          {DE_ROTULO[campo.de]}
+        </span>
+      </span>
+      <input
+        name={`map[${campo.id}]`}
+        defaultValue={valor ?? ""}
+        placeholder={padrao}
+        className={`${entrada} py-2 font-mono text-[12px]`}
+      />
+    </div>
   );
 }
 
