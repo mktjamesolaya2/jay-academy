@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { Check, Loader2, Code2, Trash2 } from "lucide-react";
 import { salvarCodigoCrmAction } from "@/app/lps/actions";
+import { temMarcacaoVisivel, somenteScript } from "@/lib/webhook-codigo";
 
 /**
  * Onde se cola o código que o CRM gera pra página.
@@ -71,11 +72,27 @@ export function CrmCodigoForm({
         placeholder={'Cole aqui o código que o CRM gerou\n\n<form id="form-jayo">…'}
         className="w-full resize-y rounded-lg border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2.5 font-mono text-[11.5px] leading-relaxed text-neutral-200 placeholder:text-neutral-600 focus:border-neutral-600 focus:outline-none"
       />
+      {/* ⚠️ Avisa ANTES de salvar. O James colou a variante "formulário pronto"
+          e viu o formulário aparecer solto no rodapé da página: "NÃO QUERO ISSO
+          APARECENDO". A parte visível é descartada de qualquer jeito — o aviso
+          existe pra ele não achar que o formulário do CRM vai aparecer. */}
+      {temMarcacaoVisivel(valor) && (
+        <p className="rounded-md border border-rose-500/25 bg-rose-500/10 px-3 py-2.5 text-[12px] leading-relaxed text-rose-200">
+          Esse código traz um <strong className="font-semibold">formulário junto</strong> —
+          ele apareceria solto no rodapé da página, sem estilo. Peça ao CRM a
+          variante <strong className="font-semibold">só o envio</strong>: ela se
+          liga no formulário que a página já tem, e nada novo aparece.
+        </p>
+      )}
+      {valor.trim() && !somenteScript(valor) && (
+        <p className="rounded-md border border-rose-500/25 bg-rose-500/10 px-3 py-2.5 text-[12px] leading-relaxed text-rose-200">
+          Não achei nenhum script nesse código. Copie no CRM o trecho que vem
+          com <code>&lt;script&gt;</code> dentro.
+        </p>
+      )}
       <p className="text-[11.5px] leading-relaxed text-neutral-500">
-        Entra no fim da página, antes do <code className="text-neutral-400">&lt;/body&gt;</code>.
-        Se a página já tem formulário próprio, peça no CRM a variante{" "}
-        <strong className="text-neutral-300">só o envio</strong> — a completa
-        criaria um segundo formulário.
+        Entra no fim da página, antes do <code className="text-neutral-400">&lt;/body&gt;</code>,
+        e se liga no formulário que a página já tem.
       </p>
       {erro && (
         <p className="rounded-md border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-[12px] font-medium text-rose-300">

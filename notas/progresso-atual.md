@@ -68,6 +68,39 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### ⚠️ 11/08 — o webhook não pode sujar a página
+
+James colou a variante **"formulário pronto"** do CRM (form + script) e viu o
+formulário aparecer **solto no rodapé, sem estilo**: *"NÃO QUERO ISSO
+APARECENDO"*. (Era um teste meu no localhost dele, não algo que ele tinha feito
+— mas o problema era real.)
+
+Duas tentativas até acertar:
+
+1. **Descartar só o formulário e injetar o script** — não serve: o script da
+   variante completa procura o formulário DELA
+   (`getElementById("form-jayo")`), que a gente acabou de descartar. Resultado
+   seria erro de JavaScript na página.
+2. **Recusar a variante inteira** — é o certo. As páginas daqui já têm o
+   formulário delas; o que falta é o envio.
+
+`lib/webhook-codigo.ts` (6 testes): `temMarcacaoVisivel()` detecta form/div/
+input fora de `<script>`, e `somenteScript()` extrai os blocos de script.
+
+- **Salvar recusa** a variante com formulário, com o texto explicando qual pedir.
+- **A injeção também recusa** (`serve-lp.ts` e `app/p/[slug]/route.ts`) —
+  defesa pra dado que já esteja gravado.
+- A tela avisa **enquanto digita**, antes de salvar.
+
+⚠️ **Regra**: o portal só instala a variante **"só o envio"**. Nada que o CRM
+gere pode desenhar coisa na página.
+
+Sobre o **HTTP 405** que ele viu ao enviar: é o sintoma de o formulário ter
+feito envio nativo (POST na própria URL) em vez de rodar o script — os route
+handlers das LPs só têm GET. Com a variante certa instalada, o script chama
+`preventDefault` e isso não acontece. **Confirmar com ele depois de instalar a
+variante certa.**
+
 ### 11/08 (parte 4) — unificação: uma lista, um webhook, um editor
 
 James: *"faça tudo"* e *"todas têm que ter o editor exatamente igual"*.

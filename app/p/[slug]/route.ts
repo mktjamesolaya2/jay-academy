@@ -11,6 +11,7 @@ import { loadEditedEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
 import { withTracking } from "@/lib/meta-tracking";
 import { getLpFormConfig } from "@/lib/lp-form-config";
+import { somenteScript, temMarcacaoVisivel } from "@/lib/webhook-codigo";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 
 function escapeHtml(s: string): string {

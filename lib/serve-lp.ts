@@ -6,6 +6,7 @@ import { withTracking, buildVisitBeacon } from "@/lib/meta-tracking";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 import { resolveEmbeddedHtml, resolveLpHtml } from "@/lib/embedded-html-store";
 import { getLpFormConfig } from "@/lib/lp-form-config";
+import { somenteScript, temMarcacaoVisivel } from "@/lib/webhook-codigo";
 
 // Serving unificado das LPs custom (antes eram ~10 route handlers quase
 // idênticos). Três variantes:
@@ -111,13 +112,15 @@ export async function serveLp(
     ? html.replace(/<\/body>/i, `${beacon}\n</body>`)
     : html + beacon;
 
-  // Código do CRM colado no painel (Integração do CRM, na tela da página).
-  // Vai por último, antes de </body>, pra achar o formulário já montado quando
-  // for a variante "só o envio" — script que roda antes do formulário existir
-  // não engancha em nada.
+  // Webhook colado no painel. ⚠️ SÓ O SCRIPT — se vier formulário junto (a
+  // variante "formulário pronto" do CRM), ele é descartado: apareceria solto no
+  // fim da página, sem estilo, embaixo do rodapé. A página daqui já tem o
+  // formulário dela. Vai por último, antes de </body>, pra achar esse
+  // formulário já montado.
   const cfg = await getLpFormConfig(slug).catch(() => null);
-  if (cfg?.codigoCrm) {
-    const bloco = `\n<!-- Integração do CRM (colada no painel) -->\n${cfg.codigoCrm}\n`;
+  const script = cfg?.codigoCrm && !temMarcacaoVisivel(cfg.codigoCrm) ? somenteScript(cfg.codigoCrm) : "";
+  if (script) {
+    const bloco = `\n<!-- Webhook (colado no painel) -->\n${script}\n`;
     html = /<\/body>/i.test(html)
       ? html.replace(/<\/body>/i, `${bloco}</body>`)
       : html + bloco;
