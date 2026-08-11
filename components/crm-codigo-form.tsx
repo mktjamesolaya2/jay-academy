@@ -46,14 +46,14 @@ export function CrmCodigoForm({
         <div className="flex items-center gap-2 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 py-2.5">
           <Check size={14} strokeWidth={2.6} className="shrink-0 text-emerald-300" />
           <p className="text-[12.5px] font-semibold text-emerald-200">
-            {salvo ? "Código salvo" : "Código do CRM instalado nesta página"}
+            {salvo ? "Webhook salvo" : "Webhook instalado nesta página"}
           </p>
         </div>
         <button
           onClick={() => setAberto(true)}
           className="text-[12.5px] font-semibold text-neutral-400 transition hover:text-white"
         >
-          Ver ou trocar o código
+          Ver ou trocar o webhook
         </button>
       </div>
     );
@@ -93,7 +93,7 @@ export function CrmCodigoForm({
           ) : (
             <Code2 size={13} strokeWidth={2.4} />
           )}
-          Salvar código
+          Salvar webhook
         </button>
         {codigo && (
           <button

@@ -211,7 +211,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
             {/* Integração do CRM na tela da PRÓPRIA página — antes isso era uma
                 lista solta em /leads, longe da página a que pertence. */}
             {userCanEdit && (
-              <Block title="Integração do CRM">
+              <Block title="Webhook">
                 <CrmCodigoForm slug={lp.slug} codigo={formConfig?.codigoCrm} />
               </Block>
             )}
