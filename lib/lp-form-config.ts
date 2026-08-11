@@ -10,6 +10,17 @@ import { kvGet, kvSet } from "./storage";
 export type LpFormConfig = {
   formWebhookUrl?: string;
   formRedirectUrl?: string;
+  /**
+   * O código que o CRM gera pra página — formulário + script, ou só o script.
+   *
+   * ⚠️ O CRM não entrega uma URL: entrega um BLOCO DE CÓDIGO pronto pra colar.
+   * Guardar só a URL obrigaria a gente a remontar o script na mão e a adivinhar
+   * o formato — e aí toda vez que o Lucas mudasse alguma coisa a gente
+   * quebrava. Guardando o código como veio, o que ele entrega é o que roda.
+   *
+   * É injetado antes de `</body>` na hora de servir a página (lib/serve-lp.ts).
+   */
+  codigoCrm?: string;
 };
 
 const keyFor = (slug: string) => `lp-form-config:${slug}`;
@@ -28,5 +39,7 @@ export async function setLpFormConfig(
     clean.formWebhookUrl = cfg.formWebhookUrl.trim();
   if (cfg.formRedirectUrl && cfg.formRedirectUrl.trim())
     clean.formRedirectUrl = cfg.formRedirectUrl.trim();
+  if (cfg.codigoCrm && cfg.codigoCrm.trim())
+    clean.codigoCrm = cfg.codigoCrm.trim();
   await kvSet(keyFor(slug), clean);
 }

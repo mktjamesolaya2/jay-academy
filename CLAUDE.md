@@ -42,16 +42,15 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
 - `websites` — páginas tipo website. `lps` — LPs de venda (+`[slug]/{build,edit-visual}`, `new`).
 - `analytics` — visitas por página. `midia` — biblioteca de mídia. `sugestoes` — sugestões+upvote.
 - `settings` (+`users` roles, +`backup` do KV). `lixeira` — trash restaurável.
-  **Webhook de lead — o portal MANDA, não recebe.** Cada formulário tem um campo de URL:
-  `/forms/[id]` pros formulários do portal, e a seção "Webhooks das LPs" em `/leads` pras LPs de
-  `lp-html/` (grava em `lp-form-config:<slug>`). É onde se cola a URL que o CRM gera — hoje Clint,
-  depois JAY.O. O payload sai com `name/email/phone/whatsapp`, que são nomes aceitos pelo
-  endpoint do JAY.O, então trocar a URL basta.
-  ⚠️ Nas LPs Elementor os `utm_*` vão dentro de `raw`, aninhados. Se o CRM precisar ler
-  `utm_source` como origem do negócio, tem que subir esses campos pro topo do payload em
-  `api/elementor-form`.
-  ⚠️ **Não construir sistema de integração dentro do portal.** Já foi feito e desfeito em
-  11/08 — o CRM é quem cria e administra os webhooks. O portal só cola a URL.
+  **Código do CRM por página**: o CRM entrega um BLOCO DE CÓDIGO (formulário + script, ou só o
+  script), não uma URL. Fica em `lp-form-config:<slug>.codigoCrm`, editado no bloco "Integração
+  do CRM" em `/lps/<slug>`, e injetado antes de `</body>` por `lib/serve-lp.ts` — por último, pra
+  achar o formulário já montado. Os formulários do portal seguem com o campo de webhook em
+  `/forms/[id]`.
+  ⚠️ **`/lps/[slug]` cai no `lp-html-registry` quando o KV não tem a LP.** Sem isso, 8 páginas
+  (incl. as 4 que mais trazem lead) davam 404 e não tinham onde configurar nada.
+  ⚠️ **Não construir sistema de integração dentro do portal.** Já foi feito e desfeito em 11/08 —
+  o CRM é dono dos webhooks; o portal só hospeda o código que ele gera.
 - `wordpress` — importação DESATIVADA (migração concluída); redireciona pra `/wp-pages`.
 - `login`; `f/[slug]` — render público de form standalone.
 

@@ -17,17 +17,57 @@ import { inferLpSource } from "@/lib/page-catalog";
 import { clsx } from "clsx";
 import { LpActionsMenu } from "@/components/lp-actions-menu";
 import { SiteUrlLink } from "@/components/site-url-link";
+import { CrmCodigoForm } from "@/components/crm-codigo-form";
+import { getCurrentUser, canEdit } from "@/lib/auth";
+import { getLpFormConfig } from "@/lib/lp-form-config";
+import { getLpHtmlEntry } from "@/lib/lp-html-registry";
+import type { LandingPage } from "@/lib/landing-pages";
 
 type Params = Promise<{ slug: string }>;
 
+/**
+ * Ficha das LPs que moram no repositório (lp-html/) e não têm registro no KV.
+ *
+ * ⚠️ Sem isto, `/lps/basic-nanofios` dava 404 — e eram OITO páginas nessa
+ * situação, incluindo as 4 que mais trazem lead (NanoFios, Profissão Remove,
+ * Fio a Fio, Lips Sense). Elas apareciam no catálogo mas não tinham tela
+ * nenhuma, então não havia onde colar o código do CRM nem ver os atalhos.
+ * Era isto que o James descrevia como "não tá tendo como eu adicionar a
+ * webhook, tá meio bugado".
+ *
+ * Toda página tem ficha agora. Não voltar a depender só do KV aqui.
+ */
+function lpDoRegistro(slug: string): LandingPage | null {
+  const e = getLpHtmlEntry(slug);
+  if (!e) return null;
+  return {
+    slug: e.slug,
+    name: e.title,
+    tagline: "",
+    description: "Página editada no repositório (lp-html/) — publica por commit.",
+    stack: "HTML no repo",
+    status: "published",
+    type: "lp",
+    localPath: "",
+    accent: e.accent ?? "pink-orange",
+    contentSource: "lp-html",
+    createdAt: "",
+  };
+}
+
 export default async function LpDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const lp = await getLpFromStore(slug);
+  const lp = (await getLpFromStore(slug)) ?? lpDoRegistro(slug);
   if (!lp) notFound();
 
   const style = statusColors[lp.status];
   const isProduction = process.env.VERCEL_ENV === "production" || !!process.env.VERCEL;
   const hasBuilder = await isBuilderPage(slug);
+  const [me, formConfig] = await Promise.all([
+    getCurrentUser(),
+    getLpFormConfig(slug),
+  ]);
+  const userCanEdit = canEdit(me);
   const publicUrl = publicUrlFor(lp);
   // Fonte de conteúdo: campo contentSource com fallback heurístico pra LPs
   // antigas do KV sem o campo (ver inferLpSource).
@@ -90,7 +130,10 @@ export default async function LpDetailPage({ params }: { params: Params }) {
 
         <section className="px-5 py-6 lg:px-10 lg:py-8 grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2 space-y-5">
-            {!lp.localPath && !hasBuilder && (
+            {/* ⚠️ Página de lp-html/ NÃO é rascunho: o conteúdo dela está no
+                repositório e já está no ar. Antes o aviso aparecia nelas do
+                mesmo jeito — aviso que mente é pior que aviso nenhum. */}
+            {!lp.localPath && !hasBuilder && source !== "lp-html" && (
               <div className="bg-amber-500/5 border border-amber-500/25 rounded-2xl p-5">
                 <p className="text-[11px] uppercase tracking-[0.16em] text-amber-300 font-semibold">
                   Página em rascunho
@@ -165,6 +208,14 @@ export default async function LpDetailPage({ params }: { params: Params }) {
           </div>
 
           <aside className="space-y-5">
+            {/* Integração do CRM na tela da PRÓPRIA página — antes isso era uma
+                lista solta em /leads, longe da página a que pertence. */}
+            {userCanEdit && (
+              <Block title="Integração do CRM">
+                <CrmCodigoForm slug={lp.slug} codigo={formConfig?.codigoCrm} />
+              </Block>
+            )}
+
             <Block title="Atalhos">
               <div className="space-y-2">
                 {publicUrl && (
@@ -249,9 +300,13 @@ export default async function LpDetailPage({ params }: { params: Params }) {
               </div>
             </Block>
 
-            <Block title="Criada em">
-              <p className="text-neutral-300 text-sm font-medium">{lp.createdAt}</p>
-            </Block>
+            {/* Bloco vazio é ruído: as páginas de lp-html/ não têm data de
+                criação no painel (nasceram no repositório). */}
+            {lp.createdAt && (
+              <Block title="Criada em">
+                <p className="text-neutral-300 text-sm font-medium">{lp.createdAt}</p>
+              </Block>
+            )}
           </aside>
         </section>
       </main>

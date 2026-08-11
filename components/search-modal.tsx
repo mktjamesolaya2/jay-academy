@@ -52,15 +52,20 @@ export function SearchModal({
 
   const results = useMemo<Result[]>(() => {
     const q = query.toLowerCase().trim();
+    // ⚠️ Só página PUBLICADA entra na busca. James: "naquela busca não é pra
+    // aparecer página que não tá postada". Rascunho e lixeira poluíam a lista
+    // e faziam a busca parecer quebrada.
     const all: Result[] = [
-      ...landingPages.map((lp) => ({
-        id: `lp-${lp.slug}`,
-        title: lp.name,
-        subtitle: `${lp.type === "website" ? "Website" : "Landing page"} · /${lp.slug}`,
-        href: `/lps/${lp.slug}`,
-        kind: "lp" as const,
-        icon: lp.type === "website" ? Globe : Layout,
-      })),
+      ...landingPages
+        .filter((lp) => lp.status === "published" && !lp.trashed)
+        .map((lp) => ({
+          id: `lp-${lp.slug}`,
+          title: lp.name,
+          subtitle: `${lp.type === "website" ? "Website" : "Landing page"} · /${lp.slug}`,
+          href: `/lps/${lp.slug}`,
+          kind: "lp" as const,
+          icon: lp.type === "website" ? Globe : Layout,
+        })),
       // LPs servidas de lp-html/ (registro estático em git) — sem detalhe no
       // painel (exceto as que também têm registro de LP), então abre a página
       ...lpHtmlPages
@@ -73,7 +78,9 @@ export function SearchModal({
           kind: "static" as const,
           icon: FileCode2,
         })),
-      ...savedWp.map((wp) => ({
+      ...savedWp
+        .filter((wp) => wp.published)
+        .map((wp) => ({
         id: `wp-${wp.domain}-${wp.slug}`,
         title: wp.title.replace(/<[^>]*>/g, ""),
         subtitle: `${pageOriginLabel(wp)}/${wp.slug}`,

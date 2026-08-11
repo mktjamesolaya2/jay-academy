@@ -5,6 +5,7 @@ import path from "node:path";
 import { withTracking, buildVisitBeacon } from "@/lib/meta-tracking";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 import { resolveEmbeddedHtml } from "@/lib/embedded-html-store";
+import { getLpFormConfig } from "@/lib/lp-form-config";
 
 // Serving unificado das LPs custom (antes eram ~10 route handlers quase
 // idênticos). Três variantes:
@@ -106,6 +107,18 @@ export async function serveLp(
   html = /<\/body>/i.test(html)
     ? html.replace(/<\/body>/i, `${beacon}\n</body>`)
     : html + beacon;
+
+  // Código do CRM colado no painel (Integração do CRM, na tela da página).
+  // Vai por último, antes de </body>, pra achar o formulário já montado quando
+  // for a variante "só o envio" — script que roda antes do formulário existir
+  // não engancha em nada.
+  const cfg = await getLpFormConfig(slug).catch(() => null);
+  if (cfg?.codigoCrm) {
+    const bloco = `\n<!-- Integração do CRM (colada no painel) -->\n${cfg.codigoCrm}\n`;
+    html = /<\/body>/i.test(html)
+      ? html.replace(/<\/body>/i, `${bloco}</body>`)
+      : html + bloco;
+  }
 
   return new NextResponse(html, {
     headers: {

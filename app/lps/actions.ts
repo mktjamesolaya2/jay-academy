@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { logActivity } from "@/lib/activity-log";
+import { getLpFormConfig, setLpFormConfig } from "@/lib/lp-form-config";
 import {
   addLp,
   getLpFromStore,
@@ -232,4 +233,42 @@ export async function setLpStatusAction(formData: FormData) {
   revalidatePath("/websites");
   revalidatePath(`/lps/${slug}`);
   revalidatePath(`/p/${slug}`);
+}
+
+/**
+ * Guarda o código que o CRM gera pra uma página (formulário + script, ou só o
+ * script). Ele é injetado antes de `</body>` na hora de servir — ver
+ * `lib/serve-lp.ts`.
+ *
+ * Código vazio TIRA a integração daquela página: é como se desinstala, e por
+ * isso não vale exigir conteúdo aqui.
+ */
+export async function salvarCodigoCrmAction(
+  formData: FormData
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    await requireAdmin();
+    const slug = (formData.get("slug")?.toString() ?? "").trim();
+    if (!slug) return { ok: false, error: "Página não identificada" };
+    const codigo = formData.get("codigo")?.toString() ?? "";
+
+    // 200 KB é MUITO mais do que qualquer script de formulário — o teto está
+    // aqui só pra ninguém colar uma página inteira por engano.
+    if (codigo.length > 200_000) {
+      return { ok: false, error: "Código grande demais — confira se colou só o trecho do CRM." };
+    }
+
+    const atual = (await getLpFormConfig(slug)) ?? {};
+    await setLpFormConfig(slug, { ...atual, codigoCrm: codigo });
+    await logActivity(
+      "wp.edit",
+      slug,
+      codigo.trim() ? "código do CRM instalado na página" : "código do CRM removido da página"
+    );
+    revalidatePath(`/lps/${slug}`);
+    revalidatePath(`/${slug}`);
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro ao salvar" };
+  }
 }

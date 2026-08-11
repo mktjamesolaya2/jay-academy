@@ -12,6 +12,62 @@ James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
 com vc as imagens não estão subindo p ca!"* e depois *"deixa como a galeria do
 iphone acho q ficaria bom"*.
 
+## 🧭 Sessão 2026-08-11 (parte 3) — arrumando o portal + o código do CRM nas páginas
+
+James: *"o portal tá bem bagunçado"*. E estava — três coisas concretas.
+
+### 🐛 O bug que explicava tudo: 8 páginas sem tela nenhuma
+
+`/lps/basic-nanofios` dava **404**. Eram **8 LPs** nessa situação — incluindo
+as **4 que mais trazem lead** (NanoFios, Profissão Remove, Fio a Fio, Lips
+Sense). Elas apareciam no catálogo, mas clicar não levava a lugar nenhum.
+
+Causa: `/lps/[slug]` só olhava o KV, e as LPs de `lp-html/` não têm registro
+lá — o registro delas é `lib/lp-html-registry.ts`, versionado. Agora a tela cai
+no registro quando o KV não tem. **Toda página tem ficha.**
+
+Era isto que ele descrevia como *"não tá tendo como eu adicionar a webhook, tá
+meio bugado"*: não faltava o campo, faltava a TELA.
+
+### O código do CRM mora na página
+
+⚠️ O CRM **não entrega uma URL** — entrega um **bloco de código** (formulário +
+script, ou só o script). Por isso o campo é uma caixa de texto, não um input de
+URL: guardar só a URL obrigaria a gente a remontar o script na mão e quebrar
+toda vez que o Lucas mudasse alguma coisa.
+
+- `lp-form-config:<slug>` ganhou **`codigoCrm`**.
+- `lib/serve-lp.ts` injeta antes de `</body>` — **por último**, pra achar o
+  formulário já montado quando for a variante "só o envio".
+- Bloco **"Integração do CRM"** no topo da coluna da direita em `/lps/<slug>`.
+- **Saiu a lista "Webhooks das LPs" de `/leads`.** James: *"ficar colocando em
+  muito lugar assim não vai dar certo"*. Agora fica na tela da própria página.
+
+Conferido servindo a página de verdade: o código aparece no HTML, com a chave
+`pk_` do Lucas, antes do `</body>`.
+
+### Busca do topo: só página publicada
+
+Ela listava rascunho, arquivada e página do WP não publicada. Agora filtra por
+`status === "published"` e `wp.published`.
+
+### Avisos que mentiam (o "mostra coisa que não tem")
+
+- **"Conteúdo ainda não foi construído"** aparecia nas páginas de `lp-html/`,
+  que estão no ar e com conteúdo no repositório.
+- **"Criada em"** vazio nas mesmas páginas.
+
+Os dois só aparecem quando fazem sentido.
+
+### ⏭️ Ainda pendente do que ele pediu
+
+- **Padronizar a tela de todas as páginas.** Hoje LP e página do WP têm telas e
+  menus de ação diferentes (`lp-actions-menu` × `wp-page-actions`). O bloco do
+  CRM está só na de LP — falta a de WP.
+- Ele disse que ia continuar procurando mais coisa fora do lugar.
+
+---
+
 ## 🔌 Sessão 2026-08-11 — integração com o CRM: construída e DESFEITA
 
 Terminou em nada de código, e é assim que tinha que ser. Fica registrado pra

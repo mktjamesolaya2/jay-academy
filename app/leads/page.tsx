@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Inbox, Search, Webhook } from "lucide-react";
+import { Download, Inbox, Search } from "lucide-react";
 import { clsx } from "clsx";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
@@ -10,8 +10,6 @@ import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import { relativeTime } from "@/lib/landing-pages";
 import { lpHtmlPages, getLpHtmlEntry } from "@/lib/lp-html-registry";
-import { getLpFormConfig } from "@/lib/lp-form-config";
-import { LpWebhookForm } from "@/components/lp-webhook-form";
 
 export const dynamic = "force-dynamic";
 
@@ -60,12 +58,6 @@ export default async function LeadsPage({
       return false;
     return true;
   });
-
-  // Config de webhook por LP de venda (lp-html)
-  const vendaLps = lpHtmlPages.filter((p) => p.category === "venda");
-  const configs = await Promise.all(
-    vendaLps.map((p) => getLpFormConfig(p.slug).catch(() => null))
-  );
 
   const exportHref = origem
     ? `/leads/export?origem=${encodeURIComponent(origem)}`
@@ -189,32 +181,10 @@ export default async function LeadsPage({
             </div>
           )}
 
-          {/* Config de webhook por LP de venda */}
-          {userCanEdit && (
-            <section className="mt-10">
-              <div className="flex items-center gap-2 mb-1">
-                <Webhook size={15} strokeWidth={2.2} className="text-sky-300" />
-                <h2 className="text-lg font-semibold text-white tracking-[-0.02em]">
-                  Webhooks das LPs
-                </h2>
-              </div>
-              <p className="text-sm text-neutral-500 mb-4">
-                Cada lead de uma LP pode ser enviado pra um webhook (Clint,
-                Zapier, etc.) na hora. Deixe em branco pra só guardar aqui.
-              </p>
-              <div className="border border-[#1f1f1f] rounded-2xl overflow-hidden bg-[#0d0d0d]">
-                {vendaLps.map((p, i) => (
-                  <LpWebhookForm
-                    key={p.slug}
-                    slug={p.slug}
-                    title={p.title}
-                    webhook={configs[i]?.formWebhookUrl}
-                    redirect={configs[i]?.formRedirectUrl}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+          {/* A configuração do CRM saiu daqui. Ela agora mora na tela da
+              PRÓPRIA página (/lps/<slug>), junto dos outros atalhos dela —
+              James: "ficar colocando em muito lugar assim não vai dar certo". */}
+
         </main>
       </div>
     </div>
