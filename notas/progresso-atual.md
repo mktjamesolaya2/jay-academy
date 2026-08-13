@@ -68,6 +68,30 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### ✅ 11/08 — CRM recebendo lead (RESOLVIDO)
+
+James: *"funcionouuu"*.
+
+O que destravou, na ordem em que foi descoberto:
+
+1. **Envio pelo servidor** (`/api/elementor-form`), não pelo navegador — POST
+   com JSON dispara verificação prévia e o navegador barrava calado.
+2. **Origin e Referer da página de origem** no envio pro CRM. Ele decide pela
+   lista de *"Domínios liberados"* olhando de qual site veio; do servidor a
+   requisição chegava **sem site nenhum** e a chave com lista preenchida
+   recusava. Foi a última peça.
+3. **Domínios liberados** preenchidos no CRM com `jayacademy.com.br`,
+   `www.jayacademy.com.br`, `jay-academy.vercel.app` (ou em branco).
+
+⚠️ **Regra pro futuro**: se um serviço externo filtra por domínio e a gente
+manda do servidor, tem que anunciar o domínio de origem — senão ele recusa sem
+dizer por quê.
+
+**Ponta solta**: falta colar a chave nas outras páginas. Cada página tem a sua
+(bloco Webhook em `/lps/<slug>` ou `/wp-pages/<domain>/<slug>`).
+
+**Limpar**: leads de teste que eu criei — "TESTE PORTAL" em `/acao-mshadow`.
+
 ### 🚨 11/08 — eu quebrei os formulários do WP tentando consertar o webhook
 
 Sequência do estrago, pra não repetir:
