@@ -68,6 +68,37 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### 🚨 11/08 — eu quebrei os formulários do WP tentando consertar o webhook
+
+Sequência do estrago, pra não repetir:
+
+1. Injetei nas páginas do WP (`app/p/[slug]`) um script que **segurava o
+   submit e mandava direto pro CRM**. Isso sequestrou formulários que
+   funcionavam — James viu na hora: *"a animação que ele tinha antes mudou tb,
+   não era assim"*.
+2. Como a chave dele responde 404, o envio falhava e a pessoa via só *"Não
+   conseguimos enviar agora"*: *"os formulários não estão sendo permitidos
+   serem enviados!"*.
+3. Tentei estreitar pra `form.elementor-form` — **não adiantou**: os
+   formulários dele SÃO do Elementor (varri as 72 páginas do sitemap pra
+   achar a dele, já que ele tinha fechado o link).
+
+**Solução**: LP e página do WP usam a MESMA ponte
+(`montarGuardaDeFormularios`), que manda pro `/api/elementor-form` — o
+servidor guarda o lead, dispara o webhook da página, chama o CRM e devolve a
+mensagem de sucesso. A ponte sai de fininho se alguém já tratou o submit.
+
+⚠️ **Regra**: nunca segurar o submit pra falar com serviço de fora. Manda pro
+nosso servidor e deixa ele falar com o mundo — e nunca trocar o comportamento
+de um formulário que já funciona.
+
+Conferido em produção, em `/acao-mshadow`: `200 POST /api/elementor-form` e
+*"Recebido com sucesso!"* na tela. Ficou um lead "TESTE PORTAL" pra apagar.
+
+⚠️ **Ainda pendente**: a chave do CRM responde 404 (testada direto, e chave
+inventada dá o mesmo). Mas agora **o lead não se perde**: fica no portal mesmo
+se o CRM recusar.
+
 ### 🚨 11/08 — os formulários das 4 LPs de venda estavam QUEBRADOS
 
 James mandou print do **HTTP 405** ao enviar um formulário. Investigando,
