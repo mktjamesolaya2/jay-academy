@@ -5,6 +5,7 @@ import {
   somenteScript,
   temMarcacaoVisivel,
   montarScriptDeEnvio,
+  montarGuardaDeFormularios,
 } from "./webhook-codigo.ts";
 
 const varianteCompleta = `<form id="form-jayo">
@@ -114,4 +115,35 @@ test("somenteScript descarta o que é visível", () => {
   const r = somenteScript(varianteCompleta);
   assert.ok(!r.includes("<form"));
   assert.ok(r.includes("fetch("));
+});
+
+/* ── a ponte que evita o 405 ────────────────────────────────────────────── */
+
+const guarda = montarGuardaDeFormularios();
+
+test("a ponte manda pro portal, não pra própria página", () => {
+  assert.ok(guarda.includes('"/api/elementor-form"'));
+  assert.ok(guarda.includes("preventDefault"));
+});
+
+test("a ponte não atropela formulário que já funciona", () => {
+  assert.ok(guarda.includes("defaultPrevented"), "quem já tratou o submit fica intacto");
+  assert.ok(guarda.includes("mesmaPagina"), "form com destino próprio (Hotmart) segue direto");
+});
+
+test("mesmaPagina reconhece o que iria pro vazio", () => {
+  const abre = "function mesmaPagina(action) {";
+  const i = guarda.indexOf(abre);
+  const corpo = guarda.slice(i + abre.length, guarda.indexOf("\n  }", i));
+  const fn = new Function("action", "location", corpo) as (a: string | null, l: unknown) => boolean;
+  const loc = { href: "https://x.com/basic-nanofios", pathname: "/basic-nanofios" };
+  assert.equal(fn(null, loc), true, "sem action = POST na própria URL = 405");
+  assert.equal(fn("", loc), true);
+  assert.equal(fn("/basic-nanofios", loc), true);
+  assert.equal(fn("https://pay.hotmart.com/abc", loc), false, "destino próprio: não encosta");
+});
+
+test("a ponte mostra o retorno na tela", () => {
+  assert.ok(guarda.includes("Enviando..."));
+  assert.ok(guarda.includes("Não conseguimos enviar agora"));
 });

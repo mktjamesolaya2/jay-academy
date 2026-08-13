@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
+import { extrairChave } from "@/lib/webhook-codigo";
+import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
+import { kvSet } from "@/lib/storage";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 import { getLpFormConfig } from "@/lib/lp-form-config";
 
@@ -113,6 +116,52 @@ export async function POST(req: Request) {
         webhookStatus = "failed";
         webhookError = e instanceof Error ? e.message : "Erro de rede";
       }
+    }
+
+    // Webhook do CRM (a chave colada no painel). Vai daqui, do SERVIDOR: do
+    // navegador, a verificação prévia do POST com JSON barra o envio quando o
+    // domínio não está liberado na chave, e o lead some sem erro nenhum.
+    const chaveCrm = lpCfg?.codigoCrm ? extrairChave(lpCfg.codigoCrm) : null;
+    if (chaveCrm) {
+      let status = 0;
+      let motivo = "";
+      try {
+        const r = await fetch(
+          `https://www.sistemajayo.com/api/integrations/site/lead/${chaveCrm}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nome: name,
+              email,
+              telefone: whatsapp,
+              pagina: slug,
+              ...fields,
+            }),
+            signal: AbortSignal.timeout(8000),
+          }
+        );
+        status = r.status;
+        const texto = await r.text().catch(() => "");
+        let ok = r.ok;
+        try {
+          ok = ok && JSON.parse(texto || "{}").ok !== false;
+        } catch {}
+        if (!ok) motivo = texto.slice(0, 300);
+      } catch (e) {
+        motivo = e instanceof Error ? e.message : "Erro de rede";
+      }
+      // O resultado aparece na tela da página, em "Últimos envios".
+      try {
+        const anteriores = await logsDaPagina(slug);
+        await kvSet(
+          chaveLog(slug),
+          [
+            { em: new Date().toISOString(), status, erro: motivo || undefined },
+            ...anteriores,
+          ].slice(0, 10)
+        );
+      } catch {}
     }
 
     await addSubmission({

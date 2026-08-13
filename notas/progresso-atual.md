@@ -68,6 +68,41 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### 🚨 11/08 — os formulários das 4 LPs de venda estavam QUEBRADOS
+
+James mandou print do **HTTP 405** ao enviar um formulário. Investigando,
+descobri que era muito pior que um detalhe do webhook:
+
+```
+window.jQuery              -> undefined
+window.elementorProFrontend -> undefined
+```
+
+O jQuery e o Elementor **não carregam** nas LPs (nenhum asset dá erro — eles
+simplesmente não executam). Sem eles, ninguém intercepta o envio: o formulário
+faz POST na própria URL e a página, que só responde GET, devolve **405**.
+
+⚠️ **Isso estava em produção sem webhook nenhum configurado. Todo lead das 4
+páginas de venda se perdia** — NanoFios, Profissão Remove, Fio a Fio, Lips
+Sense. Reproduzido no navegador antes e depois.
+
+**`montarGuardaDeFormularios()`** agora vai em TODA página servida pelo
+`serve-lp`, com ou sem webhook. Ela intercepta o submit, manda pro
+`/api/elementor-form` (que já guardava o lead e dispara o webhook da página) e
+mostra a resposta na tela.
+
+Não atropela nada: se outro script já tratou o envio (`defaultPrevented`) ou se
+o formulário tem destino próprio (Hotmart), a ponte não encosta —
+`mesmaPagina()` decide, e é testada executando a função.
+
+O `/api/elementor-form` agora também dispara **a chave do CRM**, do servidor,
+e grava o resultado em `webhook-log:<slug>` — que aparece em "Últimos envios"
+na tela da página.
+
+Conferido de ponta a ponta em `/basic-nanofios`: antes `405 POST
+/basic-nanofios`; agora `200 POST /api/elementor-form`, lead gravado e
+*"Recebido com sucesso!"* na tela. Leads de teste removidos depois.
+
 ### ⚠️ 11/08 — o "Tirar" do webhook não tirava
 
 James: *"não está sendo possível remover ou trocar a webhook"*.

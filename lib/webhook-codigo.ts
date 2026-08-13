@@ -65,6 +65,78 @@ export function temMarcacaoVisivel(codigo: string): boolean {
  * - Nomes de campo do Elementor (`form_fields[nome]`) são normalizados, e o
  *   `_gotcha` (isca de robô) nunca viaja.
  */
+/**
+ * Ponte entre o formulário da página e o portal. Vai em TODA LP, com ou sem
+ * webhook configurado.
+ *
+ * ⚠️ Por que precisa existir: nas 4 LPs de venda o jQuery e o Elementor **não
+ * carregam** (confirmado no navegador: `window.jQuery` e
+ * `window.elementorProFrontend` são `undefined`). Sem eles, ninguém intercepta
+ * o envio, o formulário faz POST na própria URL e a página — que só responde
+ * GET — devolve **HTTP 405**. Era o erro que o James via, e estava assim em
+ * produção mesmo antes de qualquer webhook: **todo lead dessas páginas se
+ * perdia**.
+ *
+ * A ponte manda pro `/api/elementor-form`, que já guarda o lead, dispara o
+ * webhook da página e devolve a mensagem de sucesso.
+ *
+ * Nunca atropela quem já funciona: se outro script tratou o envio, ou se o
+ * formulário tem destino próprio (action pra fora), a gente não encosta.
+ */
+export function montarGuardaDeFormularios(): string {
+  return `<script>
+(function () {
+  function mesmaPagina(action) {
+    if (!action) return true;
+    try { return new URL(action, location.href).pathname === location.pathname; }
+    catch (e) { return false; }
+  }
+  function avisar(form, texto, erro) {
+    var aviso =
+      form.querySelector("[data-jayo-aviso]") ||
+      form.querySelector(".jayo-aviso");
+    if (!aviso) {
+      aviso = document.createElement("p");
+      aviso.className = "jayo-aviso";
+      aviso.style.cssText = "margin:12px 0 0;font-size:15px;line-height:1.5;font-weight:600";
+      form.appendChild(aviso);
+    }
+    aviso.style.color = erro ? "#f87171" : "#22c55e";
+    aviso.textContent = texto;
+  }
+  document.addEventListener("submit", function (evento) {
+    var form = evento.target;
+    if (!form || form.tagName !== "FORM") return;
+    // Alguém já cuidou (Elementor funcionando, script próprio): não encosta.
+    if (evento.defaultPrevented) return;
+    // Formulário com destino de verdade (Hotmart, outro site): deixa seguir.
+    if (!mesmaPagina(form.getAttribute("action"))) return;
+
+    evento.preventDefault();
+    var dados = new FormData(form);
+    if (!dados.get("action")) dados.append("action", "elementor_pro_forms_send_form");
+    if (!dados.get("form_slug")) dados.append("form_slug", location.pathname.replace(/^\\//, ""));
+    avisar(form, "Enviando...", false);
+    fetch("/api/elementor-form", { method: "POST", body: dados })
+      .then(function (r) { return r.json().catch(function () { return null; }); })
+      .then(function (res) {
+        if (res && res.success) {
+          var d = res.data || {};
+          avisar(form, d.message || "Recebemos seu contato. Falamos com você em breve!", false);
+          try { form.reset(); } catch (e) {}
+          if (d.redirect_url) setTimeout(function () { location.href = d.redirect_url; }, 900);
+        } else {
+          avisar(form, "Não conseguimos enviar agora. Tente novamente em instantes.", true);
+        }
+      })
+      .catch(function () {
+        avisar(form, "Não conseguimos enviar agora. Tente novamente em instantes.", true);
+      });
+  }, false);
+})();
+</script>`;
+}
+
 export function montarScriptDeEnvio(chave: string): string {
   return `<script>
 (function () {
