@@ -68,6 +68,78 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+## 🔜 PRÓXIMA FRENTE — migrar os formulários do Clint pro CRM (13/08)
+
+### O fluxo que precisa voltar a funcionar
+
+```
+pessoa comenta no Instagram → ManyChat dispara → manda o link da página com
+formulário (hoje no NOSSO portal) → pessoa preenche → cai no CRM no funil
+comercial, JÁ COM A TAG daquele formulário
+```
+
+A **tag** diz de qual formulário veio, e é ela que decide o roteiro e as
+mensagens prontas do comercial. Sem tag o lead chega anônimo. No Clint cada
+formulário tinha seu webhook e o webhook carregava a tag.
+
+⚠️ **Roteiro e mensagens prontas dentro do CRM são do James, manual.** Não é
+nosso escopo.
+
+### Tamanho real: **70 páginas com formulário** (varridas do sitemap, 70 de 72)
+
+Lista completa em `scratchpad/` da sessão; grupos: `/acao-lips-sense-*` (12),
+`/acao-jayremove-*` (4), `/remove_*` (7), `/magic-shadow-*` (6),
+`/fio-a-fio-*` (3), `/contato-*` (3), mais avulsas.
+
+É esse número que decide a arquitetura — na mão não dá.
+
+### ❓ Bloqueado nas respostas do Lucas
+
+1. **A tag entra por onde?** No print de "Novo webhook" só aparecem Nome,
+   Etapa de entrada, Responsável, Domínios liberados e **Rótulo de origem** —
+   **não vi campo de tag**.
+   - Se o rótulo de origem servir como tag → **uma chave só** resolve (a chave
+     padrão já está construída) e a página manda o identificador.
+   - Se a tag for amarrada ao webhook → **70 webhooks**, um por formulário.
+2. **Dá pra criar webhook por API?** Se der, criamos os 70 sem digitar.
+3. **As tags do Clint dão pra exportar?** Precisamos do par formulário → tag.
+4. **O CRM lê campos extras no envio** (`utm_source`, `tag`)? Com quais nomes?
+5. **Etapa de entrada e Responsável são por webhook** — se for uma chave só,
+   todo lead cai na mesma etapa. Isso serve?
+6. **Limite de envios por chave** — com 70 formulários numa chave só, importa.
+
+### O que já está pronto do nosso lado
+
+- Envio pelo servidor com `Origin`/`Referer` (resolvido, ver seção do dia 11)
+- **Chave padrão do CRM** em Configurações → Integrações (a chave da página
+  vence a padrão) — já cobre o cenário "uma chave só"
+- Coluna **CRM** na tela de Leads + botão **Reenviar**
+- Aviso no dashboard quando lead recente não chegou no CRM
+
+## 🚨 URGENTE — a Vercel está barrando visitante (13/08)
+
+Uma cliente mandou print de `ERR_HTTP_RESPONSE_CODE_FAILURE` ao abrir
+`/beautyempreenda` pelo Instagram. **Não é o formulário.** É a Vercel:
+
+```
+403 Forbidden
+X-Vercel-Mitigated: challenge
+```
+
+Peguei acontecendo em TODAS as páginas testadas (`/beautyempreenda`,
+`/contato-instagram`, `/acao-mshadow`, `/basic-nanofios`, `/stbrows`,
+`/campanha-vogue`) e minutos depois parou — é **intermitente**.
+
+O navegador de dentro do Instagram não completa o desafio anti-robô, então a
+página nem abre. **Enquanto isso estiver ligado, lead do Instagram se perde sem
+deixar rastro** — nem chega no portal.
+
+**Ação (só o James consegue)**: Vercel → projeto `jay-academy` → **Firewall** →
+conferir **Attack Challenge Mode**. Se estiver ligado, desligar. O acesso à
+Vercel a partir do Claude Code não está autorizado.
+
+---
+
 ### ✅ 11/08 — CRM recebendo lead (RESOLVIDO)
 
 James: *"funcionouuu"*.
