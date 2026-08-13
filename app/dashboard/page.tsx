@@ -338,8 +338,10 @@ export default async function DashboardPage() {
                     <h2 className="text-sm font-semibold text-white">
                       Leads recentes
                     </h2>
+                    {/* "Ver todos" de LEADS vai pra /leads. Ia pra /forms, que
+                        é a tela de criar formulário — outra coisa. */}
                     <Link
-                      href="/forms"
+                      href="/leads"
                       className="text-xs text-neutral-500 hover:text-white transition inline-flex items-center gap-1"
                     >
                       Ver todos

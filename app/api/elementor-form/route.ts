@@ -139,6 +139,8 @@ export async function POST(req: Request) {
     // navegador, a verificação prévia do POST com JSON barra o envio quando o
     // domínio não está liberado na chave, e o lead some sem erro nenhum.
     const chaveCrm = lpCfg?.codigoCrm ? extrairChave(lpCfg.codigoCrm) : null;
+    let crmStatus: FormSubmission["crmStatus"] = "sem-chave";
+    let crmErro: string | undefined;
     if (chaveCrm) {
       let status = 0;
       let motivo = "";
@@ -161,12 +163,15 @@ export async function POST(req: Request) {
               Origin: origem.origin,
               Referer: origem.href,
             },
+            // ⚠️ Os campos brutos vêm PRIMEIRO: os normalizados (nome, email,
+            // telefone) têm que vencer. Na ordem inversa, um campo do
+            // formulário com o mesmo nome sobrescrevia o valor já tratado.
             body: JSON.stringify({
+              ...fields,
               nome: name,
               email,
               telefone: whatsapp,
               pagina: slug,
-              ...fields,
             }),
             signal: AbortSignal.timeout(8000),
           }
@@ -178,9 +183,12 @@ export async function POST(req: Request) {
           ok = ok && JSON.parse(texto || "{}").ok !== false;
         } catch {}
         if (!ok) motivo = texto.slice(0, 300);
+        crmStatus = ok ? "ok" : "falhou";
       } catch (e) {
         motivo = e instanceof Error ? e.message : "Erro de rede";
+        crmStatus = "falhou";
       }
+      if (crmStatus === "falhou") crmErro = motivo || undefined;
       // O resultado aparece na tela da página, em "Últimos envios".
       try {
         const anteriores = await logsDaPagina(slug);
@@ -203,6 +211,9 @@ export async function POST(req: Request) {
       submittedAt: new Date().toISOString(),
       webhookStatus,
       webhookError,
+      crmStatus,
+      crmErro,
+      paginaSlug: slug,
     });
 
     await logAnonymousActivity(

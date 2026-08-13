@@ -24,6 +24,19 @@ export type FormSubmission = {
   submittedAt: string;
   webhookStatus?: "sent" | "failed" | "skipped";
   webhookError?: string;
+  /**
+   * O lead chegou no CRM?
+   *
+   * ⚠️ Separado do `webhookStatus`, que é do webhook por URL. São dois destinos
+   * diferentes e um pode falhar sem o outro. Sem este campo, o portal mostrava
+   * o lead como recebido mesmo quando o CRM tinha recusado — foi o que
+   * aconteceu com o James: *"o lead foi criado aqui dentro do portal, apenas
+   * não dentro do CRM"*, e não havia como ver isso na lista.
+   */
+  crmStatus?: "ok" | "falhou" | "sem-chave";
+  crmErro?: string;
+  /** Página de origem — é ela que sabe qual chave usar num reenvio. */
+  paginaSlug?: string;
 };
 
 const FORMS_KEY = "forms:all";
@@ -143,6 +156,29 @@ export async function listAllSubmissions(): Promise<{
     .flat()
     .sort((a, b) => (b.submittedAt ?? "").localeCompare(a.submittedAt ?? ""));
   return { total: submissions.length, submissions };
+}
+
+/**
+ * Atualiza campos de um lead já gravado (usado pelo reenvio pro CRM).
+ *
+ * Procura em todas as listas porque o id não carrega o formId — e reescrever a
+ * lista inteira é aceitável: cada uma tem no máximo 500 entradas.
+ */
+export async function atualizarSubmissao(
+  id: string,
+  campos: Partial<FormSubmission>
+): Promise<boolean> {
+  const keys = await kvKeys("form-submissions:*");
+  for (const k of keys) {
+    const lista = await kvGet<FormSubmission[]>(k);
+    if (!Array.isArray(lista)) continue;
+    const i = lista.findIndex((s) => s.id === id);
+    if (i === -1) continue;
+    lista[i] = { ...lista[i], ...campos };
+    await kvSet(k, lista);
+    return true;
+  }
+  return false;
 }
 
 export function slugify(input: string): string {

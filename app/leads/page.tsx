@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Download, Inbox, Search } from "lucide-react";
 import { clsx } from "clsx";
 import { Sidebar } from "@/components/sidebar";
+import { CrmStatusLead } from "@/components/crm-status-lead";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { EmptyState } from "@/components/empty-state";
 import { getCurrentUser, canEdit } from "@/lib/auth";
@@ -145,6 +146,7 @@ export default async function LeadsPage({
                       <th className="px-4 py-3">Origem</th>
                       <th className="px-4 py-3">Quando</th>
                       <th className="px-4 py-3">Webhook</th>
+                      <th className="px-4 py-3">CRM</th>
                     </tr>
                   </thead>
                   <tbody>
