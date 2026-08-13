@@ -20,12 +20,15 @@ import { extrairChave } from "@/lib/webhook-codigo";
 export function CrmCodigoForm({
   slug,
   codigo,
+  tag,
 }: {
   slug: string;
   codigo?: string;
+  tag?: string;
 }) {
   const [aberto, setAberto] = useState(!codigo);
   const [valor, setValor] = useState(codigo ?? "");
+  const [tagValor, setTagValor] = useState(tag ?? "");
   const [salvo, setSalvo] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [pendente, startTransition] = useTransition();
@@ -56,6 +59,11 @@ export function CrmCodigoForm({
           <Check size={14} strokeWidth={2.6} className="shrink-0 text-emerald-300" />
           <p className="text-[12.5px] font-semibold text-emerald-200">
             {salvo ? "Webhook salvo" : "Webhook instalado nesta página"}
+            {tagValor && (
+              <span className="ml-1 font-mono text-[11.5px] font-normal text-emerald-300/80">
+                · {tagValor}
+              </span>
+            )}
           </p>
         </div>
         <button
@@ -71,6 +79,29 @@ export function CrmCodigoForm({
   return (
     <form action={salvar} className="space-y-2.5">
       <input type="hidden" name="slug" value={slug} />
+      {/* ⚠️ A TAG vira etiqueta no CRM e é criada na hora, se ainda não
+          existir. É ela que diz de qual formulário o lead veio — a tag fixa da
+          integração diz o funil. Grafia diferente cria etiqueta diferente, e um
+          typo aqui vira tag permanente no catálogo: por isso o aviso. */}
+      <label className="block">
+        <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
+          Etiqueta desta página
+        </span>
+        <input
+          name="tag"
+          value={tagValor}
+          onChange={(e) => setTagValor(e.target.value)}
+          spellCheck={false}
+          placeholder="Ex: INSTA CIAFOL LUZ"
+          className="w-full rounded-lg border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2 text-[12.5px] text-neutral-200 placeholder:text-neutral-600 focus:border-neutral-600 focus:outline-none"
+        />
+        <span className="mt-1.5 block text-[11.5px] leading-relaxed text-neutral-500">
+          Vira etiqueta no CRM, criada na hora.{" "}
+          <strong className="text-neutral-400">Escreva sempre igual</strong> —
+          uma letra diferente cria outra etiqueta, e ela não sai mais do
+          catálogo.
+        </span>
+      </label>
       <textarea
         name="codigo"
         value={valor}

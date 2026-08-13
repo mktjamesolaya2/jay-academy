@@ -68,6 +68,46 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### ✅ 13/08 (fim do dia) — a tag funciona; e o erro que me levou pro caminho errado
+
+⚠️ **Eu diagnostiquei errado e o Lucas corrigiu**: *"o webhook não estava
+ignorando o utm_source — ele nunca chegou. O corpo do envio das 17:41 foi só
+name, nome, email, telefone, pagina"*.
+
+Ou seja: eu mandei o James testar afirmando que a tag ia no envio, **ela não
+foi**, e a partir do resultado eu concluí que o CRM ignorava a tag. Cheguei a
+**remover o campo da tela** por causa dessa conclusão errada.
+
+**A lição não é "prestar atenção"**: é que o corpo do envio precisa ser
+verificável sem depender de um teste manual no CRM de produção. Agora ele é:
+`lib/crm-envio.ts` (`montarCorpoDoLead`) é uma função pura com 5 testes que
+olham o objeto que sai, e o teste local intercepta o envio de verdade:
+
+```
+{"nome":"Maria Teste","whatsapp":"11999998888","email":"maria@teste.com",
+ "telefone":"11999998888","pagina":"metodo-shadow-pro","tag":"INSTA CIAFOL LUZ"}
+```
+
+#### O que o Lucas entregou (produção, `eb3f2fc`)
+
+- Campo **`tag`** no corpo vira **etiqueta no contato**, criada na hora se não
+  existir — **não precisa cadastrar as 22 antes**.
+- Aceita `tag`, `tags`, `etiqueta`, `etiquetas`; várias por vírgula; **até 3
+  por envio** (a chave é pública).
+- Sem campo de tag, o `utm_source` serve de etiqueta.
+- A integração tem **tags fixas** no formulário de configuração — as do funil,
+  aplicadas em todo preenchimento. **Fixa = funil, campo `tag` = página.**
+- Canal agora é: `utm_source` → primeira tag → rótulo de origem → nome do
+  webhook.
+
+**Por isso um webhook por funil basta: são 6, não 22.**
+
+⚠️ **Grafia**: escrever a tag sempre igual entre as páginas. Diferente cria
+etiqueta diferente, e como ela nasce do envio, um typo vira tag permanente no
+catálogo (dá pra ocultar em `/crm/configuracoes/tags`). Apagar tag usada por
+integração agora é recusado — sem isso a landing pararia de marcar em silêncio.
+O aviso está na tela, embaixo do campo.
+
 ### ✅ 13/08 — divisão fechada: o CRM cuida de tag, o portal só entrega
 
 Testado de ponta a ponta na `/ciafol-luz` com a chave nova do James
