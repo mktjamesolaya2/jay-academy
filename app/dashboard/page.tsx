@@ -116,6 +116,10 @@ export default async function DashboardPage() {
     within7d(s.submittedAt)
   ).length;
   const recentLeads = leads.submissions.slice(0, 5);
+  // Leads recentes que o CRM não recebeu — vira aviso no topo da coluna.
+  const leadsForaDoCrm = leads.submissions
+    .slice(0, 50)
+    .filter((s) => s.crmStatus === "falhou").length;
   const isRecent = (iso?: string): boolean =>
     !!iso && now - new Date(iso).getTime() <= THREE_DAYS_MS;
   const EDIT_KINDS = new Set<string>([

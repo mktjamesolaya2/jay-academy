@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { CrmChavePadrao } from "@/components/crm-chave-padrao";
+import { getChavePadrao } from "@/lib/crm-chave";
 import { Trash2, ChevronRight, Users, DatabaseBackup } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
@@ -12,6 +14,7 @@ import { getNotifications, unreadCount } from "@/lib/notifications";
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
+  const chavePadrao = await getChavePadrao().catch(() => null);
   const [landingPages, savedWp, me, activity, notifications] =
     await Promise.all([
       loadLps(),

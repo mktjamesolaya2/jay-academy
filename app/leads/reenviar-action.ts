@@ -3,8 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { listAllSubmissions, atualizarSubmissao } from "@/lib/forms-store";
-import { getLpFormConfig } from "@/lib/lp-form-config";
-import { extrairChave } from "@/lib/webhook-codigo";
+import { chaveDoSlug } from "@/lib/crm-chave";
 import { logActivity } from "@/lib/activity-log";
 
 /**
@@ -27,12 +26,12 @@ export async function reenviarProCrmAction(
 
     // O slug da página é quem sabe qual chave usar.
     const slug = lead.paginaSlug || lead.formId.replace(/^wp:/, "");
-    const cfg = await getLpFormConfig(slug).catch(() => null);
-    const chave = cfg?.codigoCrm ? extrairChave(cfg.codigoCrm) : null;
+    const chave = await chaveDoSlug(slug).catch(() => null);
     if (!chave) {
       return {
         ok: false,
-        error: `A página /${slug} não tem webhook configurado. Cole a chave nela primeiro.`,
+        error:
+          "Não há chave do CRM — nem nesta página, nem a padrão em Configurações.",
       };
     }
 

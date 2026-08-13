@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
-import { extrairChave } from "@/lib/webhook-codigo";
+import { chaveDoSlug } from "@/lib/crm-chave";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
@@ -138,7 +138,8 @@ export async function POST(req: Request) {
     // Webhook do CRM (a chave colada no painel). Vai daqui, do SERVIDOR: do
     // navegador, a verificação prévia do POST com JSON barra o envio quando o
     // domínio não está liberado na chave, e o lead some sem erro nenhum.
-    const chaveCrm = lpCfg?.codigoCrm ? extrairChave(lpCfg.codigoCrm) : null;
+    // Chave da página, ou a padrão do site (ver lib/crm-chave.ts).
+    const chaveCrm = await chaveDoSlug(slug).catch(() => null);
     let crmStatus: FormSubmission["crmStatus"] = "sem-chave";
     let crmErro: string | undefined;
     if (chaveCrm) {
