@@ -57,10 +57,27 @@ export async function POST(req: Request) {
     }
 
     // form_fields[chave] → { chave: valor }
+    //
+    // ⚠️ Aceita TAMBÉM nome de campo simples (`nome`, `whatsapp`). Nem todo
+    // formulário das páginas usa o prefixo do Elementor, e quando não usava, o
+    // lead chegava aqui vazio e era recusado com "Preencha ao menos um campo" —
+    // do lado de quem preencheu, só "não conseguimos enviar agora".
+    const IGNORAR = new Set([
+      "action",
+      "post_id",
+      "form_id",
+      "referer",
+      "referer_title",
+      "queried_id",
+      "form_slug",
+      "_gotcha",
+    ]);
     const fields: Record<string, string> = {};
     for (const [k, v] of form.entries()) {
+      if (typeof v !== "string") continue;
       const m = k.match(/^form_fields\[(.+)\]$/);
-      if (m && typeof v === "string") fields[m[1]] = v;
+      if (m) fields[m[1]] = v;
+      else if (!IGNORAR.has(k) && v.trim()) fields[k] = v;
     }
 
     const name = pick(fields, ["name", "nome", "fullname", "full_name"]);

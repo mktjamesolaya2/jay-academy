@@ -107,6 +107,12 @@ export function montarGuardaDeFormularios(): string {
   document.addEventListener("submit", function (evento) {
     var form = evento.target;
     if (!form || form.tagName !== "FORM") return;
+    // ⚠️ SÓ formulário do Elementor. Foram esses que quebraram quando o
+    // Elementor parou de carregar. Formulário próprio da página tem o script
+    // dele e o comportamento dele (redirecionar pro WhatsApp, animação de
+    // sucesso) — a ponte encostou num desses e o James viu logo: "a animação
+    // que ele tinha antes mudou". Não é nosso, não mexemos.
+    if (!/(^|\s)elementor-form(\s|$)/.test(form.className || "")) return;
     // Alguém já cuidou (Elementor funcionando, script próprio): não encosta.
     if (evento.defaultPrevented) return;
     // Formulário com destino de verdade (Hotmart, outro site): deixa seguir.

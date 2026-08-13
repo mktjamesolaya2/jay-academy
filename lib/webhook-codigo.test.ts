@@ -131,6 +131,20 @@ test("a ponte não atropela formulário que já funciona", () => {
   assert.ok(guarda.includes("mesmaPagina"), "form com destino próprio (Hotmart) segue direto");
 });
 
+test("a ponte SÓ encosta em formulário do Elementor", () => {
+  // ⚠️ Ela chegou a pegar um formulário proprio da pagina e trocou o
+  // comportamento dele. James viu na hora: "a animacao que ele tinha antes
+  // mudou". Formulario com script proprio nao e nosso.
+  const ondeChecaClasse = guarda.indexOf("elementor-form");
+  const ondeSegura = guarda.indexOf("evento.preventDefault()");
+  assert.notEqual(ondeChecaClasse, -1, "a checagem de classe existe");
+  assert.notEqual(ondeSegura, -1, "o preventDefault existe");
+  assert.ok(
+    ondeChecaClasse < ondeSegura,
+    "a checagem de classe vem ANTES de segurar o envio"
+  );
+});
+
 test("mesmaPagina reconhece o que iria pro vazio", () => {
   const abre = "function mesmaPagina(action) {";
   const i = guarda.indexOf(abre);
