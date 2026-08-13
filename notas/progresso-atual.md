@@ -68,6 +68,41 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### ✅ 13/08 — divisão fechada: o CRM cuida de tag, o portal só entrega
+
+Testado de ponta a ponta na `/ciafol-luz` com a chave nova do James
+(`pk_8YXIL695uQcGTcyA` — confirmada válida: POST vazio devolve 422 "Telefone
+inválido", enquanto a antiga dava 404).
+
+**O lead chegou no CRM**, no funil e etapa certos. A anotação do negócio provou
+que o corpo do envio é lido:
+
+```
+Preenchimento do formulário "FORMULARIO CONTEUDO"
+Página: ciafol-luz          ← campo NOSSO
+```
+
+⚠️ **Mas o CRM ignora o `utm_source` do corpo.** Em "De onde veio" apareceu
+`Canal: FORMULARIO CONTEUDO` — o nome da webhook — e o negócio ficou **sem
+etiqueta**. A ideia de "uma webhook por funil + tag no envio" **não funciona**.
+
+**Decisão do James**: *"a única função do portal é fazer com que leia a webhook
+do CRM e envie diretamente pro certo local no CRM. Essa parte de tageamento vai
+ficar por conta do CRM, não nossa."*
+
+Então: **uma webhook por tag, criada no CRM**, e a chave dela colada na página.
+O campo "Tag do formulário" que eu tinha criado **foi removido** — campo que não
+faz nada engana. Ver o comentário em `lib/lp-form-config.ts`, que guarda o
+porquê pra ninguém recriar.
+
+**Estado**: só a `/ciafol-luz` tem chave colada. As outras 21 guardam o lead no
+portal mas não mandam pro CRM. O James cria as webhooks quando o Lucas terminar
+as tags, e cola página por página — a tabela tag → página está na sessão e em
+`notas/tags-formularios.csv`.
+
+**Pendências dele**: apagar o lead `testeluz` do CRM; desligar o Attack
+Challenge Mode na Vercel.
+
 ## 🔜 PRÓXIMA FRENTE — migrar os formulários do Clint pro CRM (13/08)
 
 ### O fluxo que precisa voltar a funcionar

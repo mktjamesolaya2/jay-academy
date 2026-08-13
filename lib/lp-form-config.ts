@@ -21,19 +21,19 @@ export type LpFormConfig = {
    * É injetado antes de `</body>` na hora de servir a página (lib/serve-lp.ts).
    */
   codigoCrm?: string;
-  /**
-   * A tag do formulário — o que diz de QUAL formulário o lead veio.
-   *
-   * ⚠️ É ela que decide o roteiro e as mensagens prontas do comercial. No Clint
-   * cada formulário tinha seu webhook e a tag vinha do webhook. No CRM ela
-   * viaja no envio, como `utm_source`: o próprio campo "Rótulo de origem" diz
-   * *"quando a página manda utm_source, ele vence"*.
-   *
-   * É por isso que 6 webhooks bastam (um por funil, porque Etapa e Responsável
-   * são por webhook) em vez de um por formulário.
-   */
-  tag?: string;
 };
+
+// ⚠️ NÃO existe campo de tag aqui, e é de propósito. Chegou a existir em
+// 13/08/2026 — a ideia era mandar a tag como `utm_source` e usar uma webhook
+// pra vários formulários. O teste na /ciafol-luz mostrou que o CRM **ignora**
+// o utm_source do corpo: o negócio chegou com "Canal: FORMULARIO CONTEUDO",
+// que é o nome da webhook. A anotação provou que o resto do corpo é lido
+// ("Página: ciafol-luz" é campo nosso) — só a tag não.
+//
+// Decisão do James, e é a divisão certa: **o CRM cuida de webhook e tag, o
+// portal só entrega o lead na porta certa**. Uma webhook por tag, criada no
+// CRM, e a chave dela colada na página. Campo de tag aqui seria campo que não
+// faz nada — e campo que não faz nada engana.
 
 const keyFor = (slug: string) => `lp-form-config:${slug}`;
 
@@ -53,6 +53,5 @@ export async function setLpFormConfig(
     clean.formRedirectUrl = cfg.formRedirectUrl.trim();
   if (cfg.codigoCrm && cfg.codigoCrm.trim())
     clean.codigoCrm = cfg.codigoCrm.trim();
-  if (cfg.tag && cfg.tag.trim()) clean.tag = cfg.tag.trim();
   await kvSet(keyFor(slug), clean);
 }
