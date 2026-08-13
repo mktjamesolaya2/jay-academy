@@ -140,6 +140,7 @@ export async function POST(req: Request) {
     // domínio não está liberado na chave, e o lead some sem erro nenhum.
     // Chave da página, ou a padrão do site (ver lib/crm-chave.ts).
     const chaveCrm = await chaveDoSlug(slug).catch(() => null);
+    const tagDaPagina = lpCfg?.tag?.trim() || null;
     let crmStatus: FormSubmission["crmStatus"] = "sem-chave";
     let crmErro: string | undefined;
     if (chaveCrm) {
@@ -173,6 +174,11 @@ export async function POST(req: Request) {
               email,
               telefone: whatsapp,
               pagina: slug,
+              // ⚠️ A tag vai como utm_source: é assim que ela vence o "Rótulo
+              // de origem" do webhook e diz DE QUAL formulário o lead veio.
+              // Sem isso, as 17 páginas que dividem a mesma chave chegariam
+              // todas com a mesma origem.
+              ...(tagDaPagina ? { utm_source: tagDaPagina } : {}),
             }),
             signal: AbortSignal.timeout(8000),
           }
