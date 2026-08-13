@@ -27,6 +27,7 @@ import {
   ehExportElementor,
 } from "@/lib/embedded-html-store";
 import { VoltarOriginal } from "@/components/voltar-original";
+import { logsDaPagina, explicarEnvio } from "@/lib/webhook-log";
 import type { LandingPage } from "@/lib/landing-pages";
 
 type Params = Promise<{ slug: string }>;
@@ -70,10 +71,11 @@ export default async function LpDetailPage({ params }: { params: Params }) {
   const isProduction = process.env.VERCEL_ENV === "production" || !!process.env.VERCEL;
   const hasBuilder = await isBuilderPage(slug);
   const entradaHtml = getLpHtmlEntry(slug);
-  const [me, formConfig, editada, htmlBase] = await Promise.all([
+  const [me, formConfig, editada, ultimosEnvios, htmlBase] = await Promise.all([
     getCurrentUser(),
     getLpFormConfig(slug),
     temVersaoEditada(slug),
+    logsDaPagina(slug),
     entradaHtml
       ? resolveLpHtml(slug, entradaHtml.htmlFile.split("/").pop()!)
       : Promise.resolve(null),

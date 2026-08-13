@@ -57,8 +57,42 @@ test("a isca de robô nunca viaja", () => {
   assert.ok(script.includes('"_gotcha"'));
 });
 
-test("normaliza o nome de campo do Elementor", () => {
-  assert.ok(script.includes("\\[(.+)\\]"));
+/** Pega o corpo de uma função do script gerado, pra poder EXECUTAR aqui. */
+function corpoDaFuncao(nome: string, arg: string): (v: string) => string {
+  const abre = `function ${nome}(${arg}) {`;
+  const i = script.indexOf(abre);
+  assert.notEqual(i, -1, `${nome} não existe no script gerado`);
+  const fim = script.indexOf("\n  }", i);
+  const corpo = script.slice(i + abre.length, fim);
+  return new Function(arg, corpo) as (v: string) => string;
+}
+
+test("normaliza o nome de campo do Elementor — executando de verdade", () => {
+  // ⚠️ Não basta a função existir: já teve versão em que o escape do regex se
+  // perdia no template e "form_fields[nome]" saía intacto, silenciosamente.
+  const limpa = corpoDaFuncao("limpaNome", "n");
+  assert.equal(limpa("form_fields[nome]"), "nome");
+  assert.equal(limpa("form_fields[whatsapp]"), "whatsapp");
+  assert.equal(limpa("nome"), "nome");
+  assert.equal(limpa("  email  "), "email");
+});
+
+test("conta os dígitos do telefone — executando de verdade", () => {
+  const digitos = corpoDaFuncao("soDigitos", "v");
+  assert.equal(digitos("+55 (11) 99999-8888"), "5511999998888");
+  assert.equal(digitos("abc"), "");
+});
+
+test("o envio passa pelo NOSSO servidor, não direto pro CRM", () => {
+  // direto do navegador, a verificação prévia do POST com JSON barra o envio e
+  // o lead some sem erro na tela
+  assert.ok(script.includes('"/api/crm-envio"'));
+  assert.ok(!script.includes("sistemajayo.com"), "o navegador não fala com o CRM");
+});
+
+test("mostra o retorno pra quem preencheu", () => {
+  assert.ok(script.includes("Recebemos seu contato"));
+  assert.ok(script.includes("Não conseguimos enviar agora"));
 });
 
 test("exige telefone com DDD antes de gastar a requisição", () => {

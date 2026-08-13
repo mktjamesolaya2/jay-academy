@@ -68,42 +68,55 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
-### ⚠️ 11/08 — o portal monta o envio a partir da CHAVE
+### ⚠️ 11/08 — envio pro CRM: chave, servidor e diagnóstico
 
-James colou a variante "formulário pronto" do CRM e viu o formulário aparecer
-**solto no rodapé, sem estilo**: *"NÃO QUERO ISSO APARECENDO"*. Depois, quando
-eu disse pra pedir outra variante ao Lucas: *"pra que eu preciso pedir algo pro
-Lucas? Eu pedi pra você ajustar"*. **Ele estava certo** — a chave `pk_…` já
-vinha dentro do código que ele colou. Com ela, dá pra escrever o envio aqui.
+James colou a variante "formulário pronto" do CRM e o formulário apareceu solto
+no rodapé: *"NÃO QUERO ISSO APARECENDO"*. Depois, sobre eu mandar pedir outra
+variante ao Lucas: *"pra que eu preciso pedir algo pro Lucas? Eu pedi pra você
+ajustar"*. **Certo nas duas.** A chave `pk_…` já vinha no código colado.
 
-`lib/webhook-codigo.ts` (12 testes):
+`lib/webhook-codigo.ts` (15 testes): `extrairChave()` acha o `pk_…` em
+qualquer coisa (código, URL, ou a chave sozinha) e `montarScriptDeEnvio()`
+escreve o envio. **Nada visível entra na página.**
 
-- `extrairChave()` — acha o `pk_…` em qualquer coisa: código inteiro, URL, ou
-  a chave sozinha.
-- `montarScriptDeEnvio()` — gera o script. **Nada visível entra na página.**
+#### O envio passa pelo NOSSO servidor (`/api/crm-envio`)
 
-Três decisões que evitam quebrar página que já funciona:
+⚠️ Direto do navegador **não funciona**: POST com JSON dispara a verificação
+prévia (preflight), e se o CRM não liberar o domínio ali, o navegador barra
+antes de sair — o lead some **sem erro na tela**. Confirmado no navegador. Pelo
+servidor não existe essa regra.
 
-1. **Manda uma cópia, não sequestra o envio.** Se outro script já tratou o
-   submit (Elementor faz), a gente só manda a cópia e deixa o fluxo seguir.
-2. **Só segura o envio quando ele iria pro vazio** — formulário sem `action`
-   faz POST na própria URL, e os route handlers das LPs só têm GET: era esse o
-   **HTTP 405** que ele viu.
-3. **`keepalive`**, pra requisição sobreviver à navegação.
+#### Três cuidados no script
 
-Normaliza `form_fields[nome]` do Elementor, exige telefone com DDD e nunca
-envia o `_gotcha`.
+1. **Manda uma cópia, não sequestra o submit** — se outro script já tratou
+   (Elementor), o fluxo original segue.
+2. **Só segura o envio quando iria pro vazio** (formulário sem `action`) — era
+   a causa do **HTTP 405**.
+3. **Sem regex dentro do script gerado**: o escape de barra invertida se perdia
+   no template e o normalizador do Elementor virou classe de caracteres,
+   silenciosamente. Agora `limpaNome` e `soDigitos` usam string pura, e os
+   testes **executam** essas funções em vez de procurar texto no script.
 
-Conferido no navegador, com o código dele colado:
+#### O diagnóstico volta pro painel
+
+`webhook-log:<pagina>` guarda os 10 últimos envios (só página, status e
+motivo — nada do lead) e a tela da página mostra em português:
+`explicarEnvio()`.
+
+#### ⚠️ ESTADO ATUAL: a chave não é reconhecida
+
+Testado contra o CRM de verdade:
 
 ```
-url   : https://www.sistemajayo.com/api/integrations/site/lead/pk_GFNMm_kOuM_H0kto
-corpo : {"nome":"Maria Teste","whatsapp":"11999998888","email":"m@e.com","pagina":"…"}
-        (_gotcha ficou de fora, e a página não navegou — sem 405)
+POST /api/integrations/site/lead/pk_GFNMm_kOuM_H0kto  -> 404 {"ok":false}
+POST /api/integrations/site/lead/<chave inventada>    -> 404 {"ok":false}
+caminhos errados (/api/leads/…, /api/site/lead/…)     -> 307 (redirect)
 ```
 
-⚠️ **Regra**: colar QUALQUER coisa que tenha a chave dentro tem que funcionar.
-Não mandar o James pedir variante pro Lucas — o portal se vira com a chave.
+O caminho certo responde **JSON**, os errados redirecionam — ou seja, **o
+endereço está certo e é a chave que o CRM não acha**. Por isso o cadastro dele
+não chegou. Não é código do portal: é a chave (regenerada, de outro ambiente ou
+copiada pela metade). **Pendente: James conferir a chave no CRM.**
 
 ### 11/08 (parte 4) — unificação: uma lista, um webhook, um editor
 

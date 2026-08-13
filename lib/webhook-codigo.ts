@@ -44,56 +44,107 @@ export function temMarcacaoVisivel(codigo: string): boolean {
  * - Nomes de campo do Elementor (`form_fields[nome]`) são normalizados, e o
  *   `_gotcha` (isca de robô) nunca viaja.
  */
+/**
+ * O script de envio, escrito por nós.
+ *
+ * ⚠️ Manda pro NOSSO servidor (`/api/crm-envio`), que repassa pro CRM.
+ * Mandar direto do navegador dispara a verificação prévia (preflight) do
+ * POST com JSON — e se o CRM não liberar o domínio da página ali, o navegador
+ * barra antes de sair e **o lead some sem erro na tela**. Foi o que aconteceu.
+ * Pelo servidor não existe essa regra: sai sempre, e a resposta do CRM fica
+ * registrada pra aparecer no painel.
+ *
+ * Outras decisões, todas pra não quebrar página que já funciona:
+ *
+ * - **Manda uma cópia, não sequestra o envio.** Se outro script da página já
+ *   tratou o submit (Elementor faz isso), a gente só manda a cópia e deixa o
+ *   fluxo original seguir.
+ * - **Só segura o envio quando ele iria pro vazio.** Formulário sem `action`
+ *   faz POST na própria URL — e as páginas daqui só respondem GET, o que dá o
+ *   **HTTP 405**. Nesse caso, e só nesse, a gente segura.
+ * - Nomes de campo do Elementor (`form_fields[nome]`) são normalizados, e o
+ *   `_gotcha` (isca de robô) nunca viaja.
+ */
 export function montarScriptDeEnvio(chave: string): string {
-  const url = `https://www.sistemajayo.com/api/integrations/site/lead/${chave}`;
   return `<script>
 (function () {
-  var URL_CRM = ${JSON.stringify(url)};
+  var CHAVE = ${JSON.stringify(chave)};
+  // Sem regex de propósito: este script nasce dentro de um template, e escape
+  // de barra invertida some no caminho — foi assim que o normalizador do
+  // Elementor virou uma classe de caracteres e parou de funcionar.
   function limpaNome(n) {
-    return String(n || "").replace(/^.*\\[(.+)\\]$/, "$1").trim();
+    var s = String(n || "").trim();
+    var a = s.indexOf("["), b = s.lastIndexOf("]");
+    return a > -1 && b > a ? s.slice(a + 1, b).trim() : s;
+  }
+  function soDigitos(v) {
+    var s = String(v || ""), r = "";
+    for (var i = 0; i < s.length; i++) if (s[i] >= "0" && s[i] <= "9") r += s[i];
+    return r;
   }
   function coleta(form) {
     var dados = {};
-    var campos = new FormData(form);
-    campos.forEach(function (valor, chave) {
+    new FormData(form).forEach(function (valor, chave) {
       var nome = limpaNome(chave);
       if (!nome || nome === "_gotcha") return;
       if (typeof valor === "string" && valor.trim()) dados[nome] = valor.trim();
     });
     dados.pagina = location.href;
-    var q = new URLSearchParams(location.search);
-    q.forEach(function (v, k) { if (k.indexOf("utm_") === 0 || k === "fbclid" || k === "gclid") dados[k] = v; });
+    new URLSearchParams(location.search).forEach(function (v, k) {
+      if (k.indexOf("utm_") === 0 || k === "fbclid" || k === "gclid") dados[k] = v;
+    });
     return dados;
   }
   function temContato(d) {
     var tel = d.telefone || d.whatsapp || d.phone || d.celular || d.tel || d.fone || "";
-    return String(tel).replace(/\\D/g, "").length >= 10;
+    return soDigitos(tel).length >= 10;
+  }
+  function avisar(form, texto, erro) {
+    var aviso =
+      form.querySelector("[data-jayo-aviso]") ||
+      form.querySelector("#form-jayo-aviso") ||
+      form.querySelector(".jayo-aviso");
+    if (!aviso) {
+      aviso = document.createElement("p");
+      aviso.className = "jayo-aviso";
+      aviso.style.cssText = "margin:12px 0 0;font-size:15px;line-height:1.5;font-weight:600";
+      form.appendChild(aviso);
+    }
+    aviso.style.color = erro ? "#f87171" : "#22c55e";
+    aviso.textContent = texto;
   }
   function enviar(form) {
     var dados = coleta(form);
-    if (!temContato(dados)) return;
-    try {
-      fetch(URL_CRM, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados),
-        keepalive: true,
-      }).catch(function () {});
-    } catch (e) {}
+    if (!temContato(dados)) {
+      avisar(form, "Confira o WhatsApp com DDD.", true);
+      return;
+    }
+    avisar(form, "Enviando...", false);
+    fetch("/api/crm-envio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chave: CHAVE, pagina: location.pathname, dados: dados }),
+      keepalive: true,
+    })
+      .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+      .then(function (res) {
+        if (res && res.ok) {
+          avisar(form, "Recebemos seu contato. Falamos com você em breve!", false);
+          try { form.reset(); } catch (e) {}
+        } else {
+          avisar(form, "Não conseguimos enviar agora. Tente novamente em instantes.", true);
+        }
+      })
+      .catch(function () {
+        avisar(form, "Não conseguimos enviar agora. Tente novamente em instantes.", true);
+      });
   }
   document.addEventListener("submit", function (evento) {
     var form = evento.target;
     if (!form || form.tagName !== "FORM") return;
     enviar(form);
-    // Só segura o envio se ele fosse pro vazio: sem action, o POST cai na
-    // propria URL e a pagina responde 405.
     var action = (form.getAttribute("action") || "").trim();
-    if (!evento.defaultPrevented && !action) {
-      evento.preventDefault();
-      try { form.reset(); } catch (e) {}
-      var aviso = form.querySelector("[data-jayo-aviso]");
-      if (aviso) aviso.textContent = "Recebemos seu contato. Falamos com você em breve!";
-    }
+    if (!evento.defaultPrevented && !action) evento.preventDefault();
   }, false);
 })();
 </script>`;
