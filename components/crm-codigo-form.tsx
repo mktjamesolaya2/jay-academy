@@ -32,9 +32,17 @@ export function CrmCodigoForm({
 
   function salvar(fd: FormData) {
     setErro(null);
+    const removeu = fd.get("acao")?.toString() === "remover";
     startTransition(async () => {
       const r = await salvarCodigoCrmAction(fd);
       if (!r.ok) return setErro(r.error ?? "Erro ao salvar");
+      if (removeu) {
+        // Deixa a caixa vazia e ABERTA: quem tirou o webhook quase sempre quer
+        // colar outro em seguida. Fechar mostrando "instalado" seria mentira.
+        setValor("");
+        setAberto(true);
+        return;
+      }
       setSalvo(true);
       setAberto(false);
       setTimeout(() => setSalvo(false), 2500);
@@ -114,8 +122,8 @@ export function CrmCodigoForm({
         {codigo && (
           <button
             type="submit"
-            name="codigo"
-            value=""
+            name="acao"
+            value="remover"
             className="inline-flex items-center gap-1.5 rounded-lg border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-[12.5px] font-semibold text-rose-300 transition hover:bg-rose-500/20"
           >
             <Trash2 size={12} strokeWidth={2.2} /> Tirar

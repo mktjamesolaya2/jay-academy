@@ -251,7 +251,13 @@ export async function salvarCodigoCrmAction(
     await requireAdmin();
     const slug = (formData.get("slug")?.toString() ?? "").trim();
     if (!slug) return { ok: false, error: "Página não identificada" };
-    const codigo = formData.get("codigo")?.toString() ?? "";
+    // ⚠️ O "Tirar" manda `acao=remover`, e NÃO um segundo campo `codigo` vazio.
+    // Quando ele tinha `name="codigo" value=""`, o FormData ficava com dois
+    // campos de mesmo nome e o `.get()` devolvia o PRIMEIRO — o texto da caixa.
+    // Ou seja: clicar em Tirar regravava o mesmo código. Era isso que o James
+    // via como "não está sendo possível remover ou trocar a webhook".
+    const remover = formData.get("acao")?.toString() === "remover";
+    const codigo = remover ? "" : formData.get("codigo")?.toString() ?? "";
 
     // 200 KB é MUITO mais do que qualquer script de formulário — o teto está
     // aqui só pra ninguém colar uma página inteira por engano.

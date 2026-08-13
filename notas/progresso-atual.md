@@ -68,6 +68,29 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### ⚠️ 11/08 — o "Tirar" do webhook não tirava
+
+James: *"não está sendo possível remover ou trocar a webhook"*.
+
+O botão de remover tinha `name="codigo" value=""` — **o mesmo nome da caixa de
+texto**. FormData aceita nomes repetidos e `.get()` devolve o PRIMEIRO, que era
+o texto da caixa. Ou seja: clicar em "Tirar" regravava o mesmo código.
+
+Agora o botão manda `acao=remover`, num campo de nome próprio, e a action
+grava vazio quando vê isso. Depois de remover, a caixa fica **vazia e aberta** —
+quem tirou quase sempre quer colar outro em seguida; fechar dizendo "instalado"
+seria mentira.
+
+`lib/webhook-form.test.ts` (4 testes) guarda a regra, inclusive um que
+demonstra o bug antigo: dois campos `codigo` e o `.get()` pegando o primeiro.
+
+Conferido no navegador em `/lps/metodo-shadow-pro`: colar → **Tirar** deixa o
+arquivo em `{}` → colar outra chave grava a nova → trocar de novo grava a
+terceira.
+
+⚠️ **Regra**: botão que submete formulário **nunca** repete o `name` de um
+campo do mesmo formulário.
+
 ### ⚠️ 11/08 — envio pro CRM: chave, servidor e diagnóstico
 
 James colou a variante "formulário pronto" do CRM e o formulário apareceu solto
