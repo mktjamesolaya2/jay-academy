@@ -11,7 +11,7 @@ import { loadEditedEmbeddedHtml } from "@/lib/embedded-html-store";
 import { getLpFromStore } from "@/lib/lp-store";
 import { withTracking } from "@/lib/meta-tracking";
 import { getLpFormConfig } from "@/lib/lp-form-config";
-import { extrairChave, montarScriptDeEnvio } from "@/lib/webhook-codigo";
+import { montarGuardaDeFormularios } from "@/lib/webhook-codigo";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 
 function escapeHtml(s: string): string {
@@ -180,22 +180,19 @@ ${cleaned}
     req,
   });
 
-  // Webhook colado no painel. MESMO store das outras páginas
-  // (`lp-form-config:<slug>`), pra não existir "o webhook da LP" e "o webhook
-  // da página do WP" como duas coisas. Vai por último, antes de </body>, pra
-  // achar o formulário já montado.
-  const cfgCrm = await getLpFormConfig(content.publicSlug || content.slug).catch(
-    () => null
-  );
-  // Do código colado usamos só a CHAVE, e montamos o envio aqui — nada do que
-  // veio junto entra na página.
-  const chaveCrm = cfgCrm?.codigoCrm ? extrairChave(cfgCrm.codigoCrm) : null;
-  if (chaveCrm) {
-    const bloco = `\n<!-- Webhook (colado no painel) -->\n${montarScriptDeEnvio(chaveCrm)}\n`;
-    html = /<\/body>/i.test(html)
-      ? html.replace(/<\/body>/i, `${bloco}</body>`)
-      : html + bloco;
-  }
+  // ⚠️ A MESMA ponte das LPs, e pelo mesmo motivo: sem ela o formulário do
+  // Elementor faz POST na própria URL e a página responde 405.
+  //
+  // Aqui ela substituiu um script que mandava direto pro CRM e **sequestrava o
+  // envio** — o formulário parava de fazer o que fazia antes (James: "a
+  // animação que ele tinha antes mudou tb, não era assim"). A ponte não
+  // atropela: se o interceptador acima, ou o Elementor, ou qualquer script da
+  // página já tratou o submit, ela sai de fininho. E o CRM é chamado do
+  // servidor, dentro do /api/elementor-form.
+  const ponte = `\n<!-- Envio dos formulários pelo portal -->\n${montarGuardaDeFormularios()}\n`;
+  html = /<\/body>/i.test(html)
+    ? html.replace(/<\/body>/i, `${ponte}</body>`)
+    : html + ponte;
 
   return new NextResponse(html, {
     headers: {
