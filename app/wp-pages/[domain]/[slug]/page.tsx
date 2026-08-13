@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { CrmCodigoForm } from "@/components/crm-codigo-form";
 import { getLpFormConfig } from "@/lib/lp-form-config";
+import { logsDaPagina, explicarEnvio } from "@/lib/webhook-log";
 import {
   ArrowLeft,
   ExternalLink,
@@ -64,9 +65,11 @@ export default async function WpPageDetailPage({
   ]);
   if (!content) notFound();
   const userCanEdit = canEdit(me);
-  const formConfig = await getLpFormConfig(
-    content.publicSlug || content.slug
-  ).catch(() => null);
+  const chavePagina = content.publicSlug || content.slug;
+  const [formConfig, ultimosEnvios] = await Promise.all([
+    getLpFormConfig(chavePagina).catch(() => null),
+    logsDaPagina(chavePagina).catch(() => []),
+  ]);
 
   const isPublished = !!content.published;
   const isForm = content.placed === "form";
@@ -188,6 +191,33 @@ export default async function WpPageDetailPage({
                     slug={content.publicSlug || content.slug}
                     codigo={formConfig?.codigoCrm}
                   />
+                  {/* ⚠️ Isto existia só na tela das LPs — e a página do James é
+                      do WP, então ele ficou sem saber o que o CRM respondeu.
+                      É a resposta pra "o lead não chegou no CRM, vê o que é". */}
+                  {ultimosEnvios.length > 0 && (
+                    <div className="mt-4 space-y-1.5 border-t border-[#1f1f1f] pt-3.5">
+                      <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
+                        Últimos envios
+                      </p>
+                      {ultimosEnvios.slice(0, 3).map((e) => {
+                        const ok = e.status >= 200 && e.status < 300;
+                        return (
+                          <p
+                            key={e.em}
+                            className={clsx(
+                              "text-[12px] leading-relaxed",
+                              ok ? "text-emerald-300" : "text-rose-300"
+                            )}
+                          >
+                            {explicarEnvio(e)}
+                            <span className="ml-1.5 text-neutral-600">
+                              {new Date(e.em).toLocaleString("pt-BR")}
+                            </span>
+                          </p>
+                        );
+                      })}
+                    </div>
+                  )}
                 </Block>
               )}
 

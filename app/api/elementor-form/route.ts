@@ -143,11 +143,24 @@ export async function POST(req: Request) {
       let status = 0;
       let motivo = "";
       try {
+        // ⚠️ Origin e Referer vão de propósito. O CRM tem "Domínios liberados"
+        // por chave, e ele decide olhando de qual site veio o envio. Como quem
+        // manda agora é o NOSSO servidor, sem esses cabeçalhos a requisição
+        // chega sem site nenhum — e uma chave com a lista preenchida recusa.
+        // Não é disfarce: o envio é da página mesmo, e é ela que anunciamos.
+        const origem = new URL(
+          referer || `https://www.jayacademy.com.br/${slug}`,
+          "https://www.jayacademy.com.br"
+        );
         const r = await fetch(
           `https://www.sistemajayo.com/api/integrations/site/lead/${chaveCrm}`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Origin: origem.origin,
+              Referer: origem.href,
+            },
             body: JSON.stringify({
               nome: name,
               email,
