@@ -68,6 +68,24 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### 13/08 (final) — etiqueta sai do portal de vez
+
+James: *"tira esse negócio de etiqueta aí, porque a gente não etiqueta nada. É
+só CRM. Aqui no portal a gente não vai etiquetar nada."*
+
+O campo existiu por meio dia e foi removido. **O CRM ganhou tags fixas por
+integração** — então quem etiqueta é ele: uma webhook por tag, criada lá, e a
+chave colada na página. O portal só entrega o lead na porta certa.
+
+O porquê ficou registrado em `lib/lp-form-config.ts` e `lib/crm-envio.ts`, com
+um teste que **falha se alguém voltar a mandar tag no corpo** — foi criado e
+recriado duas vezes em um dia, então o teste é a trava.
+
+⚠️ **Também arquivado** (decisão dele, *"não é nada importante"*): testar a
+etiqueta na /ciafol-luz, criar os 5 webhooks por funil, e a conferida do Attack
+Challenge Mode na Vercel. Fica aqui registrado caso volte — o do Firewall é o
+único que pode **perder lead sem deixar rastro**, porque a página nem abre.
+
 ### 13/08 — trocar a URL saiu do SEO e foi pra tela da página
 
 James: *"senti falta de poder trocar a URL por aqui — vê aonde tem e unifica

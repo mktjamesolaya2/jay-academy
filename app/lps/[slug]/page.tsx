@@ -228,8 +228,7 @@ export default async function LpDetailPage({ params }: { params: Params }) {
                 lista solta em /leads, longe da página a que pertence. */}
             {userCanEdit && (
               <Block title="Webhook">
-                <CrmCodigoForm slug={lp.slug} codigo={formConfig?.codigoCrm}
-                    tag={formConfig?.tag} />
+                <CrmCodigoForm slug={lp.slug} codigo={formConfig?.codigoCrm} />
               </Block>
             )}
 

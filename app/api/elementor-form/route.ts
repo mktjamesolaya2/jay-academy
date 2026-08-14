@@ -174,8 +174,7 @@ export async function POST(req: Request) {
                 name,
                 email,
                 whatsapp,
-                slug,
-                tag: lpCfg?.tag,
+                slug,
               })
             ),
             signal: AbortSignal.timeout(8000),

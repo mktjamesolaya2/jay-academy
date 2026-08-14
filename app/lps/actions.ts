@@ -279,7 +279,7 @@ export async function salvarCodigoCrmAction(
     // A tag identifica DE QUAL formulário o lead veio — vira etiqueta no CRM.
     const tag = (formData.get("tag")?.toString() ?? "").trim();
     const atual = (await getLpFormConfig(slug)) ?? {};
-    await setLpFormConfig(slug, { ...atual, codigoCrm: codigo, tag });
+    await setLpFormConfig(slug, { ...atual, codigoCrm: codigo });
     await logActivity(
       "wp.edit",
       slug,

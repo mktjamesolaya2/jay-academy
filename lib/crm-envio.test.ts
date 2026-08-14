@@ -10,21 +10,21 @@ const base = {
   slug: "ciafol-luz",
 };
 
-test("a TAG vai no corpo — foi ela que faltou em 13/08 e ninguém viu", () => {
-  const c = montarCorpoDoLead({ ...base, tag: "INSTA CIAFOL LUZ" });
-  assert.equal(c.tag, "INSTA CIAFOL LUZ");
+test("o corpo leva o que o CRM precisa pro negócio e pra anotação", () => {
+  const c = montarCorpoDoLead(base);
+  assert.equal(c.nome, "Maria");
+  assert.equal(c.email, "maria@teste.com");
+  assert.equal(c.telefone, "11999998888");
+  assert.equal(c.pagina, "ciafol-luz");
 });
 
-test("sem tag configurada, o campo não aparece — não manda vazio", () => {
-  assert.equal("tag" in montarCorpoDoLead({ ...base, tag: null }), false);
-  assert.equal("tag" in montarCorpoDoLead({ ...base, tag: "   " }), false);
-  assert.equal("tag" in montarCorpoDoLead(base), false);
-});
-
-test("espaço sobrando na tag é aparado", () => {
-  // ⚠️ Grafia diferente cria etiqueta DIFERENTE no CRM, e ela nasce do envio:
-  // um espaço a mais viraria tag permanente no catálogo.
-  assert.equal(montarCorpoDoLead({ ...base, tag: "  ST BEAUTY  " }).tag, "ST BEAUTY");
+test("o portal NÃO manda etiqueta — quem etiqueta é o CRM", () => {
+  // James: "aqui no portal a gente não vai etiquetar nada". As tags fixas da
+  // integração resolvem isso do lado de lá.
+  const c = montarCorpoDoLead(base);
+  assert.equal("tag" in c, false);
+  assert.equal("tags" in c, false);
+  assert.equal("utm_source" in c, false);
 });
 
 test("os campos normalizados vencem os crus", () => {
@@ -36,14 +36,10 @@ test("os campos normalizados vencem os crus", () => {
   assert.equal(c.telefone, "11999998888");
 });
 
-test("o corpo leva o que o CRM precisa pra anotação e o negócio", () => {
-  const c = montarCorpoDoLead({ ...base, tag: "INSTA CIAFOL LUZ" });
-  assert.deepEqual(Object.keys(c).sort(), [
-    "email",
-    "nome",
-    "pagina",
-    "tag",
-    "telefone",
-    "whatsapp",
-  ]);
+test("campo extra do formulário viaja junto", () => {
+  const c = montarCorpoDoLead({
+    ...base,
+    fields: { ...base.fields, cidade: "Campinas" },
+  });
+  assert.equal(c.cidade, "Campinas");
 });

@@ -202,8 +202,7 @@ export default async function WpPageDetailPage({
                 <Block title="Webhook">
                   <CrmCodigoForm
                     slug={content.publicSlug || content.slug}
-                    codigo={formConfig?.codigoCrm}
-                    tag={formConfig?.tag}
+                    codigo={formConfig?.codigoCrm}
                   />
                   {/* ⚠️ Isto existia só na tela das LPs — e a página do James é
                       do WP, então ele ficou sem saber o que o CRM respondeu.

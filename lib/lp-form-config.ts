@@ -21,19 +21,15 @@ export type LpFormConfig = {
    * É injetado antes de `</body>` na hora de servir a página (lib/serve-lp.ts).
    */
   codigoCrm?: string;
-  /**
-   * A etiqueta desta página no CRM — diz de QUAL formulário o lead veio.
-   *
-   * ⚠️ Vai no corpo do envio como `tag`, e o CRM **cria a etiqueta na hora** se
-   * ainda não existir. A tag FIXA da integração diz o funil; esta diz a página.
-   * As duas somam, e é por isso que **um webhook por funil basta** — não são 22.
-   *
-   * ⚠️ Escrever sempre igual entre as páginas: grafia diferente cria etiqueta
-   * diferente, e como ela nasce do envio, um typo vira tag permanente no
-   * catálogo do CRM.
-   */
-  tag?: string;
 };
+
+// ⚠️ NÃO existe campo de etiqueta aqui, e é decisão do James (13/08/2026):
+// *"tira esse negócio de etiqueta aí, porque a gente não etiqueta nada. É só
+// CRM. Aqui no portal a gente não vai etiquetar nada."*
+//
+// Chegou a existir por meio dia. O CRM ganhou tags fixas por integração, então
+// quem etiqueta é ele — uma webhook por tag, criada lá, e a chave colada aqui.
+// O portal só entrega o lead na porta certa.
 
 const keyFor = (slug: string) => `lp-form-config:${slug}`;
 
@@ -53,6 +49,5 @@ export async function setLpFormConfig(
     clean.formRedirectUrl = cfg.formRedirectUrl.trim();
   if (cfg.codigoCrm && cfg.codigoCrm.trim())
     clean.codigoCrm = cfg.codigoCrm.trim();
-  if (cfg.tag && cfg.tag.trim()) clean.tag = cfg.tag.trim();
   await kvSet(keyFor(slug), clean);
 }
