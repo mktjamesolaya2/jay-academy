@@ -7,6 +7,7 @@ import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 import { resolveEmbeddedHtml, resolveLpHtml } from "@/lib/embedded-html-store";
 import { getLpFormConfig } from "@/lib/lp-form-config";
 import { montarGuardaDeFormularios } from "@/lib/webhook-codigo";
+import { comFormMobileCss } from "@/lib/form-mobile-css";
 
 // Serving unificado das LPs custom (antes eram ~10 route handlers quase
 // idênticos). Três variantes:
@@ -96,7 +97,8 @@ export async function serveLp(
     return new NextResponse("Página não encontrada", { status: 404 });
   }
 
-  const prepared = delazy ? delazyPipeline(raw) : raw;
+  // Conserto de layout dos formulários no celular (ver lib/form-mobile-css).
+  const prepared = comFormMobileCss(delazy ? delazyPipeline(raw) : raw);
   let html = await withTracking(prepared, {
     // O slug decide quem leva Pixel/GTM (ver a política em lib/meta-tracking.ts).
     slug,

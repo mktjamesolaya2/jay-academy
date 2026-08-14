@@ -12,6 +12,7 @@ import { getLpFromStore } from "@/lib/lp-store";
 import { withTracking } from "@/lib/meta-tracking";
 import { getLpFormConfig } from "@/lib/lp-form-config";
 import { montarGuardaDeFormularios } from "@/lib/webhook-codigo";
+import { comFormMobileCss } from "@/lib/form-mobile-css";
 import { delazyHtml, delazyBackgrounds } from "@/lib/wp-localize-core";
 
 function escapeHtml(s: string): string {

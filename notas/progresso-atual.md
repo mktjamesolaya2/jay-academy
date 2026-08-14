@@ -68,6 +68,29 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### 13/08 — formulários apertados no celular
+
+James: *"todos os formulários no mobile estão com um bug de layout"*.
+
+Medido numa tela de 390px, igual em `/acao-mshadow`, `/contato-instagram` e
+`/stbrows`: **os campos ficavam a 10px da borda**, colados, enquanto o texto em
+volta respirava. Dá a impressão de que o formulário vazou pra fora da página.
+
+⚠️ **O que NÃO era**: a calha negativa do Elementor (wrapper `-5px` + grupo
+`padding: 5px`) parecia culpada — o grupo mede 380 dentro de um form de 370 —
+mas ela se anula e o campo já saía alinhado. Perdi uma tentativa mexendo nela.
+
+**O que era**: falta de respiro. `lib/form-mobile-css.ts` põe `12px` de padding
+no wrapper abaixo de 768px → o campo sai de 10px pra 22px e alinha com o bloco
+de texto. Injetado no `<head>` pelos dois caminhos de servir.
+
+⚠️ **`!important` é proposital**: o CSS do Elementor vem depois e com
+especificidade alta. Sem ele a regra é ignorada — medido no navegador, o campo
+continuava em 10px. A primeira versão do arquivo não tinha, e não funcionou.
+
+Conferido aplicando o CSS na página de produção antes de subir: campo de
+`{esq:10,larg:370}` pra `{esq:22,larg:346}`.
+
 ### 13/08 (final) — etiqueta sai do portal de vez
 
 James: *"tira esse negócio de etiqueta aí, porque a gente não etiqueta nada. É
