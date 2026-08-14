@@ -98,24 +98,6 @@ export function SeoEditor({
         </Field>
 
         <Field
-          label="Slug / Permalink"
-          hint={`URL final: ${host}/${publicSlug || slug}`}
-        >
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-neutral-600 font-mono shrink-0">
-              /
-            </span>
-            <input
-              name="publicSlug"
-              value={publicSlug}
-              onChange={(e) => setPublicSlug(e.target.value)}
-              placeholder={slug}
-              className={`${inputCls} font-mono`}
-            />
-          </div>
-        </Field>
-
-        <Field
           label="URL canônica (avançado)"
           hint="Opcional. Use se essa página é cópia de outra, pra dizer ao Google qual é a original."
         >

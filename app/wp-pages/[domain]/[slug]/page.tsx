@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { CrmCodigoForm } from "@/components/crm-codigo-form";
+import { TrocarUrl } from "@/components/trocar-url";
 import { getLpFormConfig } from "@/lib/lp-form-config";
 import { logsDaPagina, explicarEnvio } from "@/lib/webhook-log";
 import {
@@ -117,6 +118,18 @@ export default async function WpPageDetailPage({
                   /{publicSlug}
                   <ExternalLink size={11} strokeWidth={2} />
                 </a>
+              )}
+              {/* Trocar a URL fica AQUI, junto da URL — antes só dava pra
+                  trocar escondido dentro do SEO. */}
+              {userCanEdit && (
+                <div className="mt-1.5">
+                  <TrocarUrl
+                    domain={content.domain}
+                    slug={content.slug}
+                    urlAtual={publicSlug}
+                    publicada={isPublished}
+                  />
+                </div>
               )}
             </div>
             <div className="flex flex-col items-end gap-3">

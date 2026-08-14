@@ -68,6 +68,25 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+### 13/08 — trocar a URL saiu do SEO e foi pra tela da página
+
+James: *"senti falta de poder trocar a URL por aqui — vê aonde tem e unifica
+apenas aqui"*.
+
+Onde estava: um campo **"Slug / Permalink"** escondido **dentro do editor de
+SEO**, entre título, descrição e imagem de compartilhamento. Trocar a URL não é
+SEO — é a identidade da página, o link que se copia e manda pro ManyChat.
+
+E tinha uma segunda porta morta: `changePublicSlugAction` já existia em
+`wp-pages/manage-actions.ts` e **ninguém chamava**. Ela é a que cuida do índice
+de publicadas e recusa URL já usada. Agora é ela que roda.
+
+- `components/trocar-url.tsx` — "Trocar endereço" logo abaixo da URL, na tela
+  da página
+- o campo saiu do `seo-editor.tsx` — **um lugar só**
+- ⚠️ avisa antes de trocar: o endereço antigo deixa de funcionar, e link em
+  anúncio, ManyChat ou bio precisa ser atualizado
+
 ### ✅ 13/08 (fim do dia) — a tag funciona; e o erro que me levou pro caminho errado
 
 ⚠️ **Eu diagnostiquei errado e o Lucas corrigiu**: *"o webhook não estava
