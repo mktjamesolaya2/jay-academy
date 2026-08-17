@@ -109,11 +109,14 @@ function Lista({ aoEscolher }: { aoEscolher?: () => void }) {
  */
 export function AtalhosDesktop() {
   return (
-    <aside className="sticky top-24 hidden w-64 shrink-0 self-start lg:block">
-      <p className="px-3 text-[10px] font-medium uppercase tracking-[0.28em] text-[#AC9751]/70">
+    // ⚠️ Encostada no painel por uma linha, não solta na página. Antes ela
+    // flutuava a 200px da conversa e as duas pareciam telas diferentes abertas
+    // lado a lado.
+    <aside className="hidden w-60 shrink-0 overflow-y-auto border-l border-[#AC9751]/15 px-3 py-5 lg:block">
+      <p className="px-2 text-[10px] font-medium uppercase tracking-[0.28em] text-[#AC9751]/70">
         Também por aqui
       </p>
-      <Meandro id="meandro-atalhos" className="my-2.5 text-[#AC9751]/25" altura={8} />
+      <Meandro id="meandro-atalhos" className="my-3 text-[#AC9751]/20" altura={7} />
       <Lista />
     </aside>
   );

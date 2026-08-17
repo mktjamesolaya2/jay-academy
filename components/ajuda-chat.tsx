@@ -7,6 +7,19 @@ import { Medalhao } from "@/components/marca-jayo";
 type Msg = { de: "aluno" | "atendente"; texto: string; em?: string; anexo?: string };
 type Anexo = { tipo: "imagem" | "audio"; dataUrl: string; nome: string };
 
+/**
+ * Os assuntos que mais chegam, prontos pra tocar.
+ *
+ * ⚠️ São os três casos que a base de conhecimento resolve sem chamar ninguém —
+ * de propósito. Sugerir algo que sempre cai pra atendente seria criar fila com
+ * a nossa própria mão.
+ */
+const SUGESTOES = [
+  "Não consigo acessar meu curso",
+  "Onde fica a apostila?",
+  "Meu acesso venceu?",
+];
+
 /** A hora do jeito que se lê num chat: 14:32. */
 function hora(iso?: string): string {
   if (!iso) return "";
@@ -113,9 +126,12 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
     return () => clearInterval(t);
   }, [conversaId, comPessoa, buscar]);
 
-  async function enviar(e: React.FormEvent) {
+  function enviar(e: React.FormEvent) {
     e.preventDefault();
-    const t = texto.trim();
+    void enviarTexto(texto.trim());
+  }
+
+  async function enviarTexto(t: string) {
     // Print sem legenda é comum: a pessoa manda só a imagem.
     if ((!t && !anexo) || pensando) return;
     setErro(null);
@@ -169,19 +185,42 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col px-4 sm:px-6">
-      <div className="flex-1 space-y-4 py-6">
+    // ⚠️ Rola por DENTRO do painel (`min-h-0` + `overflow-y-auto`). Sem isso a
+    // conversa empurraria o painel e o campo de escrever sairia da tela.
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+        <div className="mx-auto w-full max-w-xl space-y-4">
         {/* ── a abertura: balão fixo, nosso, sem custo de IA ─────────────── */}
-        <div className="flex items-end gap-2.5">
+        {/* ⚠️ `items-start`: o medalhão acompanha a PRIMEIRA linha do balão.
+            Alinhado embaixo ele descia junto com o horário e parecia solto. */}
+        <div className="flex items-start gap-2.5">
           <Medalhao tamanho={30} />
           <div>
-            <div className="max-w-[min(84vw,30rem)] rounded-2xl rounded-bl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-[#101820]">
+            <div className="max-w-[min(84vw,26rem)] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-[#101820]">
               {saudacao}! Aqui é o suporte da Jay Academy.
               {"\n"}Como você se chama?
             </div>
             <p className="mt-1 pl-1 text-[11px] text-[#F4F1EA]/35">{horaAbertura}</p>
           </div>
         </div>
+
+        {/* ⚠️ Os assuntos mais comuns, prontos pra tocar. Preenchem o topo da
+            conversa — que era o vazio que mais incomodava — mas ganham lugar
+            por outro motivo: pouparam a pessoa de descrever o problema, e ela
+            chega com pressa. Somem assim que a conversa começa. */}
+        {msgs.length === 0 && !pensando && (
+          <div className="flex flex-wrap gap-2 pl-[38px]">
+            {SUGESTOES.map((s) => (
+              <button
+                key={s}
+                onClick={() => void enviarTexto(s)}
+                className="rounded-full border border-[#AC9751]/35 px-3.5 py-1.5 text-[12.5px] text-[#F4F1EA]/75 transition hover:border-[#AC9751] hover:bg-[#AC9751]/10 hover:text-[#F4F1EA]"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
 
         {msgs.map((m, i) => {
           const daAluna = m.de === "aluno";
@@ -191,7 +230,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
           return (
             <div
               key={i}
-              className={`flex items-end gap-2.5 ${daAluna ? "justify-end" : ""}`}
+              className={`flex items-start gap-2.5 ${daAluna ? "justify-end" : ""}`}
             >
               {!daAluna &&
                 (abreSequencia ? (
@@ -203,8 +242,8 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
                 <div
                   className={`max-w-[min(84vw,30rem)] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap ${
                     daAluna
-                      ? "rounded-2xl rounded-br-md bg-[#AC9751] text-[#101820]"
-                      : "rounded-2xl rounded-bl-md bg-[#F4F1EA] text-[#101820]"
+                      ? "rounded-2xl rounded-tr-md bg-[#AC9751] text-[#101820]"
+                      : "rounded-2xl rounded-tl-md bg-[#F4F1EA] text-[#101820]"
                   }`}
                 >
                   {m.anexo && (
@@ -228,9 +267,9 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         })}
 
         {pensando && (
-          <div className="flex items-end gap-2.5">
+          <div className="flex items-start gap-2.5">
             <Medalhao tamanho={30} />
-            <div className="rounded-2xl rounded-bl-md bg-[#F4F1EA] px-4 py-3">
+            <div className="rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3">
               <Digitando />
             </div>
           </div>
@@ -270,11 +309,13 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
           </div>
         )}
 
-        <div ref={fim} />
+          <div ref={fim} />
+        </div>
       </div>
 
-      {/* ── o campo de escrever, colado embaixo ────────────────────────── */}
-      <div className="sticky bottom-0 -mx-4 bg-[#101820] px-4 pb-4 pt-2 sm:-mx-6 sm:px-6">
+      {/* ── o campo de escrever, no rodapé do painel ───────────────────── */}
+      <div className="shrink-0 border-t border-[#AC9751]/12 px-4 pb-4 pt-3 sm:px-6">
+        <div className="mx-auto w-full max-w-xl">
         {erro && (
           <p className="mb-2.5 rounded-xl border border-[#AC9751]/30 bg-[#AC9751]/10 px-4 py-2.5 text-[13px] leading-relaxed text-[#F4F1EA]/85">
             {erro}
@@ -349,6 +390,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
             <Send size={15} strokeWidth={2.4} />
           </button>
         </form>
+      </div>
       </div>
     </div>
   );
