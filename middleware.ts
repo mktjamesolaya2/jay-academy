@@ -24,6 +24,7 @@ const ADMIN_PREFIXES = [
   "/midia",
   "/paginas",
   "/settings",
+  "/suporte",
   "/sugestoes",
   "/websites",
   "/wordpress",

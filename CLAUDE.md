@@ -41,6 +41,12 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
 - `leads` — inbox de submissões (+`leads/export` CSV). `forms` — CRUD de forms (+`new`, `[id]`).
 - `lps/[slug]` — ficha da página (+`{build,edit-visual,celular}`). `websites` existe mas saiu do menu.
 - `analytics` — visitas por página. `midia` — biblioteca de mídia. `sugestoes` — sugestões+upvote.
+- `suporte` — **IA de suporte dos cursos, FASE 1: sem WhatsApp conectado.** Tela de treino (chat de
+  teste + base de conhecimento editável). Usa a MESMA cadeia de modelos grátis do PMU CLASS.
+  Regras: nunca inicia conversa; ao pedir humano ela CALA e só o James reativa; não inventa preço
+  nem política (o que não está na base vira "chamo uma pessoa"). Lógica pura e testada em
+  `lib/suporte-prompt.ts`. ⚠️ Conectar número só pela API OFICIAL — biblioteca não oficial arrisca
+  banir o número de suporte dele.
 - `settings` (+`users` roles, +`backup` do KV). `lixeira` — trash restaurável.
   **Código do CRM por página**: o CRM entrega um BLOCO DE CÓDIGO (formulário + script, ou só o
   script), não uma URL. Fica em `lp-form-config:<slug>.codigoCrm`, editado no bloco "Integração

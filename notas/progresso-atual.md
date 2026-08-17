@@ -68,6 +68,42 @@ Os dois só aparecem quando fazem sentido.
 
 ---
 
+## 🆕 SUPORTE POR IA NO WHATSAPP — fase 1 no ar (13/08)
+
+Ideia do James: uma IA que faz o suporte dos cursos online pelo WhatsApp, e só
+chama uma pessoa quando precisa. O número de suporte é dele, hoje ligado só ao
+Clint — de onde estão migrando.
+
+**Decidido**: construir **dentro do portal** (reusa login, KV, e a cadeia de
+modelos grátis do PMU CLASS), isolado numa pasta só dele. James: *"pode ser
+dentro, se até já quiser criar a aba de WhatsApp do suporte lá"*.
+
+### Fase 1 (feita) — treinar antes de conectar
+
+`/suporte`, na barra lateral. Chat de teste de um lado, **base de conhecimento
+editável** do outro. Nada conectado a WhatsApp nenhum, e a tela diz isso.
+
+Regras no `lib/suporte-prompt.ts` (9 testes, função pura):
+- **Nunca inicia conversa** — só responde.
+- **Não inventa** preço, prazo, política nem link. O que não está na base vira
+  "vou chamar uma pessoa". Num suporte, resposta errada com confiança é pior
+  que "não sei": o aluno age em cima dela.
+- **Pediu humano → a IA cala.** Marcador `[HUMANO]` na resposta do modelo, mais
+  um atalho que pega o pedido explícito ANTES de gastar chamada de IA. Ela não
+  volta sozinha; quem reativa é o James.
+
+### Fases seguintes (não começadas)
+
+2. **Conectar o número** — ⚠️ **só pela API oficial da Meta**. Biblioteca não
+   oficial (Baileys/whatsapp-web.js) funciona fingindo ser o WhatsApp Web: é
+   contra os termos e **bana o número**, que no caso é o dele, com histórico.
+   Risco maior ainda se iniciar conversa — mas ele não vai iniciar.
+3. **Caixa de entrada** no portal pra ele assumir conversa.
+4. **Trocar o motor** pra OpenAI se autorizarem — é mudar endpoint e chave, o
+   resto continua.
+
+⚠️ Ele vai perguntar ao Lucas sobre a conta Meta Business.
+
 ### 13/08 — formulários apertados no celular
 
 James: *"todos os formulários no mobile estão com um bug de layout"*.

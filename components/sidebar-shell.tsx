@@ -9,6 +9,7 @@ import {
   Link2,
   Globe,
   Layout,
+  MessageCircle,
   LayoutGrid,
   Inbox,
   FileText,
@@ -214,6 +215,18 @@ export function SidebarShell({ user }: { user: SessionUser | null }) {
             label="Leads"
             icon={Inbox}
             active={isActive("/leads")}
+            hideLabel={hideOnCollapse}
+            center={collapsed}
+            onNavigate={closeMobile}
+          />
+          {/* Suporte WhatsApp — fase 1: treina as respostas, sem número
+              conectado. Fica junto de Leads porque é a mesma conversa: um
+              vira o outro. */}
+          <NavItem
+            href="/suporte"
+            label="Suporte WhatsApp"
+            icon={MessageCircle}
+            active={isActive("/suporte")}
             hideLabel={hideOnCollapse}
             center={collapsed}
             onNavigate={closeMobile}
