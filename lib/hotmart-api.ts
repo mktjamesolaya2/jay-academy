@@ -28,12 +28,41 @@ export function temCredenciais(): boolean {
 }
 
 /**
- * O `Basic` da Hotmart vem com a palavra "Basic" na frente na tela dela.
- * Aceita dos dois jeitos pra não depender de quem copiou lembrar disso.
+ * As formas de pedir o token. A Hotmart aceita uma ou outra dependendo da
+ * versão da credencial, então tentamos em ordem.
+ *
+ * ⚠️ O diagnóstico e a consulta de verdade usam ESTA MESMA lista. Elas já
+ * ficaram diferentes uma vez: o teste passava (porque tentava três jeitos) e a
+ * consulta falhava (porque usava só um) — "funciona no teste e quebra no uso"
+ * é exatamente o tipo de armadilha que some sem ninguém ver.
  */
-function cabecalhoBasic(): string {
-  const b = (process.env.HOTMART_BASIC ?? "").trim();
-  return /^basic\s/i.test(b) ? b : `Basic ${b}`;
+function formasDePedirToken() {
+  const id = (process.env.HOTMART_CLIENT_ID ?? "").trim();
+  const secret = (process.env.HOTMART_CLIENT_SECRET ?? "").trim();
+  const basicVar = (process.env.HOTMART_BASIC ?? "").trim().replace(/^basics+/i, "");
+  const calculado = Buffer.from(`${id}:${secret}`).toString("base64");
+  const params = { grant_type: "client_credentials", client_id: id, client_secret: secret };
+  return [
+    { como: "parametros na URL + Basic da variavel", naUrl: true, basic: basicVar, params },
+    { como: "parametros no corpo + Basic da variavel", naUrl: false, basic: basicVar, params },
+    { como: "parametros na URL + Basic calculado por nos", naUrl: true, basic: calculado, params },
+  ];
+}
+
+async function tentarForma(f: ReturnType<typeof formasDePedirToken>[number]) {
+  const url = new URL(TOKEN_URL);
+  const corpo = new URLSearchParams(f.params);
+  if (f.naUrl) for (const [k, v] of corpo) url.searchParams.set(k, v);
+  const r = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${f.basic}`,
+      ...(f.naUrl ? {} : { "Content-Type": "application/x-www-form-urlencoded" }),
+    },
+    body: f.naUrl ? undefined : corpo,
+    signal: AbortSignal.timeout(15000),
+  });
+  return r;
 }
 
 async function pegarToken(): Promise<string> {
@@ -41,27 +70,29 @@ async function pegarToken(): Promise<string> {
   // no meio da requisição seguinte.
   if (cache && cache.expiraEm > Date.now() + 60_000) return cache.valor;
 
-  const url = new URL(TOKEN_URL);
-  url.searchParams.set("grant_type", "client_credentials");
-  url.searchParams.set("client_id", process.env.HOTMART_CLIENT_ID ?? "");
-  url.searchParams.set("client_secret", process.env.HOTMART_CLIENT_SECRET ?? "");
-
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { Authorization: cabecalhoBasic() },
-    signal: AbortSignal.timeout(15000),
-  });
-  if (!r.ok) {
-    const t = await r.text().catch(() => "");
-    throw new Error(`Hotmart recusou as credenciais (${r.status}): ${t.slice(0, 200)}`);
+  const erros: string[] = [];
+  for (const f of formasDePedirToken()) {
+    try {
+      const r = await tentarForma(f);
+      if (!r.ok) {
+        erros.push(`${f.como}: ${r.status}`);
+        continue;
+      }
+      const d = (await r.json()) as { access_token?: string; expires_in?: number };
+      if (!d.access_token) {
+        erros.push(`${f.como}: sem token na resposta`);
+        continue;
+      }
+      cache = {
+        valor: d.access_token,
+        expiraEm: Date.now() + (d.expires_in ?? 3600) * 1000,
+      };
+      return cache.valor;
+    } catch (e) {
+      erros.push(`${f.como}: ${e instanceof Error ? e.message : "erro"}`);
+    }
   }
-  const d = (await r.json()) as { access_token?: string; expires_in?: number };
-  if (!d.access_token) throw new Error("Hotmart não devolveu token.");
-  cache = {
-    valor: d.access_token,
-    expiraEm: Date.now() + (d.expires_in ?? 3600) * 1000,
-  };
-  return cache.valor;
+  throw new Error(`Hotmart recusou as credenciais — ${erros.join(" | ")}`);
 }
 
 export type VendaHotmart = {
@@ -143,35 +174,9 @@ export async function testarCredenciais(): Promise<{
   };
 
   const tentativas: Array<{ como: string; status: number; resposta: string }> = [];
-
-  // 1) parâmetros na URL + cabeçalho Basic (o jeito documentado)
-  // 2) parâmetros no corpo, como formulário
-  // 3) Basic montado por nós, ignorando o que veio na variável
-  const formas = [
-    { como: "parametros na URL + Basic da variavel", url: true, basic: basicSoValor },
-    { como: "parametros no corpo + Basic da variavel", url: false, basic: basicSoValor },
-    { como: "parametros na URL + Basic calculado por nos", url: true, basic: calculado },
-  ];
-
-  for (const f of formas) {
+  for (const f of formasDePedirToken()) {
     try {
-      const url = new URL(TOKEN_URL);
-      const corpo = new URLSearchParams({
-        grant_type: "client_credentials",
-        client_id: id,
-        client_secret: secret,
-      });
-      if (f.url) for (const [k, v] of corpo) url.searchParams.set(k, v);
-
-      const r = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${f.basic}`,
-          ...(f.url ? {} : { "Content-Type": "application/x-www-form-urlencoded" }),
-        },
-        body: f.url ? undefined : corpo,
-        signal: AbortSignal.timeout(15000),
-      });
+      const r = await tentarForma(f);
       const texto = await r.text().catch(() => "");
       tentativas.push({ como: f.como, status: r.status, resposta: texto.slice(0, 160) });
       if (r.ok) return { ok: true, formato, tentativas };
