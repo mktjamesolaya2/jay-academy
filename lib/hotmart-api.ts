@@ -98,15 +98,91 @@ export async function vendasDoEmail(email: string): Promise<VendaHotmart[]> {
   }));
 }
 
-/** Só confere se as credenciais funcionam, sem consultar dado de ninguém. */
-export async function testarCredenciais(): Promise<{ ok: boolean; erro?: string }> {
-  try {
-    if (!temCredenciais()) {
-      return { ok: false, erro: "Faltam HOTMART_CLIENT_ID, SECRET ou BASIC." };
-    }
-    await pegarToken();
-    return { ok: true };
-  } catch (e) {
-    return { ok: false, erro: e instanceof Error ? e.message : "Erro" };
+/**
+ * Diagnóstico das credenciais, sem imprimir segredo nenhum.
+ *
+ * ⚠️ Só o formato: tamanho, se parece base64, se o BASIC bate com
+ * `base64(client_id:client_secret)`. Um 401 seco não diz qual das três chaves
+ * está errada — e ficar chutando, com o James copiando e colando de novo a cada
+ * tentativa, é o pior jeito de descobrir.
+ *
+ * Também tenta as duas formas de mandar os parâmetros (na URL e no corpo),
+ * porque a Hotmart aceita uma delas dependendo da versão.
+ */
+export async function testarCredenciais(): Promise<{
+  ok: boolean;
+  erro?: string;
+  formato?: Record<string, unknown>;
+  tentativas?: Array<{ como: string; status: number; resposta: string }>;
+}> {
+  if (!temCredenciais()) {
+    return {
+      ok: false,
+      erro: "Faltam HOTMART_CLIENT_ID, SECRET ou BASIC.",
+      formato: {
+        temClientId: !!process.env.HOTMART_CLIENT_ID,
+        temSecret: !!process.env.HOTMART_CLIENT_SECRET,
+        temBasic: !!process.env.HOTMART_BASIC,
+      },
+    };
   }
+
+  const id = (process.env.HOTMART_CLIENT_ID ?? "").trim();
+  const secret = (process.env.HOTMART_CLIENT_SECRET ?? "").trim();
+  const basicBruto = (process.env.HOTMART_BASIC ?? "").trim();
+  const basicSoValor = basicBruto.replace(/^basic\s+/i, "");
+  const calculado = Buffer.from(`${id}:${secret}`).toString("base64");
+
+  const formato = {
+    clientIdTamanho: id.length,
+    secretTamanho: secret.length,
+    basicComecaComPalavraBasic: /^basic\s/i.test(basicBruto),
+    basicTamanho: basicSoValor.length,
+    basicPareceBase64: /^[A-Za-z0-9+/=]+$/.test(basicSoValor),
+    basicBateComIdESecret: basicSoValor === calculado,
+  };
+
+  const tentativas: Array<{ como: string; status: number; resposta: string }> = [];
+
+  // 1) parâmetros na URL + cabeçalho Basic (o jeito documentado)
+  // 2) parâmetros no corpo, como formulário
+  // 3) Basic montado por nós, ignorando o que veio na variável
+  const formas = [
+    { como: "parametros na URL + Basic da variavel", url: true, basic: basicSoValor },
+    { como: "parametros no corpo + Basic da variavel", url: false, basic: basicSoValor },
+    { como: "parametros na URL + Basic calculado por nos", url: true, basic: calculado },
+  ];
+
+  for (const f of formas) {
+    try {
+      const url = new URL(TOKEN_URL);
+      const corpo = new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: id,
+        client_secret: secret,
+      });
+      if (f.url) for (const [k, v] of corpo) url.searchParams.set(k, v);
+
+      const r = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${f.basic}`,
+          ...(f.url ? {} : { "Content-Type": "application/x-www-form-urlencoded" }),
+        },
+        body: f.url ? undefined : corpo,
+        signal: AbortSignal.timeout(15000),
+      });
+      const texto = await r.text().catch(() => "");
+      tentativas.push({ como: f.como, status: r.status, resposta: texto.slice(0, 160) });
+      if (r.ok) return { ok: true, formato, tentativas };
+    } catch (e) {
+      tentativas.push({
+        como: f.como,
+        status: 0,
+        resposta: e instanceof Error ? e.message : "erro",
+      });
+    }
+  }
+
+  return { ok: false, erro: "Nenhuma forma funcionou", formato, tentativas };
 }

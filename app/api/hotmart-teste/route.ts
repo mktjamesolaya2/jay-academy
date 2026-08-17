@@ -23,7 +23,12 @@ export async function GET(req: Request) {
   const teste = await testarCredenciais();
   if (!teste.ok) {
     return NextResponse.json(
-      { credenciais: "NÃO funcionaram", motivo: teste.erro },
+      {
+        credenciais: "NÃO funcionaram",
+        motivo: teste.erro,
+        formato: teste.formato,
+        tentativas: teste.tentativas,
+      },
       { status: 200 }
     );
   }
