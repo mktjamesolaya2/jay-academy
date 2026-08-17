@@ -19,6 +19,27 @@
 
 export type NomeProvedor = "gemini" | "openrouter";
 
+/**
+ * ⚠️ **O áudio de WhatsApp é `.ogg` (opus), e o endereço compatível do Google
+ * recusa `.ogg` com 400 "Invalid audio format".** Medido, não suposto:
+ *
+ * | formato | endereço compatível | endereço nativo do Gemini |
+ * |---------|--------------------|---------------------------|
+ * | mp3     | ✅ 200             | ✅ 200                     |
+ * | wav     | ✅ 200             | ✅ 200                     |
+ * | ogg     | ❌ 400             | ✅ 200                     |
+ *
+ * Ou seja: o Gemini OUVE ogg — quem não aceita é a camada de compatibilidade.
+ * Pra atender áudio de WhatsApp é preciso falar o formato nativo dele
+ * (`:generateContent`, chave no cabeçalho `x-goog-api-key`, anexo em
+ * `inline_data`), que é um pedido de outro formato.
+ *
+ * Enquanto isso não existe, áudio ogg falha e a conversa vai pra uma pessoa —
+ * que é o comportamento certo pra hoje, porque a tela do suporte ainda é teste
+ * com upload de arquivo. Vira problema de verdade na fase do WhatsApp.
+ */
+export const AUDIO_OGG_NAO_PASSA = true;
+
 export type Provedor = {
   nome: NomeProvedor;
   endpoint: string;
@@ -40,19 +61,30 @@ export type Provedor = {
 };
 
 /**
- * Cadeia do Gemini.
+ * Cadeia do Gemini — **cada um testado com chamada real**, não escolhido pela
+ * lista de modelos.
  *
- * ⚠️ Diferente da OpenRouter, aqui **o mesmo modelo lê texto, imagem e áudio** —
- * por isso as três filas são iguais. Some a parte mais frágil do desenho antigo:
- * lá só existia UM modelo gratuito que ouvia áudio, sem nenhuma rede embaixo.
+ * ⚠️ Aparecer em `GET /models` NÃO quer dizer que funciona. O `gemini-2.5-flash`
+ * estava listado na conta e mesmo assim respondeu 404: *"no longer available to
+ * new users"*. Se a lista tivesse sido usada como verdade, o suporte entraria no
+ * ar quebrado.
  *
- * `flash-lite` vem depois do `flash` porque tem cota diária maior: quando o
- * primeiro estoura o limite do dia, o segundo ainda responde.
+ * ⚠️ E o mais novo não vai primeiro: `gemini-3.7-flash` devolveu 503 *"high
+ * demand"* no teste. Modelo congestionado na frente da fila faz TODA mensagem
+ * pagar uma ida-e-volta perdida antes de ser respondida — foi exatamente o bug
+ * que deixou o chat do PMU CLASS lento (`lib/chat-models.ts`).
+ *
+ * Aqui **o mesmo modelo lê texto e imagem**, então as duas filas são iguais.
+ * Áudio tem uma ressalva — ver `AUDIO_OGG_NAO_PASSA` abaixo.
  */
 const GEMINI = [
-  "gemini-2.5-flash",
-  "gemini-2.5-flash-lite",
-  "gemini-2.0-flash",
+  // Recomendado pelo próprio Google na mensagem de erro do 2.5. Testado: 200.
+  "gemini-3.6-flash",
+  // Mais leve e com cota maior: é quem atende quando o primeiro satura.
+  "gemini-3.5-flash-lite",
+  // Apelido que o Google reaponta sozinho — a rede que impede esta lista de
+  // envelhecer sem ninguém perceber.
+  "gemini-flash-latest",
 ] as const;
 
 /**

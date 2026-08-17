@@ -88,6 +88,23 @@ test("no Gemini o mesmo modelo lê texto, print e áudio", () => {
   assert.ok(p.filas.audio.length > 1, "áudio precisa de rede de proteção");
 });
 
+test("a fila do Gemini não tem modelo aposentado", () => {
+  // ⚠️ `gemini-2.5-flash` APARECIA em GET /models desta conta e mesmo assim
+  // respondia 404 "no longer available to new users". Listar não é funcionar —
+  // cada modelo daqui foi testado com chamada real.
+  const p = escolher({ GEMINI_API_KEY: "g" })!;
+  for (const m of p.filas.texto) {
+    assert.ok(!m.startsWith("gemini-2."), `${m} é da geração aposentada`);
+  }
+});
+
+test("a fila do Gemini termina num apelido que o Google reaponta sozinho", () => {
+  // Sem isso, a lista envelhece calada: um dia todos os IDs fixos aposentam de
+  // uma vez e o suporte para sem ninguém ter mexido em nada.
+  const p = escolher({ GEMINI_API_KEY: "g" })!;
+  assert.match(p.filas.texto.at(-1)!, /-latest$/);
+});
+
 test("a OpenRouter mantém as filas separadas que ela precisa", () => {
   const p = escolher({ OPENROUTER_API_KEY: "or" })!;
   assert.deepEqual(p.filas.imagem, filasOR.imagem);
