@@ -36,22 +36,21 @@ export type Conversa = {
  * O que a IA sabe. Começa com o catálogo, mas quem manda aqui é o James — ele
  * edita direto na tela, e é assim que ela é treinada.
  */
-const CONHECIMENTO_INICIAL = `CURSOS ONLINE (Hotmart, acesso por 12 meses — não é vitalício)
-- Basic Nanofios — R$ 297 à vista, ou 12x de R$ 32,55. 13 módulos.
-- Basic Magic Shadow — R$ 97 à vista, ou 12x de R$ 29,70. 13 módulos. Em promoção.
-- Fio a Fio Realista — R$ 197 à vista, ou 12x de R$ 20,37. 13 módulos. Em promoção.
-- Lips Sense — R$ 597 à vista, ou 12x de R$ 65,43. 13 módulos.
-
-EM ESPANHOL
-- Pelo a Pelo e Basic Magic Shadow ES. Preço ainda não definido.
+const CONHECIMENTO_INICIAL = `CURSOS ONLINE
+- São 4 em português: Basic Nanofios, Basic Magic Shadow, Fio a Fio Realista e
+  Lips Sense. Cada um tem 13 módulos.
+- Em espanhol: Pelo a Pelo e Basic Magic Shadow ES.
+- ⚠️ Preço NÃO se fala aqui. Quem quer conhecer ou comprar, você passa pra uma
+  pessoa do time.
 
 ACESSO
-- O acesso vale 12 meses a partir da compra.
+- O acesso vale 12 meses a partir da compra. Não é vitalício.
 - Quem quiser estender o acesso precisa falar com uma pessoa do time.
 
 O QUE AINDA NÃO ESTÁ AQUI
 Política de reembolso, prazo de liberação depois da compra, certificado e
 problemas de login. Enquanto não estiver escrito aqui, chame uma pessoa.`;
+
 
 export async function getConhecimento(): Promise<string> {
   const salvo = await kvGet<string>(CHAVE_CONHECIMENTO);
@@ -88,5 +87,58 @@ export async function apagarConversa(id: string): Promise<void> {
   await kvSet(
     CHAVE_CONVERSAS,
     todas.filter((c) => c.id !== id)
+  );
+}
+
+/**
+ * As perguntas que ela NÃO soube responder.
+ *
+ * ⚠️ É assim que ela fica mais esperta — e não sozinha, de propósito.
+ *
+ * James pediu que "a cada resposta ela vá ficando mais esperta, tudo adicionado
+ * no banco". Deixar uma IA aprender das próprias respostas é justamente como se
+ * estraga um suporte: ela erra uma vez, grava o erro como verdade e passa a
+ * repetir com mais confiança — e ninguém percebe até um aluno agir em cima.
+ *
+ * Então o que entra aqui é a PERGUNTA, nunca a resposta dela. Vira uma fila de
+ * lacunas na tela: o James escreve a resposta certa, ela vai pra base, e daí em
+ * diante a IA sabe. Aprende igual, só que sem inventar.
+ */
+const CHAVE_LACUNAS = "suporte:lacunas";
+const MAX_LACUNAS = 100;
+
+export type Lacuna = {
+  pergunta: string;
+  vezes: number;
+  ultimaEm: string;
+};
+
+export async function listarLacunas(): Promise<Lacuna[]> {
+  return (await kvGet<Lacuna[]>(CHAVE_LACUNAS)) ?? [];
+}
+
+/** Registra uma pergunta sem resposta. Repetida, só soma no contador. */
+export async function anotarLacuna(pergunta: string): Promise<void> {
+  const texto = pergunta.trim().slice(0, 300);
+  if (!texto) return;
+  const todas = await listarLacunas();
+  const chave = texto.toLowerCase();
+  const existente = todas.find((l) => l.pergunta.toLowerCase() === chave);
+  if (existente) {
+    existente.vezes += 1;
+    existente.ultimaEm = new Date().toISOString();
+  } else {
+    todas.unshift({ pergunta: texto, vezes: 1, ultimaEm: new Date().toISOString() });
+  }
+  // As mais pedidas primeiro: é por elas que vale começar a preencher.
+  todas.sort((a, b) => b.vezes - a.vezes);
+  await kvSet(CHAVE_LACUNAS, todas.slice(0, MAX_LACUNAS));
+}
+
+export async function removerLacuna(pergunta: string): Promise<void> {
+  const todas = await listarLacunas();
+  await kvSet(
+    CHAVE_LACUNAS,
+    todas.filter((l) => l.pergunta !== pergunta)
   );
 }

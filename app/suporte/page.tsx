@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/sidebar";
 import { canEdit, getCurrentUser } from "@/lib/auth";
-import { getConhecimento } from "@/lib/suporte-store";
+import { getConhecimento, listarLacunas } from "@/lib/suporte-store";
+import { SuporteLacunas } from "@/components/suporte-lacunas";
 import { SuporteChat } from "@/components/suporte-chat";
 import { SuporteConhecimento } from "@/components/suporte-conhecimento";
 
@@ -22,7 +23,10 @@ export default async function SuportePage() {
   if (!me) redirect("/login?redirect=/suporte");
   if (!canEdit(me)) redirect("/dashboard");
 
-  const conhecimento = await getConhecimento();
+  const [conhecimento, lacunas] = await Promise.all([
+    getConhecimento(),
+    listarLacunas(),
+  ]);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -66,6 +70,13 @@ export default async function SuportePage() {
               Ela só responde o que estiver aqui. Qualquer coisa fora disso ela
               passa pra uma pessoa em vez de inventar — de propósito.
             </p>
+
+            {/* ⚠️ É aqui que ela fica mais esperta, com você no meio. Entra só
+                a PERGUNTA que ela não soube — a resposta quem escreve é você. */}
+            <h2 className="mt-7 mb-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              O que ela ainda não sabe
+            </h2>
+            <SuporteLacunas lacunas={lacunas} />
           </div>
         </section>
       </main>

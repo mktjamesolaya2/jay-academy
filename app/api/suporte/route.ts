@@ -6,6 +6,7 @@ import {
   getConhecimento,
   getConversa,
   salvarConversa,
+  anotarLacuna,
   type Conversa,
 } from "@/lib/suporte-store";
 import { montarPrompt, lerResposta, pediuHumano } from "@/lib/suporte-prompt";
@@ -134,7 +135,11 @@ export async function POST(req: Request) {
         texto: resposta,
         em: new Date().toISOString(),
       });
-      if (precisaHumano) conversa.aguardandoPessoa = true;
+      if (precisaHumano) {
+        conversa.aguardandoPessoa = true;
+        // A pergunta vai pra fila de lacunas — é o que ela ainda não sabe.
+        await anotarLacuna(texto).catch(() => {});
+      }
       await salvarConversa(conversa);
 
       return NextResponse.json({

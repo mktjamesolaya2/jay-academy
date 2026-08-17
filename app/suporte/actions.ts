@@ -8,6 +8,7 @@ import {
   getConversa,
   salvarConversa,
   apagarConversa,
+  removerLacuna,
 } from "@/lib/suporte-store";
 
 /** Salva o que a IA sabe. É aqui que ela é treinada. */
@@ -77,6 +78,14 @@ export async function responderComoPessoaAction(
 export async function apagarConversaAction(id: string): Promise<{ ok: boolean }> {
   await requireAdmin();
   await apagarConversa(id);
+  revalidatePath("/suporte");
+  return { ok: true };
+}
+
+/** Tira uma pergunta da fila de lacunas (já foi respondida na base). */
+export async function removerLacunaAction(pergunta: string): Promise<{ ok: boolean }> {
+  await requireAdmin();
+  await removerLacuna(pergunta);
   revalidatePath("/suporte");
   return { ok: true };
 }
