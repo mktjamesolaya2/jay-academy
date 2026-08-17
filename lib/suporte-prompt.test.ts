@@ -138,3 +138,16 @@ test("resumo corta mensagem quilométrica", () => {
   assert.ok(r.length < 100);
   assert.ok(r.endsWith("…"));
 });
+
+test("manda pedir o E-MAIL, não 'há quanto tempo comprou'", () => {
+  // ⚠️ A regra antiga mandava perguntar há quanto tempo — e o modelo obedecia
+  // ela mesmo quando o sistema JÁ sabia a data, pela consulta na Hotmart. A
+  // aluna era interrogada à toa.
+  const p = montarPrompt("x");
+  assert.match(p, /pedir o e-mail da compra/i);
+  assert.match(p, /Nunca pergunte\s+"há quanto tempo/i);
+});
+
+test("os fatos da aluna vencem o que o modelo imaginar", () => {
+  assert.match(montarPrompt("x"), /manda mais\s+que qualquer coisa que você imagine/i);
+});

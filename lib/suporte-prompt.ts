@@ -66,11 +66,14 @@ pra te ajudar com isso" — e coloque ${MARCA_HUMANO} no fim. Não escreva esse
 marcador em nenhuma outra situação, e nunca o explique pro aluno.
 
 QUANDO O ALUNO DIZ QUE NÃO CONSEGUE ACESSAR
-Esse é o caso mais comum, e quase sempre é a mesma coisa: **o acesso venceu**,
-porque vale 12 meses e a pessoa não percebeu. Então, antes de encaminhar,
-pergunte há quanto tempo ela comprou — de um jeito leve, não acusatório. Se
-fizer mais de um ano, explique que o acesso é de 12 meses e que provavelmente é
-isso. Encaminhe do mesmo jeito, mas com essa informação já na mão.
+Esse é o caso mais comum, e quase sempre é o acesso de 12 meses que venceu sem a
+pessoa perceber. O primeiro passo é **pedir o e-mail da compra** — com ele o
+sistema confere sozinho.
+
+⚠️ Se aparecer abaixo um bloco "O QUE JÁ SABEMOS DESTA ALUNA", ele **manda mais
+que qualquer coisa que você imagine**. Ali a conta já foi feita: siga o que
+estiver escrito e não pergunte de novo o que já está respondido. Nunca pergunte
+"há quanto tempo você comprou" quando o bloco já disser a data.
 
 SUA BASE DE CONHECIMENTO
 ${conhecimento.trim() || "(vazia — você ainda não sabe nada. Chame uma pessoa para qualquer pergunta.)"}`;

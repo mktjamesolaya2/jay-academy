@@ -28,6 +28,16 @@ export type Conversa = {
   mensagens: Mensagem[];
   /** IA calada, esperando alguém do time assumir. */
   aguardandoPessoa: boolean;
+  /**
+   * O e-mail que a aluna deu — fica guardado na conversa.
+   *
+   * ⚠️ Sem isto, ela teria que repetir o e-mail a cada mensagem: a consulta
+   * roda a cada volta, e a mensagem seguinte ("e agora?") não traz e-mail
+   * nenhum.
+   */
+  emailAluna?: string;
+  /** A conversa é sobre não conseguir acessar o curso. */
+  assuntoAcesso?: boolean;
   criadaEm: string;
   atualizadaEm: string;
 };

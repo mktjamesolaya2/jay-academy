@@ -26,6 +26,14 @@ import {
   resumoPraAtendente,
 } from "@/lib/suporte-prompt";
 import { logAnonymousActivity } from "@/lib/activity-log";
+import {
+  acharEmail,
+  ehProblemaDeAcesso,
+  avaliarAcesso,
+  fatosDoAcesso,
+  saudacao,
+} from "@/lib/suporte-acesso";
+import { comprasDoEmail } from "@/lib/hotmart-store";
 
 /**
  * O cérebro do suporte.
@@ -126,13 +134,53 @@ export async function POST(req: Request) {
     );
   }
 
+  // ── O caso mais comum: "não consigo acessar" ────────────────────────────
+  //
+  // ⚠️ A decisão é tomada AQUI, em código, e não pelo modelo. Ele recebe a
+  // conclusão pronta e só escreve a frase. Data de compra e prazo de 12 meses
+  // são conta — se um modelo gratuito errasse essa conta, diria "seu acesso
+  // está ativo" pra quem não tem, e a aluna ficaria tentando entrar.
+  const emailNaMensagem = acharEmail(texto);
+  if (emailNaMensagem) conversa.emailAluna = emailNaMensagem;
+  if (ehProblemaDeAcesso(texto)) conversa.assuntoAcesso = true;
+
+  let fatos = "";
+  let humanoPorRegra = false;
+  if (conversa.assuntoAcesso) {
+    const compras = conversa.emailAluna
+      ? await comprasDoEmail(conversa.emailAluna).catch(() => [])
+      : [];
+    const situacao = avaliarAcesso(conversa.emailAluna ?? null, compras);
+    fatos = fatosDoAcesso(situacao);
+    // Quem decide chamar uma pessoa aqui é a regra, não o modelo.
+    humanoPorRegra =
+      situacao.tipo === "no-prazo" ||
+      situacao.tipo === "vencido" ||
+      situacao.tipo === "cancelado";
+  }
+
   const conhecimento = await getConhecimento();
   const anteriores = conversa.mensagens.slice(-16, -1).map((m) => ({
     role: m.de === "aluno" ? "user" : "assistant",
     content: m.texto as string | Array<Record<string, unknown>>,
   }));
+  const abertura =
+    conversa.mensagens.filter((m) => m.de === "aluno").length === 1
+      ? `
+
+É o primeiro contato desta conversa. Agora é "${saudacao()}" em Brasília — abra com isso.`
+      : "";
   const messages = [
-    { role: "system", content: montarPrompt(conhecimento) },
+    {
+      role: "system",
+      content:
+        montarPrompt(conhecimento) +
+        abertura +
+        (fatos ? `
+
+O QUE JÁ SABEMOS DESTA ALUNA (use, não invente)
+${fatos}` : ""),
+    },
     ...anteriores,
     // A última mensagem é a que carrega o print ou o áudio.
     { role: "user", content: montarConteudo(texto, anexos) },
@@ -184,7 +232,7 @@ export async function POST(req: Request) {
         texto: resposta,
         em: new Date().toISOString(),
       });
-      if (precisaHumano) {
+      if (precisaHumano || humanoPorRegra) {
         conversa.aguardandoPessoa = true;
         // A pergunta vai pra fila de lacunas — é o que ela ainda não sabe.
         await anotarLacuna(texto).catch(() => {});
@@ -203,7 +251,7 @@ export async function POST(req: Request) {
 
       return NextResponse.json({
         reply: resposta,
-        precisaHumano,
+        precisaHumano: precisaHumano || humanoPorRegra,
         conversaId: id,
         model,
       });
