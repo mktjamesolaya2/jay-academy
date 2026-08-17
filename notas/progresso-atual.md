@@ -6,6 +6,82 @@
 
 ---
 
+## 🤖 Sessão 2026-08-17 — a I.A do suporte trocou de fornecedor (OpenRouter → Gemini)
+
+**Estado: funcionando.** James testou no localhost: *"respondeu normal"*.
+
+### Por que trocar
+
+A conta grátis da OpenRouter dá **~50 mensagens POR DIA**. Isso acabou no
+primeiro dia de teste — e numa manhã de atendimento real acabaria antes do
+almoço. O erro que aparecia (`429`) saía como *"todos os modelos
+indisponíveis"*, que manda procurar problema no lugar errado.
+
+James: *"vamos utilizar o GEMINI então, pois estamos so fazendo testes"*.
+
+Também perguntou se usar a API do Claude gastaria o limite do Claude Code:
+**não** — são contas separadas, a API é cobrada por mensagem em créditos
+próprios. Sem camada grátis, então não serve pra fase de teste. OpenAI ficou
+de fora porque ele não tem autorização pra usar a API deles.
+
+### Como ficou (`lib/ia-provedor.ts`)
+
+O Google publica um endereço **compatível com o formato da OpenAI** — o mesmo
+`chat/completions` da OpenRouter. Então trocar de fornecedor é trocar endereço,
+chave e lista de modelos; **o corpo da mensagem, os anexos e as regras
+continuam idênticos.**
+
+Escolha automática: **se existir `GEMINI_API_KEY`, usa Gemini**; senão volta pra
+OpenRouter. `IA_PROVEDOR=openrouter` força o antigo pra comparar os dois.
+A chave vive em `portal/.env.local` (localhost) e na Vercel (produção) — os dois
+são independentes, nenhum lê o outro.
+
+### ⚠️ A lição que quase entrou em produção quebrada
+
+Os modelos que eu escolhi de cabeça (`gemini-2.5-flash` e família) estavam
+**aposentados**. E o pior: o `2.5-flash` **aparecia no `GET /models` da conta
+dele** e mesmo assim respondia 404 — *"no longer available to new users"*.
+
+**Aparecer na lista de modelos NÃO quer dizer que funciona.** Cada modelo da
+fila foi testado com chamada real antes de entrar:
+
+| modelo | resultado |
+|---|---|
+| `gemini-3.6-flash` | 200 — o próprio Google recomendou no erro do 2.5 |
+| `gemini-3.5-flash-lite` | 200 — cota maior, atende quando o primeiro satura |
+| `gemini-flash-latest` | 200 — apelido que o Google reaponta sozinho |
+
+**O mais novo não vai primeiro**: `gemini-3.7-flash` deu 503 *"high demand"*.
+Modelo congestionado na frente da fila faz TODA mensagem pagar uma ida-e-volta
+perdida — o mesmo bug que deixou o chat do PMU CLASS lento.
+
+Outra armadilha virada teste: `reasoning` é invenção da OpenRouter e, mandado
+pro Gemini, **derruba o pedido inteiro** por campo desconhecido — levando junto
+o print ou o áudio da aluna.
+
+### 🎤 Pendência real pra fase do WhatsApp: áudio `.ogg`
+
+Medido nos dois endereços do Google:
+
+| formato | endereço compatível (o que usamos) | endereço nativo do Gemini |
+|---|---|---|
+| mp3 | ✅ 200 | ✅ 200 |
+| wav | ✅ 200 | ✅ 200 |
+| **ogg** | ❌ 400 | ✅ 200 |
+
+**Áudio de WhatsApp é `.ogg`.** O Gemini ouve ogg sem problema — quem recusa é
+a camada de compatibilidade. Hoje não atrapalha (a tela é teste, com upload de
+arquivo) e o ogg que falha cai pra atendente, que é o certo. **Na fase do
+WhatsApp, todo áudio de aluna falharia.**
+
+A saída existe e está documentada em `AUDIO_OGG_NAO_PASSA`: falar o formato
+nativo (`:generateContent`, chave em `x-goog-api-key`, anexo em `inline_data`).
+**Decisão de fazer agora ou junto com o WhatsApp ainda está com o James.**
+
+Print confirmado funcionando (leu um PNG e respondeu a cor). 238 testes.
+
+---
+
 ## 🖼️ Sessão 2026-08-10 (parte 4) — galeria de mídia no formato do app Fotos
 
 James: *"queria deixar essa galeria mais organizada, e as paginas que eu crio
