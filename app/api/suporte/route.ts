@@ -37,6 +37,12 @@ import {
 import { todasAsCompras } from "@/lib/hotmart-store";
 import { pedirReenvio } from "@/lib/reenvio-store";
 import { escolherProvedor, recadoDeLimite } from "@/lib/ia-provedor";
+import {
+  paraGeminiNativo,
+  urlNativa,
+  lerRespostaNativa,
+  erroNativo,
+} from "@/lib/gemini-nativo";
 
 /**
  * O cérebro do suporte.
@@ -227,35 +233,64 @@ ${fatos}` : ""),
         ? provedor.filas.imagem
         : provedor.filas.texto;
 
+  // ⚠️ **Áudio no Gemini fala o formato NATIVO dele**, não o compatível.
+  // Áudio de WhatsApp é `.ogg`, e a camada de compatibilidade recusa ogg com
+  // 400 "Invalid audio format" — o nativo aceita (medido nos dois). Sem este
+  // desvio, toda mensagem de voz de aluna cairia pra atendente.
+  //
+  // Só áudio: texto e print seguem no compatível, que funciona e é o mesmo
+  // código da OpenRouter.
+  const nativo = provedor.nome === "gemini" && tipo === "audio";
+
+  // ⚠️ Folga de propósito nos 900: o raciocínio interno do modelo consome deste
+  // mesmo teto, mesmo sendo descartado — com 400 a resposta visível cortava no
+  // meio ("Vou pedir ao").
+  const TEMPERATURA = 0.4;
+  const TETO = 900;
+
   let limiteDiario = false;
   for (const model of fila) {
     try {
-      const r = await fetch(provedor.endpoint, {
+      const r = await fetch(
+        nativo ? urlNativa(model) : provedor.endpoint,
+        {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${provedor.chave}`,
-          ...provedor.cabecalhos,
-        },
-        body: JSON.stringify({
-          model,
-          messages,
-          temperature: 0.4,
-          // ⚠️ Folga de propósito: o raciocínio interno do modelo consome
-          // deste mesmo teto, mesmo sendo descartado — com 400 a resposta
-          // visível cortava no meio ("Vou pedir ao").
-          max_tokens: 900,
-          // Campos que só um dos fornecedores entende (ex.: `reasoning`, da
-          // OpenRouter). Mandar pro outro derruba o pedido inteiro.
-          ...provedor.extras,
-        }),
+        headers: nativo
+          ? {
+              "Content-Type": "application/json",
+              // O nativo não usa Bearer — quer a chave neste cabeçalho.
+              // Mandar Bearer aqui dá 401 falando de OAuth, que manda procurar
+              // problema de permissão onde é só o cabeçalho errado.
+              "x-goog-api-key": provedor.chave,
+            }
+          : {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${provedor.chave}`,
+              ...provedor.cabecalhos,
+            },
+        body: JSON.stringify(
+          nativo
+            ? paraGeminiNativo(messages, {
+                temperature: TEMPERATURA,
+                maxOutputTokens: TETO,
+              })
+            : {
+                model,
+                messages,
+                temperature: TEMPERATURA,
+                max_tokens: TETO,
+                // Campos que só um dos fornecedores entende (ex.: `reasoning`,
+                // da OpenRouter). Mandar pro outro derruba o pedido inteiro.
+                ...provedor.extras,
+              }
+        ),
         signal: AbortSignal.timeout(30000),
       });
       if (!r.ok) {
         const corpoErro = await r.text().catch(() => "");
         if (r.status === 400 || r.status === 404) {
           console.error(
-            `[suporte] modelo "${model}" recusado por ${provedor.nome} (${r.status}): ${corpoErro.slice(0, 200)}`
+            `[suporte] modelo "${model}" recusado por ${provedor.nome}${nativo ? " (nativo)" : ""} (${r.status}): ${erroNativo(corpoErro)}`
           );
         } else if (r.status === 429) {
           // ⚠️ Cota diária estourada. Sem esta distinção o erro sai como
@@ -274,7 +309,10 @@ ${fatos}` : ""),
       const data = (await r.json()) as {
         choices?: Array<{ message?: { content?: string } }>;
       };
-      const bruta = data?.choices?.[0]?.message?.content;
+      // Os dois formatos guardam a resposta em lugares diferentes.
+      const bruta = nativo
+        ? lerRespostaNativa(data)
+        : data?.choices?.[0]?.message?.content;
       if (!bruta) continue;
 
       // ⚠️ Rascunho do modelo NUNCA chega na aluna. Aconteceu uma vez: veio
