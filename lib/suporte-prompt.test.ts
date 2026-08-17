@@ -4,6 +4,7 @@ import {
   montarPrompt,
   lerResposta,
   pediuHumano,
+  limparVazamento,
   MARCA_HUMANO,
 } from "./suporte-prompt.ts";
 
@@ -63,4 +64,44 @@ test("pergunta comum não é confundida com pedido de humano", () => {
   assert.equal(pediuHumano("quanto custa o Lips Sense?"), false);
   assert.equal(pediuHumano("não consigo assistir a aula 3"), false);
   assert.equal(pediuHumano("o acesso é vitalício?"), false);
+});
+
+test("proíbe falar da própria base pro aluno", () => {
+  // ⚠️ Na primeira bateria ela respondeu "não temos isso na base que eu
+  // conheço". O aluno não tem nada a ver com como a gente guarda a informação.
+  const p = montarPrompt("x");
+  assert.ok(/Não fale da sua "base"/i.test(p));
+  assert.ok(/não tenho na minha base/i.test(p), "traz o exemplo do que é errado");
+});
+
+/* ── o vazamento do "na base" ───────────────────────────────────────────── */
+
+test("tira a menção à base — as frases que ela realmente falou", () => {
+  // ⚠️ Estas duas saíram da bateria de teste, em produção do modelo grátis:
+  // primeiro "na base que eu conheço"; depois de eu proibir no prompt, ela
+  // trocou pra "na base atual". Por isso a limpeza é no código.
+  assert.equal(
+    limparVazamento("Não temos curso de cílios na base que eu conheço, vou chamar alguém"),
+    "Não temos curso de cílios, vou chamar alguém"
+  );
+  assert.equal(
+    limparVazamento("Não temos curso de cílios na base atual, vou chamar alguém"),
+    "Não temos curso de cílios, vou chamar alguém"
+  );
+});
+
+test("pega as outras formas de dizer a mesma coisa", () => {
+  assert.ok(!/base/i.test(limparVazamento("Isso não está na minha base de conhecimento.")));
+  assert.ok(!/base/i.test(limparVazamento("Não consta na nossa base de dados.")));
+});
+
+test("não mutila resposta boa", () => {
+  const ok = "O Basic Nanofios tem 13 módulos e custa R$ 297.";
+  assert.equal(limparVazamento(ok), ok);
+});
+
+test("a limpeza roda junto com a leitura da resposta", () => {
+  const r = lerResposta(`Não temos isso na base atual ${MARCA_HUMANO}`);
+  assert.ok(!/base/i.test(r.texto));
+  assert.equal(r.precisaHumano, true);
 });

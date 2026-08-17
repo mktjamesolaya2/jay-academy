@@ -105,7 +105,11 @@ export async function POST(req: Request) {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${chave}`,
-          "X-Title": "Jay Academy — Suporte",
+          // ⚠️ Só ASCII aqui. Cabeçalho HTTP não aceita acento nem traço longo:
+          // com "Jay Academy — Suporte" o fetch estourava ANTES de sair da
+          // máquina, nos 4 modelos, e o erro chegava como "todos os modelos
+          // indisponíveis" — que manda procurar no lugar errado.
+          "X-Title": "Jay Academy Suporte",
         },
         body: JSON.stringify({ model, messages, temperature: 0.4, max_tokens: 400 }),
         signal: AbortSignal.timeout(30000),
@@ -139,7 +143,15 @@ export async function POST(req: Request) {
         conversaId: id,
         model,
       });
-    } catch {
+    } catch (e) {
+      // ⚠️ NÃO engolir em silêncio. Um `catch {}` vazio aqui escondeu por meia
+      // hora um erro banal (traço longo no cabeçalho): os 4 modelos falhavam
+      // em milissegundos e a mensagem dizia "modelos indisponíveis", mandando
+      // procurar na OpenRouter em vez de no nosso código.
+      console.error(
+        `[suporte] ${model} falhou:`,
+        e instanceof Error ? e.message : e
+      );
       continue;
     }
   }
