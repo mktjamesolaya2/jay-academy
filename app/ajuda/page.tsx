@@ -37,6 +37,9 @@ export default function AjudaPage() {
       <header className="sticky top-0 z-10 border-b border-[#AC9751]/15 bg-[#101820]/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-2xl items-center gap-3.5 px-4 py-3.5 sm:px-6">
           <Medalhao tamanho={42} />
+          {/* ⚠️ Aqui tinha "Segunda a sexta". Saiu: anunciar limite de horário
+              antes de a pessoa ter falado só planta a dúvida de se alguém vai
+              responder — e ela chega aqui já com um problema na mão. */}
           <div className="min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-[#AC9751]">
               Jay Academy
@@ -45,9 +48,6 @@ export default function AjudaPage() {
               Suporte
             </h1>
           </div>
-          <p className="ml-auto shrink-0 text-right text-[11px] leading-tight text-[#F4F1EA]/40">
-            Segunda a sexta
-          </p>
         </div>
         {/* A grega fecha o cabeçalho — é a assinatura da marca. */}
         <Meandro id="meandro-topo" className="text-[#AC9751]/35" altura={9} />
