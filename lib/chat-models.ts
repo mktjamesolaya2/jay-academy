@@ -31,3 +31,35 @@ export const MODEL_CHAIN = [
 export function idDeModeloValido(id: string): boolean {
   return /^[a-z0-9._-]+\/[a-z0-9._-]+(:[a-z0-9-]+)?$/i.test(id);
 }
+
+/**
+ * Modelos que ENXERGAM imagem — pro aluno mandar print.
+ *
+ * ⚠️ Print é o jeito mais comum de alguém mostrar que não consegue acessar o
+ * curso. Sem isso, a IA responderia no escuro uma mensagem que só faz sentido
+ * junto da imagem.
+ *
+ * O primeiro é o mesmo `gemma-4-31b` da cadeia de texto — ele já lê imagem, e
+ * de graça. Os outros são fallback de outro fornecedor, pro caso de saturação.
+ */
+export const MODEL_CHAIN_VISAO = [
+  "google/gemma-4-31b-it:free",
+  "google/gemma-4-26b-a4b-it:free",
+  "nvidia/nemotron-nano-12b-v2-vl:free",
+  "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+] as const;
+
+/**
+ * Modelos que OUVEM áudio — pro aluno mandar mensagem de voz.
+ *
+ * ⚠️ Só existe UM gratuito na OpenRouter hoje (o `omni` da NVIDIA), então aqui
+ * não há rede de proteção: se ele saturar, o áudio falha e a conversa vai pra
+ * uma pessoa. É o comportamento certo — melhor um atendente do que adivinhar o
+ * que a pessoa falou.
+ *
+ * Se um dia valer pagar, os mais baratos com áudio são o `gemini-2.5-flash-lite`
+ * e o `voxtral-small` (centavos por milhão de tokens).
+ */
+export const MODEL_CHAIN_AUDIO = [
+  "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+] as const;

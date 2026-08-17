@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
 import { canEdit, getCurrentUser } from "@/lib/auth";
-import { MODEL_CHAIN } from "@/lib/chat-models";
+import {
+  MODEL_CHAIN,
+  MODEL_CHAIN_VISAO,
+  MODEL_CHAIN_AUDIO,
+} from "@/lib/chat-models";
+import {
+  montarConteudo,
+  anexoValido,
+  tipoDeConversa,
+  type Anexo,
+} from "@/lib/suporte-anexo";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
 import {
   getConhecimento,
@@ -38,7 +48,7 @@ export async function POST(req: Request) {
   if (!canEdit(me)) {
     return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
   }
-  if (payloadTooLarge(req, 32 * 1024)) {
+  if (payloadTooLarge(req, 14 * 1024 * 1024)) {
     return NextResponse.json({ error: "Mensagem muito grande" }, { status: 413 });
   }
   if (!(await rateLimit("suporte", req, 30, 60)).ok) {
@@ -48,9 +58,19 @@ export async function POST(req: Request) {
   const body = (await req.json().catch(() => null)) as {
     conversaId?: string;
     texto?: string;
+    anexos?: Anexo[];
   } | null;
   const texto = (body?.texto ?? "").trim();
-  if (!texto) return NextResponse.json({ error: "Sem mensagem" }, { status: 400 });
+  const anexos = (body?.anexos ?? []).slice(0, 3);
+  // Print sem legenda é comum: manda a imagem e pronto. Só barra se não veio
+  // nada mesmo.
+  if (!texto && !anexos.length) {
+    return NextResponse.json({ error: "Sem mensagem" }, { status: 400 });
+  }
+  for (const a of anexos) {
+    const v = anexoValido(a);
+    if (!v.ok) return NextResponse.json({ error: v.erro }, { status: 400 });
+  }
 
   const id = body?.conversaId || `c-${Date.now()}`;
   const agora = new Date().toISOString();
@@ -62,7 +82,11 @@ export async function POST(req: Request) {
     criadaEm: agora,
     atualizadaEm: agora,
   };
-  conversa.mensagens.push({ de: "aluno", texto, em: agora });
+  conversa.mensagens.push({
+    de: "aluno",
+    texto: texto || (tipoDeConversa(anexos) === "audio" ? "(áudio)" : "(imagem)"),
+    em: agora,
+  });
 
   // ⚠️ A IA fica CALADA depois que a conversa foi passada pra uma pessoa.
   // Quem reativa é o James, na tela. Se ela voltasse a responder sozinha,
@@ -103,15 +127,28 @@ export async function POST(req: Request) {
   }
 
   const conhecimento = await getConhecimento();
+  const anteriores = conversa.mensagens.slice(-16, -1).map((m) => ({
+    role: m.de === "aluno" ? "user" : "assistant",
+    content: m.texto as string | Array<Record<string, unknown>>,
+  }));
   const messages = [
     { role: "system", content: montarPrompt(conhecimento) },
-    ...conversa.mensagens.slice(-16).map((m) => ({
-      role: m.de === "aluno" ? "user" : "assistant",
-      content: m.texto,
-    })),
+    ...anteriores,
+    // A última mensagem é a que carrega o print ou o áudio.
+    { role: "user", content: montarConteudo(texto, anexos) },
   ];
 
-  for (const model of MODEL_CHAIN) {
+  // ⚠️ Fila por tipo: só alguns modelos enxergam imagem, e só UM ouve áudio.
+  // Mandar print pro modelo de texto faz ele responder no escuro.
+  const tipo = tipoDeConversa(anexos);
+  const fila =
+    tipo === "audio"
+      ? MODEL_CHAIN_AUDIO
+      : tipo === "imagem"
+        ? MODEL_CHAIN_VISAO
+        : MODEL_CHAIN;
+
+  for (const model of fila) {
     try {
       const r = await fetch(ENDPOINT, {
         method: "POST",
@@ -185,7 +222,12 @@ export async function POST(req: Request) {
 
   await salvarConversa(conversa);
   return NextResponse.json(
-    { error: "Todos os modelos gratuitos estão indisponíveis agora." },
+    {
+      error:
+        tipo === "audio"
+          ? "Não consegui ouvir esse áudio agora. Vou passar pra uma pessoa."
+          : "Todos os modelos gratuitos estão indisponíveis agora.",
+    },
     { status: 503 }
   );
 }

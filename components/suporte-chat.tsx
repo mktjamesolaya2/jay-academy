@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Loader2, RotateCcw, Send, UserRound } from "lucide-react";
+import { Loader2, Paperclip, RotateCcw, Send, UserRound, X } from "lucide-react";
 import { reativarIaAction } from "@/app/suporte/actions";
 
-type Msg = { de: "aluno" | "ia" | "pessoa"; texto: string };
+type Msg = { de: "aluno" | "ia" | "pessoa"; texto: string; anexo?: string };
+type Anexo = { tipo: "imagem" | "audio"; dataUrl: string; nome: string };
 
 /**
  * A tela onde o James treina o suporte.
@@ -20,6 +21,7 @@ type Msg = { de: "aluno" | "ia" | "pessoa"; texto: string };
 export function SuporteChat() {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [texto, setTexto] = useState("");
+  const [anexo, setAnexo] = useState<Anexo | null>(null);
   const [conversaId, setConversaId] = useState<string | null>(null);
   const [aguardandoPessoa, setAguardandoPessoa] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -34,16 +36,30 @@ export function SuporteChat() {
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
     const t = texto.trim();
-    if (!t || pensando) return;
+    // Print sem legenda é comum — o aluno manda só a imagem.
+    if ((!t && !anexo) || pensando) return;
     setErro(null);
     setTexto("");
-    setMsgs((m) => [...m, { de: "aluno", texto: t }]);
+    const enviado = anexo;
+    setAnexo(null);
+    setMsgs((m) => [
+      ...m,
+      {
+        de: "aluno",
+        texto: t || (enviado?.tipo === "audio" ? "(áudio)" : "(imagem)"),
+        anexo: enviado?.tipo === "imagem" ? enviado.dataUrl : undefined,
+      },
+    ]);
     setPensando(true);
     try {
       const r = await fetch("/api/suporte", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conversaId, texto: t }),
+        body: JSON.stringify({
+          conversaId,
+          texto: t,
+          anexos: enviado ? [{ tipo: enviado.tipo, dataUrl: enviado.dataUrl }] : [],
+        }),
       });
       const d = await r.json();
       if (d.conversaId) setConversaId(d.conversaId);
@@ -108,6 +124,14 @@ export function SuporteChat() {
                     : "bg-[#1a1a1a] text-neutral-200"
               }`}
             >
+              {m.anexo && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={m.anexo}
+                  alt="print enviado"
+                  className="mb-2 max-h-40 rounded-lg border border-white/10"
+                />
+              )}
               {m.texto}
             </div>
           </div>
@@ -152,10 +176,56 @@ export function SuporteChat() {
         </p>
       )}
 
+      {anexo && (
+        <div className="mx-4 mb-2 flex items-center gap-2 rounded-lg border border-[#1f1f1f] bg-[#0f0f0f] px-3 py-2">
+          <Paperclip size={12} strokeWidth={2.2} className="shrink-0 text-neutral-500" />
+          <span className="min-w-0 flex-1 truncate text-[12px] text-neutral-300">
+            {anexo.nome}
+          </span>
+          <button
+            type="button"
+            onClick={() => setAnexo(null)}
+            className="shrink-0 text-neutral-600 transition hover:text-rose-300"
+          >
+            <X size={13} strokeWidth={2.2} />
+          </button>
+        </div>
+      )}
+
       <form
         onSubmit={enviar}
         className="flex items-center gap-2 border-t border-[#1f1f1f] px-3 py-3"
       >
+        {/* ⚠️ Print e áudio são o jeito mais comum de mostrar "não consigo
+            acessar". Aqui dá pra testar isso antes de existir WhatsApp. */}
+        <label
+          title="Anexar print ou áudio"
+          className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#1f1f1f] text-neutral-500 transition hover:text-white"
+        >
+          <Paperclip size={15} strokeWidth={2.2} />
+          <input
+            type="file"
+            accept="image/*,audio/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              e.target.value = "";
+              if (!f) return;
+              if (f.size > 4 * 1024 * 1024) {
+                setErro("Arquivo muito grande (máximo 4 MB).");
+                return;
+              }
+              const leitor = new FileReader();
+              leitor.onload = () =>
+                setAnexo({
+                  tipo: f.type.startsWith("audio") ? "audio" : "imagem",
+                  dataUrl: String(leitor.result),
+                  nome: f.name,
+                });
+              leitor.readAsDataURL(f);
+            }}
+          />
+        </label>
         <input
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
@@ -164,7 +234,7 @@ export function SuporteChat() {
         />
         <button
           type="submit"
-          disabled={pensando || !texto.trim()}
+          disabled={pensando || (!texto.trim() && !anexo)}
           className="btn-primary inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full disabled:opacity-40"
         >
           <Send size={15} strokeWidth={2.2} />

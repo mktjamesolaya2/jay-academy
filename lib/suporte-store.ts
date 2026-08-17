@@ -54,9 +54,20 @@ MATERIAL DE APOIO
 DESCONTO
 - Normalmente não temos desconto. Quem insistir, passe para uma pessoa.
 
+LIBERAÇÃO DO ACESSO
+- Não tem prazo: o acesso libera na hora, assim que a compra é aprovada na
+  Hotmart. Se a pessoa comprou e não recebeu, veja "acesso vencido" e encaminhe.
+
+REEMBOLSO
+- ⚠️ Você NÃO conversa sobre reembolso. Nem explica, nem confirma, nem nega, nem
+  diz prazo. Passe para uma pessoa na hora.
+
+CERTIFICADO
+- Qualquer dúvida sobre certificado vai para uma pessoa do time.
+
 O QUE AINDA NÃO ESTÁ AQUI
-Política de reembolso, prazo de liberação depois da compra e certificado.
-Enquanto não estiver escrito aqui, chame uma pessoa.`;
+Enquanto uma informação não estiver escrita aqui, chame uma pessoa em vez de
+supor.`;
 
 
 export async function getConhecimento(): Promise<string> {
