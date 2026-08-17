@@ -41,7 +41,10 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
 - `leads` — inbox de submissões (+`leads/export` CSV). `forms` — CRUD de forms (+`new`, `[id]`).
 - `lps/[slug]` — ficha da página (+`{build,edit-visual,celular}`). `websites` existe mas saiu do menu.
 - `analytics` — visitas por página. `midia` — biblioteca de mídia. `sugestoes` — sugestões+upvote.
-- `suporte` — **IA de suporte dos cursos, FASE 1: sem WhatsApp conectado.** Tela de treino (chat de
+- `suporte` — **IA de suporte dos cursos, FASE 1: sem WhatsApp conectado.** Tela = só o chat;
+  base + lacunas em `/suporte/ajustes`. Consulta a Hotmart (webhook `/api/hotmart` + API só
+  leitura) pra saber se o acesso de 12 meses venceu — decisão em código (`lib/suporte-acesso.ts`),
+  não no modelo. Lê print e ouve áudio (cadeias `MODEL_CHAIN_VISAO`/`_AUDIO`). Tela de treino (chat de
   teste + base de conhecimento editável). Usa a MESMA cadeia de modelos grátis do PMU CLASS.
   Regras: nunca inicia conversa; ao pedir humano ela CALA e só o James reativa; não inventa preço
   nem política (o que não está na base vira "chamo uma pessoa"). Lógica pura e testada em

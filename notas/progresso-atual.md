@@ -127,6 +127,61 @@ continuava em 10px. A primeira versão do arquivo não tinha, e não funcionou.
 Conferido aplicando o CSS na página de produção antes de subir: campo de
 `{esq:10,larg:370}` pra `{esq:22,larg:346}`.
 
+## 🤖 SUPORTE POR IA — fase 1 completa, com Hotmart ligada (13/08)
+
+`/suporte` no painel. **Nenhum WhatsApp conectado** — é a fase de treinar as
+respostas. A tela é **só o chat**; a base de conhecimento e a fila de lacunas
+ficam em `/suporte/ajustes` (James: *"não quero isso aqui, apenas o chat"*).
+
+### O que ela faz
+
+- Responde o que está na base; **não inventa** — o que falta vira "chamo uma
+  pessoa"
+- **Nunca vende, nunca fala preço.** Quem quer curso vai pra uma pessoa
+- Responde em **espanhol** no idioma de quem escreveu
+- **Lê print** e **ouve áudio** (modelos gratuitos da OpenRouter; conferido com
+  print de verdade: citou curso e data que só existiam na imagem)
+- Pediu humano → **cala** e só o James reativa. Toca o **sino do portal** com um
+  resumo do caso
+
+### O fluxo de acesso, ligado na Hotmart
+
+```
+"não consigo acessar"  → pede o e-mail
+dentro dos 12 meses    → "vou pedir pro time reenviar"      → PESSOA
+fora dos 12 meses      → "expirou em <data>"                 → PESSOA
+e-mail sem compra      → "usou outro e-mail?"
+compra cancelada       → não fala de dinheiro                → PESSOA
+```
+
+⚠️ **A decisão é da regra, não do modelo** (`lib/suporte-acesso.ts`, 15 testes).
+Data e prazo são conta em código; o modelo só escreve a frase. Modelo grátis
+errando essa conta diria "seu acesso está ativo" pra quem não tem.
+
+### Hotmart (conectada em 13/08)
+
+- **Webhook** `/api/hotmart` — compra aprovada/completa/cancelada. Exige o
+  `HOTMART_HOTTOK`; sem ele qualquer um inventaria compra e a IA afirmaria
+  acesso que não existe.
+- **API** (`HOTMART_CLIENT_ID/SECRET/BASIC`) — alcança o **histórico**, que o
+  webhook não cobre. **Só leitura.**
+- `todasAsCompras()` junta as duas: se a API cair, segue com o webhook. Dizer
+  "você não tem compra" pra quem tem é pior que informação parcial.
+- Conferido em produção: 3 compras reais de uma aluna, com produto e data.
+
+⚠️ **Reembolso e chargeback NÃO estão marcados** (decisão do James). Então o
+portal não sabe de reembolso — por isso a IA não crava a data como certeza e
+qualquer assunto de reembolso vai direto pra pessoa.
+
+⚠️ **"Reenviar acesso" continua sendo humano.** É um clique na Hotmart; não
+sabemos se existe na API. A IA descobre que precisa e avisa o atendente.
+
+### Pendências
+
+- Ligar no WhatsApp (fase 2) — **só pela API oficial**, biblioteca não oficial
+  bane o número
+- Encher a base: o que ela não souber cai em `/suporte/ajustes`
+
 ### 13/08 (final) — etiqueta sai do portal de vez
 
 James: *"tira esse negócio de etiqueta aí, porque a gente não etiqueta nada. É

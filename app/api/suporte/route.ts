@@ -33,7 +33,7 @@ import {
   fatosDoAcesso,
   saudacao,
 } from "@/lib/suporte-acesso";
-import { comprasDoEmail } from "@/lib/hotmart-store";
+import { todasAsCompras } from "@/lib/hotmart-store";
 
 /**
  * O cérebro do suporte.
@@ -148,7 +148,7 @@ export async function POST(req: Request) {
   let humanoPorRegra = false;
   if (conversa.assuntoAcesso) {
     const compras = conversa.emailAluna
-      ? await comprasDoEmail(conversa.emailAluna).catch(() => [])
+      ? await todasAsCompras(conversa.emailAluna).catch(() => [])
       : [];
     const situacao = avaliarAcesso(conversa.emailAluna ?? null, compras);
     fatos = fatosDoAcesso(situacao);

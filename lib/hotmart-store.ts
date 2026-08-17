@@ -47,3 +47,48 @@ export async function registrarCompra(c: CompraHotmart): Promise<void> {
   else todas[i] = { ...todas[i], ...c };
   await kvSet(chave(c.email), todas.slice(0, 20));
 }
+
+/**
+ * Todas as compras que a gente conhece de um e-mail.
+ *
+ * ⚠️ Junta as DUAS fontes, e cada uma cobre o buraco da outra:
+ * - a **API** tem o histórico completo, inclusive quem comprou antes de a
+ *   gente conectar — que é justamente a aluna com acesso perto de vencer;
+ * - o **webhook** tem o que acabou de acontecer, e continua funcionando se a
+ *   API estiver fora do ar ou a credencial expirar.
+ *
+ * Se a API falhar, seguimos com o webhook em vez de dizer "não achei nada" —
+ * responder "você não tem compra" pra quem tem é pior do que responder com
+ * informação parcial.
+ */
+export async function todasAsCompras(email: string): Promise<CompraHotmart[]> {
+  const doWebhook = await comprasDoEmail(email).catch(() => []);
+
+  let daApi: CompraHotmart[] = [];
+  try {
+    const { temCredenciais, vendasDoEmail } = await import("./hotmart-api");
+    if (temCredenciais()) {
+      daApi = (await vendasDoEmail(email)).map((v) => ({
+        email,
+        nome: v.comprador || undefined,
+        produto: v.produto,
+        compradaEm: v.compradaEm,
+        situacao: v.situacao,
+        atualizadaEm: new Date().toISOString(),
+      }));
+    }
+  } catch (e) {
+    console.warn("[hotmart] consulta na API falhou, usando só o webhook:", e);
+  }
+
+  // Mesma compra nas duas fontes: fica uma só (produto + dia).
+  const vistas = new Set<string>();
+  const juntas: CompraHotmart[] = [];
+  for (const c of [...daApi, ...doWebhook]) {
+    const chave = `${c.produto.toLowerCase()}|${c.compradaEm.slice(0, 10)}`;
+    if (vistas.has(chave)) continue;
+    vistas.add(chave);
+    juntas.push(c);
+  }
+  return juntas;
+}
