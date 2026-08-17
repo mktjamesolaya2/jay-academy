@@ -147,6 +147,10 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 - `KV_REST_API_URL`/`KV_REST_API_TOKEN` (Vercel KV). `CRON_SECRET` (recomendada, protege os crons).
 - `S3_*`/`R2_*` (storage S3-compatível, prioridade) ou `BLOB_READ_WRITE_TOKEN` (Vercel Blob).
 - `OPENROUTER_API_KEY` (resumo IA / chat PMU — só em prod). Sem gateway de pagamento (Hotmart hardcoded no HTML).
+- `GEMINI_API_KEY` — IA do **suporte**. Se existir, o suporte usa Gemini em vez da OpenRouter
+  (`lib/ia-provedor.ts`); a cota grátis da OpenRouter é ~50 msg/DIA e acabou no 1º dia de teste.
+  O Gemini fala o mesmo formato (`/v1beta/openai/chat/completions`), e no Gemini o **mesmo** modelo
+  lê texto, print e áudio. `IA_PROVEDOR=openrouter` força o antigo pra comparar os dois.
 
 ## Convenções
 - Comentários e docs de projeto (README, `notas/`) em português — manter o padrão.

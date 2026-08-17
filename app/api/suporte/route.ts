@@ -36,6 +36,7 @@ import {
 } from "@/lib/suporte-acesso";
 import { todasAsCompras } from "@/lib/hotmart-store";
 import { pedirReenvio } from "@/lib/reenvio-store";
+import { escolherProvedor, recadoDeLimite } from "@/lib/ia-provedor";
 
 /**
  * O cérebro do suporte.
@@ -44,14 +45,13 @@ import { pedirReenvio } from "@/lib/reenvio-store";
  * WhatsApp** — isso é decisão de depois, e o James já sabe que conectar com
  * biblioteca não oficial arrisca banir o número dele.
  *
- * Usa a mesma cadeia de modelos gratuitos do chat do PMU CLASS
- * (`lib/chat-models.ts`), então custa zero enquanto ele treina. Trocar pra
- * OpenAI depois é mudar o endpoint e a chave — o resto continua igual.
+ * Quem responde é escolhido em `lib/ia-provedor.ts`: **Gemini se houver
+ * `GEMINI_API_KEY`**, senão a mesma cadeia gratuita da OpenRouter usada pelo
+ * chat do PMU CLASS. A troca é por variável de ambiente porque a cota grátis da
+ * OpenRouter (~50 mensagens/dia) acabou no primeiro dia de teste.
  */
 
 export const dynamic = "force-dynamic";
-
-const ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
 
 export async function POST(req: Request) {
   const me = await getCurrentUser();
@@ -128,10 +128,17 @@ export async function POST(req: Request) {
     });
   }
 
-  const chave = process.env.OPENROUTER_API_KEY;
-  if (!chave) {
+  const provedor = escolherProvedor(process.env, {
+    texto: MODEL_CHAIN,
+    imagem: MODEL_CHAIN_VISAO,
+    audio: MODEL_CHAIN_AUDIO,
+  });
+  if (!provedor) {
     return NextResponse.json(
-      { error: "OPENROUTER_API_KEY não configurada — funciona em produção." },
+      {
+        error:
+          "Nenhuma chave de IA configurada. Coloque GEMINI_API_KEY (recomendado) ou OPENROUTER_API_KEY.",
+      },
       { status: 503 }
     );
   }
@@ -208,29 +215,27 @@ ${fatos}` : ""),
     { role: "user", content: montarConteudo(texto, anexos) },
   ];
 
-  // ⚠️ Fila por tipo: só alguns modelos enxergam imagem, e só UM ouve áudio.
-  // Mandar print pro modelo de texto faz ele responder no escuro.
+  // ⚠️ Fila por tipo: na OpenRouter só alguns modelos enxergam imagem e só UM
+  // ouve áudio, então mandar print pro modelo de texto faz ele responder no
+  // escuro. No Gemini as três filas são o mesmo modelo — mas quem decide isso é
+  // o provedor, não esta linha.
   const tipo = tipoDeConversa(anexos);
   const fila =
     tipo === "audio"
-      ? MODEL_CHAIN_AUDIO
+      ? provedor.filas.audio
       : tipo === "imagem"
-        ? MODEL_CHAIN_VISAO
-        : MODEL_CHAIN;
+        ? provedor.filas.imagem
+        : provedor.filas.texto;
 
   let limiteDiario = false;
   for (const model of fila) {
     try {
-      const r = await fetch(ENDPOINT, {
+      const r = await fetch(provedor.endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${chave}`,
-          // ⚠️ Só ASCII aqui. Cabeçalho HTTP não aceita acento nem traço longo:
-          // com "Jay Academy — Suporte" o fetch estourava ANTES de sair da
-          // máquina, nos 4 modelos, e o erro chegava como "todos os modelos
-          // indisponíveis" — que manda procurar no lugar errado.
-          "X-Title": "Jay Academy Suporte",
+          Authorization: `Bearer ${provedor.chave}`,
+          ...provedor.cabecalhos,
         },
         body: JSON.stringify({
           model,
@@ -240,10 +245,9 @@ ${fatos}` : ""),
           // deste mesmo teto, mesmo sendo descartado — com 400 a resposta
           // visível cortava no meio ("Vou pedir ao").
           max_tokens: 900,
-          // Pede pro OpenRouter não devolver os tokens de raciocínio. Ajuda,
-          // mas não basta: modelo pequeno às vezes escreve o rascunho no
-          // próprio conteúdo. Por isso existe a checagem abaixo.
-          reasoning: { exclude: true },
+          // Campos que só um dos fornecedores entende (ex.: `reasoning`, da
+          // OpenRouter). Mandar pro outro derruba o pedido inteiro.
+          ...provedor.extras,
         }),
         signal: AbortSignal.timeout(30000),
       });
@@ -251,14 +255,16 @@ ${fatos}` : ""),
         const corpoErro = await r.text().catch(() => "");
         if (r.status === 400 || r.status === 404) {
           console.error(
-            `[suporte] modelo "${model}" recusado (${r.status}) — rodar "npm run checar-modelos".`
+            `[suporte] modelo "${model}" recusado por ${provedor.nome} (${r.status}): ${corpoErro.slice(0, 200)}`
           );
         } else if (r.status === 429) {
-          // ⚠️ A conta grátis da OpenRouter dá ~50 mensagens POR DIA. Isso
-          // acaba num dia de testes, e acabaria numa manhã de suporte real.
-          // Sem esta mensagem o erro sai como "modelos indisponíveis", que
-          // manda procurar problema onde não tem.
-          console.error(`[suporte] limite diário da OpenRouter atingido: ${corpoErro.slice(0, 200)}`);
+          // ⚠️ Cota diária estourada. Sem esta distinção o erro sai como
+          // "modelos indisponíveis", que manda procurar problema onde não tem —
+          // foi o que aconteceu quando a conta grátis da OpenRouter (~50/dia)
+          // acabou no primeiro dia de teste.
+          console.error(
+            `[suporte] limite diário de ${provedor.nome} atingido: ${corpoErro.slice(0, 200)}`
+          );
           limiteDiario = true;
         } else {
           console.warn(`[suporte] ${model} falhou: ${r.status} ${corpoErro.slice(0, 120)}`);
@@ -309,6 +315,7 @@ ${fatos}` : ""),
         precisaHumano: precisaHumano || humanoPorRegra,
         conversaId: id,
         model,
+        provedor: provedor.nome,
       });
     } catch (e) {
       // ⚠️ NÃO engolir em silêncio. Um `catch {}` vazio aqui escondeu por meia
@@ -327,7 +334,7 @@ ${fatos}` : ""),
   return NextResponse.json(
     {
       error: limiteDiario
-        ? "Limite diário de mensagens gratuitas da OpenRouter atingido (são ~50 por dia na conta grátis). Volta amanhã, ou adicione créditos pra subir o limite."
+        ? recadoDeLimite(provedor.nome)
         : tipo === "audio"
           ? "Não consegui ouvir esse áudio agora. Vou passar pra uma pessoa."
           : "Todos os modelos gratuitos estão indisponíveis agora.",
