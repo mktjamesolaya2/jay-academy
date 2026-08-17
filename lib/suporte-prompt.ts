@@ -163,3 +163,39 @@ export function resumoPraAtendente(
   if (doAluno.length === 1) return corta(primeira);
   return `${corta(primeira)} → ${corta(ultima)}`;
 }
+
+/**
+ * A resposta é o raciocínio interno do modelo vazando?
+ *
+ * ⚠️ Aconteceu com uma aluna simulada: no lugar da resposta veio *"We need to
+ * follow instructions. The user gave email. We need to check the O QUE JÁ
+ * SABEMOS DESTA ALUNA..."* — o modelo pensando alto, em inglês, com o nome dos
+ * nossos blocos internos no meio.
+ *
+ * Modelo de raciocínio às vezes escreve o rascunho no lugar da resposta. Não dá
+ * pra corrigir isso por prompt: quando acontece, o prompt já foi ignorado. A
+ * saída é reconhecer e **trocar de modelo**, que é o que a rota faz.
+ */
+export function pareceRaciocinio(texto: string): boolean {
+  const t = texto.trim();
+  if (!t) return true;
+
+  // O rascunho fala do "usuário" e das "instruções", em inglês, na 1ª pessoa
+  // do plural — jeito que nenhuma resposta de suporte teria.
+  const marcas = [
+    /\bwe need to\b/i,
+    /\bthe user (gave|said|wants|asked|cannot|is)\b/i,
+    /\bwe (should|must|have to) (respond|reply|answer|check|ask)\b/i,
+    /\bfollow (the )?instructions\b/i,
+    /\baccording to the (system )?prompt\b/i,
+    /\blet's (think|check|see)\b/i,
+    /\bso it's not expired\b/i,
+  ];
+  if (marcas.some((m) => m.test(t))) return true;
+
+  // Citou o nome de um bloco interno nosso — nunca deveria sair pra aluna.
+  if (/O QUE JÁ SABEMOS DESTA ALUNA|SUA BASE DE CONHECIMENTO|QUANDO CHAMAR UMA PESSOA/i.test(t)) {
+    return true;
+  }
+  return false;
+}

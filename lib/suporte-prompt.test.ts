@@ -6,6 +6,7 @@ import {
   pediuHumano,
   limparVazamento,
   resumoPraAtendente,
+  pareceRaciocinio,
   MARCA_HUMANO,
 } from "./suporte-prompt.ts";
 
@@ -150,4 +151,28 @@ test("manda pedir o E-MAIL, não 'há quanto tempo comprou'", () => {
 
 test("os fatos da aluna vencem o que o modelo imaginar", () => {
   assert.match(montarPrompt("x"), /manda mais\s+que qualquer coisa que você imagine/i);
+});
+
+/* ── raciocínio vazando ─────────────────────────────────────────────────── */
+
+test("pega o raciocínio que vazou de verdade pra aluna", () => {
+  // ⚠️ Texto real, do print que o James mandou.
+  const vazou = `We need to follow instructions. The user gave email. We need to
+check the "O QUE JÁ SABEMOS DESTA ALUNA". It says: "O acesso de
+'renataaadelima21@gmail.com' está DENTRO dos 12 meses." So it's not expired.`;
+  assert.equal(pareceRaciocinio(vazou), true);
+});
+
+test("resposta normal não é confundida com rascunho", () => {
+  assert.equal(pareceRaciocinio("Seu acesso está dentro do prazo, vou pedir pro time reenviar."), false);
+  assert.equal(pareceRaciocinio("Oi! Como posso ajudar?"), false);
+  assert.equal(pareceRaciocinio("El acceso dura 12 meses desde la compra."), false);
+});
+
+test("resposta vazia conta como rascunho — não manda nada pra aluna", () => {
+  assert.equal(pareceRaciocinio("   "), true);
+});
+
+test("citar bloco interno nosso é vazamento", () => {
+  assert.equal(pareceRaciocinio("Segundo a SUA BASE DE CONHECIMENTO, o acesso é de 12 meses"), true);
 });

@@ -24,6 +24,7 @@ import {
   lerResposta,
   pediuHumano,
   resumoPraAtendente,
+  pareceRaciocinio,
 } from "@/lib/suporte-prompt";
 import { logAnonymousActivity } from "@/lib/activity-log";
 import {
@@ -209,7 +210,16 @@ ${fatos}` : ""),
           // indisponíveis" — que manda procurar no lugar errado.
           "X-Title": "Jay Academy Suporte",
         },
-        body: JSON.stringify({ model, messages, temperature: 0.4, max_tokens: 400 }),
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: 0.4,
+          max_tokens: 400,
+          // Pede pro OpenRouter não devolver os tokens de raciocínio. Ajuda,
+          // mas não basta: modelo pequeno às vezes escreve o rascunho no
+          // próprio conteúdo. Por isso existe a checagem abaixo.
+          reasoning: { exclude: true },
+        }),
         signal: AbortSignal.timeout(30000),
       });
       if (!r.ok) {
@@ -225,6 +235,16 @@ ${fatos}` : ""),
       };
       const bruta = data?.choices?.[0]?.message?.content;
       if (!bruta) continue;
+
+      // ⚠️ Rascunho do modelo NUNCA chega na aluna. Aconteceu uma vez: veio
+      // "We need to follow instructions. The user gave email..." em inglês, com
+      // o nome dos nossos blocos internos no meio. Quando isso acontece o
+      // prompt já foi ignorado, então não adianta pedir de novo — troca de
+      // modelo.
+      if (pareceRaciocinio(bruta)) {
+        console.warn(`[suporte] ${model} devolveu raciocínio em vez de resposta — trocando de modelo.`);
+        continue;
+      }
 
       const { texto: resposta, precisaHumano } = lerResposta(bruta);
       conversa.mensagens.push({
