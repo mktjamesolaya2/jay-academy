@@ -25,6 +25,7 @@ export async function salvarConhecimentoAction(
     await setConhecimento(texto);
     await logActivity("wp.edit", "Suporte", "base de conhecimento atualizada");
     revalidatePath("/suporte");
+    revalidatePath("/suporte/conversas");
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Erro" };
@@ -47,6 +48,7 @@ export async function reativarIaAction(
     c.aguardandoPessoa = false;
     await salvarConversa(c);
     revalidatePath("/suporte");
+    revalidatePath("/suporte/conversas");
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Erro" };
@@ -70,6 +72,7 @@ export async function responderComoPessoaAction(
     c.aguardandoPessoa = true;
     await salvarConversa(c);
     revalidatePath("/suporte");
+    revalidatePath("/suporte/conversas");
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : "Erro" };
@@ -80,6 +83,7 @@ export async function apagarConversaAction(id: string): Promise<{ ok: boolean }>
   await requireAdmin();
   await apagarConversa(id);
   revalidatePath("/suporte");
+  revalidatePath("/suporte/conversas");
   return { ok: true };
 }
 
@@ -88,6 +92,7 @@ export async function removerLacunaAction(pergunta: string): Promise<{ ok: boole
   await requireAdmin();
   await removerLacuna(pergunta);
   revalidatePath("/suporte");
+  revalidatePath("/suporte/conversas");
   return { ok: true };
 }
 
@@ -97,5 +102,6 @@ export async function marcarReenviadoAction(email: string): Promise<{ ok: boolea
   await marcarReenviado(email);
   await logActivity("wp.edit", email, "acesso reenviado na Hotmart");
   revalidatePath("/suporte");
+  revalidatePath("/suporte/conversas");
   return { ok: true };
 }

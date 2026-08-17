@@ -163,10 +163,34 @@ check the "O QUE JÁ SABEMOS DESTA ALUNA". It says: "O acesso de
   assert.equal(pareceRaciocinio(vazou), true);
 });
 
+test("pega o modelo se auto-avaliando em voz alta", () => {
+  // ⚠️ Texto REAL, da primeira conversa da página pública `/ajuda`. Chegou
+  // inteiro na tela da "aluna". As marcas antigas não pegaram porque isto não é
+  // frase em 1ª pessoa — é lista de conferência.
+  const vazou = `Name: Ana Paula used? Yes. * Empathy/Reaction first? "Poxa, deixa eu te ajudar". Yes. * Natural language`;
+  assert.equal(pareceRaciocinio(vazou), true);
+});
+
+test("outras formas da mesma auto-avaliação", () => {
+  assert.equal(pareceRaciocinio("Tone check: ok. Final answer: Oi, Ana!"), true);
+  assert.equal(pareceRaciocinio("Checklist: saudação? Yes."), true);
+});
+
 test("resposta normal não é confundida com rascunho", () => {
   assert.equal(pareceRaciocinio("Seu acesso está dentro do prazo, vou pedir pro time reenviar."), false);
   assert.equal(pareceRaciocinio("Oi! Como posso ajudar?"), false);
   assert.equal(pareceRaciocinio("El acceso dura 12 meses desde la compra."), false);
+});
+
+test("espanhol com 'no' depois de pergunta continua passando", () => {
+  // ⚠️ A regra nova olha só o "yes" em inglês, de propósito. Barrar "no" depois
+  // de "?" cortaria resposta legítima em espanhol — e a IA precisa atender
+  // aluna hispanofalante.
+  assert.equal(
+    pareceRaciocinio("¿Perdiste el acceso? No te preocupes, lo revisamos ahora."),
+    false
+  );
+  assert.equal(pareceRaciocinio("Perdeu o acesso? Não se preocupe, vou ver aqui."), false);
 });
 
 test("resposta vazia conta como rascunho — não manda nada pra aluna", () => {

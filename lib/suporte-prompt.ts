@@ -228,6 +228,25 @@ export function pareceRaciocinio(texto: string): boolean {
   ];
   if (marcas.some((m) => m.test(t))) return true;
 
+  // ⚠️ O modelo se auto-avaliando em voz alta. Apareceu de verdade na primeira
+  // conversa da página pública, e chegou inteiro na tela da "aluna":
+  //
+  //   "Name: Ana Paula used? Yes. * Empathy/Reaction first? "Poxa, deixa eu te
+  //    ajudar". Yes. * Natural language"
+  //
+  // As marcas acima não pegaram porque isto não é frase em 1ª pessoa — é uma
+  // lista de conferência. Duas assinaturas resolvem, e nenhuma delas pode
+  // aparecer numa resposta de verdade em português ou espanhol:
+  const autoAvaliacao = [
+    // Pergunta respondida com "Yes" em inglês. Note que é só `yes`, não `no`:
+    // em espanhol "¿Perdeu o acesso? No te preocupes" é resposta legítima, e
+    // barrar isso deixaria a aluna hispanofalante sem atendimento.
+    /\?\s*["'”’)\]]*\s*yes\b/i,
+    // Vocabulário de quem está avaliando a própria resposta.
+    /\b(empathy|checklist|natural language|final answer|rationale|tone check)\b/i,
+  ];
+  if (autoAvaliacao.some((m) => m.test(t))) return true;
+
   // Citou o nome de um bloco interno nosso — nunca deveria sair pra aluna.
   if (/O QUE JÁ SABEMOS DESTA ALUNA|SUA BASE DE CONHECIMENTO|QUANDO CHAMAR UMA PESSOA/i.test(t)) {
     return true;
