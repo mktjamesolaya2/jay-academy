@@ -5,6 +5,7 @@ import {
   lerResposta,
   pediuHumano,
   limparVazamento,
+  resumoPraAtendente,
   MARCA_HUMANO,
 } from "./suporte-prompt.ts";
 
@@ -104,4 +105,36 @@ test("a limpeza roda junto com a leitura da resposta", () => {
   const r = lerResposta(`Não temos isso na base atual ${MARCA_HUMANO}`);
   assert.ok(!/base/i.test(r.texto));
   assert.equal(r.precisaHumano, true);
+});
+
+/* ── o resumo pro atendente ─────────────────────────────────────────────── */
+
+test("resumo com uma mensagem só é a própria mensagem", () => {
+  const r = resumoPraAtendente([{ de: "aluno", texto: "não consigo entrar no curso" }]);
+  assert.equal(r, "não consigo entrar no curso");
+});
+
+test("resumo com várias mostra do que começou ao que virou", () => {
+  const r = resumoPraAtendente([
+    { de: "aluno", texto: "comprei dois cursos" },
+    { de: "ia", texto: "que bom!" },
+    { de: "aluno", texto: "deu erro no cartão e quero reembolso" },
+  ]);
+  assert.ok(r.startsWith("comprei dois cursos"));
+  assert.ok(r.includes("reembolso"));
+  assert.ok(r.includes("→"));
+});
+
+test("resumo ignora o que a IA falou — só o aluno importa", () => {
+  const r = resumoPraAtendente([
+    { de: "ia", texto: "Oi! Como posso ajudar?" },
+    { de: "aluno", texto: "quero falar com atendente" },
+  ]);
+  assert.equal(r, "quero falar com atendente");
+});
+
+test("resumo corta mensagem quilométrica", () => {
+  const r = resumoPraAtendente([{ de: "aluno", texto: "a".repeat(300) }]);
+  assert.ok(r.length < 100);
+  assert.ok(r.endsWith("…"));
 });

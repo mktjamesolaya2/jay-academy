@@ -9,7 +9,13 @@ import {
   anotarLacuna,
   type Conversa,
 } from "@/lib/suporte-store";
-import { montarPrompt, lerResposta, pediuHumano } from "@/lib/suporte-prompt";
+import {
+  montarPrompt,
+  lerResposta,
+  pediuHumano,
+  resumoPraAtendente,
+} from "@/lib/suporte-prompt";
+import { logAnonymousActivity } from "@/lib/activity-log";
 
 /**
  * O cérebro do suporte.
@@ -75,6 +81,12 @@ export async function POST(req: Request) {
       em: new Date().toISOString(),
     });
     await salvarConversa(conversa);
+    await logAnonymousActivity(
+      "suporte.humano",
+      conversa.quem,
+      id,
+      resumoPraAtendente(conversa.mensagens)
+    ).catch(() => {});
     return NextResponse.json({
       reply: "Claro, já estou chamando alguém do time pra falar com você.",
       precisaHumano: true,
@@ -139,6 +151,16 @@ export async function POST(req: Request) {
         conversa.aguardandoPessoa = true;
         // A pergunta vai pra fila de lacunas — é o que ela ainda não sabe.
         await anotarLacuna(texto).catch(() => {});
+        // ⚠️ Notificação no sino do portal. Tem gente parada esperando resposta
+        // do outro lado — se ficasse só marcado na tela, ninguém veria.
+        // O resumo é pra pessoa chegar na conversa já sabendo o que houve, em
+        // vez de ler tudo do começo.
+        await logAnonymousActivity(
+          "suporte.humano",
+          conversa.quem,
+          id,
+          resumoPraAtendente(conversa.mensagens)
+        ).catch(() => {});
       }
       await salvarConversa(conversa);
 

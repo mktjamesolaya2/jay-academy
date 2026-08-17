@@ -21,6 +21,8 @@ export type ActivityKind =
   | "form.update"
   | "form.delete"
   | "form.submission"
+  // Alguém no WhatsApp pediu atendimento humano — vira notificação no sino.
+  | "suporte.humano"
   | "user.promote"
   | "user.demote"
   | "user.delete";
@@ -139,6 +141,8 @@ export function describeActivity(entry: ActivityEntry): string {
       return `atualizou o formulário "${t}"`;
     case "form.delete":
       return `excluiu o formulário "${t}"`;
+    case "suporte.humano":
+      return `suporte: pediram atendente — ${t}`;
     case "form.submission":
       return `recebeu um lead no "${t}"${entry.details ? ` — ${entry.details}` : ""}`;
     case "user.promote":

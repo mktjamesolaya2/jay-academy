@@ -13,19 +13,33 @@ function stripTags(s: string): string {
   return s.replace(/<[^>]*>/g, "");
 }
 
-/** Notificações = leads novos (submissões de formulário). */
+/**
+ * Notificações = leads novos + pedidos de atendimento humano no suporte.
+ *
+ * ⚠️ O pedido de humano vem PRIMEIRO na lista: tem alguém esperando resposta do
+ * outro lado. Lead pode esperar; gente parada numa conversa, não.
+ */
 export async function getNotifications(limit = 15): Promise<Notification[]> {
   const entries = await readActivityLog(80);
-  return entries
+  const suporte = entries
+    .filter((e) => e.kind === "suporte.humano")
+    .map((e) => ({
+      id: e.id,
+      title: "Suporte: querem falar com atendente",
+      detail: stripTags(e.details || e.target),
+      at: e.at,
+      href: "/suporte",
+    }));
+  const leads = entries
     .filter((e) => e.kind === "form.submission")
-    .slice(0, limit)
     .map((e) => ({
       id: e.id,
       title: `Novo lead — ${e.userName}`,
       detail: `em ${stripTags(e.target)}`,
       at: e.at,
-      href: "/forms",
+      href: "/leads",
     }));
+  return [...suporte, ...leads].slice(0, limit);
 }
 
 /** "Novos" = últimas 24h (pra mostrar a bolinha no sino). */

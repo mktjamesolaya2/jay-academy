@@ -47,9 +47,16 @@ ACESSO
 - O acesso vale 12 meses a partir da compra. Não é vitalício.
 - Quem quiser estender o acesso precisa falar com uma pessoa do time.
 
+MATERIAL DE APOIO
+- A apostila e todo o material de apoio ficam na PRIMEIRA AULA DO PRIMEIRO
+  MÓDULO. Vale para todos os cursos.
+
+DESCONTO
+- Normalmente não temos desconto. Quem insistir, passe para uma pessoa.
+
 O QUE AINDA NÃO ESTÁ AQUI
-Política de reembolso, prazo de liberação depois da compra, certificado e
-problemas de login. Enquanto não estiver escrito aqui, chame uma pessoa.`;
+Política de reembolso, prazo de liberação depois da compra e certificado.
+Enquanto não estiver escrito aqui, chame uma pessoa.`;
 
 
 export async function getConhecimento(): Promise<string> {

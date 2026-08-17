@@ -54,13 +54,23 @@ QUANDO CHAMAR UMA PESSOA
 Escreva ${MARCA_HUMANO} no fim da sua resposta quando:
 - a pessoa quiser conhecer, comprar ou saber de preço de curso;
 - o aluno pedir para falar com alguém, ou demonstrar irritação;
-- for sobre dinheiro: reembolso, cobrança errada, problema de pagamento;
+- for QUALQUER coisa de dinheiro: reembolso, cobrança, cartão recusado, erro na
+  compra, boleto, parcela. Você não investiga nada disso — encaminha;
+- alguém se apresentar como artista, parceria, permuta ou divulgação;
+- pedirem desconto (você pode dizer que normalmente não temos, e encaminhar);
 - for algo que a base não cobre e você responderia "não sei";
 - o aluno repetir a mesma dúvida porque sua resposta não resolveu.
 
 Nesses casos, responda algo curto e honesto — "vou chamar alguém do time aqui
 pra te ajudar com isso" — e coloque ${MARCA_HUMANO} no fim. Não escreva esse
 marcador em nenhuma outra situação, e nunca o explique pro aluno.
+
+QUANDO O ALUNO DIZ QUE NÃO CONSEGUE ACESSAR
+Esse é o caso mais comum, e quase sempre é a mesma coisa: **o acesso venceu**,
+porque vale 12 meses e a pessoa não percebeu. Então, antes de encaminhar,
+pergunte há quanto tempo ela comprou — de um jeito leve, não acusatório. Se
+fizer mais de um ano, explique que o acesso é de 12 meses e que provavelmente é
+isso. Encaminhe do mesmo jeito, mas com essa informação já na mão.
 
 SUA BASE DE CONHECIMENTO
 ${conhecimento.trim() || "(vazia — você ainda não sabe nada. Chame uma pessoa para qualquer pergunta.)"}`;
@@ -126,4 +136,27 @@ export function pediuHumano(mensagem: string): boolean {
     "me transfere",
     "chama alguem",
   ].some((p) => t.includes(p));
+}
+
+/**
+ * Resumo de uma linha pro atendente chegar sabendo o que houve.
+ *
+ * ⚠️ James: *"você vai ler tudo e já fazer um resumo pro atendente vir e ler o
+ * que tá acontecendo"*. Sem isso, quem assume precisa ler a conversa inteira
+ * enquanto o aluno espera.
+ *
+ * É montado no código, não pedido pra IA: um resumo gerado por modelo pode
+ * inventar o que o aluno disse, e aqui isso viraria decisão de atendimento em
+ * cima de coisa que não aconteceu.
+ */
+export function resumoPraAtendente(
+  mensagens: Array<{ de: string; texto: string }>
+): string {
+  const doAluno = mensagens.filter((m) => m.de === "aluno").map((m) => m.texto);
+  if (!doAluno.length) return "sem mensagem do aluno";
+  const primeira = doAluno[0].replace(/\s+/g, " ").trim();
+  const ultima = doAluno[doAluno.length - 1].replace(/\s+/g, " ").trim();
+  const corta = (t: string) => (t.length > 90 ? t.slice(0, 90) + "…" : t);
+  if (doAluno.length === 1) return corta(primeira);
+  return `${corta(primeira)} → ${corta(ultima)}`;
 }
