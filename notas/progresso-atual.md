@@ -59,26 +59,51 @@ Outra armadilha virada teste: `reasoning` é invenção da OpenRouter e, mandado
 pro Gemini, **derruba o pedido inteiro** por campo desconhecido — levando junto
 o print ou o áudio da aluna.
 
-### 🎤 Pendência real pra fase do WhatsApp: áudio `.ogg`
+### 🎤 Áudio de WhatsApp (`.ogg`) — RESOLVIDO na mesma sessão
+
+James: *"faz agr já"*.
 
 Medido nos dois endereços do Google:
 
-| formato | endereço compatível (o que usamos) | endereço nativo do Gemini |
+| formato | endereço compatível | endereço nativo do Gemini |
 |---|---|---|
 | mp3 | ✅ 200 | ✅ 200 |
 | wav | ✅ 200 | ✅ 200 |
 | **ogg** | ❌ 400 | ✅ 200 |
 
-**Áudio de WhatsApp é `.ogg`.** O Gemini ouve ogg sem problema — quem recusa é
-a camada de compatibilidade. Hoje não atrapalha (a tela é teste, com upload de
-arquivo) e o ogg que falha cai pra atendente, que é o certo. **Na fase do
-WhatsApp, todo áudio de aluna falharia.**
+**Áudio de WhatsApp é `.ogg` (opus).** O Gemini **ouve** ogg — quem recusa é a
+camada de compatibilidade. Sem tratar isso, na fase do WhatsApp toda mensagem
+de voz de aluna falharia e cairia pra atendente. E voz é justamente como a
+pessoa explica o problema quando está com pressa ou sem jeito de escrever.
 
-A saída existe e está documentada em `AUDIO_OGG_NAO_PASSA`: falar o formato
-nativo (`:generateContent`, chave em `x-goog-api-key`, anexo em `inline_data`).
-**Decisão de fazer agora ou junto com o WhatsApp ainda está com o James.**
+Agora **só o áudio no Gemini** fala o formato nativo (`:generateContent`, chave
+em `x-goog-api-key`, anexo em `inline_data`). Texto e print seguem no
+compatível, que funciona e é o mesmo código da OpenRouter — trocar o que
+funciona só dobraria a superfície de erro.
 
-Print confirmado funcionando (leu um PNG e respondeu a cor). 238 testes.
+A tradução é função pura em **`lib/gemini-nativo.ts`** (17 testes). Três
+detalhes que só apareceriam com a aluna esperando:
+
+- ⚠️ No Gemini a **instrução do sistema sai de dentro da conversa** e vira campo
+  próprio, e o assistente chama `model`, não `assistant`. Errar isso **não dá
+  erro nenhum**: o modelo passa a tratar as regras como fala da aluna — e aí
+  inventa preço, promete coisa e ignora o "chame uma pessoa".
+- `audio/mp3` não é tipo MIME de verdade; o certo é `audio/mpeg`.
+- Mensagem que ficaria com partes vazias não entra: o Gemini recusa `parts: []`
+  com 400, e o áudio se perderia por causa de uma linha em branco no histórico.
+
+Conferido de ponta a ponta com arquivos reais, pelo código de verdade e não só
+pelos testes puros: **ogg, mp3 e wav todos HTTP 200**.
+
+Print também confirmado (leu um PNG e respondeu a cor). **255 testes**, tsc e
+build limpos.
+
+### O que falta na I.A do suporte
+
+- Encher a base de conhecimento (`/suporte/ajustes`) — o que ela não sabe cai lá
+- Conectar o WhatsApp: **só pela API OFICIAL da Meta**; biblioteca não oficial
+  arrisca banir o número de suporte do James
+- Subir `GEMINI_API_KEY` na Vercel quando for pro ar (hoje só está no localhost)
 
 ---
 
