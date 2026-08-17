@@ -191,3 +191,8 @@ export async function testarCredenciais(): Promise<{
 
   return { ok: false, erro: "Nenhuma forma funcionou", formato, tentativas };
 }
+
+/** O token, pra sonda de endereços usar o mesmo caminho de autenticação. */
+export async function pegarTokenPublico(): Promise<string> {
+  return await pegarToken();
+}

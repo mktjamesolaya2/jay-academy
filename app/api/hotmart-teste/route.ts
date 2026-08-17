@@ -33,7 +33,16 @@ export async function GET(req: Request) {
     );
   }
 
-  const email = new URL(req.url).searchParams.get("email");
+  const url0 = new URL(req.url);
+  if (url0.searchParams.get("sondar") === "1") {
+    const { sondar } = await import("@/lib/hotmart-sonda");
+    return NextResponse.json({
+      aviso: "Só leitura — nada foi executado na sua conta.",
+      achados: await sondar(),
+    });
+  }
+
+  const email = url0.searchParams.get("email");
   if (!email) {
     return NextResponse.json({
       credenciais: "OK — a Hotmart aceitou",
