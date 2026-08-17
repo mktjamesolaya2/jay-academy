@@ -152,7 +152,15 @@ export async function POST(req: Request) {
     const compras = conversa.emailAluna
       ? await todasAsCompras(conversa.emailAluna).catch(() => [])
       : [];
-    const situacao = avaliarAcesso(conversa.emailAluna ?? null, compras);
+    const situacao = avaliarAcesso(
+      conversa.emailAluna ?? null,
+      compras.map((c) => ({
+        produto: c.produto,
+        compradaEm: c.compradaEm,
+        situacao: c.situacao,
+        nome: c.nome,
+      }))
+    );
     fatos = fatosDoAcesso(situacao);
 
     // Acesso válido = só falta reenviar o e-mail, e isso é clique humano na
@@ -210,6 +218,7 @@ ${fatos}` : ""),
         ? MODEL_CHAIN_VISAO
         : MODEL_CHAIN;
 
+  let limiteDiario = false;
   for (const model of fila) {
     try {
       const r = await fetch(ENDPOINT, {
@@ -239,10 +248,20 @@ ${fatos}` : ""),
         signal: AbortSignal.timeout(30000),
       });
       if (!r.ok) {
+        const corpoErro = await r.text().catch(() => "");
         if (r.status === 400 || r.status === 404) {
           console.error(
             `[suporte] modelo "${model}" recusado (${r.status}) — rodar "npm run checar-modelos".`
           );
+        } else if (r.status === 429) {
+          // ⚠️ A conta grátis da OpenRouter dá ~50 mensagens POR DIA. Isso
+          // acaba num dia de testes, e acabaria numa manhã de suporte real.
+          // Sem esta mensagem o erro sai como "modelos indisponíveis", que
+          // manda procurar problema onde não tem.
+          console.error(`[suporte] limite diário da OpenRouter atingido: ${corpoErro.slice(0, 200)}`);
+          limiteDiario = true;
+        } else {
+          console.warn(`[suporte] ${model} falhou: ${r.status} ${corpoErro.slice(0, 120)}`);
         }
         continue;
       }
@@ -307,8 +326,9 @@ ${fatos}` : ""),
   await salvarConversa(conversa);
   return NextResponse.json(
     {
-      error:
-        tipo === "audio"
+      error: limiteDiario
+        ? "Limite diário de mensagens gratuitas da OpenRouter atingido (são ~50 por dia na conta grátis). Volta amanhã, ou adicione créditos pra subir o limite."
+        : tipo === "audio"
           ? "Não consegui ouvir esse áudio agora. Vou passar pra uma pessoa."
           : "Todos os modelos gratuitos estão indisponíveis agora.",
     },

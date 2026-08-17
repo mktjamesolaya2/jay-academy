@@ -18,7 +18,22 @@ export type CompraConhecida = {
   produto: string;
   compradaEm: string;
   situacao: string;
+  /** Nome de quem comprou — vem da Hotmart. */
+  nome?: string;
 };
+
+/**
+ * Só o primeiro nome, com a inicial maiúscula.
+ *
+ * ⚠️ A Hotmart devolve "RENATA LIMA DE SOUZA" em caixa alta. Chamar a aluna de
+ * "RENATA" no WhatsApp parece grito, e o nome completo parece cadastro. Uma
+ * pessoa do time escreveria "Oi, Renata!".
+ */
+export function primeiroNome(completo?: string): string | null {
+  const p = (completo ?? "").trim().split(/\s+/)[0];
+  if (!p || p.length < 2) return null;
+  return p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+}
 
 export type SituacaoAcesso =
   | { tipo: "sem-email" }
@@ -118,7 +133,9 @@ verificar isso com o time e passe para uma pessoa.`;
 
     case "no-prazo": {
       const lista = s.compras.map((c) => c.produto).join(", ");
-      return `O acesso de "${s.email}" está DENTRO dos 12 meses.
+      const nome = primeiroNome(s.compras.find((c) => c.nome)?.nome);
+      return `${nome ? `A aluna se chama ${nome} — trate ela pelo nome.
+` : ""}O acesso de "${s.email}" está DENTRO dos 12 meses.
 Curso(s): ${lista}. Pelo nosso registro vai até ${dataBR(s.venceEm)} (${s.dias} dias).
 Então NÃO é acesso vencido. Diga que está tudo certo com o prazo e que vai pedir
 para o time reenviar o acesso dela agora — e passe para uma pessoa, porque o
@@ -127,7 +144,9 @@ reenvio é feito na Hotmart, à mão.`;
 
     case "vencido": {
       const lista = s.compras.map((c) => c.produto).join(", ");
-      return `O acesso de "${s.email}" VENCEU em ${dataBR(s.venceuEm)}.
+      const nome = primeiroNome(s.compras.find((c) => c.nome)?.nome);
+      return `${nome ? `A aluna se chama ${nome} — trate ela pelo nome.
+` : ""}O acesso de "${s.email}" VENCEU em ${dataBR(s.venceuEm)}.
 Curso(s): ${lista}. Explique com gentileza que o acesso vale 12 meses e que o
 dela encerrou nessa data — é o motivo de não conseguir entrar, e quase ninguém
 sabe disso. Diga que o time pode explicar como seguir com o curso. NÃO cite

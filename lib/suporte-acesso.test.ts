@@ -6,6 +6,7 @@ import {
   avaliarAcesso,
   fatosDoAcesso,
   saudacao,
+  primeiroNome,
 } from "./suporte-acesso.ts";
 
 const compra = (compradaEm: string, situacao = "approved") => [
@@ -128,4 +129,26 @@ test("saudação segue o horário de Brasília", () => {
   assert.equal(saudacao(new Date("2026-08-17T12:00:00Z")), "Bom dia"); // 9h BRT
   assert.equal(saudacao(new Date("2026-08-17T18:00:00Z")), "Boa tarde"); // 15h BRT
   assert.equal(saudacao(new Date("2026-08-18T01:00:00Z")), "Boa noite"); // 22h BRT
+});
+
+/* ── o nome da aluna ────────────────────────────────────────────────────── */
+
+test("só o primeiro nome, e sem gritar", () => {
+  // ⚠️ A Hotmart devolve em caixa alta. "Oi, RENATA!" parece grito; o nome
+  // completo parece cadastro.
+  assert.equal(primeiroNome("RENATA LIMA DE SOUZA"), "Renata");
+  assert.equal(primeiroNome("ana paula"), "Ana");
+  assert.equal(primeiroNome(""), null);
+  assert.equal(primeiroNome(undefined), null);
+});
+
+test("o nome entra nos fatos, pra ela chamar pelo nome", () => {
+  const f = fatosDoAcesso(
+    avaliarAcesso(
+      "a@b.com",
+      [{ produto: "Basic Nanofios", compradaEm: "2026-03-12T00:00:00Z", situacao: "approved", nome: "MARIA SILVA" }],
+      new Date("2026-08-17T00:00:00Z")
+    )
+  );
+  assert.match(f, /se chama Maria/);
 });

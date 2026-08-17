@@ -206,6 +206,36 @@ espaço, com os e-mails pra reenviar"*.
 consome do mesmo teto mesmo sendo descartado, e a resposta visível cortava no
 meio ("Vou pedir ao").
 
+### 13/08 — o jeito de falar dela, e o teto de 50 mensagens/dia
+
+James: *"deixar as conversas da IA mais humana, e não que pareça tanto IA"*.
+
+O que denunciava o robô era **fórmula**: *"Assim consigo verificar seu acesso"*,
+*"Identifiquei que…"*. Reescrevi a seção COMO FALAR com **pares errado/certo**,
+que é o que move modelo pequeno — regra abstrata ele ignora, exemplo ele copia.
+
+E ela passou a **chamar pela nome**: a Hotmart devolve o nome do comprador, e
+`primeiroNome()` corta pro primeiro com inicial maiúscula. "RENATA LIMA" vira
+"Renata" — em caixa alta parece grito, completo parece cadastro.
+
+Antes e depois, mesma situação:
+
+```
+antes:  "Qual e-mail da compra? Assim consigo verificar seu acesso."
+depois: "Poxa, que chato! Me passa o e-mail da compra que eu dou uma olhada?"
+
+antes:  "Identifiquei que seu acesso está ativo até 09/05/2027."
+depois: "Oi, Ana! Acesso tá dentro do prazo, vou pedir pro time reenviar agora 🙂"
+```
+
+⚠️ **ACHADO IMPORTANTE — a conta grátis da OpenRouter dá ~50 mensagens POR DIA.**
+Acabou num dia de teste (`Rate limit exceeded: free-models-per-day`,
+`X-RateLimit-Limit: 50`). **Acabaria numa manhã de suporte real.**
+
+Adicionar ~US$ 10 de crédito sobe pra 1000/dia e os modelos continuam de graça.
+É a decisão que destrava sair do teste. Enquanto não fizer, o erro agora **diz
+isso** em vez de "modelos indisponíveis", que mandava procurar no lugar errado.
+
 ### 13/08 (final) — etiqueta sai do portal de vez
 
 James: *"tira esse negócio de etiqueta aí, porque a gente não etiqueta nada. É
