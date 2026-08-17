@@ -51,18 +51,47 @@ export function acharEmail(texto: string): string | null {
 /**
  * A aluna está falando de problema de acesso?
  *
- * Serve pra IA pedir o e-mail em vez de ficar dando volta — é o passo que o
- * James faz primeiro em todo atendimento desse tipo.
+ * É o gatilho de TUDO: sem ele a consulta na Hotmart não roda, a IA não recebe
+ * fato nenhum e improvisa — foi exatamente o que aconteceu numa conversa real.
+ *
+ * ⚠️ A primeira versão exigia a construção "não consigo acessar" e deixava
+ * passar **sete de oito** jeitos de dizer a mesma coisa. O caso que estourou:
+ * *"estou com problemas para acessar o meu curso online"*. A aluna deu o
+ * e-mail, a busca nunca rodou, e o atendimento foi empurrado pra uma pessoa sem
+ * ninguém nunca ter olhado se ela tinha acesso.
+ *
+ * Agora são três famílias, e basta uma:
+ *  1. palavra de acesso + palavra de problema ("problemas para acessar")
+ *  2. conteúdo que não aparece ("o curso não abre", "a aula não carrega")
+ *  3. o que não chegou ("não recebi o acesso", "não veio o e-mail")
  */
 export function ehProblemaDeAcesso(texto: string): boolean {
   const t = texto
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "");
-  const naoConsegue = /(nao|n)\s*(estou\s*)?(consigo|consegui|to\s*conseguindo|estou\s*conseguindo)/.test(t);
-  const acesso = /(acess|entrar|logar|login|assistir|ver as aulas|plataforma|curso)/.test(t);
-  const sumiu = /(sumiu|expirou|expirado|venceu|vencido|bloquead|fora do ar)/.test(t);
-  return (naoConsegue && acesso) || (sumiu && acesso);
+
+  // Onde ela entra: a área, a conta, a aula.
+  const ondeEntra =
+    /(acess|entrar|logar|login|senha|plataforma|area de membro|assistir|minhas aulas|ver as aulas)/.test(t);
+  // Que algo está errado. ⚠️ Vai além de negação: "perdi", "sumiu" e "esqueci"
+  // não têm "não" nenhum e são dos jeitos mais comuns de relatar o problema.
+  const algoErrado =
+    /(nao|problema|dificuldade|erro|sumi|expir|venc|bloquead|fora do ar|perdi|esqueci|recuperar|resetar|redefinir|travad|invalid|impossivel)/.test(t);
+
+  if (ondeEntra && algoErrado) return true;
+
+  // O conteúdo que não aparece — ela nem fala em "acesso", fala no curso.
+  const conteudo = /(curso|aula|modulo|video|apostila|material)/.test(t);
+  const naoAparece = /(nao abre|nao carrega|nao aparece|nao roda|nao ta indo|sumi|travou|fora do ar)/.test(t);
+  if (conteudo && naoAparece) return true;
+
+  // O que era pra ter chegado e não chegou.
+  const naoChegou = /(nao recebi|nao chegou|nao veio|nao mandaram)/.test(t);
+  const oQue = /(acesso|email|e-mail|link|senha|curso|liberac)/.test(t);
+  if (naoChegou && oQue) return true;
+
+  return false;
 }
 
 /** Decide a situação a partir do que a Hotmart já contou. */
@@ -121,10 +150,17 @@ Peça o e-mail da compra, só isso, numa frase curta. Não peça mais nada junto
 não chame ninguém do time ainda.`;
 
     case "nao-encontrado":
-      return `Procuramos "${s.email}" e não achamos compra nenhuma com esse
-e-mail. Diga isso com cuidado — pode ser que ela tenha comprado com outro — e
-pergunte se pode ter usado outro e-mail. Se ela confirmar que é esse mesmo,
-passe para uma pessoa.`;
+      return `Procuramos "${s.email}" e NÃO achamos compra nenhuma com esse
+e-mail.
+
+DIGA ISSO A ELA, com estas duas partes na mesma mensagem:
+1. que você procurou e não encontrou compra com esse e-mail;
+2. que talvez ela tenha comprado com outro, e peça pra ela conferir.
+
+⚠️ NÃO chame uma pessoa do time nesta mensagem. Ela ainda pode ter digitado
+errado ou ter comprado com outro e-mail, e chamar alguém agora é empurrar pra
+frente um caso que a própria aluna resolve na mensagem seguinte. Só chame se
+ela confirmar que o e-mail está certo.`;
 
     case "cancelado":
       return `A compra de "${s.email}" consta como cancelada. NÃO explique o

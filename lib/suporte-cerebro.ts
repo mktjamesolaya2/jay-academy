@@ -78,16 +78,18 @@ export type PedidoSuporte = {
 };
 
 export type RespostaSuporte =
-  | { tipo: "calada"; conversaId: string }
+  | { tipo: "calada"; conversaId: string; quem?: string }
   | {
       tipo: "ok";
       conversaId: string;
+      /** Como a pessoa se chama — usado pra já escrever o nome dela no WhatsApp. */
+      quem?: string;
       reply: string;
       precisaHumano: boolean;
       model?: string;
       provedor?: string;
     }
-  | { tipo: "erro"; status: number; erro: string; conversaId?: string };
+  | { tipo: "erro"; status: number; erro: string; conversaId?: string; quem?: string };
 
 const FRASE_CHAMANDO = "Claro, já estou chamando alguém do time pra falar com você.";
 
@@ -133,7 +135,7 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
   // o atendimento humano no meio — e a aluna veria duas vozes se contradizendo.
   if (conversa.aguardandoPessoa) {
     await salvarConversa(conversa);
-    return { tipo: "calada", conversaId: id };
+    return { tipo: "calada", conversaId: id, quem: conversa.quem === SEM_NOME ? undefined : conversa.quem };
   }
 
   // Pedido explícito de pessoa nem chega no modelo.
@@ -142,7 +144,13 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     conversa.mensagens.push({ de: "ia", texto: FRASE_CHAMANDO, em: new Date().toISOString() });
     await salvarConversa(conversa);
     await avisarOTime(conversa, id);
-    return { tipo: "ok", conversaId: id, reply: FRASE_CHAMANDO, precisaHumano: true };
+    return {
+      tipo: "ok",
+      conversaId: id,
+      quem: conversa.quem === SEM_NOME ? undefined : conversa.quem,
+      reply: FRASE_CHAMANDO,
+      precisaHumano: true,
+    };
   }
 
   const provedor = escolherProvedor(process.env, {
@@ -168,7 +176,14 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
   // está ativo" pra quem não tem, e a aluna ficaria tentando entrar.
   const emailNaMensagem = acharEmail(texto);
   if (emailNaMensagem) conversa.emailAluna = emailNaMensagem;
-  if (ehProblemaDeAcesso(texto)) conversa.assuntoAcesso = true;
+  // ⚠️ Duas portas pro mesmo lugar, e a segunda é a rede de proteção da
+  // primeira. Detectar a frase depende de eu ter previsto o jeito de escrever —
+  // e uma vez já falhou em produção ("estou com problemas para acessar"), com a
+  // aluna dando o e-mail e ninguém nunca olhando a compra dela.
+  //
+  // Quem digita o e-mail da compra num suporte está falando de acesso. Então o
+  // e-mail sozinho já manda consultar, sem depender de acerto de linguagem.
+  if (ehProblemaDeAcesso(texto) || emailNaMensagem) conversa.assuntoAcesso = true;
 
   let fatos = "";
   let humanoPorRegra = false;
@@ -354,6 +369,7 @@ ${fatos}`
       return {
         tipo: "ok",
         conversaId: id,
+        quem: conversa.quem === SEM_NOME ? undefined : conversa.quem,
         reply: resposta,
         precisaHumano: precisaHumano || humanoPorRegra,
         model,
@@ -379,6 +395,7 @@ ${fatos}`
     tipo: "erro",
     status: 503,
     conversaId: id,
+    quem: conversa.quem === SEM_NOME ? undefined : conversa.quem,
     erro: limiteDiario
       ? recadoDeLimite(provedor.nome)
       : tipo === "audio"

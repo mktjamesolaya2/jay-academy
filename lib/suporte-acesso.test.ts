@@ -35,9 +35,48 @@ test("reconhece as formas que a aluna escreve de verdade", () => {
   assert.equal(ehProblemaDeAcesso("meu acesso expirou?"), true);
 });
 
+test("o caso real que passou batido e quebrou um atendimento", () => {
+  // ⚠️ Frase EXATA de uma conversa de verdade. A versão antiga exigia a
+  // construção "não consigo acessar" e deixou passar. Como não detectou, a
+  // consulta na Hotmart nunca rodou: a aluna deu o e-mail, ninguém nunca olhou
+  // se ela tinha acesso, e a conversa foi empurrada pra uma pessoa.
+  assert.equal(
+    ehProblemaDeAcesso("estou com problemas para acessar o meu curso online"),
+    true
+  );
+});
+
+test("os outros jeitos de dizer a mesma coisa", () => {
+  for (const f of [
+    "problema no acesso",
+    "meu curso não abre",
+    "não carrega a aula",
+    "perdi o acesso",
+    "não recebi o email de acesso",
+    "não chegou o link do curso",
+    "minha senha não funciona",
+    "a plataforma está fora do ar",
+    "esqueci minha senha de login",
+    "o vídeo não roda",
+  ]) {
+    assert.equal(ehProblemaDeAcesso(f), true, f);
+  }
+});
+
 test("não confunde com outras dúvidas", () => {
-  assert.equal(ehProblemaDeAcesso("onde fica a apostila?"), false);
-  assert.equal(ehProblemaDeAcesso("quantos módulos tem?"), false);
+  // ⚠️ Falso positivo custa caro: a IA passa a pedir o e-mail da compra pra
+  // quem só queria saber onde está a apostila.
+  for (const f of [
+    "onde fica a apostila?",
+    "quantos módulos tem?",
+    "o curso tem certificado?",
+    "qual a duração do curso?",
+    "bom dia",
+    "me chamo Nelza",
+    "quero saber sobre o curso de nanofios",
+  ]) {
+    assert.equal(ehProblemaDeAcesso(f), false, f);
+  }
 });
 
 /* ── a decisão, que NÃO passa pelo modelo ───────────────────────────────── */
@@ -108,6 +147,17 @@ test("vencido: proíbe citar preço e oferecer plano", () => {
   );
   assert.match(f, /NÃO cite\s+preço/i);
   assert.match(f, /NÃO ofereça plano/i);
+});
+
+test("e-mail não encontrado: DIZ que não achou, e não empurra pra atendente", () => {
+  // ⚠️ Caso real: a aluna deu um e-mail que não existia e a conversa foi
+  // direto pra uma pessoa, sem nunca dizer a ela o que tinha acontecido. James:
+  // *"o certo seria ele mandar assim, não encontrei nenhum cadastro com esse
+  // e-mail. Você pode me enviar de novo?"*
+  const f = fatosDoAcesso(avaliarAcesso("nelza123@hotmail.com", [], new Date()));
+  assert.match(f, /N[ÃA]O achamos compra/i);
+  assert.match(f, /conferir/i);
+  assert.match(f, /N[ÃA]O chame uma pessoa/i);
 });
 
 test("cancelada: proíbe falar de reembolso", () => {

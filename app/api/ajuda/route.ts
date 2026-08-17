@@ -8,6 +8,7 @@ import {
 } from "@/lib/rate-limit";
 import { responder } from "@/lib/suporte-cerebro";
 import { conversaPraAluna } from "@/lib/ajuda-visitante";
+import { linkWhatsApp } from "@/lib/whatsapp-suporte";
 import { getConversa } from "@/lib/suporte-store";
 
 /**
@@ -76,24 +77,36 @@ export async function POST(req: Request) {
     anexos,
   });
 
+  // ⚠️ O chat é primeiro contato e triagem: quem assume a conversa é uma pessoa
+  // **no WhatsApp**, não aqui. James: *"o atendente não vai continuar a conversa
+  // aqui no chat"*. Sem número configurado, `linkWhatsApp` devolve null e a
+  // tela volta ao comportamento antigo — nunca um botão quebrado.
+  const whatsapp = r.conversaId
+    ? linkWhatsApp(process.env.WHATSAPP_SUPORTE, {
+        conversaId: r.conversaId,
+        nome: r.quem,
+      })
+    : null;
+
   if (r.tipo === "erro") {
     // ⚠️ Mesmo quando a IA falha, a aluna sai com um id de conversa. Sem ele a
     // conversa ficaria órfã: ela escreveu, ninguém respondeu, e não há por onde
     // continuar nem o time achar. O cérebro já marcou pra uma pessoa assumir.
     return NextResponse.json(
-      { error: r.erro, conversaId: r.conversaId, comPessoa: true },
+      { error: r.erro, conversaId: r.conversaId, comPessoa: true, whatsapp },
       { status: r.status }
     );
   }
   if (r.tipo === "calada") {
     // A conversa já está com uma pessoa: a mensagem foi guardada, e a resposta
     // chega pelo GET abaixo quando o time responder.
-    return NextResponse.json({ conversaId: r.conversaId, comPessoa: true });
+    return NextResponse.json({ conversaId: r.conversaId, comPessoa: true, whatsapp });
   }
   return NextResponse.json({
     conversaId: r.conversaId,
     reply: r.reply,
     comPessoa: r.precisaHumano,
+    whatsapp,
   });
 }
 

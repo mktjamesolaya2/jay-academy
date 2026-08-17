@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Paperclip, Send, X } from "lucide-react";
+import { MessageCircle, Paperclip, Send, X } from "lucide-react";
 import { Medalhao } from "@/components/marca-jayo";
 
 type Msg = { de: "aluno" | "atendente"; texto: string; em?: string; anexo?: string };
@@ -63,6 +63,8 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
   const [anexo, setAnexo] = useState<Anexo | null>(null);
   const [conversaId, setConversaId] = useState<string | null>(null);
   const [comPessoa, setComPessoa] = useState(false);
+  // ⚠️ Vem do servidor: só existe se o número do WhatsApp estiver configurado.
+  const [whatsapp, setWhatsapp] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [pensando, setPensando] = useState(false);
   const fim = useRef<HTMLDivElement>(null);
@@ -143,6 +145,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
       const d = await r.json();
       if (d.conversaId) setConversaId(d.conversaId);
       if (d.comPessoa) setComPessoa(true);
+      if (d.whatsapp) setWhatsapp(d.whatsapp);
       if (d.reply) {
         setMsgs((m) => [
           ...m,
@@ -233,13 +236,38 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
           </div>
         )}
 
-        {/* ⚠️ Espera sem aviso é o que faz a pessoa desistir e mandar
-            "alguém aí???". Dizer que já chamamos alguém compra paciência. */}
+        {/* ⚠️ Aqui a conversa MUDA DE LUGAR. O chat é primeiro contato e
+            triagem; quem assume é uma pessoa no WhatsApp. Sem número
+            configurado o botão não existe e a tela volta a pedir que ela espere
+            aqui — nunca um botão que não leva a lugar nenhum. */}
         {comPessoa && !pensando && (
-          <p className="px-2 pt-1 text-center text-[12.5px] leading-relaxed text-[#F4F1EA]/45">
-            Já chamei uma pessoa do time pra te responder. Pode deixar esta
-            página aberta — a resposta aparece aqui.
-          </p>
+          <div className="pt-2">
+            {whatsapp ? (
+              <div className="rounded-2xl border border-[#AC9751]/30 bg-[#AC9751]/[0.07] px-4 py-4 text-center">
+                <p className="text-[13.5px] leading-relaxed text-[#F4F1EA]/80">
+                  Pra continuar, é melhor a gente falar no WhatsApp — assim
+                  ninguém precisa ficar de olho nesta página.
+                </p>
+                <a
+                  href={whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#AC9751] px-5 py-2.5 text-[14px] font-semibold text-[#101820] transition hover:brightness-110"
+                >
+                  <MessageCircle size={15} strokeWidth={2.4} />
+                  Continuar no WhatsApp
+                </a>
+                <p className="mt-2.5 text-[11.5px] text-[#F4F1EA]/35">
+                  Sua conversa vai junto — não precisa contar tudo de novo.
+                </p>
+              </div>
+            ) : (
+              <p className="px-2 text-center text-[12.5px] leading-relaxed text-[#F4F1EA]/45">
+                Já chamei uma pessoa do time pra te responder. Pode deixar esta
+                página aberta — a resposta aparece aqui.
+              </p>
+            )}
+          </div>
         )}
 
         <div ref={fim} />
