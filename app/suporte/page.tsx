@@ -4,6 +4,8 @@ import { Settings2 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { SuporteChat } from "@/components/suporte-chat";
+import { SuporteReenvios } from "@/components/suporte-reenvios";
+import { listarReenvios } from "@/lib/reenvio-store";
 
 /**
  * Suporte WhatsApp — a tela é **só a conversa**.
@@ -22,6 +24,9 @@ export default async function SuportePage() {
   const me = await getCurrentUser();
   if (!me) redirect("/login?redirect=/suporte");
   if (!canEdit(me)) redirect("/dashboard");
+
+  // Só aparece se tiver algo na fila — com ela vazia, a tela segue só o chat.
+  const reenvios = await listarReenvios().catch(() => []);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -48,6 +53,7 @@ export default async function SuportePage() {
 
         <section className="px-5 py-6 lg:px-10 lg:py-8">
           <div className="mx-auto max-w-2xl">
+            <SuporteReenvios reenvios={reenvios} />
             <SuporteChat />
           </div>
         </section>

@@ -182,6 +182,30 @@ sabemos se existe na API. A IA descobre que precisa e avisa o atendente.
   bane o número
 - Encher a base: o que ela não souber cai em `/suporte/ajustes`
 
+### 13/08 — fila de "acessos pra reenviar"
+
+⚠️ **Reenviar acesso NÃO tem API.** Sondei seis endereços plausíveis com GET
+(só leitura) e todos deram 404. O que existe e responde é `sales/history`,
+`sales/users` e `subscriptions`. Achado de brinde: `club/api/v1/users` existe
+mas dá **403 — sem permissão nesta credencial**; se um dia liberarem, dá pra
+saber em que módulo a aluna parou.
+
+Então o reenvio segue sendo clique humano na Hotmart, e o portal faz a parte
+dele: quando a IA descobre que o acesso está **válido** e só falta reenviar, ela
+**anota numa fila** (`suporte:reenvios`). James: *"deixar ali uma caixa, um
+espaço, com os e-mails pra reenviar"*.
+
+- **Sino do portal**: "N acessos pra reenviar na Hotmart", **antes de tudo** —
+  é aluna com acesso pago que não consegue entrar
+- **Caixa em `/suporte`**, com e-mail, curso e até quando vale. **Só aparece
+  quando tem algo na fila** — vazia, a tela continua sendo só o chat, como ele
+  pediu
+- Botão **"Já reenviei"** risca da lista
+
+⚠️ **`max_tokens` subiu de 400 pra 900**: o raciocínio interno do modelo
+consome do mesmo teto mesmo sendo descartado, e a resposta visível cortava no
+meio ("Vou pedir ao").
+
 ### 13/08 (final) — etiqueta sai do portal de vez
 
 James: *"tira esse negócio de etiqueta aí, porque a gente não etiqueta nada. É

@@ -10,6 +10,7 @@ import {
   apagarConversa,
   removerLacuna,
 } from "@/lib/suporte-store";
+import { marcarReenviado } from "@/lib/reenvio-store";
 
 /** Salva o que a IA sabe. É aqui que ela é treinada. */
 export async function salvarConhecimentoAction(
@@ -86,6 +87,15 @@ export async function apagarConversaAction(id: string): Promise<{ ok: boolean }>
 export async function removerLacunaAction(pergunta: string): Promise<{ ok: boolean }> {
   await requireAdmin();
   await removerLacuna(pergunta);
+  revalidatePath("/suporte");
+  return { ok: true };
+}
+
+/** Alguém reenviou o acesso na Hotmart — tira da fila. */
+export async function marcarReenviadoAction(email: string): Promise<{ ok: boolean }> {
+  await requireAdmin();
+  await marcarReenviado(email);
+  await logActivity("wp.edit", email, "acesso reenviado na Hotmart");
   revalidatePath("/suporte");
   return { ok: true };
 }

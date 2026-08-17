@@ -21,6 +21,28 @@ function stripTags(s: string): string {
  */
 export async function getNotifications(limit = 15): Promise<Notification[]> {
   const entries = await readActivityLog(80);
+
+  // ⚠️ Reenvios pendentes vêm PRIMEIRO de tudo: é aluna com acesso pago e
+  // válido que não está conseguindo entrar. Nada na fila é mais urgente.
+  const { listarReenvios } = await import("./reenvio-store");
+  const reenvios = await listarReenvios().catch(() => []);
+  const aviso: Notification[] = reenvios.length
+    ? [
+        {
+          id: "reenvios-pendentes",
+          title:
+            reenvios.length === 1
+              ? "1 acesso pra reenviar na Hotmart"
+              : `${reenvios.length} acessos pra reenviar na Hotmart`,
+          detail: reenvios
+            .slice(0, 3)
+            .map((r) => r.email)
+            .join(", "),
+          at: reenvios[0].pedidoEm,
+          href: "/suporte",
+        },
+      ]
+    : [];
   const suporte = entries
     .filter((e) => e.kind === "suporte.humano")
     .map((e) => ({
@@ -39,7 +61,7 @@ export async function getNotifications(limit = 15): Promise<Notification[]> {
       at: e.at,
       href: "/leads",
     }));
-  return [...suporte, ...leads].slice(0, limit);
+  return [...aviso, ...suporte, ...leads].slice(0, limit);
 }
 
 /** "Novos" = últimas 24h (pra mostrar a bolinha no sino). */

@@ -35,6 +35,7 @@ import {
   saudacao,
 } from "@/lib/suporte-acesso";
 import { todasAsCompras } from "@/lib/hotmart-store";
+import { pedirReenvio } from "@/lib/reenvio-store";
 
 /**
  * O cérebro do suporte.
@@ -153,6 +154,18 @@ export async function POST(req: Request) {
       : [];
     const situacao = avaliarAcesso(conversa.emailAluna ?? null, compras);
     fatos = fatosDoAcesso(situacao);
+
+    // Acesso válido = só falta reenviar o e-mail, e isso é clique humano na
+    // Hotmart (não tem API). Entra na fila pra não se perder na conversa.
+    if (situacao.tipo === "no-prazo") {
+      await pedirReenvio({
+        email: situacao.email,
+        nome: compras.find((c) => c.nome)?.nome,
+        produtos: [...new Set(situacao.compras.map((c) => c.produto))],
+        venceEm: situacao.venceEm,
+        pedidoEm: new Date().toISOString(),
+      }).catch(() => {});
+    }
     // Quem decide chamar uma pessoa aqui é a regra, não o modelo.
     humanoPorRegra =
       situacao.tipo === "no-prazo" ||
@@ -214,7 +227,10 @@ ${fatos}` : ""),
           model,
           messages,
           temperature: 0.4,
-          max_tokens: 400,
+          // ⚠️ Folga de propósito: o raciocínio interno do modelo consome
+          // deste mesmo teto, mesmo sendo descartado — com 400 a resposta
+          // visível cortava no meio ("Vou pedir ao").
+          max_tokens: 900,
           // Pede pro OpenRouter não devolver os tokens de raciocínio. Ajuda,
           // mas não basta: modelo pequeno às vezes escreve o rascunho no
           // próprio conteúdo. Por isso existe a checagem abaixo.
