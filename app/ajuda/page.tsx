@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AjudaChat } from "@/components/ajuda-chat";
 import { Meandro, Medalhao } from "@/components/marca-jayo";
+import { AtalhosDesktop, AtalhosMobile } from "@/components/ajuda-atalhos";
 import { saudacao } from "@/lib/suporte-acesso";
 
 /**
@@ -34,8 +35,8 @@ export default function AjudaPage() {
     <main className="flex min-h-[100dvh] flex-col bg-[#101820] font-[family-name:var(--font-corpo)]">
       {/* ⚠️ Cabeçalho grudado no topo: numa conversa longa no celular, sem isto
           a pessoa rola e perde a referência de onde está. */}
-      <header className="sticky top-0 z-10 border-b border-[#AC9751]/15 bg-[#101820]/95 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-2xl items-center gap-3.5 px-4 py-3.5 sm:px-6">
+      <header className="sticky top-0 z-30 border-b border-[#AC9751]/15 bg-[#101820]/95 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-[64rem] items-center gap-3.5 px-4 py-3.5 sm:px-6">
           <Medalhao tamanho={42} />
           {/* ⚠️ Aqui tinha "Segunda a sexta". Saiu: anunciar limite de horário
               antes de a pessoa ter falado só planta a dúvida de se alguém vai
@@ -48,12 +49,20 @@ export default function AjudaPage() {
               Suporte
             </h1>
           </div>
+          {/* As três barrinhas — só no celular, onde não cabe a coluna. */}
+          <AtalhosMobile />
         </div>
         {/* A grega fecha o cabeçalho — é a assinatura da marca. */}
         <Meandro id="meandro-topo" className="text-[#AC9751]/35" altura={9} />
       </header>
 
-      <AjudaChat saudacao={saudacao()} />
+      {/* ⚠️ Duas colunas só no computador. A conversa mantém a largura de
+          leitura que já tinha (linha larga demais cansa de ler) — quem ganha o
+          espaço que sobrava é a coluna de atalhos, não o texto. */}
+      <div className="mx-auto flex w-full max-w-[64rem] flex-1 gap-8 px-0 lg:px-6 lg:pt-6">
+        <AjudaChat saudacao={saudacao()} />
+        <AtalhosDesktop />
+      </div>
     </main>
   );
 }
