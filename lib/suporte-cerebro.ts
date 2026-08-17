@@ -27,10 +27,12 @@ import {
   avaliarAcesso,
   fatosDoAcesso,
   saudacao,
+  primeiroNome,
 } from "./suporte-acesso";
 import { todasAsCompras } from "./hotmart-store";
 import { pedirReenvio } from "./reenvio-store";
 import { escolherProvedor, recadoDeLimite } from "./ia-provedor";
+import { nomeDaMensagem, SEM_NOME } from "./nome-no-chat";
 import {
   paraGeminiNativo,
   urlNativa,
@@ -104,14 +106,21 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
   const agora = new Date().toISOString();
   const conversa: Conversa = (await getConversa(id)) ?? {
     id,
-    quem: p.quem?.trim() || "Teste",
+    quem: p.quem?.trim() || SEM_NOME,
     mensagens: [],
     aguardandoPessoa: false,
     criadaEm: agora,
     atualizadaEm: agora,
   };
-  // O e-mail da entrada vale desde a primeira mensagem.
   if (p.email && !conversa.emailAluna) conversa.emailAluna = p.email.toLowerCase();
+
+  // ⚠️ A conversa abre com a saudação perguntando o nome, então a PRIMEIRA
+  // mensagem costuma ser a resposta disso. Se não for — se ela já chegar
+  // contando o problema — `nomeDaMensagem` devolve null e a gente segue sem
+  // nome, sem insistir. James: não vale travar a pessoa num formulário.
+  const primeiraDaAluna = !conversa.mensagens.some((m) => m.de === "aluno");
+  const nomeDito = primeiraDaAluna ? nomeDaMensagem(texto) : null;
+  if (nomeDito && conversa.quem === SEM_NOME) conversa.quem = nomeDito;
 
   conversa.mensagens.push({
     de: "aluno",
@@ -178,6 +187,14 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     );
     fatos = fatosDoAcesso(situacao);
 
+    // ⚠️ Quem não disse o nome no chat ganha o nome da COMPRA. É o melhor nome
+    // que existe: veio da Hotmart, não de adivinhação — e é o que faz a caixa
+    // do time parar de ter conversa sem dono.
+    const nomeDaCompra = compras.find((c) => c.nome)?.nome;
+    if (conversa.quem === SEM_NOME && nomeDaCompra) {
+      conversa.quem = primeiroNome(nomeDaCompra) ?? nomeDaCompra;
+    }
+
     // Acesso válido = só falta reenviar o e-mail, e isso é clique humano na
     // Hotmart (não tem API). Entra na fila pra não se perder na conversa.
     if (situacao.tipo === "no-prazo") {
@@ -201,16 +218,18 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     role: m.de === "aluno" ? "user" : "assistant",
     content: m.texto as string | Array<Record<string, unknown>>,
   }));
-  const abertura =
-    conversa.mensagens.filter((m) => m.de === "aluno").length === 1
+  // ⚠️ A tela da aluna JÁ mostrou "Boa tarde! Como você se chama?" antes de ela
+  // escrever. Sem avisar isso aqui, a IA cumprimenta de novo e a conversa abre
+  // com dois "boa tarde" seguidos — o jeito mais rápido de parecer robô.
+  const abertura = !primeiraDaAluna
+    ? ""
+    : nomeDito
       ? `
 
-É o primeiro contato desta conversa. Agora é "${saudacao()}" em Brasília — abra com isso.${
-          conversa.quem && conversa.quem !== "Teste"
-            ? ` A pessoa se chama ${conversa.quem} — trate ela pelo nome.`
-            : ""
-        }`
-      : "";
+A conversa já foi aberta por nós com "${saudacao()}" e a pergunta do nome — NÃO cumprimente de novo. Ela acabou de dizer que se chama ${nomeDito}: chame pelo nome e pergunte, em uma frase, no que pode ajudar.`
+      : `
+
+A conversa já foi aberta por nós com "${saudacao()}" e a pergunta do nome — NÃO cumprimente de novo. Ela não disse o nome, foi direto ao assunto: ajude no que ela pediu e NÃO insista em perguntar o nome.`;
   const messages = [
     {
       role: "system",

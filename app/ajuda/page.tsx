@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AjudaChat } from "@/components/ajuda-chat";
+import { saudacao } from "@/lib/suporte-acesso";
 
 /**
  * A página de atendimento da aluna — **pública, sem login**.
@@ -37,7 +38,10 @@ export default function AjudaPage() {
         </p>
       </header>
 
-      <AjudaChat />
+      {/* ⚠️ A saudação vem do servidor, no fuso de Brasília. Calculada no
+          navegador, sairia "Bom dia" pra quem está com o relógio do celular em
+          outro fuso — e ninguém escreve "bom dia" às 22h. */}
+      <AjudaChat saudacao={saudacao()} />
     </main>
   );
 }

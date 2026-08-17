@@ -9,6 +9,12 @@ type Anexo = { tipo: "imagem" | "audio"; dataUrl: string; nome: string };
 /**
  * O atendimento pela visão da aluna.
  *
+ * ⚠️ **Não tem formulário de entrada.** A conversa já abre com a saudação
+ * perguntando o nome, e a pessoa começa respondendo em vez de preenchendo.
+ * James: *"o email a gente pergunta so dps pq a gente não sabe c é a duvida da
+ * pessoa"* — pedir e-mail de compra pra quem só quer saber onde está a apostila
+ * é atrito à toa, e formulário antes de falar é onde a pessoa desiste.
+ *
  * ⚠️ Ela **não vê** quem respondeu — se foi a IA ou uma pessoa do time. É de
  * propósito: marcar "isto foi um robô" faz a pessoa desconfiar da resposta
  * certa e pedir humano por reflexo, mesmo quando a resposta já resolvia.
@@ -18,11 +24,10 @@ type Anexo = { tipo: "imagem" | "audio"; dataUrl: string; nome: string };
  * demorar). Sem isso a aluna escreveria, veria a mensagem parada e ia embora
  * achando que ninguém leu.
  */
-export function AjudaChat() {
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [entrou, setEntrou] = useState(false);
-
+export function AjudaChat({ saudacao }: { saudacao: string }) {
+  // ⚠️ A saudação é um balão FIXO, fora desta lista. Se entrasse aqui, ela
+  // contaria como mensagem e desalinharia a comparação com o servidor — que
+  // não tem essa mensagem — fazendo a resposta do time não aparecer.
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [texto, setTexto] = useState("");
   const [anexo, setAnexo] = useState<Anexo | null>(null);
@@ -94,8 +99,6 @@ export function AjudaChat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           conversaId,
-          nome,
-          email,
           texto: t,
           anexos: enviado ? [{ tipo: enviado.tipo, dataUrl: enviado.dataUrl }] : [],
         }),
@@ -122,78 +125,18 @@ export function AjudaChat() {
     }
   }
 
-  /* ── a porta: quem é você ────────────────────────────────────────────── */
-
-  if (!entrou) {
-    return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (nome.trim().length >= 2 && /\S+@\S+\.\S+/.test(email)) setEntrou(true);
-        }}
-        className="mx-auto w-full max-w-md rounded-2xl border border-white/10 bg-[#101010] p-6 sm:p-7"
-      >
-        <h2 className="text-[17px] font-semibold text-white">Vamos te ajudar</h2>
-        {/* ⚠️ Diz POR QUE pede o e-mail. Formulário que pede dado sem explicar
-            faz a pessoa desistir — e é justo o e-mail que deixa a gente já
-            olhar a compra dela antes da primeira resposta. */}
-        <p className="mt-1.5 text-[13.5px] leading-relaxed text-neutral-400">
-          Use o mesmo e-mail da sua compra — assim já consigo ver seu acesso e
-          te responder de primeira.
-        </p>
-
-        <label className="mt-5 block text-[12.5px] font-medium text-neutral-400">
-          Seu nome
-          <input
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            autoComplete="name"
-            placeholder="Como podemos te chamar?"
-            className="mt-1.5 w-full rounded-xl border border-white/10 bg-[#0a0a0a] px-4 py-3 text-[15px] text-white placeholder:text-neutral-600 focus:border-[#AC9751] focus:outline-none"
-          />
-        </label>
-
-        <label className="mt-4 block text-[12.5px] font-medium text-neutral-400">
-          E-mail da compra
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            // ⚠️ `type="email"` + `inputMode` fazem o teclado do celular abrir
-            // com o @ à mão. Sem isso a pessoa erra o e-mail e a busca da
-            // compra falha por digitação.
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            autoCapitalize="off"
-            spellCheck={false}
-            placeholder="voce@email.com"
-            className="mt-1.5 w-full rounded-xl border border-white/10 bg-[#0a0a0a] px-4 py-3 text-[15px] text-white placeholder:text-neutral-600 focus:border-[#AC9751] focus:outline-none"
-          />
-        </label>
-
-        <button
-          type="submit"
-          disabled={nome.trim().length < 2 || !/\S+@\S+\.\S+/.test(email)}
-          className="mt-6 w-full rounded-xl bg-[#AC9751] px-4 py-3.5 text-[14.5px] font-semibold text-[#101820] transition hover:brightness-110 disabled:opacity-35"
-        >
-          Começar
-        </button>
-      </form>
-    );
-  }
-
-  /* ── a conversa ──────────────────────────────────────────────────────── */
-
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#101010]">
       <div className="flex-1 space-y-2.5 overflow-y-auto px-4 py-5 sm:px-5">
-        {msgs.length === 0 && (
-          <p className="mt-10 px-4 text-center text-[14px] leading-relaxed text-neutral-500">
-            Oi, {nome.split(" ")[0]}! Conta o que está acontecendo.
-            <br />
-            Se ajudar, manda um print da tela.
-          </p>
-        )}
+        {/* ⚠️ Balão fixo: é a nossa abertura, não vem do servidor. Aparece na
+            hora, sem gastar chamada de IA, e já pergunta o nome — a pessoa
+            começa respondendo em vez de preenchendo formulário. */}
+        <div className="flex justify-start">
+          <div className="max-w-[82%] rounded-2xl bg-[#1c1c1c] px-4 py-2.5 text-[14.5px] leading-relaxed whitespace-pre-wrap text-neutral-100">
+            {saudacao}! Aqui é o suporte da Jay Academy 🙂
+            {"\n"}Como você se chama?
+          </div>
+        </div>
 
         {msgs.map((m, i) => (
           <div key={i} className={`flex ${m.de === "aluno" ? "justify-end" : "justify-start"}`}>

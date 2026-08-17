@@ -45,6 +45,9 @@ export async function POST(req: Request) {
     conversaId: body?.conversaId,
     texto: body?.texto ?? "",
     anexos,
+    // Marca a conversa como treino, pra não se misturar com aluna de verdade
+    // na caixa de entrada do time.
+    quem: "Teste",
   });
 
   if (r.tipo === "erro") {

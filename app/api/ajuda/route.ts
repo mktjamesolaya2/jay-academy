@@ -7,7 +7,7 @@ import {
   isSameOrigin,
 } from "@/lib/rate-limit";
 import { responder } from "@/lib/suporte-cerebro";
-import { lerVisitante, conversaPraAluna } from "@/lib/ajuda-visitante";
+import { conversaPraAluna } from "@/lib/ajuda-visitante";
 import { getConversa } from "@/lib/suporte-store";
 
 /**
@@ -64,22 +64,16 @@ export async function POST(req: Request) {
     if (!v.ok) return NextResponse.json({ error: v.erro }, { status: 400 });
   }
 
-  // Conversa nova exige identificação; conversa em andamento não pede de novo.
-  let quem: string | undefined;
-  let email: string | undefined;
-  if (!body?.conversaId) {
-    const v = lerVisitante(body);
-    if (!v.ok) return NextResponse.json({ error: v.erro }, { status: 400 });
-    quem = v.visitante.nome;
-    email = v.visitante.email;
-  }
-
+  // ⚠️ **Sem formulário de entrada.** A conversa abre com a saudação
+  // perguntando o nome, e o nome é lido do que a pessoa escreve
+  // (`lib/nome-no-chat.ts`). O e-mail só é pedido quando o assunto se revela
+  // ser acesso. James: *"o email a gente pergunta so dps pq a gente não sabe c
+  // é a duvida da pessoa"* — e formulário antes de falar é onde a pessoa
+  // desiste.
   const r = await responder({
     conversaId: body?.conversaId,
     texto: body?.texto ?? "",
     anexos,
-    quem,
-    email,
   });
 
   if (r.tipo === "erro") {
