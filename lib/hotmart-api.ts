@@ -36,10 +36,31 @@ export function temCredenciais(): boolean {
  * consulta falhava (porque usava só um) — "funciona no teste e quebra no uso"
  * é exatamente o tipo de armadilha que some sem ninguém ver.
  */
-function formasDePedirToken() {
-  const id = (process.env.HOTMART_CLIENT_ID ?? "").trim();
-  const secret = (process.env.HOTMART_CLIENT_SECRET ?? "").trim();
-  const basicVar = (process.env.HOTMART_BASIC ?? "").trim().replace(/^basics+/i, "");
+/**
+ * Qual jogo de credenciais usar.
+ *
+ * ⚠️ O sufixo `_2` existe pra TESTAR uma credencial nova sem tocar na que está
+ * em produção. O suporte da Hotmart afirma que criar uma credencial já dá
+ * acesso às APIs de Sales e Club — a nossa não tem, e a única forma de saber
+ * quem está certo é experimentar com uma segunda, em paralelo.
+ *
+ * Credencial nova não invalida a antiga, então isso não derruba nada. E o
+ * segredo continua onde tem que estar: em variável de ambiente, nunca na URL
+ * (que ia parar em log de acesso).
+ */
+export type JogoDeCredenciais = "principal" | "segunda";
+
+function credenciais(jogo: JogoDeCredenciais) {
+  const sufixo = jogo === "segunda" ? "_2" : "";
+  return {
+    id: (process.env[`HOTMART_CLIENT_ID${sufixo}`] ?? "").trim(),
+    secret: (process.env[`HOTMART_CLIENT_SECRET${sufixo}`] ?? "").trim(),
+    basic: (process.env[`HOTMART_BASIC${sufixo}`] ?? "").trim().replace(/^basic\s+/i, ""),
+  };
+}
+
+function formasDePedirToken(jogo: JogoDeCredenciais = "principal") {
+  const { id, secret, basic: basicVar } = credenciais(jogo);
   const calculado = Buffer.from(`${id}:${secret}`).toString("base64");
   const params = { grant_type: "client_credentials", client_id: id, client_secret: secret };
   return [
@@ -65,13 +86,15 @@ async function tentarForma(f: ReturnType<typeof formasDePedirToken>[number]) {
   return r;
 }
 
-async function pegarToken(): Promise<string> {
-  // Reaproveita enquanto vale — com 60s de folga pra não usar um que expira
-  // no meio da requisição seguinte.
-  if (cache && cache.expiraEm > Date.now() + 60_000) return cache.valor;
+async function pegarToken(jogo: JogoDeCredenciais = "principal"): Promise<string> {
+  // ⚠️ O cache é só da principal. A segunda é de teste, roda pouco, e cachear
+  // ela abriria a porta pra devolver o token errado pra consulta de verdade.
+  if (jogo === "principal" && cache && cache.expiraEm > Date.now() + 60_000) {
+    return cache.valor;
+  }
 
   const erros: string[] = [];
-  for (const f of formasDePedirToken()) {
+  for (const f of formasDePedirToken(jogo)) {
     try {
       const r = await tentarForma(f);
       if (!r.ok) {
@@ -83,6 +106,7 @@ async function pegarToken(): Promise<string> {
         erros.push(`${f.como}: sem token na resposta`);
         continue;
       }
+      if (jogo !== "principal") return d.access_token;
       cache = {
         valor: d.access_token,
         expiraEm: Date.now() + (d.expires_in ?? 3600) * 1000,
@@ -193,6 +217,14 @@ export async function testarCredenciais(): Promise<{
 }
 
 /** O token, pra sonda de endereços usar o mesmo caminho de autenticação. */
-export async function pegarTokenPublico(): Promise<string> {
-  return await pegarToken();
+export async function pegarTokenPublico(
+  jogo: JogoDeCredenciais = "principal"
+): Promise<string> {
+  return await pegarToken(jogo);
+}
+
+/** Existe uma segunda credencial configurada pra testar? */
+export function temSegundaCredencial(): boolean {
+  const c = credenciais("segunda");
+  return !!(c.id && c.secret && c.basic);
 }

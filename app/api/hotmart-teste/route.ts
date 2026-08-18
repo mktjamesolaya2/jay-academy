@@ -34,12 +34,16 @@ export async function GET(req: Request) {
   }
 
   const url0 = new URL(req.url);
+  // ⚠️ Só ESCOLHE qual jogo usar — o segredo continua em variável de ambiente.
+  // Aceitar credencial pela URL deixaria o client_secret no log de acesso.
+  const jogo = url0.searchParams.get("cred") === "2" ? "segunda" : "principal";
   if (url0.searchParams.get("sondar") === "1") {
     const { sondar } = await import("@/lib/hotmart-sonda");
     return NextResponse.json({
       aviso: "Só leitura — nada foi executado na sua conta.",
       dica: "Pros endereços do Club, acrescente &subdomain=<o-nome-da-area-de-membros>",
-      achados: await sondar(url0.searchParams.get("subdomain") ?? undefined),
+      credencial: jogo,
+      achados: await sondar(url0.searchParams.get("subdomain") ?? undefined, jogo),
     });
   }
 
@@ -85,7 +89,8 @@ export async function GET(req: Request) {
     return NextResponse.json({
       aviso: "Só leitura. A resposta mostra apenas QUANTAS compras vieram, nunca os dados.",
       email: alvo,
-      tentativas: await sondarVendas(alvo),
+      credencial: jogo,
+      tentativas: await sondarVendas(alvo, jogo),
     });
   }
 

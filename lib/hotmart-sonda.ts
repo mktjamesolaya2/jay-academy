@@ -1,5 +1,5 @@
 import "server-only";
-import { pegarTokenPublico } from "./hotmart-api";
+import { pegarTokenPublico, type JogoDeCredenciais } from "./hotmart-api";
 
 /**
  * Sonda quais endereços da API da Hotmart existem.
@@ -69,8 +69,11 @@ function comSubdominio(endereco: string, subdomain?: string): string {
   return u.toString();
 }
 
-export async function sondar(subdomain?: string): Promise<Achado[]> {
-  const token = await pegarTokenPublico();
+export async function sondar(
+  subdomain?: string,
+  jogo: JogoDeCredenciais = "principal"
+): Promise<Achado[]> {
+  const token = await pegarTokenPublico(jogo);
   const achados: Achado[] = [];
   for (const bruto of CANDIDATOS) {
     const endereco = comSubdominio(bruto, subdomain);
@@ -117,8 +120,11 @@ export async function sondar(subdomain?: string): Promise<Achado[]> {
  * itens vieram**, nunca o conteúdo — a tela de diagnóstico não é lugar de
  * despejar dado de aluna.
  */
-export async function sondarVendas(email: string): Promise<Achado[]> {
-  const token = await pegarTokenPublico();
+export async function sondarVendas(
+  email: string,
+  jogo: JogoDeCredenciais = "principal"
+): Promise<Achado[]> {
+  const token = await pegarTokenPublico(jogo);
   const base = "https://developers.hotmart.com/payments/api/v1/sales/history";
 
   /**
