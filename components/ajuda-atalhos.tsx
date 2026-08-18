@@ -28,24 +28,32 @@ import { GRUPOS, type Atalho } from "@/components/ajuda-atalhos-dados";
  * daqui são outra coisa: vender curso e agendar clínica.
  */
 
+/**
+ * Um atalho — **cápsula com contorno próprio**, como na planta.
+ *
+ * ⚠️ Já foi linha solta e já foi ladrilho. A planta que o James aprovou tem
+ * cada item dentro do seu próprio contorno arredondado, e é isso que dá o ritmo
+ * da coluna: cinco cápsulas iguais, espaçadas.
+ *
+ * ⚠️ Uma linha só de texto. A descrição não cabe sem quebrar o ritmo — ela
+ * sobrevive no `title`, pra quem passa o mouse.
+ */
 function Item({ a, aoEscolher }: { a: Atalho; aoEscolher?: () => void }) {
   return (
     <a
       href={a.href}
       onClick={aoEscolher}
+      title={a.descricao}
       {...(a.externo ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className="group flex items-center gap-3 rounded-xl px-2.5 py-2 transition hover:bg-[#AC9751]/10"
+      className="group flex items-center gap-3 rounded-2xl border border-[#AC9751]/30 px-3.5 py-3 transition hover:border-[#AC9751]/70 hover:bg-[#AC9751]/10"
     >
       <a.Icone
-        size={16}
+        size={15}
         strokeWidth={1.7}
-        className="shrink-0 text-[#AC9751]/70 transition group-hover:text-[#AC9751]"
+        className="shrink-0 text-[#AC9751]/80 transition group-hover:text-[#AC9751]"
       />
-      <span className="min-w-0">
-        <span className="block truncate text-[13px] font-medium text-[#F4F1EA]/90">
-          {a.titulo}
-        </span>
-        <span className="block truncate text-[11px] text-[#F4F1EA]/40">{a.descricao}</span>
+      <span className="min-w-0 truncate text-[13px] text-[#F4F1EA]/90">
+        {a.curto ?? a.titulo}
       </span>
     </a>
   );
@@ -101,12 +109,11 @@ export function AtalhosBarra() {
           WebkitMaskImage: MASCARA_ZEUS,
         }}
       />
-      <div className="relative flex flex-col gap-5 overflow-y-auto px-5 py-6">
+      <div className="relative flex flex-col overflow-y-auto px-4 py-6">
         {/* ⚠️ A marca vive AQUI no computador — o cabeçalho da direita só
-            existe no celular. Sem este bloco a tela grande ficaria sem
-            medalhão e sem nome: foi o furo que quase passou quando o
-            cabeçalho saiu. */}
-        <div className="flex items-center gap-3">
+            existe no celular. Repetir os dois seria dizer duas vezes a mesma
+            coisa na mesma tela. */}
+        <div className="flex items-center gap-3 px-1">
           <Medalhao tamanho={40} />
           <div className="min-w-0">
             <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-[#AC9751]">
@@ -118,17 +125,15 @@ export function AtalhosBarra() {
           </div>
         </div>
 
-        {GRUPOS.map((g, i) => (
-          <div key={g.titulo}>
-            <Titulo>{g.titulo}</Titulo>
-            <Meandro id={`meandro-barra-${i}`} className="my-2.5 text-[#AC9751]/25" altura={7} />
-            <div className="space-y-0.5">
-              {g.itens.map((a) => (
-                <Item key={a.titulo} a={a} />
-              ))}
-            </div>
-          </div>
-        ))}
+        {/* ⚠️ UMA lista, sem os títulos "Também por aqui" / "Falar agora". Eles
+            cortavam a coluna em dois e mudavam o lugar de cada atalho — foi o
+            que o James apontou comparando com a planta. Os grupos continuam
+            existindo nos dados, pra gaveta do celular, onde há espaço pra eles. */}
+        <div className="mt-6 space-y-2.5">
+          {GRUPOS.flatMap((g) => g.itens).map((a) => (
+            <Item key={a.titulo} a={a} />
+          ))}
+        </div>
       </div>
     </aside>
   );
