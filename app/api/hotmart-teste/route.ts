@@ -44,16 +44,47 @@ export async function GET(req: Request) {
   }
 
   if (url0.searchParams.get("sondarvendas") === "1") {
-    const alvo = url0.searchParams.get("email");
+    // ⚠️ Aceita `protocolo` além de `email`: quando o caso vem de uma conversa
+    // ("o protocolo EF03D5 deu erro"), quem está diagnosticando não tem o
+    // e-mail na mão — ele está lá dentro. Sem isso, o caminho era abrir a
+    // transcrição, copiar o e-mail e montar outra URL.
+    const protocolo = (url0.searchParams.get("protocolo") ?? "")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .toUpperCase();
+    let alvo = url0.searchParams.get("email");
+
+    if (!alvo && protocolo) {
+      const [{ listarConversas }, { protocoloDe }] = await Promise.all([
+        import("@/lib/suporte-store"),
+        import("@/lib/protocolo"),
+      ]);
+      const conversas = await listarConversas().catch(() => []);
+      const c = conversas.find((x) => protocoloDe(x.id).startsWith(protocolo));
+      if (!c) {
+        return NextResponse.json(
+          { error: `Nada com o protocolo ${protocolo}.` },
+          { status: 404 }
+        );
+      }
+      if (!c.emailAluna) {
+        return NextResponse.json(
+          { error: `A conversa ${protocolo} não tem e-mail — a aluna não chegou a dar.` },
+          { status: 400 }
+        );
+      }
+      alvo = c.emailAluna;
+    }
+
     if (!alvo) {
       return NextResponse.json(
-        { error: "Falta ?email= — a sonda testa a consulta com um e-mail real." },
+        { error: "Use ?sondarvendas=1&email=... ou &protocolo=ABC123" },
         { status: 400 }
       );
     }
     const { sondarVendas } = await import("@/lib/hotmart-sonda");
     return NextResponse.json({
       aviso: "Só leitura. A resposta mostra apenas QUANTAS compras vieram, nunca os dados.",
+      email: alvo,
       tentativas: await sondarVendas(alvo),
     });
   }
