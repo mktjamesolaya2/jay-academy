@@ -82,12 +82,18 @@ export function AtalhosBarra() {
         aria-hidden="true"
         loading="lazy"
         decoding="async"
-        className="pointer-events-none absolute bottom-0 left-[-6%] top-0 h-full w-auto"
+        // ⚠️ Dimensionado pela ALTURA DA COLUNA (78%), ancorado embaixo — não
+        // esticado na altura da tela. A imagem é retrato (736x1151): com
+        // `h-full` numa coluna de ~950px ela renderizava a ~590x920 e a cara
+        // engolia a barra inteira. Na planta ela sai a ~200x310, e é essa
+        // proporção que o James aprovou.
+        className="pointer-events-none absolute bottom-0 left-[-8%] h-[78%] w-auto"
         style={{
-          maxWidth: "120%",
           objectFit: "contain",
-          objectPosition: "left center",
-          opacity: 0.45,
+          objectPosition: "bottom left",
+          // Mais discreta que a planta de propósito: ampliada numa tela de
+          // verdade, a mesma opacidade lê bem mais forte que na maquete.
+          opacity: 0.38,
           // ⚠️ A MESMA máscara da planta: some pra direita e nas pontas de cima
           // e de baixo. É ela que faz o Zeus virar textura em vez de foto
           // colada — sem, a imagem termina numa linha reta.
