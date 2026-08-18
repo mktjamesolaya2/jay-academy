@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Check, FileUp, TriangleAlert } from "lucide-react";
-import { lerCsv, type LeituraDoCsv } from "@/lib/hotmart-csv";
+import { lerCsv, agruparPorEmail, emLotes, type LeituraDoCsv } from "@/lib/hotmart-csv";
 
 /**
  * Sobe o relatório de vendas da Hotmart pro portal.
@@ -24,34 +24,76 @@ const ROTULOS: Record<string, string> = {
   situacao: "Situação",
 };
 
+/** E-mails por requisição. 300 × ~2 idas ao banco cabe folgado no tempo limite. */
+const POR_LOTE = 300;
+
 export function ImportarVendas({
   importar,
+  fechar,
 }: {
-  importar: (compras: string) => Promise<{ ok: boolean; gravadas?: number; erro?: string }>;
+  importar: (lote: string) => Promise<{ ok: boolean; gravadas?: number; erro?: string }>;
+  fechar: (total: number) => Promise<{ ok: boolean }>;
 }) {
   const [leitura, setLeitura] = useState<LeituraDoCsv | null>(null);
   const [arquivo, setArquivo] = useState<string>("");
   const [gravando, setGravando] = useState(false);
+  const [progresso, setProgresso] = useState(0);
   const [feito, setFeito] = useState<number | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
-  async function escolher(f: File | null) {
+  async function escolher(lista: FileList | null) {
     setFeito(null);
     setErro(null);
-    if (!f) return setLeitura(null);
-    setArquivo(f.name);
-    const texto = await f.text();
-    setLeitura(lerCsv(texto));
+    if (!lista?.length) return setLeitura(null);
+
+    // ⚠️ Aceita VÁRIOS arquivos: a Hotmart exporta um por ano, e são sete.
+    // Subir um de cada vez multiplicaria por sete a chance de esquecer um — e
+    // o ano esquecido vira aluna que o suporte não acha.
+    const arquivos = [...lista];
+    setArquivo(
+      arquivos.length === 1 ? arquivos[0]!.name : `${arquivos.length} arquivos`
+    );
+
+    const juntas: LeituraDoCsv = { compras: [], colunas: {}, descartadas: [] };
+    for (const f of arquivos) {
+      const r = lerCsv(await f.text());
+      juntas.compras.push(...r.compras);
+      juntas.descartadas.push(...r.descartadas);
+      if (!Object.keys(juntas.colunas).length) juntas.colunas = r.colunas;
+    }
+    setLeitura(juntas);
   }
 
   async function gravar() {
     if (!leitura?.compras.length) return;
     setGravando(true);
     setErro(null);
-    const r = await importar(JSON.stringify(leitura.compras));
+    setProgresso(0);
+
+    // Agrupa por e-mail ANTES de mandar: uma escrita por pessoa, não por linha.
+    // Com 12 mil linhas a diferença é entre segundos e estourar no meio.
+    const lotes = emLotes(agruparPorEmail(leitura.compras), POR_LOTE);
+    let total = 0;
+
+    for (let i = 0; i < lotes.length; i++) {
+      const r = await importar(JSON.stringify(lotes[i]));
+      if (!r.ok) {
+        setGravando(false);
+        // ⚠️ Diz ONDE parou. "Deu erro" depois de 4 mil alunas gravadas
+        // deixaria ninguém sabendo se pode tentar de novo (pode: reimportar
+        // atualiza em vez de duplicar).
+        setErro(
+          `${r.erro ?? "Não deu pra gravar."} — parou no lote ${i + 1} de ${lotes.length}, com ${total} compras já gravadas. Dá pra rodar de novo: reimportar atualiza em vez de duplicar.`
+        );
+        return;
+      }
+      total += r.gravadas ?? 0;
+      setProgresso(Math.round(((i + 1) / lotes.length) * 100));
+    }
+
+    await fechar(total).catch(() => {});
     setGravando(false);
-    if (r.ok) setFeito(r.gravadas ?? 0);
-    else setErro(r.erro ?? "Não deu pra gravar.");
+    setFeito(total);
   }
 
   return (
@@ -60,18 +102,19 @@ export function ImportarVendas({
         <FileUp size={18} strokeWidth={2} className="shrink-0 text-[#AC9751]" />
         <div className="min-w-0">
           <p className="text-[13.5px] font-semibold text-white">
-            {arquivo || "Escolher o arquivo exportado da Hotmart"}
+            {arquivo || "Escolher os arquivos exportados da Hotmart"}
           </p>
           <p className="mt-0.5 text-[12px] text-neutral-500">
-            CSV ou TXT. O arquivo é lido aqui no navegador primeiro — nada é
-            gravado até você conferir e confirmar.
+            Pode escolher vários de uma vez — a Hotmart exporta um por ano. São
+            lidos aqui no navegador, e nada é gravado até você conferir.
           </p>
         </div>
         <input
           type="file"
           accept=".csv,.txt,text/csv,text/plain"
           className="hidden"
-          onChange={(e) => escolher(e.target.files?.[0] ?? null)}
+          multiple
+          onChange={(e) => escolher(e.target.files)}
         />
       </label>
 
@@ -189,9 +232,20 @@ export function ImportarVendas({
             className="rounded-full bg-[#AC9751] px-5 py-2.5 text-[13.5px] font-semibold text-[#101820] transition hover:brightness-110 disabled:opacity-40"
           >
             {gravando
-              ? "Importando…"
+              ? `Importando… ${progresso}%`
               : `Importar ${leitura.compras.length} ${leitura.compras.length === 1 ? "compra" : "compras"}`}
           </button>
+
+          {/* ⚠️ Barra de verdade, porque isto demora. São 8.477 e-mails em 29
+              lotes — sem sinal de vida, quem está olhando fecha a aba no meio. */}
+          {gravando && (
+            <div className="h-1.5 max-w-xs overflow-hidden rounded-full bg-[#1a1a1a]">
+              <div
+                className="h-full rounded-full bg-[#AC9751] transition-all duration-300"
+                style={{ width: `${progresso}%` }}
+              />
+            </div>
+          )}
         </>
       )}
 

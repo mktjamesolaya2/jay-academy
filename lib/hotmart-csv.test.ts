@@ -1,6 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { lerCsv, lerData, partirLinha, acharSeparador, acharColunas } from "./hotmart-csv.ts";
+import {
+  lerCsv,
+  lerData,
+  partirLinha,
+  acharSeparador,
+  acharColunas,
+  agruparPorEmail,
+  emLotes,
+} from "./hotmart-csv.ts";
 
 /* ── o formato do arquivo ────────────────────────────────────────────────── */
 
@@ -144,4 +152,45 @@ test("uma coluna serve a um campo só", () => {
 
 test("data com segundos, como vem no arquivo real", () => {
   assert.match(lerData("28/12/2020 20:41:03")!, /^2020-12-28T20:41/);
+});
+
+/* ── agrupar antes de gravar ─────────────────────────────────────────────── */
+
+test("agrupa por e-mail — uma escrita por pessoa, não por linha", () => {
+  // ⚠️ O arquivo real tem 12.358 linhas e 8.477 e-mails. Linha por linha
+  // seriam ~25 mil idas ao banco em sequência, e o tempo limite estoura NO
+  // MEIO: metade das alunas importada, sem ninguém saber quais.
+  const g = agruparPorEmail([
+    { email: "ana@x.com", produto: "Nanofios", compradaEm: "2025-01-01T00:00:00Z", situacao: "completo" },
+    { email: "ana@x.com", produto: "Shadow", compradaEm: "2026-01-01T00:00:00Z", situacao: "completo" },
+    { email: "bia@x.com", produto: "Nanofios", compradaEm: "2024-01-01T00:00:00Z", situacao: "completo" },
+  ]);
+  assert.equal(g.length, 2);
+  assert.equal(g.find((x) => x.email === "ana@x.com")!.compras.length, 2);
+});
+
+test("mesmo curso duas vezes: vale a compra MAIS RECENTE", () => {
+  // ⚠️ Contar da primeira diria que venceu quem ainda tem acesso.
+  const g = agruparPorEmail([
+    { email: "ana@x.com", produto: "Nanofios", compradaEm: "2024-01-01T00:00:00Z", situacao: "completo" },
+    { email: "ana@x.com", produto: "nanofios", compradaEm: "2026-05-01T00:00:00Z", situacao: "completo" },
+  ]);
+  assert.equal(g[0]!.compras.length, 1, "produto igual com caixa diferente é o mesmo produto");
+  assert.match(g[0]!.compras[0]!.compradaEm, /^2026-05/);
+});
+
+test("e-mail com maiúscula é a mesma pessoa", () => {
+  const g = agruparPorEmail([
+    { email: "Ana@X.com", produto: "A", compradaEm: "2025-01-01T00:00:00Z", situacao: "completo" },
+    { email: "ana@x.com", produto: "B", compradaEm: "2025-01-01T00:00:00Z", situacao: "completo" },
+  ]);
+  assert.equal(g.length, 1);
+  assert.equal(g[0]!.email, "ana@x.com");
+});
+
+test("os lotes cobrem tudo, sem repetir nem perder", () => {
+  const l = emLotes([1, 2, 3, 4, 5], 2);
+  assert.deepEqual(l, [[1, 2], [3, 4], [5]]);
+  assert.deepEqual(emLotes([], 10), []);
+  assert.equal(emLotes(Array.from({ length: 8477 }, (_, i) => i), 300).flat().length, 8477);
 });

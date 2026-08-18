@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { ImportarVendas } from "@/components/importar-vendas";
 import { canEdit, getCurrentUser } from "@/lib/auth";
-import { importarVendasAction } from "@/app/suporte/actions";
+import { importarVendasAction, fecharImportacaoAction } from "@/app/suporte/actions";
 
 /**
  * Importar o histórico de vendas da Hotmart.
@@ -42,8 +42,9 @@ export default async function ImportarPage() {
           </h1>
           <p className="mt-1 max-w-2xl text-sm leading-relaxed text-neutral-500">
             Enquanto a Hotmart não libera a API de vendas, o suporte só enxerga
-            compra feita depois que o webhook foi ligado. Sobe aqui o relatório
-            exportado do painel e ele passa a achar as alunas antigas também.
+            compra feita depois que o webhook foi ligado. Sobe aqui os relatórios
+            exportados do painel — pode ser vários de uma vez — e ele passa a
+            achar as alunas antigas também.
           </p>
         </header>
 
@@ -66,7 +67,7 @@ export default async function ImportarPage() {
               </li>
             </ol>
 
-            <ImportarVendas importar={importarVendasAction} />
+            <ImportarVendas importar={importarVendasAction} fechar={fecharImportacaoAction} />
           </div>
         </section>
       </main>

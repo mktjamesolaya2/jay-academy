@@ -231,3 +231,48 @@ export function lerCsv(texto: string): LeituraDoCsv {
 
   return { compras, colunas, descartadas };
 }
+
+/* ── preparar pra gravar ─────────────────────────────────────────────────── */
+
+export type ComprasDeUmEmail = { email: string; compras: LinhaDeCompra[] };
+
+/**
+ * Junta as compras por e-mail antes de gravar.
+ *
+ * ⚠️ O arquivo real tem **12.358 linhas e 8.477 e-mails**. Gravando linha por
+ * linha seriam ~25 mil idas ao banco em sequência — o tempo limite da função
+ * estoura muito antes de terminar, e o pior é que estoura NO MEIO: metade das
+ * alunas importada, sem ninguém saber quais.
+ *
+ * Agrupado, é uma leitura e uma escrita por e-mail.
+ *
+ * ⚠️ Mesma pessoa + mesmo produto = fica a compra MAIS RECENTE. Quem comprou o
+ * mesmo curso duas vezes tem o acesso contado a partir da última — contar da
+ * primeira diria que venceu quem ainda tem acesso.
+ */
+export function agruparPorEmail(compras: LinhaDeCompra[]): ComprasDeUmEmail[] {
+  const porEmail = new Map<string, Map<string, LinhaDeCompra>>();
+
+  for (const c of compras) {
+    const email = c.email.trim().toLowerCase();
+    if (!email) continue;
+    const doEmail = porEmail.get(email) ?? new Map<string, LinhaDeCompra>();
+    const chave = c.produto.trim().toLowerCase();
+    const jaTem = doEmail.get(chave);
+    if (!jaTem || c.compradaEm > jaTem.compradaEm) doEmail.set(chave, { ...c, email });
+    porEmail.set(email, doEmail);
+  }
+
+  return [...porEmail].map(([email, produtos]) => ({
+    email,
+    // Mais recente primeiro: é a que decide o prazo de acesso.
+    compras: [...produtos.values()].sort((a, b) => (a.compradaEm < b.compradaEm ? 1 : -1)),
+  }));
+}
+
+/** Fatia o trabalho em pedaços que cabem numa requisição. */
+export function emLotes<T>(itens: T[], tamanho: number): T[][] {
+  const lotes: T[][] = [];
+  for (let i = 0; i < itens.length; i += tamanho) lotes.push(itens.slice(i, i + tamanho));
+  return lotes;
+}
