@@ -30,6 +30,17 @@ import { saudacao } from "@/lib/suporte-acesso";
  * justamente a conversa que a IA não faz.
  */
 
+/**
+ * A máscara que faz o Zeus sumir na borda em vez de recortar.
+ *
+ * ⚠️ Copiada do tratamento da LP do Jay.O Laser, não inventada: são dois
+ * degradês somados — some pra direita (pra não brigar com a conversa) e some em
+ * cima e embaixo (pra não encostar nas bordas da tela). Sem eles a imagem
+ * termina numa linha reta e denuncia que é uma foto colada.
+ */
+const MASCARA_ZEUS =
+  "linear-gradient(to right, black 0%, black 18%, rgba(0,0,0,0.5) 45%, transparent 75%), linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%)";
+
 export const metadata: Metadata = {
   title: "Ajuda · Jay Academy",
   description: "Fale com o suporte da Jay Academy.",
@@ -50,6 +61,32 @@ export default function AjudaPage() {
         style={{
           background:
             "radial-gradient(60rem 40rem at 50% 0%, rgba(172,151,81,0.07), transparent 70%)",
+        }}
+      />
+
+      {/* ⚠️ O Zeus da LP do Jay.O Laser, no MESMO tratamento de lá — James
+          pediu esse efeito. Encostado na esquerda, sangrando pra fora da tela e
+          desaparecendo na máscara. É ele que dá fundo ao vazio dos lados sem
+          disputar atenção com a conversa: opacidade baixa, atrás de tudo e
+          sem capturar clique.
+
+          Só no computador. No celular o painel ocupa a tela inteira e não
+          sobraria nada dele pra ver — seria peso de imagem por nada, no
+          aparelho de quem tem menos banda. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/laser/assets/zeus-BWpgiY3L.jpg"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        className="pointer-events-none absolute -left-16 bottom-0 top-0 z-0 hidden h-full w-auto lg:block"
+        style={{
+          objectFit: "contain",
+          objectPosition: "left center",
+          opacity: 0.45,
+          maskImage: MASCARA_ZEUS,
+          WebkitMaskImage: MASCARA_ZEUS,
         }}
       />
 
