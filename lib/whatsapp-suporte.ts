@@ -16,10 +16,26 @@
  */
 
 /**
+ * O número do suporte.
+ *
+ * ⚠️ Fica no código, e não só em variável de ambiente, porque **não é
+ * segredo**: já está público nas landing pages da Jay Academy. Em variável,
+ * ele precisaria ser configurado na Vercel pra funcionar em produção — e o
+ * botão ficaria invisível pra aluna até alguém lembrar disso.
+ *
+ * `WHATSAPP_SUPORTE` continua valendo se existir: trocar o número passa a
+ * ser mudar uma variável, sem esperar deploy.
+ */
+export const NUMERO_PADRAO = "5519998930861";
+
+export function numeroDoSuporte(env = process.env): string {
+  return (env.WHATSAPP_SUPORTE ?? "").trim() || NUMERO_PADRAO;
+}
+
+/**
  * Só os dígitos, do jeito que o WhatsApp espera (país + DDD + número).
  *
- * Aceita o número escrito como gente escreve — "+55 (11) 99999-8888" — porque é
- * assim que ele vai ser colado na variável de ambiente.
+ * Aceita o número escrito como gente escreve — "+55 (19) 99893-0861".
  */
 export function numeroLimpo(bruto: string | undefined): string | null {
   const d = (bruto ?? "").replace(/\D/g, "");

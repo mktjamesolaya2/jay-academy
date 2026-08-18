@@ -8,7 +8,7 @@ import {
 } from "@/lib/rate-limit";
 import { responder } from "@/lib/suporte-cerebro";
 import { conversaPraAluna } from "@/lib/ajuda-visitante";
-import { linkWhatsApp } from "@/lib/whatsapp-suporte";
+import { linkWhatsApp, numeroDoSuporte } from "@/lib/whatsapp-suporte";
 import { getConversa } from "@/lib/suporte-store";
 
 /**
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
   // aqui no chat"*. Sem número configurado, `linkWhatsApp` devolve null e a
   // tela volta ao comportamento antigo — nunca um botão quebrado.
   const whatsapp = r.conversaId
-    ? linkWhatsApp(process.env.WHATSAPP_SUPORTE, {
+    ? linkWhatsApp(numeroDoSuporte(), {
         conversaId: r.conversaId,
         nome: r.quem,
       })

@@ -1,6 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { numeroLimpo, mensagemInicial, linkWhatsApp } from "./whatsapp-suporte.ts";
+import {
+  numeroLimpo,
+  mensagemInicial,
+  linkWhatsApp,
+  numeroDoSuporte,
+  NUMERO_PADRAO,
+} from "./whatsapp-suporte.ts";
 
 /* ── o número ───────────────────────────────────────────────────────────── */
 
@@ -57,4 +63,20 @@ test("o texto vai codificado — acento e espaço não quebram a URL", () => {
   const l = linkWhatsApp("5511999998888", { nome: "Thaís Antônia", conversaId: "abc123" })!;
   assert.ok(!/\s/.test(l), "não pode ter espaço solto na URL");
   assert.match(decodeURIComponent(l), /Thaís Antônia/);
+});
+
+/* ── o número do suporte ────────────────────────────────────────────────── */
+
+test("existe número por padrão — o botão não depende da Vercel", () => {
+  // ⚠️ Em variável de ambiente só, o botão ficaria invisível pra aluna até
+  // alguém lembrar de configurar em produção. E não é segredo: o número já está
+  // público nas landing pages.
+  assert.equal(numeroDoSuporte({}), NUMERO_PADRAO);
+  assert.ok(numeroLimpo(numeroDoSuporte({})));
+});
+
+test("a variável de ambiente ainda manda, se existir", () => {
+  // Trocar o número passa a ser mudar uma variável, sem esperar deploy.
+  assert.equal(numeroDoSuporte({ WHATSAPP_SUPORTE: "5511911112222" }), "5511911112222");
+  assert.equal(numeroDoSuporte({ WHATSAPP_SUPORTE: "   " }), NUMERO_PADRAO);
 });
