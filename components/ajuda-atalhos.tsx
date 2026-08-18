@@ -2,7 +2,38 @@
 
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Meandro, Medalhao } from "@/components/marca-jayo";
+import { Medalhao } from "@/components/marca-jayo";
+
+/**
+ * O Zeus da coluna.
+ *
+ * ⚠️ Uma peça só, usada pela barra do computador E pela gaveta do celular. São
+ * a mesma coisa em telas diferentes — se fossem dois trechos parecidos, um dia
+ * um deles ficaria pra trás.
+ *
+ * Dimensionado pela ALTURA DA COLUNA, nunca da tela: preso à tela, numa coluna
+ * alta a cara fica gigante e engole tudo.
+ */
+function ZeusDaColuna() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/laser/assets/zeus-BWpgiY3L.jpg"
+      alt=""
+      aria-hidden="true"
+      loading="lazy"
+      decoding="async"
+      className="pointer-events-none absolute bottom-0 left-[-8%] h-[78%] w-auto"
+      style={{
+        objectFit: "contain",
+        objectPosition: "bottom left",
+        opacity: 0.38,
+        maskImage: MASCARA_ZEUS,
+        WebkitMaskImage: MASCARA_ZEUS,
+      }}
+    />
+  );
+}
 
 /** A máscara do Zeus — a mesma da planta e da LP do Jay.O Laser. */
 const MASCARA_ZEUS =
@@ -63,14 +94,6 @@ function Item({ a, aoEscolher }: { a: Atalho; aoEscolher?: () => void }) {
   );
 }
 
-function Titulo({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="px-2.5 text-[10px] font-medium uppercase tracking-[0.26em] text-[#AC9751]/75">
-      {children}
-    </p>
-  );
-}
-
 /**
  * A barra lateral do computador — o layout 5, escolhido pelo James entre os 10.
  *
@@ -87,32 +110,7 @@ function Titulo({ children }: { children: React.ReactNode }) {
 export function AtalhosBarra() {
   return (
     <aside className="relative hidden w-[26%] min-w-[15rem] max-w-[24rem] shrink-0 overflow-hidden border-r border-[#AC9751]/20 bg-[#0b1117] lg:flex lg:flex-col">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/laser/assets/zeus-BWpgiY3L.jpg"
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-        decoding="async"
-        // ⚠️ Dimensionado pela ALTURA DA COLUNA (78%), ancorado embaixo — não
-        // esticado na altura da tela. A imagem é retrato (736x1151): com
-        // `h-full` numa coluna de ~950px ela renderizava a ~590x920 e a cara
-        // engolia a barra inteira. Na planta ela sai a ~200x310, e é essa
-        // proporção que o James aprovou.
-        className="pointer-events-none absolute bottom-0 left-[-8%] h-[78%] w-auto"
-        style={{
-          objectFit: "contain",
-          objectPosition: "bottom left",
-          // Mais discreta que a planta de propósito: ampliada numa tela de
-          // verdade, a mesma opacidade lê bem mais forte que na maquete.
-          opacity: 0.38,
-          // ⚠️ A MESMA máscara da planta: some pra direita e nas pontas de cima
-          // e de baixo. É ela que faz o Zeus virar textura em vez de foto
-          // colada — sem, a imagem termina numa linha reta.
-          maskImage: MASCARA_ZEUS,
-          WebkitMaskImage: MASCARA_ZEUS,
-        }}
-      />
+      <ZeusDaColuna />
       <div className="relative flex flex-col overflow-y-auto px-4 py-6">
         {/* ⚠️ A marca vive AQUI no computador — o cabeçalho da direita só
             existe no celular. Repetir os dois seria dizer duas vezes a mesma
@@ -182,31 +180,42 @@ export function AtalhosMobile() {
             onClick={() => setAberto(false)}
             className="absolute inset-0 h-full w-full bg-black/60 backdrop-blur-sm"
           />
-          <div className="absolute right-0 top-0 flex h-full w-[80%] max-w-xs flex-col gap-5 overflow-y-auto border-l border-[#AC9751]/20 bg-[#101820] px-4 pb-6 pt-4 shadow-2xl">
-            <div className="flex items-center justify-end">
-              <button
-                onClick={() => setAberto(false)}
-                aria-label="Fechar"
-                className="flex h-9 w-9 items-center justify-center rounded-full text-[#F4F1EA]/50 transition hover:text-[#F4F1EA]"
-              >
-                <X size={18} strokeWidth={2} />
-              </button>
-            </div>
-            {GRUPOS.map((g, i) => (
-              <div key={g.titulo}>
-                <Titulo>{g.titulo}</Titulo>
-                <Meandro
-                  id={`meandro-gaveta-${i}`}
-                  className="my-2.5 text-[#AC9751]/20"
-                  altura={7}
-                />
-                <div className="space-y-0.5">
-                  {g.itens.map((a) => (
-                    <Item key={a.titulo} a={a} aoEscolher={() => setAberto(false)} />
-                  ))}
+          {/* ⚠️ A gaveta É a barra lateral, deitada por cima da tela. Mesmo
+              Zeus, mesma marca, mesmas cápsulas — James pediu "o mesmo estilo
+              do desktop". Sem os títulos e sem os meandros: no computador eles
+              já tinham saído, e manter aqui deixaria as duas telas com
+              vocabulários diferentes pra mesma coisa. */}
+          <div className="absolute right-0 top-0 flex h-full w-[82%] max-w-xs flex-col overflow-hidden border-l border-[#AC9751]/20 bg-[#0b1117] shadow-2xl">
+            <ZeusDaColuna />
+
+            <div className="relative flex flex-col overflow-y-auto px-4 pb-6 pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Medalhao tamanho={38} />
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-[#AC9751]">
+                      Jay Academy
+                    </p>
+                    <p className="font-[family-name:var(--font-marca)] text-[16px] leading-tight text-[#F4F1EA]">
+                      Suporte
+                    </p>
+                  </div>
                 </div>
+                <button
+                  onClick={() => setAberto(false)}
+                  aria-label="Fechar"
+                  className="-mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#F4F1EA]/50 transition hover:text-[#F4F1EA]"
+                >
+                  <X size={18} strokeWidth={2.2} />
+                </button>
               </div>
-            ))}
+
+              <div className="mt-6 space-y-2.5">
+                {GRUPOS.flatMap((g) => g.itens).map((a) => (
+                  <Item key={a.titulo} a={a} aoEscolher={() => setAberto(false)} />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}

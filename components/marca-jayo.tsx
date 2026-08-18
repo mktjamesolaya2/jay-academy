@@ -1,59 +1,16 @@
 /**
- * Os dois sinais da marca JAY.O: o **meandro** grego e o **medalhão**.
+ * O **medalhão** da marca JAY.O.
  *
- * ⚠️ Vivem num arquivo próprio porque são identidade, não decoração de uma
- * tela. Desenhados em SVG, não em imagem: ficam nítidos em qualquer tela,
- * pesam alguns bytes e acompanham a cor do texto ao redor — então servem tanto
+ * ⚠️ Aqui morava também o meandro (a grega). Ele saiu quando o James pediu
+ * "sem esses meandros": num filete fino atravessando a tela ele virava um
+ * tracejado sujo em vez de assinatura — funcionava na maquete, não na tela.
+ * Está no histórico do git se um dia voltar a fazer sentido, em tamanho maior.
+ *
+ * ⚠️ Vive num arquivo próprio porque é identidade, não decoração de uma
+ * tela. Desenhado em SVG, não em imagem: fica nítido em qualquer tela,
+ * pesa alguns bytes e acompanha a cor do texto ao redor — então serve tanto
  * sobre o preto quanto sobre o off-white sem precisar de segundo arquivo.
  */
-
-/**
- * A grega (meandro) como um filete que se repete.
- *
- * ⚠️ O `id` é obrigatório e precisa ser único NA PÁGINA. Dois `<pattern>` com o
- * mesmo id fazem o navegador usar só o primeiro, e o segundo filete some sem
- * dar erro nenhum — some calado, que é o pior tipo de bug visual.
- */
-export function Meandro({
-  id,
-  className,
-  altura = 10,
-}: {
-  id: string;
-  className?: string;
-  altura?: number;
-}) {
-  const largura = altura * 1.4;
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      width="100%"
-      height={altura}
-      preserveAspectRatio="none"
-      focusable="false"
-    >
-      <defs>
-        <pattern
-          id={id}
-          width={largura}
-          height={altura}
-          patternUnits="userSpaceOnUse"
-        >
-          {/* A volta da grega: desce, corre, sobe, volta pra dentro. */}
-          <path
-            d={`M0 ${altura - 1} V1 H${largura * 0.72} V${altura * 0.68} H${largura * 0.3} V${altura * 0.38} H${largura * 0.52}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1"
-            vectorEffect="non-scaling-stroke"
-          />
-        </pattern>
-      </defs>
-      <rect width="100%" height={altura} fill={`url(#${id})`} />
-    </svg>
-  );
-}
 
 /**
  * O medalhão — o anel com o monograma.

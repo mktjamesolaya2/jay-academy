@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AjudaChat } from "@/components/ajuda-chat";
-import { Meandro, Medalhao } from "@/components/marca-jayo";
+import { Medalhao } from "@/components/marca-jayo";
 import { AtalhosBarra, AtalhosMobile } from "@/components/ajuda-atalhos";
 import { saudacao } from "@/lib/suporte-acesso";
 
@@ -48,7 +48,10 @@ export default function AjudaPage() {
         {/* ATENCAO — cabecalho SO no celular. No computador a marca ja esta na
             barra lateral, e repetir aqui seria dizer duas vezes a mesma coisa
             na mesma tela. */}
-        <header className="shrink-0 border-b border-[#AC9751]/15 lg:hidden">
+        {/* ⚠️ Sem meandro aqui. Num filete de 8px atravessando a tela do celular
+            ele virava um tracejado sujo, não uma assinatura — e o James pediu
+            "sem esses meandros". A borda dourada sozinha fecha melhor. */}
+        <header className="shrink-0 border-b border-[#AC9751]/25 lg:hidden">
           <div className="flex items-center gap-3.5 px-4 py-3.5">
             <Medalhao tamanho={42} />
             <div className="min-w-0">
@@ -61,7 +64,6 @@ export default function AjudaPage() {
             </div>
             <AtalhosMobile />
           </div>
-          <Meandro id="meandro-topo" className="text-[#AC9751]/30" altura={8} />
         </header>
 
         {/* ATENCAO — a conversa mora DENTRO de um painel, com respiro em volta.
