@@ -1,10 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CheckCheck, MessageCircle, Paperclip, Send, X } from "lucide-react";
+import { Check, CheckCheck, MessageCircle, Mic, Paperclip, Send, X } from "lucide-react";
 import { Medalhao } from "@/components/marca-jayo";
 
-type Msg = { de: "aluno" | "atendente"; texto: string; em?: string; anexo?: string };
+type Msg = {
+  de: "aluno" | "atendente";
+  texto: string;
+  em?: string;
+  /** O que ela mandou junto — a imagem pra ver, o áudio pra ouvir. */
+  anexo?: { tipo: "imagem" | "audio"; dataUrl: string };
+};
 type Anexo = { tipo: "imagem" | "audio"; dataUrl: string; nome: string };
 
 /**
@@ -102,6 +108,12 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
   const [whatsapp, setWhatsapp] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [pensando, setPensando] = useState(false);
+  /** A imagem aberta em tela cheia. */
+  const [lupa, setLupa] = useState<string | null>(null);
+  const [gravando, setGravando] = useState(false);
+  const [segundos, setSegundos] = useState(0);
+  const gravador = useRef<MediaRecorder | null>(null);
+  const pedacos = useRef<BlobPart[]>([]);
   const fim = useRef<HTMLDivElement>(null);
 
   // ⚠️ A hora da abertura só é calculada DEPOIS de montar. Calculada no
@@ -113,6 +125,70 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
   useEffect(() => {
     fim.current?.scrollIntoView({ behavior: "smooth" });
   }, [msgs, pensando]);
+
+  // Esc fecha a imagem aberta — quem abriu em tela cheia espera poder fechar
+  // sem procurar botão.
+  useEffect(() => {
+    if (!lupa) return;
+    const tecla = (e: KeyboardEvent) => e.key === "Escape" && setLupa(null);
+    document.addEventListener("keydown", tecla);
+    return () => document.removeEventListener("keydown", tecla);
+  }, [lupa]);
+
+  // O cronômetro da gravação.
+  useEffect(() => {
+    if (!gravando) return;
+    const t = setInterval(() => setSegundos((s) => s + 1), 1000);
+    return () => clearInterval(t);
+  }, [gravando]);
+
+  /**
+   * Gravar áudio, como no WhatsApp.
+   *
+   * ⚠️ O navegador grava em `webm/opus` (Chrome) ou `ogg/opus` (Firefox).
+   * Testei os dois no Gemini pelo caminho nativo: **os dois são entendidos**.
+   * Pela camada de compatibilidade o ogg seria recusado — por isso o áudio já
+   * usa o endereço nativo (ver `lib/gemini-nativo.ts`).
+   */
+  async function comecarAGravar() {
+    setErro(null);
+    try {
+      const fluxo = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const tipo = ["audio/webm;codecs=opus", "audio/ogg;codecs=opus", "audio/webm"].find(
+        (t) => MediaRecorder.isTypeSupported(t)
+      );
+      const rec = new MediaRecorder(fluxo, tipo ? { mimeType: tipo } : undefined);
+      pedacos.current = [];
+      rec.ondataavailable = (e) => e.data.size && pedacos.current.push(e.data);
+      rec.onstop = () => {
+        // ⚠️ Desligar as trilhas apaga a bolinha de "gravando" do navegador. Sem
+        // isso a aluna fica com o aviso de microfone ligado depois de mandar, e
+        // acha que a gente está ouvindo ela.
+        fluxo.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(pedacos.current, { type: rec.mimeType || "audio/webm" });
+        if (blob.size < 1200) return; // toque sem querer: não vira anexo
+        const leitor = new FileReader();
+        leitor.onload = () =>
+          setAnexo({ tipo: "audio", dataUrl: String(leitor.result), nome: "Áudio gravado" });
+        leitor.readAsDataURL(blob);
+      };
+      gravador.current = rec;
+      setSegundos(0);
+      setGravando(true);
+      rec.start();
+    } catch {
+      setErro("Não consegui usar o microfone. Libera o acesso no navegador e tenta de novo?");
+    }
+  }
+
+  function pararDeGravar(guardar: boolean) {
+    const rec = gravador.current;
+    if (!rec) return;
+    if (!guardar) pedacos.current = [];
+    rec.stop();
+    gravador.current = null;
+    setGravando(false);
+  }
 
   /**
    * Busca a conversa no servidor.
@@ -164,9 +240,12 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
       ...m,
       {
         de: "aluno",
-        texto: t || (enviado?.tipo === "audio" ? "(áudio)" : "(imagem)"),
+        // ⚠️ Sem rótulo "(imagem)" embaixo da foto: no WhatsApp a imagem fala
+        // por si. O rótulo continua indo pro SERVIDOR, onde a caixa do time
+        // precisa saber que veio um anexo — mas ele não é pra ela ver.
+        texto: t,
         em: new Date().toISOString(),
-        anexo: enviado?.tipo === "imagem" ? enviado.dataUrl : undefined,
+        anexo: enviado ? { tipo: enviado.tipo, dataUrl: enviado.dataUrl } : undefined,
       },
     ]);
     setPensando(true);
@@ -210,7 +289,14 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
     // ⚠️ Rola por DENTRO do painel (`min-h-0` + `overflow-y-auto`). Sem isso a
     // conversa empurraria o painel e o campo de escrever sairia da tela.
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+      <div
+        // ⚠️ `overflow-x-hidden`: o bico do balão fica um pouco pra fora e
+        // criava uma barra de rolagem horizontal na tela inteira. E a barra
+        // vertical vira um fio dourado — a do sistema é larga e cinza, e
+        // aparecia como um risco no meio do visual da marca.
+        className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-6 sm:px-6 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#AC9751]/30 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-1.5"
+        style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(172,151,81,0.3) transparent" }}
+      >
         <div className="w-full space-y-4">
         {/* ── a abertura: balão fixo, nosso, sem custo de IA ─────────────── */}
         {/* ⚠️ `items-start`: o medalhão acompanha a PRIMEIRA linha do balão.
@@ -218,7 +304,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         <div className="flex items-start gap-2.5">
           <Medalhao tamanho={30} />
           <div>
-            <div className="relative max-w-[72%] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-[#101820] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)]">
+            <div className="relative max-w-[72%] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-[#101820] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)]">
               <Bico dela={false} />
               {saudacao}! Aqui é o suporte da Jay Academy.
               {"\n"}Como você se chama?
@@ -263,22 +349,49 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
                 ))}
               <div className={daAluna ? "flex flex-col items-end" : ""}>
                 <div
-                  className={`relative max-w-[72%] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)] ${
+                  className={`relative max-w-[72%] overflow-hidden text-[15px] leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)] ${
+                    // ⚠️ Com imagem, o balão perde o recheio: a foto encosta na
+                    // borda, como no WhatsApp. Com texto, volta o respiro.
+                    m.anexo?.tipo === "imagem" ? "p-1" : "px-4 py-3"
+                  } ${
                     daAluna
                       ? "rounded-2xl rounded-tr-md bg-[#AC9751] text-[#101820]"
                       : "rounded-2xl rounded-tl-md bg-[#F4F1EA] text-[#101820]"
                   }`}
                 >
                   <Bico dela={daAluna} />
-                  {m.anexo && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={m.anexo}
-                      alt="print enviado"
-                      className="mb-2 max-h-52 rounded-lg border border-[#101820]/15"
+
+                  {m.anexo?.tipo === "imagem" && (
+                    <button
+                      type="button"
+                      onClick={() => setLupa(m.anexo!.dataUrl)}
+                      title="Abrir imagem"
+                      className="block w-full cursor-zoom-in"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={m.anexo.dataUrl}
+                        alt="imagem enviada"
+                        className="max-h-72 w-full rounded-xl object-cover"
+                      />
+                    </button>
+                  )}
+
+                  {m.anexo?.tipo === "audio" && (
+                    // O próprio tocador do navegador: tem play, barra e tempo,
+                    // e funciona igual no celular e no computador.
+                    <audio
+                      controls
+                      src={m.anexo.dataUrl}
+                      className="w-[16rem] max-w-full"
                     />
                   )}
-                  {m.texto}
+
+                  {m.texto && (
+                    <span className={m.anexo?.tipo === "imagem" ? "block px-3 pb-2 pt-2" : ""}>
+                      {m.texto}
+                    </span>
+                  )}
                 </div>
                 <p
                   className={`mt-1 flex items-center gap-1 text-[11px] text-[#F4F1EA]/35 ${daAluna ? "justify-end pr-1" : "pl-1"}`}
@@ -344,6 +457,27 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         </div>
       </div>
 
+      {/* A imagem em tela cheia. Clicar em qualquer lugar fecha — é o gesto
+          que a pessoa já tenta primeiro. */}
+      {lupa && (
+        <div
+          role="dialog"
+          aria-label="Imagem enviada"
+          onClick={() => setLupa(null)}
+          className="fixed inset-0 z-50 flex cursor-zoom-out items-center justify-center bg-black/85 p-6 backdrop-blur-sm"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={lupa} alt="imagem enviada" className="max-h-full max-w-full rounded-xl" />
+          <button
+            type="button"
+            aria-label="Fechar"
+            className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+          >
+            <X size={20} strokeWidth={2.2} />
+          </button>
+        </div>
+      )}
+
       {/* ── o campo de escrever, no rodapé do painel ───────────────────── */}
       <div className="shrink-0 border-t border-[#AC9751]/12 px-4 pb-4 pt-3 sm:px-6">
         <div className="w-full">
@@ -356,9 +490,14 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         {anexo && (
           <div className="mb-2 flex items-center gap-2 rounded-xl border border-[#AC9751]/20 bg-[#16202a] px-3 py-2">
             <Paperclip size={13} strokeWidth={2} className="shrink-0 text-[#AC9751]" />
-            <span className="min-w-0 flex-1 truncate text-[12.5px] text-[#F4F1EA]/75">
-              {anexo.nome}
-            </span>
+            {anexo.tipo === "audio" ? (
+              // Ouvir antes de mandar: ninguém manda áudio sem conferir.
+              <audio controls src={anexo.dataUrl} className="h-8 min-w-0 flex-1" />
+            ) : (
+              <span className="min-w-0 flex-1 truncate text-[12.5px] text-[#F4F1EA]/75">
+                {anexo.nome}
+              </span>
+            )}
             <button
               type="button"
               onClick={() => setAnexo(null)}
@@ -370,6 +509,33 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
           </div>
         )}
 
+        {gravando ? (
+          // ⚠️ Enquanto grava, o campo de escrever SOME. Um microfone ligado
+          // com a tela igual à de sempre é o jeito mais fácil de alguém gravar
+          // sem perceber — e aqui do outro lado tem uma pessoa falando de um
+          // problema dela.
+          <div className="flex items-center gap-3 rounded-full border border-rose-500/40 bg-rose-500/10 py-2 pl-4 pr-2">
+            <span className="h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-rose-400" />
+            <span className="flex-1 text-[14px] font-medium text-[#F4F1EA]">
+              Gravando {Math.floor(segundos / 60)}:{String(segundos % 60).padStart(2, "0")}
+            </span>
+            <button
+              type="button"
+              onClick={() => pararDeGravar(false)}
+              className="rounded-full px-3 py-1.5 text-[13px] font-medium text-[#F4F1EA]/60 transition hover:text-[#F4F1EA]"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={() => pararDeGravar(true)}
+              aria-label="Concluir gravação"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#AC9751] text-[#101820] transition hover:brightness-110"
+            >
+              <Check size={16} strokeWidth={2.6} />
+            </button>
+          </div>
+        ) : (
         <form
           onSubmit={enviar}
           className="flex items-center gap-2 rounded-full border border-[#AC9751]/25 bg-[#16202a] py-1.5 pl-2 pr-1.5 transition focus-within:border-[#AC9751]/60"
@@ -412,15 +578,33 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
             className="min-w-0 flex-1 bg-transparent text-[16px] text-[#F4F1EA] placeholder:text-[#F4F1EA]/30 focus:outline-none"
           />
 
-          <button
-            type="submit"
-            disabled={pensando || (!texto.trim() && !anexo)}
-            aria-label="Enviar"
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#AC9751] text-[#101820] transition hover:brightness-110 disabled:opacity-30"
-          >
-            <Send size={15} strokeWidth={2.4} />
-          </button>
+          {/* ⚠️ Microfone OU enviar, nunca os dois. Com o campo vazio o botão
+              de enviar não faz nada, então o lugar é do microfone; assim que há
+              o que mandar, ele vira o enviar. É como o WhatsApp faz, e evita
+              dois botões redondos disputando o mesmo canto. */}
+          {texto.trim() || anexo ? (
+            <button
+              type="submit"
+              disabled={pensando}
+              aria-label="Enviar"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#AC9751] text-[#101820] transition hover:brightness-110 disabled:opacity-30"
+            >
+              <Send size={15} strokeWidth={2.4} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={comecarAGravar}
+              disabled={pensando}
+              aria-label="Gravar áudio"
+              title="Gravar um áudio"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#AC9751]/15 text-[#AC9751] transition hover:bg-[#AC9751] hover:text-[#101820] disabled:opacity-30"
+            >
+              <Mic size={16} strokeWidth={2.2} />
+            </button>
+          )}
         </form>
+        )}
       </div>
       </div>
     </div>

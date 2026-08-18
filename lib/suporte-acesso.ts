@@ -40,7 +40,12 @@ export type SituacaoAcesso =
   | { tipo: "nao-encontrado"; email: string }
   | { tipo: "no-prazo"; email: string; compras: CompraConhecida[]; venceEm: string; dias: number }
   | { tipo: "vencido"; email: string; compras: CompraConhecida[]; venceuEm: string }
-  | { tipo: "cancelado"; email: string };
+  | { tipo: "cancelado"; email: string }
+  /**
+   * ⚠️ NÃO é "não achei" — é "não consegui procurar". A diferença importa: a
+   * primeira nega a compra de quem pagou.
+   */
+  | { tipo: "nao-consegui-conferir"; email: string };
 
 /** Acha o e-mail que a aluna mandou no meio da mensagem. */
 export function acharEmail(texto: string): string | null {
@@ -98,10 +103,16 @@ export function ehProblemaDeAcesso(texto: string): boolean {
 export function avaliarAcesso(
   email: string | null,
   compras: CompraConhecida[],
-  hoje = new Date()
+  hoje = new Date(),
+  /** A consulta na Hotmart estava disponível? Sem isso, lista vazia mente. */
+  consultaDisponivel = true
 ): SituacaoAcesso {
   if (!email) return { tipo: "sem-email" };
-  if (!compras.length) return { tipo: "nao-encontrado", email };
+  if (!compras.length) {
+    return consultaDisponivel
+      ? { tipo: "nao-encontrado", email }
+      : { tipo: "nao-consegui-conferir", email };
+  }
 
   const canceladas = ["cancelled", "canceled", "cancelada", "refunded", "reembolsada"];
   const validas = compras.filter(
@@ -148,6 +159,16 @@ export function fatosDoAcesso(s: SituacaoAcesso): string {
       return `A aluna falou de problema de acesso e AINDA NÃO deu o e-mail.
 Peça o e-mail da compra, só isso, numa frase curta. Não peça mais nada junto e
 não chame ninguém do time ainda.`;
+
+    case "nao-consegui-conferir":
+      return `⚠️ NÃO conseguimos consultar a compra de "${s.email}" agora — o
+sistema que confere isso está fora do ar do nosso lado.
+
+NÃO diga que não achou a compra dela: você NÃO procurou. Dizer que não achou
+nega a compra de quem pagou, e é o pior erro possível aqui.
+
+Diga que não conseguiu confirmar neste momento e que vai chamar uma pessoa do
+time pra verificar. Passe para uma pessoa.`;
 
     case "nao-encontrado":
       return `Procuramos "${s.email}" e NÃO achamos compra nenhuma com esse

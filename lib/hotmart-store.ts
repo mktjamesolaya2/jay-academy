@@ -92,3 +92,22 @@ export async function todasAsCompras(email: string): Promise<CompraHotmart[]> {
   }
   return juntas;
 }
+
+/**
+ * Dá pra consultar a Hotmart agora?
+ *
+ * ⚠️ Existe porque "não achei compra" e "não consegui procurar" são coisas
+ * MUITO diferentes pra quem está do outro lado — e a segunda estava saindo
+ * como a primeira. Sem as credenciais da API, `todasAsCompras` devolve lista
+ * vazia, e a aluna ouvia "procurei e não achei nenhuma compra com esse e-mail".
+ * Ela pagou. A frase nega a compra dela por causa de uma variável de ambiente
+ * que ninguém configurou.
+ */
+export async function podeConsultarHotmart(): Promise<boolean> {
+  try {
+    const { temCredenciais } = await import("./hotmart-api");
+    return temCredenciais();
+  } catch {
+    return false;
+  }
+}

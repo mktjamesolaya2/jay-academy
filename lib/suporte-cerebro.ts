@@ -29,7 +29,7 @@ import {
   saudacao,
   primeiroNome,
 } from "./suporte-acesso";
-import { todasAsCompras } from "./hotmart-store";
+import { todasAsCompras, podeConsultarHotmart } from "./hotmart-store";
 import { pedirReenvio } from "./reenvio-store";
 import { escolherProvedor, recadoDeLimite } from "./ia-provedor";
 import { nomeDaMensagem, SEM_NOME } from "./nome-no-chat";
@@ -191,6 +191,11 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     const compras = conversa.emailAluna
       ? await todasAsCompras(conversa.emailAluna).catch(() => [])
       : [];
+    // ⚠️ Sem isto, "não consegui procurar" saía como "procurei e não achei" — e
+    // essa frase NEGA A COMPRA de quem pagou. Aconteceu num teste real: o
+    // e-mail existia na Hotmart, as credenciais da API não estavam
+    // configuradas, e a aluna ouviu que não havia compra nenhuma.
+    const consultaDisponivel = await podeConsultarHotmart().catch(() => false);
     const situacao = avaliarAcesso(
       conversa.emailAluna ?? null,
       compras.map((c) => ({
@@ -198,7 +203,9 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
         compradaEm: c.compradaEm,
         situacao: c.situacao,
         nome: c.nome,
-      }))
+      })),
+      new Date(),
+      consultaDisponivel
     );
     fatos = fatosDoAcesso(situacao);
 
@@ -225,7 +232,8 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     humanoPorRegra =
       situacao.tipo === "no-prazo" ||
       situacao.tipo === "vencido" ||
-      situacao.tipo === "cancelado";
+      situacao.tipo === "cancelado" ||
+      situacao.tipo === "nao-consegui-conferir";
   }
 
   const conhecimento = await getConhecimento();

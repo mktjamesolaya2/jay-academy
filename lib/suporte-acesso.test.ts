@@ -202,3 +202,29 @@ test("o nome entra nos fatos, pra ela chamar pelo nome", () => {
   );
   assert.match(f, /se chama Maria/);
 });
+
+/* ── "não achei" x "não consegui procurar" ──────────────────────────────── */
+
+test("sem poder consultar, NÃO diz que não achou a compra", () => {
+  // ⚠️ Caso real: o e-mail existia na Hotmart, mas as credenciais da API não
+  // estavam configuradas. A aluna ouviu "procurei e não achei nenhuma compra
+  // com esse e-mail" — uma frase que NEGA A COMPRA de quem pagou, por causa de
+  // uma variável de ambiente.
+  const s = avaliarAcesso("existe@hotmart.com", [], new Date(), false);
+  assert.equal(s.tipo, "nao-consegui-conferir");
+
+  const f = fatosDoAcesso(s);
+  assert.match(f, /N[ÃA]O diga que não achou/i);
+  assert.match(f, /não conseguiu confirmar/i);
+  assert.match(f, /pessoa/i);
+});
+
+test("podendo consultar, lista vazia continua sendo 'não achei'", () => {
+  const s = avaliarAcesso("naoexiste@b.com", [], new Date(), true);
+  assert.equal(s.tipo, "nao-encontrado");
+});
+
+test("o padrão é assumir que a consulta funcionou", () => {
+  // Compatibilidade: quem chamar sem o argumento mantém o comportamento antigo.
+  assert.equal(avaliarAcesso("a@b.com", [], new Date()).tipo, "nao-encontrado");
+});
