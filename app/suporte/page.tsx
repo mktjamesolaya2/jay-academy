@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { MessagesSquare, Settings2 } from "lucide-react";
+import { KeyRound, MessagesSquare, Settings2 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { SuporteChat } from "@/components/suporte-chat";
-import { SuporteReenvios } from "@/components/suporte-reenvios";
 import { listarReenvios } from "@/lib/reenvio-store";
 import { listarConversas } from "@/lib/suporte-store";
 import { ordenarCaixa, quantosEsperando } from "@/lib/caixa-conversas";
@@ -68,6 +67,26 @@ export default async function SuportePage() {
                 </span>
               )}
             </Link>
+            {/* ⚠️ A liberação de acesso ganhou tela própria: é a tarefa mais
+                repetida do time, e ficar escondida numa caixa que só
+                aparecia quando tinha item fazia ninguém saber que ela
+                existe. */}
+            <Link
+              href="/suporte/reenvios"
+              className={`inline-flex items-center gap-1.5 text-[12.5px] font-semibold transition ${
+                reenvios.length > 0
+                  ? "text-amber-300 hover:text-amber-200"
+                  : "text-neutral-500 hover:text-white"
+              }`}
+            >
+              <KeyRound size={13} strokeWidth={2.2} />
+              Liberar acesso
+              {reenvios.length > 0 && (
+                <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[10.5px] leading-none">
+                  {reenvios.length}
+                </span>
+              )}
+            </Link>
             <Link
               href="/suporte/ajustes"
               className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-500 transition hover:text-white"
@@ -97,7 +116,24 @@ export default async function SuportePage() {
                 </span>
               </Link>
             )}
-            <SuporteReenvios reenvios={reenvios} />
+            {/* ⚠️ Leva pra tela, não repete a lista. Duas telas mostrando os
+                mesmos e-mails com botões diferentes ("já reenviei" x "já
+                liberei") envelhecem separadas, e um dia uma some da outra. */}
+            {reenvios.length > 0 && (
+              <Link
+                href="/suporte/reenvios"
+                className="mb-5 flex items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/[0.06] px-4 py-3.5 transition hover:border-amber-500/50"
+              >
+                <p className="text-[13px] font-semibold text-amber-100">
+                  {reenvios.length === 1
+                    ? "1 acesso pra liberar na Hotmart"
+                    : `${reenvios.length} acessos pra liberar na Hotmart`}
+                </p>
+                <span className="shrink-0 text-[12px] font-semibold text-amber-300">
+                  Liberar →
+                </span>
+              </Link>
+            )}
             <SuporteChat />
           </div>
         </section>
