@@ -64,11 +64,16 @@ export default function AjudaPage() {
           <Meandro id="meandro-topo" className="text-[#AC9751]/30" altura={8} />
         </header>
 
-        {/* No computador, um respiro no topo no lugar do cabecalho — sem ele a
-            primeira mensagem nasce colada na borda de cima da tela. */}
-        <div className="hidden shrink-0 pt-3 lg:block" />
-
-        <AjudaChat saudacao={saudacao()} />
+        {/* ATENCAO — a conversa mora DENTRO de um painel, com respiro em volta.
+            Foi assim na planta que o James escolheu, e eu tinha construido ela
+            encostada nas bordas da tela: a mensagem nascia colada em cima, o
+            campo de escrever colado embaixo, e voltou o mesmo vazio que a
+            gente ja tinha resolvido. A moldura e o que da forma a conversa. */}
+        <div className="flex min-h-0 flex-1 flex-col lg:p-5">
+          <section className="flex min-h-0 flex-1 flex-col overflow-hidden lg:rounded-2xl lg:border lg:border-[#AC9751]/20 lg:bg-[#0d141b]">
+            <AjudaChat saudacao={saudacao()} />
+          </section>
+        </div>
       </main>
     </div>
   );

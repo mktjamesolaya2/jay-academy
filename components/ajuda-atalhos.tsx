@@ -79,7 +79,7 @@ export function AtalhosBarra() {
         loading="lazy"
         decoding="async"
         className="pointer-events-none absolute inset-0 h-full w-full"
-        style={{ objectFit: "cover", objectPosition: "58% center", opacity: 0.5 }}
+        style={{ objectFit: "cover", objectPosition: "60% 38%", opacity: 0.72 }}
       />
       {/* ⚠️ O véu. Sem ele, a lista fica sobre o rosto e não se lê — bonito na
           maquete, ilegível na tela. Escuro no topo (onde estão a marca e os
@@ -89,7 +89,7 @@ export function AtalhosBarra() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(11,17,23,0.97) 0%, rgba(11,17,23,0.93) 46%, rgba(11,17,23,0.55) 74%, rgba(11,17,23,0.8) 100%)",
+            "linear-gradient(to bottom, rgba(11,17,23,0.96) 0%, rgba(11,17,23,0.88) 30%, rgba(11,17,23,0.42) 62%, rgba(11,17,23,0.62) 100%)",
         }}
       />
 

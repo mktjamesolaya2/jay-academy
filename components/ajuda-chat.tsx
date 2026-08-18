@@ -189,7 +189,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
     // conversa empurraria o painel e o campo de escrever sairia da tela.
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-        <div className="mx-auto w-full max-w-xl space-y-4">
+        <div className="mx-auto w-full max-w-3xl space-y-4">
         {/* ── a abertura: balão fixo, nosso, sem custo de IA ─────────────── */}
         {/* ⚠️ `items-start`: o medalhão acompanha a PRIMEIRA linha do balão.
             Alinhado embaixo ele descia junto com o horário e parecia solto. */}
@@ -315,7 +315,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
 
       {/* ── o campo de escrever, no rodapé do painel ───────────────────── */}
       <div className="shrink-0 border-t border-[#AC9751]/12 px-4 pb-4 pt-3 sm:px-6">
-        <div className="mx-auto w-full max-w-xl">
+        <div className="mx-auto w-full max-w-3xl">
         {erro && (
           <p className="mb-2.5 rounded-xl border border-[#AC9751]/30 bg-[#AC9751]/10 px-4 py-2.5 text-[13px] leading-relaxed text-[#F4F1EA]/85">
             {erro}
