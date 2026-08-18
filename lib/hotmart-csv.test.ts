@@ -107,3 +107,41 @@ test("arquivo vazio não explode", () => {
   assert.deepEqual(lerCsv("").compras, []);
   assert.deepEqual(lerCsv("   \n  ").compras, []);
 });
+
+/* ── o cabeçalho de verdade da Hotmart ───────────────────────────────────── */
+
+// ⚠️ Este é o cabeçalho REAL do relatório exportado (59 colunas, recortado nas
+// que importam). Ele derrubou duas suposições minhas de uma vez.
+const CABECALHO_REAL = [
+  "Nome do Produto", "Nome do Produtor", "Documento do Produtor", "Nome do Afiliado",
+  "Transação", "Meio de Pagamento", "Origem", "Moeda", "Preço do Produto",
+  "Data de Venda", "Data de Confirmação", "Status", "Nome", "Documento", "Email",
+];
+
+test("o nome da ALUNA não pode virar o nome do curso", () => {
+  // ⚠️ "Nome do Produto" vem ANTES de "Nome" no arquivo. Procurando só por
+  // pedaço do nome, a caixa do suporte ficaria cheia de "FIO A FIO REALISTA"
+  // no lugar das pessoas.
+  const c = acharColunas(CABECALHO_REAL);
+  assert.equal(CABECALHO_REAL[c.nome!], "Nome");
+  assert.equal(CABECALHO_REAL[c.produto!], "Nome do Produto");
+  assert.equal(CABECALHO_REAL[c.email!], "Email");
+  assert.equal(CABECALHO_REAL[c.situacao!], "Status");
+});
+
+test("a data é a da VENDA, não a de confirmação", () => {
+  const c = acharColunas(CABECALHO_REAL);
+  assert.equal(CABECALHO_REAL[c.data!], "Data de Venda");
+});
+
+test("uma coluna serve a um campo só", () => {
+  // ⚠️ Sem isto, "Nome do Produto" era produto E nome ao mesmo tempo — e o
+  // erro passava despercebido porque os dois campos ficavam preenchidos.
+  const c = acharColunas(CABECALHO_REAL);
+  const indices = Object.values(c);
+  assert.equal(new Set(indices).size, indices.length);
+});
+
+test("data com segundos, como vem no arquivo real", () => {
+  assert.match(lerData("28/12/2020 20:41:03")!, /^2020-12-28T20:41/);
+});

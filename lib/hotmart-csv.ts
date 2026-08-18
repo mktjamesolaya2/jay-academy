@@ -120,16 +120,23 @@ const APELIDOS = {
 export function acharColunas(cabecalho: string[]): Record<string, number> {
   const limpo = cabecalho.map((c) => tirarAcento(c.toLowerCase().trim()));
   const achadas: Record<string, number> = {};
+  const usadas = new Set<number>();
 
   for (const [campo, apelidos] of Object.entries(APELIDOS)) {
-    // Do apelido mais específico pro mais genérico: "email do comprador" tem
-    // que ganhar de "email" quando as duas colunas existem (a segunda pode ser
-    // o e-mail do AFILIADO, e aí a compra iria parar na conta errada).
     for (const apelido of apelidos) {
       const alvo = tirarAcento(apelido);
-      const i = limpo.findIndex((c) => c.includes(alvo));
+      // ⚠️ Nome EXATO primeiro, pedaço do nome depois. O arquivo de verdade
+      // tem "Nome do Produto" ANTES de "Nome", e procurando só por pedaço o
+      // nome da aluna virava o nome do curso — a caixa do suporte inteira
+      // ficaria cheia de "FIO A FIO REALISTA" no lugar das pessoas.
+      let i = limpo.findIndex((c, n) => c === alvo && !usadas.has(n));
+      if (i === -1) i = limpo.findIndex((c, n) => c.includes(alvo) && !usadas.has(n));
       if (i !== -1) {
         achadas[campo] = i;
+        // ⚠️ Uma coluna serve a UM campo. Sem isto, "Nome do Produto" era
+        // produto e nome ao mesmo tempo, e o erro passava despercebido porque
+        // os dois campos ficavam preenchidos.
+        usadas.add(i);
         break;
       }
     }
