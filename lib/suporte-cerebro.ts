@@ -217,17 +217,24 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
   let fatos = "";
   let humanoPorRegra = false;
   if (conversa.assuntoAcesso) {
-    const compras = conversa.emailAluna
-      ? await todasAsCompras(conversa.emailAluna).catch(() => [])
-      : [];
+    const busca = conversa.emailAluna
+      ? await todasAsCompras(conversa.emailAluna).catch(() => ({
+          compras: [],
+          apiFalhou: true,
+        }))
+      : { compras: [], apiFalhou: false };
     // ⚠️ Sem isto, "não consegui procurar" saía como "procurei e não achei" — e
-    // essa frase NEGA A COMPRA de quem pagou. Aconteceu num teste real: o
-    // e-mail existia na Hotmart, as credenciais da API não estavam
-    // configuradas, e a aluna ouviu que não havia compra nenhuma.
-    const consultaDisponivel = await podeConsultarHotmart().catch(() => false);
+    // essa frase NEGA A COMPRA de quem pagou. Aconteceu duas vezes: primeiro
+    // sem as credenciais configuradas, depois com a API respondendo 400 pra
+    // todo e-mail enquanto o erro virava log e sumia.
+    //
+    // ⚠️ São DOIS jeitos de não conseguir procurar, e os dois contam: não ter
+    // credencial, e a consulta falhar. Só o primeiro estava sendo olhado.
+    const temComoConsultar = await podeConsultarHotmart().catch(() => false);
+    const consultaDisponivel = temComoConsultar && !busca.apiFalhou;
     const situacao = avaliarAcesso(
       conversa.emailAluna ?? null,
-      compras.map((c) => ({
+      busca.compras.map((c) => ({
         produto: c.produto,
         compradaEm: c.compradaEm,
         situacao: c.situacao,
@@ -250,7 +257,7 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     // ⚠️ Quem não disse o nome no chat ganha o nome da COMPRA. É o melhor nome
     // que existe: veio da Hotmart, não de adivinhação — e é o que faz a caixa
     // do time parar de ter conversa sem dono.
-    const nomeDaCompra = compras.find((c) => c.nome)?.nome;
+    const nomeDaCompra = busca.compras.find((c) => c.nome)?.nome;
     if (conversa.quem === SEM_NOME && nomeDaCompra) {
       conversa.quem = primeiroNome(nomeDaCompra) ?? nomeDaCompra;
     }
@@ -260,7 +267,7 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     if (situacao.tipo === "no-prazo") {
       await pedirReenvio({
         email: situacao.email,
-        nome: compras.find((c) => c.nome)?.nome,
+        nome: busca.compras.find((c) => c.nome)?.nome,
         produtos: [...new Set(situacao.compras.map((c) => c.produto))],
         venceEm: situacao.venceEm,
         pedidoEm: new Date().toISOString(),

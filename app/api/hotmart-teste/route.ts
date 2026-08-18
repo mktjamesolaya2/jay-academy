@@ -43,6 +43,21 @@ export async function GET(req: Request) {
     });
   }
 
+  if (url0.searchParams.get("sondarvendas") === "1") {
+    const alvo = url0.searchParams.get("email");
+    if (!alvo) {
+      return NextResponse.json(
+        { error: "Falta ?email= — a sonda testa a consulta com um e-mail real." },
+        { status: 400 }
+      );
+    }
+    const { sondarVendas } = await import("@/lib/hotmart-sonda");
+    return NextResponse.json({
+      aviso: "Só leitura. A resposta mostra apenas QUANTAS compras vieram, nunca os dados.",
+      tentativas: await sondarVendas(alvo),
+    });
+  }
+
   const email = url0.searchParams.get("email");
   if (!email) {
     return NextResponse.json({

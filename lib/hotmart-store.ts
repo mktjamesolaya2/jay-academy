@@ -61,10 +61,27 @@ export async function registrarCompra(c: CompraHotmart): Promise<void> {
  * responder "você não tem compra" pra quem tem é pior do que responder com
  * informação parcial.
  */
-export async function todasAsCompras(email: string): Promise<CompraHotmart[]> {
+export type ResultadoDaBusca = {
+  compras: CompraHotmart[];
+  /**
+   * A consulta na API falhou (não é o mesmo que "não achou nada").
+   *
+   * ⚠️ Este campo existe por causa de um erro que chegou na aluna. A API
+   * respondia 400 (`invalid_parameter`) pra TODO e-mail, o `catch` engolia,
+   * a lista voltava vazia, e o suporte dizia "procurei e não achei compra
+   * com esse e-mail" — negando a compra de quem pagou, por um erro nosso.
+   *
+   * Quem chama PRECISA distinguir os dois. Por isso a falha sobe junto com o
+   * resultado, em vez de virar log e sumir.
+   */
+  apiFalhou: boolean;
+};
+
+export async function todasAsCompras(email: string): Promise<ResultadoDaBusca> {
   const doWebhook = await comprasDoEmail(email).catch(() => []);
 
   let daApi: CompraHotmart[] = [];
+  let apiFalhou = false;
   try {
     const { temCredenciais, vendasDoEmail } = await import("./hotmart-api");
     if (temCredenciais()) {
@@ -78,6 +95,7 @@ export async function todasAsCompras(email: string): Promise<CompraHotmart[]> {
       }));
     }
   } catch (e) {
+    apiFalhou = true;
     console.warn("[hotmart] consulta na API falhou, usando só o webhook:", e);
   }
 
@@ -90,7 +108,9 @@ export async function todasAsCompras(email: string): Promise<CompraHotmart[]> {
     vistas.add(chave);
     juntas.push(c);
   }
-  return juntas;
+  // ⚠️ Se o webhook achou alguma coisa, a falha da API não importa mais: a
+  // gente TEM registro de compra, e é isso que a aluna precisa ouvir.
+  return { compras: juntas, apiFalhou: apiFalhou && juntas.length === 0 };
 }
 
 /**

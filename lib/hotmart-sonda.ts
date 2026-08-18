@@ -100,3 +100,81 @@ export async function sondar(subdomain?: string): Promise<Achado[]> {
   }
   return achados;
 }
+
+/* ── por que a consulta de vendas dá 400 ─────────────────────────────────── */
+
+/**
+ * Descobre qual combinação de parâmetros o `sales/history` aceita.
+ *
+ * ⚠️ Existe porque a consulta respondia **400 `invalid_parameter`** pra todo
+ * e-mail — e o erro era engolido, virava lista vazia, e o suporte dizia
+ * "procurei e não achei compra com esse e-mail". Ou seja: negava a compra de
+ * quem pagou, por causa de um parâmetro nosso.
+ *
+ * ⚠️ Cada tentativa é um GET de leitura. Nada aqui muda nada na conta.
+ *
+ * ⚠️ O e-mail é passado por quem chama, e a resposta só devolve **quantos
+ * itens vieram**, nunca o conteúdo — a tela de diagnóstico não é lugar de
+ * despejar dado de aluna.
+ */
+export async function sondarVendas(email: string): Promise<Achado[]> {
+  const token = await pegarTokenPublico();
+  const base = "https://developers.hotmart.com/payments/api/v1/sales/history";
+
+  const agora = Date.now();
+  const doisAnos = agora - 1000 * 60 * 60 * 24 * 730;
+
+  const tentativas: Array<[string, Record<string, string>]> = [
+    ["só o e-mail (o que a gente faz hoje)", { buyer_email: email }],
+    ["e-mail + max_results", { buyer_email: email, max_results: "50" }],
+    ["e-mail + janela de 2 anos", {
+      buyer_email: email,
+      start_date: String(doisAnos),
+      end_date: String(agora),
+    }],
+    ["só a janela de 2 anos", { start_date: String(doisAnos), end_date: String(agora) }],
+    ["sem nenhum parâmetro", {}],
+    ["transaction_status=APPROVED + janela", {
+      buyer_email: email,
+      transaction_status: "APPROVED",
+      start_date: String(doisAnos),
+      end_date: String(agora),
+    }],
+  ];
+
+  const achados: Achado[] = [];
+  for (const [nome, params] of tentativas) {
+    const u = new URL(base);
+    for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+    try {
+      const r = await fetch(u, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(15000),
+      });
+      const cru = await r.text().catch(() => "");
+      let leitura = traduzir(r.status);
+      if (r.ok) {
+        // Só a contagem. O que veio é dado de aluna e não sai daqui.
+        try {
+          const itens = (JSON.parse(cru)?.items ?? []).length;
+          leitura = `FUNCIONOU — ${itens} ${itens === 1 ? "compra" : "compras"}`;
+        } catch {
+          leitura = "FUNCIONOU — resposta não era o JSON esperado";
+        }
+      }
+      achados.push({
+        endereco: nome,
+        status: r.status,
+        leitura,
+        ...(r.ok ? {} : { resposta: cru.replace(/\s+/g, " ").slice(0, 180) }),
+      });
+    } catch (e) {
+      achados.push({
+        endereco: nome,
+        status: 0,
+        leitura: e instanceof Error ? e.message : "erro de rede",
+      });
+    }
+  }
+  return achados;
+}
