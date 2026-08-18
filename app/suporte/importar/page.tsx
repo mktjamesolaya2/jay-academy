@@ -5,6 +5,8 @@ import { Sidebar } from "@/components/sidebar";
 import { ImportarVendas } from "@/components/importar-vendas";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { importarVendasAction, fecharImportacaoAction } from "@/app/suporte/actions";
+import { listarImportacoes } from "@/lib/importacao-store";
+import { formatDateTimeBR } from "@/lib/format-date";
 
 /**
  * Importar o histórico de vendas da Hotmart.
@@ -23,6 +25,8 @@ export default async function ImportarPage() {
   const me = await getCurrentUser();
   if (!me) redirect("/login?redirect=/suporte/importar");
   if (!canEdit(me)) redirect("/dashboard");
+
+  const anteriores = await listarImportacoes().catch(() => []);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -68,6 +72,42 @@ export default async function ImportarPage() {
             </ol>
 
             <ImportarVendas importar={importarVendasAction} fechar={fecharImportacaoAction} />
+
+            {/* ⚠️ James: "importei, fechei e abri a aba de novo, e sumiu". Sem
+                isto, a única forma de saber se já rodou era reimportar por
+                garantia — toda vez. */}
+            <div className="rounded-xl border border-[#1f1f1f] bg-[#0d0d0d] px-5 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-600">
+                Importações anteriores
+              </p>
+              {anteriores.length === 0 ? (
+                <p className="mt-2.5 text-[12.5px] text-neutral-500">
+                  Nenhuma ainda. Quando você importar, fica registrado aqui — com
+                  data, quanta coisa entrou e quais arquivos.
+                </p>
+              ) : (
+                <ul className="mt-3 space-y-3">
+                  {anteriores.map((i, n) => (
+                    <li key={n} className="border-t border-[#191919] pt-3 first:border-0 first:pt-0">
+                      <p className="text-[13px] text-neutral-200">
+                        <strong className="font-semibold">{i.compras}</strong>{" "}
+                        {i.compras === 1 ? "compra" : "compras"} de{" "}
+                        <strong className="font-semibold">{i.alunas}</strong>{" "}
+                        {i.alunas === 1 ? "aluna" : "alunas"}
+                      </p>
+                      <p className="mt-0.5 text-[11.5px] text-neutral-600">
+                        {formatDateTimeBR(i.em)} · {i.quem}
+                      </p>
+                      {i.arquivos.length > 0 && (
+                        <p className="mt-1 break-all font-mono text-[10.5px] leading-relaxed text-neutral-700">
+                          {i.arquivos.join(" · ")}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </section>
       </main>

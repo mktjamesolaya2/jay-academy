@@ -131,3 +131,33 @@ export async function podeConsultarHotmart(): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Grava VÁRIAS compras da mesma pessoa de uma vez.
+ *
+ * ⚠️ `registrarCompra` lê e grava a cada compra. Na importação isso vira uma
+ * ida e volta ao banco por LINHA — 12 mil no arquivo real, com a mesma chave
+ * sendo lida e regravada várias vezes pra mesma aluna. Aqui é uma leitura e
+ * uma escrita por pessoa.
+ *
+ * ⚠️ O que já existe é preservado: a compra que veio pelo webhook continua lá
+ * se não estiver no arquivo. Importar não pode apagar o que a gente já sabia.
+ */
+export async function registrarCompras(
+  email: string,
+  novas: CompraHotmart[]
+): Promise<number> {
+  if (!email.trim() || !novas.length) return 0;
+  const todas = await comprasDoEmail(email);
+
+  for (const c of novas) {
+    const i = todas.findIndex(
+      (x) => x.produto.toLowerCase() === c.produto.toLowerCase()
+    );
+    if (i === -1) todas.unshift(c);
+    else todas[i] = { ...todas[i], ...c };
+  }
+
+  await kvSet(chave(email), todas.slice(0, 20));
+  return novas.length;
+}

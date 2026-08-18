@@ -32,10 +32,11 @@ export function ImportarVendas({
   fechar,
 }: {
   importar: (lote: string) => Promise<{ ok: boolean; gravadas?: number; erro?: string }>;
-  fechar: (total: number) => Promise<{ ok: boolean }>;
+  fechar: (total: number, alunas: number, arquivos: string[]) => Promise<{ ok: boolean }>;
 }) {
   const [leitura, setLeitura] = useState<LeituraDoCsv | null>(null);
   const [arquivo, setArquivo] = useState<string>("");
+  const [nomes, setNomes] = useState<string[]>([]);
   const [gravando, setGravando] = useState(false);
   const [progresso, setProgresso] = useState(0);
   const [feito, setFeito] = useState<number | null>(null);
@@ -50,6 +51,7 @@ export function ImportarVendas({
     // Subir um de cada vez multiplicaria por sete a chance de esquecer um — e
     // o ano esquecido vira aluna que o suporte não acha.
     const arquivos = [...lista];
+    setNomes(arquivos.map((f) => f.name));
     setArquivo(
       arquivos.length === 1 ? arquivos[0]!.name : `${arquivos.length} arquivos`
     );
@@ -72,7 +74,8 @@ export function ImportarVendas({
 
     // Agrupa por e-mail ANTES de mandar: uma escrita por pessoa, não por linha.
     // Com 12 mil linhas a diferença é entre segundos e estourar no meio.
-    const lotes = emLotes(agruparPorEmail(leitura.compras), POR_LOTE);
+    const porPessoa = agruparPorEmail(leitura.compras);
+    const lotes = emLotes(porPessoa, POR_LOTE);
     let total = 0;
 
     for (let i = 0; i < lotes.length; i++) {
@@ -91,7 +94,8 @@ export function ImportarVendas({
       setProgresso(Math.round(((i + 1) / lotes.length) * 100));
     }
 
-    await fechar(total).catch(() => {});
+    const alunas = porPessoa.length;
+    await fechar(total, alunas, nomes).catch(() => {});
     setGravando(false);
     setFeito(total);
   }
@@ -114,7 +118,13 @@ export function ImportarVendas({
           accept=".csv,.txt,text/csv,text/plain"
           className="hidden"
           multiple
-          onChange={(e) => escolher(e.target.files)}
+          onChange={(e) => {
+            escolher(e.target.files);
+            // ⚠️ Zera o campo. Sem isto, escolher OS MESMOS arquivos de novo
+            // não dispara nada — o navegador só avisa quando o valor muda — e
+            // reimportar o mesmo pacote exigia recarregar a página.
+            e.target.value = "";
+          }}
         />
       </label>
 

@@ -11,7 +11,8 @@ import {
   removerLacuna,
 } from "@/lib/suporte-store";
 import { marcarReenviado } from "@/lib/reenvio-store";
-import { registrarCompra } from "@/lib/hotmart-store";
+import { registrarCompras } from "@/lib/hotmart-store";
+import { registrarImportacao } from "@/lib/importacao-store";
 import type { ComprasDeUmEmail } from "@/lib/hotmart-csv";
 
 /** Salva o que a IA sabe. É aqui que ela é treinada. */
@@ -146,18 +147,20 @@ export async function importarVendasAction(
     for (let i = 0; i < lote.length; i += FILA) {
       await Promise.all(
         lote.slice(i, i + FILA).map(async (pessoa) => {
-          for (const c of pessoa.compras) {
-            if (!c?.email || !c?.compradaEm) continue;
-            await registrarCompra({
+          // ⚠️ Uma leitura e uma escrita por PESSOA, não por compra. Antes a
+          // mesma chave era lida e regravada uma vez por linha — e quem tem
+          // três cursos custava seis idas ao banco em vez de duas.
+          const validas = (pessoa.compras ?? [])
+            .filter((c) => c?.email && c?.compradaEm)
+            .map((c) => ({
               email: c.email,
               nome: c.nome,
               produto: c.produto || "curso",
               compradaEm: c.compradaEm,
               situacao: c.situacao || "aprovada",
               atualizadaEm: agora,
-            });
-            gravadas++;
-          }
+            }));
+          gravadas += await registrarCompras(pessoa.email, validas);
         })
       );
     }
@@ -176,10 +179,20 @@ export async function importarVendasAction(
  * ganho — o número final é o mesmo.
  */
 export async function fecharImportacaoAction(
-  total: number
+  total: number,
+  alunas: number,
+  arquivos: string[]
 ): Promise<{ ok: boolean }> {
-  await requireAdmin();
+  const me = await requireAdmin();
+  await registrarImportacao({
+    em: new Date().toISOString(),
+    compras: total,
+    alunas,
+    quem: me?.email ?? "—",
+    arquivos: arquivos.slice(0, 20),
+  }).catch(() => {});
   await logActivity("wp.edit", "Suporte", `${total} vendas importadas da Hotmart`);
   revalidatePath("/suporte");
+  revalidatePath("/suporte/importar");
   return { ok: true };
 }
