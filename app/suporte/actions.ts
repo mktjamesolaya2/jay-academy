@@ -145,7 +145,14 @@ export async function importarVendasAction(
     // conexões ao KV de uma vez e ele começaria a recusar.
     const FILA = 12;
     for (let i = 0; i < lote.length; i += FILA) {
-      await Promise.all(
+      // ⚠️ Soma DEPOIS, com o que cada tarefa devolveu. Antes era
+      // `gravadas += await registrar(...)` dentro do `map` — e em JavaScript o
+      // `+=` lê o valor da esquerda ANTES do await. Com 12 tarefas em
+      // paralelo, as 12 liam o mesmo número e só a última gravava: o
+      // contador mostrou 914 no lugar de 10.835. Os dados entraram certos; era
+      // só a conta. Mas o número é o que diz se deu certo, então mentir nele é
+      // pior do que não mostrar.
+      const feitas = await Promise.all(
         lote.slice(i, i + FILA).map(async (pessoa) => {
           // ⚠️ Uma leitura e uma escrita por PESSOA, não por compra. Antes a
           // mesma chave era lida e regravada uma vez por linha — e quem tem
@@ -160,9 +167,10 @@ export async function importarVendasAction(
               situacao: c.situacao || "aprovada",
               atualizadaEm: agora,
             }));
-          gravadas += await registrarCompras(pessoa.email, validas);
+          return await registrarCompras(pessoa.email, validas);
         })
       );
+      gravadas += feitas.reduce((a, b) => a + b, 0);
     }
 
     return { ok: true, gravadas };
