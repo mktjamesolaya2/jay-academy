@@ -44,6 +44,33 @@ export type LandingPage = {
 
 export const landingPages: LandingPage[] = [
   {
+    /**
+     * ⚠️ Entra no catálogo porque **toda página criada dentro do portal
+     * precisa aparecer no painel** — senão ela existe no ar e ninguém do time
+     * sabe o endereço nem consegue abrir de dentro do sistema.
+     *
+     * ⚠️ Catalogada, mas NÃO é LP de venda: é o canal de quem JÁ comprou, e
+     * segue fora do Google (`robots: noindex` na própria página). Aparecer em
+     * busca traria gente pedindo preço — justo a conversa que a IA não faz.
+     * As mensagens continuam sendo respondidas em /suporte/conversas.
+     */
+    slug: "ajuda",
+    name: "Suporte da aluna",
+    tagline: "Chat de atendimento com I.A.",
+    description:
+      "Página pública onde a aluna fala com o suporte. A I.A. atende primeiro e consulta a Hotmart; quando não resolve, a conversa cai em /suporte/conversas pro time responder.",
+    stack: "Next.js + Gemini + Hotmart",
+    status: "published",
+    type: "website",
+    localPath: "portal/app/ajuda",
+    devUrl: "http://localhost:4000/ajuda",
+    productionUrl: "/ajuda",
+    domain: "jayacademy.com.br",
+    accent: "gold-black",
+    createdAt: "2026-08-18",
+    contentSource: "react",
+  },
+  {
     slug: "pmuclass",
     name: "PMU CLASS",
     tagline: "Netflix da micropigmentação",
