@@ -1,3 +1,5 @@
+import { SEM_NOME } from "./nome-no-chat.ts";
+
 /**
  * A ponte pro WhatsApp.
  *
@@ -52,7 +54,11 @@ export function numeroLimpo(bruto: string | undefined): string | null {
  * de novo — que é exatamente a parte chata de ser encaminhado.
  */
 export function mensagemInicial(nome: string | undefined, conversaId: string): string {
-  const quem = nome && nome.trim() ? `Sou ${nome.trim()}. ` : "";
+  // ⚠️ "Sem nome ainda" é o rótulo que o PAINEL usa quando a pessoa ainda não
+  // se apresentou — não é nome de gente. Sem esta linha, a mensagem abria o
+  // WhatsApp com "Oi! Sou Sem nome ainda." no lugar dela.
+  const limpo = (nome ?? "").trim();
+  const quem = limpo && limpo !== SEM_NOME ? `Sou ${limpo}. ` : "";
   // Só um pedaço do id: é curto de ler em voz alta e ainda acha a conversa.
   const codigo = conversaId.replace(/-/g, "").slice(0, 6).toUpperCase();
   return `Oi! ${quem}Vim do chat do site e queria continuar por aqui. (atendimento ${codigo})`;

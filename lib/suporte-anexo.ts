@@ -53,6 +53,25 @@ export function anexoValido(a: Anexo): { ok: boolean; erro?: string } {
  * Texto sozinho continua sendo string — só vira lista quando há anexo, pra não
  * mudar o formato de toda conversa por causa de um caso.
  */
+/**
+ * O que dizer quando a pessoa manda anexo SEM escrever nada.
+ *
+ * ⚠️ Sem isto o modelo IGNORA o anexo. Medido: um áudio de 12 KB chegava
+ * íntegro ao Gemini, com o tipo certo, e a resposta vinha "Olá! Como posso te
+ * ajudar hoje?" — como se nada tivesse sido enviado. Com uma pergunta junto ele
+ * ouvia normalmente; sozinho, o pedido chega sem instrução nenhuma e ele trata
+ * como conversa vazia.
+ *
+ * Mandar áudio sem legenda é o caso MAIS comum de quem está com pressa ou sem
+ * jeito de escrever — justamente quem mais precisa ser ouvido.
+ */
+const PEDIDO_SEM_LEGENDA: Record<Anexo["tipo"], string> = {
+  audio:
+    "A pessoa mandou um áudio, sem escrever nada. Ouça o áudio e responda ao que ela disse nele.",
+  imagem:
+    "A pessoa mandou uma imagem, sem escrever nada. Olhe a imagem e responda ao que ela mostra.",
+};
+
 export function montarConteudo(
   texto: string,
   anexos: Anexo[]
@@ -61,7 +80,14 @@ export function montarConteudo(
 
   const partes: Array<Record<string, unknown>> = [];
   // O texto vem primeiro: é o que diz o que olhar na imagem.
-  if (texto.trim()) partes.push({ type: "text", text: texto });
+  if (texto.trim()) {
+    partes.push({ type: "text", text: texto });
+  } else {
+    // `tipoDeConversa` também devolve "texto", que aqui não existe: só se
+    // chega neste ponto quando HÁ anexo. O áudio manda quando vêm os dois.
+    const tipo = anexos.some((a) => a.tipo === "audio") ? "audio" : "imagem";
+    partes.push({ type: "text", text: PEDIDO_SEM_LEGENDA[tipo] });
+  }
 
   for (const a of anexos) {
     if (a.tipo === "imagem") {

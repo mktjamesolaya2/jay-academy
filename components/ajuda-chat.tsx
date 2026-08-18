@@ -213,8 +213,13 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
     try {
       const r = await fetch(`/api/ajuda?id=${encodeURIComponent(id)}`);
       if (!r.ok) return;
-      const d = (await r.json()) as { mensagens: Msg[]; comPessoa: boolean };
+      const d = (await r.json()) as {
+        mensagens: Msg[];
+        comPessoa: boolean;
+        whatsapp?: string | null;
+      };
       setComPessoa(d.comPessoa);
+      if (d.whatsapp) setWhatsapp(d.whatsapp);
       setMsgs((prev) =>
         d.mensagens.length > prev.length
           ? d.mensagens.map((m, i) => ({ ...m, anexo: prev[i]?.anexo }))
@@ -349,7 +354,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         // alguém vai responder.
         setErro(
           d.conversaId
-            ? "Deu um problema aqui do nosso lado, mas sua mensagem chegou. Já pedi pra uma pessoa do time te responder."
+            ? "Deu um problema aqui do nosso lado, mas sua mensagem chegou. Já pedi pra uma pessoa do time falar com você."
             : d.error
         );
       }
@@ -498,9 +503,15 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         )}
 
         {/* ⚠️ Aqui a conversa MUDA DE LUGAR. O chat é primeiro contato e
-            triagem; quem assume é uma pessoa no WhatsApp. Sem número
-            configurado o botão não existe e a tela volta a pedir que ela espere
-            aqui — nunca um botão que não leva a lugar nenhum. */}
+            triagem; quem assume é uma pessoa no WhatsApp.
+
+            ⚠️ Nenhum texto daqui pode prometer resposta NESTA tela. James:
+            *"a gente não vai responder pelo portal"* — o portal é pra ficar de
+            olho. Se ela ficar esperando aqui, ninguém vem.
+
+            Sem número configurado o botão não existe (nunca um botão que não
+            leva a lugar nenhum), e sobra só o aviso — que continua mandando ela
+            pro WhatsApp, não pedindo que espere. */}
         {comPessoa && !pensando && (
           <div className="pt-2">
             {whatsapp ? (
@@ -524,8 +535,8 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
               </div>
             ) : (
               <p className="px-2 text-center text-[12.5px] leading-relaxed text-[#F4F1EA]/45">
-                Já chamei uma pessoa do time pra te responder. Pode deixar esta
-                página aberta — a resposta aparece aqui.
+                Já chamei uma pessoa do time. Chame a gente no WhatsApp do
+                suporte pra continuar de lá.
               </p>
             )}
           </div>

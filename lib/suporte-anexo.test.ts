@@ -32,16 +32,21 @@ test("o texto vem ANTES da imagem — é ele que diz o que olhar", () => {
 });
 
 test("áudio vira input_audio com base64 puro, sem o prefixo data:", () => {
+  // ⚠️ Índice 1: sem legenda, a instrução de ouvir vem primeiro. Sem ela o
+  // modelo ignora o áudio (medido) — a parte do áudio sozinha não basta.
   const c = montarConteudo("", [aud]) as any[];
-  assert.equal(c[0].type, "input_audio");
-  assert.equal(c[0].input_audio.data, "BBBB");
-  assert.ok(!c[0].input_audio.data.includes("data:"));
+  assert.equal(c[1].type, "input_audio");
+  assert.equal(c[1].input_audio.data, "BBBB");
+  assert.ok(!c[1].input_audio.data.includes("data:"));
 });
 
 test("print sem legenda funciona — muita gente só manda a imagem", () => {
+  // ⚠️ Este teste ANTES fixava `length: 1` — e era exatamente o bug: sem
+  // instrução nenhuma junto, o modelo tratava como conversa vazia.
   const c = montarConteudo("", [img]) as any[];
-  assert.equal(c.length, 1);
-  assert.equal(c[0].type, "image_url");
+  assert.equal(c.length, 2);
+  assert.equal(c[0].type, "text");
+  assert.equal(c[1].type, "image_url");
 });
 
 /* ── formato do áudio ───────────────────────────────────────────────────── */
@@ -86,4 +91,33 @@ test("áudio tem prioridade — só um modelo grátis ouve", () => {
 test("soBase64 tira o prefixo e aguenta string sem ele", () => {
   assert.equal(soBase64("data:image/png;base64,XYZ"), "XYZ");
   assert.equal(soBase64("XYZ"), "XYZ");
+});
+
+/* ── anexo sem legenda ──────────────────────────────────────────────────── */
+
+test("áudio sem legenda leva instrução — senão o modelo IGNORA o áudio", () => {
+  // ⚠️ Medido: 12 KB de áudio chegavam íntegros ao Gemini, com o tipo certo, e
+  // a resposta vinha "Olá! Como posso te ajudar hoje?" — como se nada tivesse
+  // sido enviado. Com uma pergunta junto, ele ouvia normalmente.
+  const partes = montarConteudo("", [
+    { tipo: "audio", dataUrl: "data:audio/webm;base64,QUJD" },
+  ]) as Array<Record<string, unknown>>;
+  assert.equal(partes[0].type, "text");
+  assert.match(String(partes[0].text), /ouça o áudio/i);
+  assert.equal(partes[1].type, "input_audio");
+});
+
+test("imagem sem legenda também", () => {
+  const partes = montarConteudo("", [
+    { tipo: "imagem", dataUrl: "data:image/png;base64,QUJD" },
+  ]) as Array<Record<string, unknown>>;
+  assert.match(String(partes[0].text), /olhe a imagem/i);
+});
+
+test("com legenda, quem manda é a pessoa — nada é inventado", () => {
+  const partes = montarConteudo("é isso aqui ó", [
+    { tipo: "imagem", dataUrl: "data:image/png;base64,QUJD" },
+  ]) as Array<Record<string, unknown>>;
+  assert.equal(partes[0].text, "é isso aqui ó");
+  assert.equal(partes.length, 2);
 });

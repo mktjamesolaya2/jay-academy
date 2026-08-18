@@ -135,5 +135,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Conversa não encontrada" }, { status: 404 });
   }
 
-  return NextResponse.json(conversaPraAluna(conversa));
+  // ⚠️ O link vai aqui TAMBÉM, e não só na resposta do envio: uma conversa
+  // pode virar "com pessoa" enquanto a aluna só olha a tela (o time assume pelo
+  // portal). Sem isso ela veria o aviso de encaminhamento sem o botão — que é
+  // justamente o único jeito de ela continuar.
+  return NextResponse.json({
+    ...conversaPraAluna(conversa),
+    whatsapp: linkWhatsApp(numeroDoSuporte(), {
+      nome: conversa.quem,
+      conversaId: conversa.id,
+    }),
+  });
 }

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { KeyRound, Settings2, UserRound } from "lucide-react";
+import { KeyRound, Settings2, Trash2, UserRound } from "lucide-react";
+import { ConfirmButton } from "@/components/confirm-button";
+import { apagarConversaAction } from "@/app/suporte/actions";
 import { Sidebar } from "@/components/sidebar";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { listarConversas } from "@/lib/suporte-store";
@@ -95,10 +97,10 @@ export default async function CaixaPage() {
           ) : (
             <div className="mx-auto max-w-3xl space-y-2">
               {linhas.map((l) => (
+                <div key={l.id} className="group relative">
                 <Link
-                  key={l.id}
                   href={`/suporte/conversas/${encodeURIComponent(l.id)}`}
-                  className={`block rounded-xl border px-4 py-3.5 transition ${
+                  className={`block rounded-xl border py-3.5 pl-4 pr-12 transition ${
                     l.esperando
                       ? "border-amber-500/30 bg-amber-500/[0.04] hover:border-amber-500/50"
                       : "border-[#1f1f1f] bg-[#0d0d0d] hover:border-[#2e2e2e]"
@@ -138,6 +140,26 @@ export default async function CaixaPage() {
                     </span>
                   </div>
                 </Link>
+
+                {/* ⚠️ Apagar tem que existir AQUI, não só dentro da conversa:
+                    limpar teste era entrar em cada uma, apagar, voltar. No
+                    celular fica sempre visível — passar o mouse não existe. */}
+                <form
+                  action={async () => {
+                    "use server";
+                    await apagarConversaAction(l.id);
+                  }}
+                  className="absolute right-2 top-2.5"
+                >
+                  <ConfirmButton
+                    message={`Apagar a conversa de ${l.quem}? Isso não tem volta.`}
+                    title="Apagar conversa"
+                    className="rounded-lg p-2 text-neutral-700 transition hover:bg-rose-500/10 hover:text-rose-300 lg:opacity-0 lg:group-hover:opacity-100 lg:focus:opacity-100"
+                  >
+                    <Trash2 size={13} strokeWidth={2.2} />
+                  </ConfirmButton>
+                </form>
+                </div>
               ))}
             </div>
           )}

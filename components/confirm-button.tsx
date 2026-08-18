@@ -10,10 +10,13 @@ import { Loader2 } from "lucide-react";
 export function ConfirmButton({
   message,
   className,
+  title,
   children,
 }: {
   message: string;
   className?: string;
+  /** Nome do botão quando ele é só um ícone — sem isso, leitor de tela lê "botão". */
+  title?: string;
   children: React.ReactNode;
 }) {
   const { pending } = useFormStatus();
@@ -21,6 +24,8 @@ export function ConfirmButton({
     <button
       type="submit"
       disabled={pending}
+      title={title}
+      aria-label={title}
       onClick={(e) => {
         if (!confirm(message)) e.preventDefault();
       }}

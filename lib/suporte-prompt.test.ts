@@ -7,6 +7,7 @@ import {
   limparVazamento,
   resumoPraAtendente,
   pareceRaciocinio,
+  tirarSaudacaoSolta,
   MARCA_HUMANO,
 } from "./suporte-prompt.ts";
 
@@ -208,4 +209,46 @@ test("proíbe cumprimentar de novo no meio da conversa", () => {
   // suporte da Jay Academy..." — a pessoa já estava na conversa. Repetir a
   // apresentação é o sinal mais rápido de que quem responde é máquina.
   assert.match(montarPrompt("x"), /Cumprimente UMA vez só/i);
+});
+
+/* ── a saudação repetida ────────────────────────────────────────────────── */
+
+test("tira o 'Oi!' solto — a tela já cumprimentou", () => {
+  // ⚠️ Caso real: a tela abre com "Bom dia! Aqui é o suporte da Jay Academy" e
+  // o modelo emendava "Oi! Posso ajudar com acesso, login...". Dois
+  // cumprimentos em dois balões seguidos = robô.
+  assert.equal(
+    tirarSaudacaoSolta("Oi! Posso ajudar com acesso, login e material."),
+    "Posso ajudar com acesso, login e material."
+  );
+  assert.equal(tirarSaudacaoSolta("Olá. Tudo certo por aqui."), "Tudo certo por aqui.");
+  assert.equal(tirarSaudacaoSolta("Bom dia! Vou verificar isso."), "Vou verificar isso.");
+});
+
+test("MANTÉM o cumprimento com nome — é o que faz parecer gente", () => {
+  // Chamar pela nome era justamente o que a gente queria; tirar seria piorar.
+  assert.equal(tirarSaudacaoSolta("Oi, Renata! Já vi aqui."), "Oi, Renata! Já vi aqui.");
+  assert.equal(tirarSaudacaoSolta("Bom dia, Ana! Tudo certo."), "Bom dia, Ana! Tudo certo.");
+});
+
+test("não mutila resposta que começa parecido", () => {
+  assert.equal(tirarSaudacaoSolta("Oitenta reais não é um valor nosso."), "Oitenta reais não é um valor nosso.");
+  assert.equal(tirarSaudacaoSolta("Olá"), "Olá");
+});
+
+test("a limpeza do 'na base' continua acontecendo junto", () => {
+  // ⚠️ Ao trocar a limpeza pela nova eu quase perdi esta — as duas rodam.
+  const r = lerResposta("Oi! Não temos isso na base atual, vou chamar alguém");
+  assert.ok(!/base/i.test(r.texto));
+  assert.ok(!/^Oi/.test(r.texto));
+});
+
+test("o prompt diz que ela OUVE áudio e VÊ imagem", () => {
+  // ⚠️ Sem isso o modelo respondia "não consigo ouvir mensagens de áudio, pode
+  // escrever em texto?" — mentira: ele ouve. E quem manda áudio costuma ser
+  // quem está com pressa ou sem jeito de escrever; mandar essa pessoa digitar
+  // é empurrar o problema pra ela.
+  const p = montarPrompt("x");
+  assert.match(p, /ouve áudio/i);
+  assert.match(p, /NUNCA diga que não consegue ouvir/i);
 });

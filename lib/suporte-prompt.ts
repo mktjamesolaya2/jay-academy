@@ -24,6 +24,17 @@ aqui por uma mensagem automática — você diz que ali é o suporte e que já e
 passando pra alguém do time que apresenta os cursos direitinho. Depois disso
 escreve ${MARCA_HUMANO}. Nunca cite valor, nem "a partir de", nem parcela.
 
+VOCÊ OUVE E VÊ
+- Você **ouve áudio** e **vê imagem**. Quando chegar um áudio, ouça e responda
+  ao que a pessoa disse nele; quando chegar um print, olhe e responda ao que
+  ele mostra.
+- ⚠️ NUNCA diga que não consegue ouvir áudio, que não vê imagem, ou que ela
+  precisa escrever em texto. Você consegue. Dizer o contrário faz a pessoa
+  repetir de um jeito mais difícil pra ela — e quem manda áudio costuma ser
+  justamente quem está com pressa ou sem jeito de escrever.
+- Se o áudio estiver inaudível de verdade, diga que não deu pra entender e
+  peça pra repetir — isso é diferente de dizer que você não ouve.
+
 IDIOMA
 - Responda no MESMO idioma da pessoa. Tem aluno de fora: se escreverem em
   espanhol, responda em espanhol, natural, sem parecer tradução.
@@ -142,18 +153,53 @@ export function limparVazamento(texto: string): string {
     .trim();
 }
 
+/**
+ * Tira o cumprimento solto do começo da resposta.
+ *
+ * ⚠️ A tela JÁ abre com "Bom dia! Aqui é o suporte da Jay Academy". Quando o
+ * modelo emenda "Oi! ..." logo depois, a aluna é cumprimentada duas vezes em
+ * dois balões seguidos — o jeito mais rápido de parecer robô.
+ *
+ * A regra existe no prompt e o modelo ignora. Regra que depende de
+ * obediência de modelo pequeno não é regra: sai no código.
+ *
+ * ⚠️ Só tira o cumprimento SOLTO. "Oi, Renata!" fica — chamar pelo nome é
+ * justamente o que faz parecer gente, e era isso que a gente queria.
+ */
+export function tirarSaudacaoSolta(texto: string): string {
+  const limpo = texto.replace(
+    // ⚠️ O olhar-adiante por letra MAIÚSCULA é o que separa "Oi! Posso..." de
+    // "Oitenta reais": sem ele, a limpeza comeria o começo de palavras que só
+    // parecem uma saudação.
+    // ⚠️ Ponto de exclamação/final, NUNCA vírgula. "Oi, Renata!" tem vírgula
+    // porque o nome vem depois — e chamar pelo nome é justamente o que a gente
+    // quer. "Oi! Posso ajudar..." é cumprimento solto, e esse sai.
+    /^\s*(oi|ol[áa]|hey|opa|bom dia|boa tarde|boa noite)\s*[!.…]+\s*(?=[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ])/i,
+    ""
+  );
+  // Se sobrou só a saudação, não devolve vazio: melhor manter o que veio.
+  return limpo.trim() ? limpo.trim() : texto.trim();
+}
+
 /** A resposta pede uma pessoa? Devolve o texto limpo e a decisão. */
 export function lerResposta(bruta: string): {
   texto: string;
   precisaHumano: boolean;
 } {
   const precisaHumano = bruta.includes(MARCA_HUMANO);
-  const texto = limparVazamento(
-    bruta
-      .split(MARCA_HUMANO)
-      .join("")
-      // O modelo às vezes inventa variações do marcador; limpa as óbvias.
-      .replace(/\[\s*humano\s*\]/gi, "")
+  // ⚠️ As DUAS limpezas, encadeadas. Ao criar a da saudação eu troquei a do "na
+  // minha base" por ela sem perceber — e essa existe desde a primeira bateria de
+  // teste, quando a IA respondeu "não temos isso na base que eu conheço" pra
+  // uma aluna. Sumir uma proteção ao adicionar outra é o jeito mais silencioso
+  // de regredir.
+  const texto = tirarSaudacaoSolta(
+    limparVazamento(
+      bruta
+        .split(MARCA_HUMANO)
+        .join("")
+        // O modelo às vezes inventa variações do marcador; limpa as óbvias.
+        .replace(/\[\s*humano\s*\]/gi, "")
+    )
   );
   return { texto, precisaHumano };
 }

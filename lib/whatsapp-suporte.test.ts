@@ -7,6 +7,7 @@ import {
   numeroDoSuporte,
   NUMERO_PADRAO,
 } from "./whatsapp-suporte.ts";
+import { SEM_NOME } from "./nome-no-chat.ts";
 
 /* ── o número ───────────────────────────────────────────────────────────── */
 
@@ -79,4 +80,16 @@ test("a variável de ambiente ainda manda, se existir", () => {
   // Trocar o número passa a ser mudar uma variável, sem esperar deploy.
   assert.equal(numeroDoSuporte({ WHATSAPP_SUPORTE: "5511911112222" }), "5511911112222");
   assert.equal(numeroDoSuporte({ WHATSAPP_SUPORTE: "   " }), NUMERO_PADRAO);
+});
+
+test('"Sem nome ainda" não é nome de gente', () => {
+  // ⚠️ É o rótulo que o PAINEL usa enquanto a pessoa não se apresenta. Sem
+  // filtrar, o WhatsApp abria com "Oi! Sou Sem nome ainda." — e quem ia ler
+  // isso era ela.
+  const m = mensagemInicial(SEM_NOME, "abc12345-0000");
+  assert.ok(!m.includes("Sou"), m);
+  assert.match(m, /Vim do chat do site/);
+
+  const l = linkWhatsApp("5519998930861", { nome: SEM_NOME, conversaId: "abc123" })!;
+  assert.ok(!decodeURIComponent(l).includes("Sou"));
 });
