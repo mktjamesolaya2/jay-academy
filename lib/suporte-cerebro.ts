@@ -1,3 +1,9 @@
+import { problemaDaConversa } from "./whatsapp-suporte.ts";
+import {
+  passoDoEncaminhamento,
+  perguntaDoNome,
+  recadoDeEncaminhamento,
+} from "./protocolo.ts";
 import "server-only";
 import { randomUUID } from "node:crypto";
 import {
@@ -11,6 +17,8 @@ import {
   getConversa,
   salvarConversa,
   anotarLacuna,
+  contarUsoIA,
+  marcarLimiteEstourado,
   type Conversa,
 } from "./suporte-store";
 import {
@@ -86,12 +94,23 @@ export type RespostaSuporte =
       conversaId: string;
       /** Como a pessoa se chama — usado pra já escrever o nome dela no WhatsApp. */
       quem?: string;
+      /** Com o que ela chegou e o e-mail dela — vão escritos no WhatsApp. */
+      problema?: string;
+      email?: string;
       reply: string;
       precisaHumano: boolean;
       model?: string;
       provedor?: string;
     }
-  | { tipo: "erro"; status: number; erro: string; conversaId?: string; quem?: string };
+  | {
+      tipo: "erro";
+      status: number;
+      erro: string;
+      conversaId?: string;
+      quem?: string;
+      problema?: string;
+      email?: string;
+    };
 
 const FRASE_CHAMANDO = "Claro, já estou chamando alguém do time pra falar com você.";
 
@@ -124,7 +143,12 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
   // contando o problema — `nomeDaMensagem` devolve null e a gente segue sem
   // nome, sem insistir. James: não vale travar a pessoa num formulário.
   const primeiraDaAluna = !conversa.mensagens.some((m) => m.de === "aluno");
-  const nomeDito = primeiraDaAluna ? nomeDaMensagem(texto) : null;
+  // ⚠️ Também escuta o nome quando a IA ACABOU de pedir (`pediuNome`), antes
+  // de encaminhar. Sem esta parte, ela respondia "Renata Lima" no meio da
+  // conversa e o nome caía no chão — o encaminhamento seguia anônimo, que é
+  // exatamente o que perguntar o nome queria evitar.
+  const podeSerNome = primeiraDaAluna || !!conversa.pediuNome;
+  const nomeDito = podeSerNome ? nomeDaMensagem(texto) : null;
   if (nomeDito && conversa.quem === SEM_NOME) conversa.quem = nomeDito;
 
   conversa.mensagens.push({
@@ -339,6 +363,8 @@ ${fatos}`
             `[suporte] limite diário de ${provedor.nome} atingido: ${corpoErro.slice(0, 200)}`
           );
           limiteDiario = true;
+          // A tela do time precisa saber disso sem ninguém ler log.
+          await marcarLimiteEstourado().catch(() => {});
         } else {
           console.warn(`[suporte] ${model} falhou: ${r.status} ${corpoErro.slice(0, 120)}`);
         }
@@ -369,20 +395,65 @@ ${fatos}`
         texto: resposta,
         em: new Date().toISOString(),
       });
-      if (precisaHumano || humanoPorRegra) {
+      // ⚠️ Antes de passar pra uma pessoa, falta saber com quem ela está
+      // falando. A decisão é de código porque o protocolo depende dela.
+      // ⚠️ `pediuNome` também conta como "precisa humano": ele quer dizer
+      // "tem um encaminhamento parado esperando o nome". Sem esta parte, ela
+      // respondia "Renata" e o encaminhamento SUMIA — o modelo não pede pessoa
+      // de novo numa mensagem que só tem um nome, e ela ficava conversando com
+      // a IA achando que já tinha sido passada pra alguém.
+      const passo = passoDoEncaminhamento({
+        precisaHumano: precisaHumano || humanoPorRegra || !!conversa.pediuNome,
+        temNome: !!conversa.quem && conversa.quem !== SEM_NOME,
+        jaPediuNome: !!conversa.pediuNome,
+      });
+
+      if (passo === "pedir-nome") {
+        conversa.pediuNome = true;
+        // A resposta do modelo é substituída: ele já se despediu, e ainda falta
+        // uma pergunta. Duas falas na mesma mensagem confundem.
+        conversa.mensagens[conversa.mensagens.length - 1]!.texto = perguntaDoNome();
+        await salvarConversa(conversa);
+        await contarUsoIA().catch(() => {});
+        return {
+          tipo: "ok",
+          conversaId: id,
+          quem: undefined,
+          problema: problemaDaConversa(conversa.mensagens),
+          email: conversa.emailAluna,
+          reply: perguntaDoNome(),
+          // ⚠️ Ainda NÃO. O botão do WhatsApp aparecendo agora faria ela sair
+          // antes de dizer o nome — e o nome é o motivo de tudo isto.
+          precisaHumano: false,
+          model,
+          provedor: provedor.nome,
+        };
+      }
+
+      if (passo === "encaminhar") {
         conversa.aguardandoPessoa = true;
+        // O protocolo vai escrito, além de ir no botão: se ela fechar a página
+        // antes de clicar, o número continua com ela.
+        conversa.mensagens[conversa.mensagens.length - 1]!.texto =
+          recadoDeEncaminhamento(id);
         // A pergunta vai pra fila de lacunas — é o que ela ainda não sabe.
         await anotarLacuna(texto).catch(() => {});
         await avisarOTime(conversa, id);
       }
       await salvarConversa(conversa);
+      // ⚠️ Conta só quando a IA REALMENTE respondeu. Modelo que recusou ou
+      // devolveu rascunho não gastou resposta — contar aí faria a barra
+      // assustar por causa de erro nosso.
+      await contarUsoIA().catch(() => {});
 
       return {
         tipo: "ok",
         conversaId: id,
         quem: conversa.quem === SEM_NOME ? undefined : conversa.quem,
-        reply: resposta,
-        precisaHumano: precisaHumano || humanoPorRegra,
+        problema: problemaDaConversa(conversa.mensagens),
+        email: conversa.emailAluna,
+        reply: conversa.mensagens[conversa.mensagens.length - 1]!.texto,
+        precisaHumano: passo === "encaminhar",
         model,
         provedor: provedor.nome,
       };
@@ -407,6 +478,8 @@ ${fatos}`
     status: 503,
     conversaId: id,
     quem: conversa.quem === SEM_NOME ? undefined : conversa.quem,
+    problema: problemaDaConversa(conversa.mensagens),
+    email: conversa.emailAluna,
     erro: limiteDiario
       ? recadoDeLimite(provedor.nome)
       : tipo === "audio"

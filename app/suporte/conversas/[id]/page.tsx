@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Bot, Trash2, UserRound } from "lucide-react";
+import { ArrowLeft, Bot, Trash2 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { getConversa } from "@/lib/suporte-store";
@@ -8,6 +8,10 @@ import { SuporteResponder } from "@/components/suporte-responder";
 import { ConfirmButton } from "@/components/confirm-button";
 import { apagarConversaAction } from "@/app/suporte/actions";
 import { espera, minutosDesde } from "@/lib/caixa-conversas";
+import { FichaAluna } from "@/components/ficha-aluna";
+import { protocoloDe } from "@/lib/protocolo";
+import { linkWhatsApp, numeroDoSuporte, problemaDaConversa } from "@/lib/whatsapp-suporte";
+import { formatDateTimeBR } from "@/lib/format-date";
 
 /**
  * Uma conversa, do lado do time.
@@ -43,7 +47,7 @@ export default async function ConversaPage({
       <main className="flex-1 min-w-0 overflow-x-hidden">
         <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-5 lg:px-10 lg:pt-8 lg:pb-6">
           <Link
-            href="/suporte/conversas"
+            href="/suporte"
             className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-500 transition hover:text-white"
           >
             <ArrowLeft size={13} strokeWidth={2.2} />
@@ -53,12 +57,14 @@ export default async function ConversaPage({
             <div className="min-w-0">
               <h1 className="flex flex-wrap items-center gap-2.5 text-2xl font-semibold tracking-[-0.02em] text-white">
                 {c.quem}
-                {c.aguardandoPessoa && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-[11px] font-semibold text-amber-200">
-                    <UserRound size={10} strokeWidth={2.6} />
-                    esperando você
-                  </span>
-                )}
+                {/* ⚠️ Aqui havia um "esperando você" em amarelo. James: *"não
+                    quero notificação de cliente não respondido"* — e ele tem
+                    razão: quem responde responde no WhatsApp, então cobrar
+                    resposta nesta tela é cobrar por uma coisa que não acontece
+                    aqui. A situação está escrita na ficha, sem tom de dívida. */}
+                <span className="font-mono text-[13px] font-semibold tracking-wider text-[#AC9751]">
+                  {protocoloDe(c.id)}
+                </span>
               </h1>
             </div>
 
@@ -69,7 +75,7 @@ export default async function ConversaPage({
               action={async () => {
                 "use server";
                 await apagarConversaAction(id);
-                redirect("/suporte/conversas");
+                redirect("/suporte");
               }}
               className="shrink-0"
             >
@@ -83,18 +89,32 @@ export default async function ConversaPage({
             </form>
           </div>
 
-          <p className="mt-1 text-sm text-neutral-500">
-            {c.emailAluna ? (
-              <span className="font-mono text-[12.5px]">{c.emailAluna}</span>
-            ) : (
-              "sem e-mail informado"
-            )}
-            {ultima && <> · última mensagem {espera(esperandoHa)}</>}
-          </p>
+          {ultima && (
+            <p className="mt-1 text-sm text-neutral-500">
+              última mensagem {espera(esperandoHa)}
+            </p>
+          )}
         </header>
 
-        <section className="px-5 py-6 lg:px-10 lg:py-8">
-          <div className="mx-auto flex max-w-2xl flex-col rounded-2xl border border-[#1f1f1f] bg-[#0d0d0d]">
+        <section className="flex flex-col gap-5 px-5 py-6 lg:flex-row lg:items-start lg:gap-6 lg:px-8 lg:py-7">
+          {/* ⚠️ A ficha vem ANTES da conversa na ordem do código, então no
+              celular ela aparece em cima — que é o que ele quer ver primeiro
+              quando chega com um protocolo na mão. */}
+          <FichaAluna
+            protocolo={protocoloDe(c.id)}
+            nome={c.quem}
+            email={c.emailAluna}
+            quando={formatDateTimeBR(c.criadaEm)}
+            situacao={c.aguardandoPessoa ? "Encaminhada pra uma pessoa" : "A I.A. está atendendo"}
+            whatsapp={linkWhatsApp(numeroDoSuporte(), {
+              nome: c.quem,
+              problema: problemaDaConversa(c.mensagens),
+              email: c.emailAluna,
+              conversaId: c.id,
+            })}
+          />
+
+          <div className="flex min-w-0 flex-1 flex-col rounded-2xl border border-[#1f1f1f] bg-[#0d0d0d]">
             <div className="max-h-[60vh] flex-1 space-y-2.5 overflow-y-auto px-4 py-4">
               {c.mensagens.map((m, i) => (
                 <div

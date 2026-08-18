@@ -1,5 +1,6 @@
 import "server-only";
 import { kvGet, kvSet } from "./storage";
+import { chaveDoDia } from "./uso-ia";
 
 /**
  * Base de conhecimento e conversas do suporte.
@@ -28,6 +29,14 @@ export type Conversa = {
   mensagens: Mensagem[];
   /** IA calada, esperando alguém do time assumir. */
   aguardandoPessoa: boolean;
+  /**
+   * Já perguntou o nome antes de encaminhar.
+   *
+   * ⚠️ Existe pra NÃO perguntar duas vezes. Sem esta marca, quem não quer dizer
+   * o nome ficaria preso num laço: pede pessoa → "qual seu nome?" → pede pessoa
+   * de novo → "qual seu nome?".
+   */
+  pediuNome?: boolean;
   /**
    * O e-mail que a aluna deu — fica guardado na conversa.
    *
@@ -187,4 +196,35 @@ export async function removerLacuna(pergunta: string): Promise<void> {
     CHAVE_LACUNAS,
     todas.filter((l) => l.pergunta !== pergunta)
   );
+}
+
+/* ── quanto da cota grátis já foi hoje ───────────────────────────────────── */
+
+type UsoDoDia = { usadas: number; estourou: boolean };
+
+/**
+ * Soma uma resposta da IA no contador do dia.
+ *
+ * ⚠️ Isto é um velocímetro, não uma contabilidade. Se duas mensagens chegarem
+ * no mesmo instante, uma pode não ser contada (ler-somar-gravar não é atômico
+ * no arquivo local). Tudo bem: o número existe pra alguém olhar e pensar
+ * "opa, tá acabando", e um a menos não muda essa conclusão. Quem diz a verdade
+ * sobre a cota ter acabado é o 429 do fornecedor, não esta conta.
+ */
+export async function contarUsoIA(agora = new Date()): Promise<void> {
+  const chave = chaveDoDia(agora);
+  const atual = (await kvGet<UsoDoDia>(chave)) ?? { usadas: 0, estourou: false };
+  await kvSet(chave, { ...atual, usadas: atual.usadas + 1 });
+}
+
+/** O fornecedor devolveu 429 — a cota de hoje acabou de verdade. */
+export async function marcarLimiteEstourado(agora = new Date()): Promise<void> {
+  const chave = chaveDoDia(agora);
+  const atual = (await kvGet<UsoDoDia>(chave)) ?? { usadas: 0, estourou: false };
+  if (atual.estourou) return;
+  await kvSet(chave, { ...atual, estourou: true });
+}
+
+export async function lerUsoIA(agora = new Date()): Promise<UsoDoDia> {
+  return (await kvGet<UsoDoDia>(chaveDoDia(agora))) ?? { usadas: 0, estourou: false };
 }

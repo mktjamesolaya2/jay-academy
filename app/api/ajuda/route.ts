@@ -8,7 +8,7 @@ import {
 } from "@/lib/rate-limit";
 import { responder } from "@/lib/suporte-cerebro";
 import { conversaPraAluna } from "@/lib/ajuda-visitante";
-import { linkWhatsApp, numeroDoSuporte } from "@/lib/whatsapp-suporte";
+import { linkWhatsApp, numeroDoSuporte, problemaDaConversa } from "@/lib/whatsapp-suporte";
 import { getConversa } from "@/lib/suporte-store";
 
 /**
@@ -85,6 +85,8 @@ export async function POST(req: Request) {
     ? linkWhatsApp(numeroDoSuporte(), {
         conversaId: r.conversaId,
         nome: r.quem,
+        problema: r.tipo === "calada" ? undefined : r.problema,
+        email: r.tipo === "calada" ? undefined : r.email,
       })
     : null;
 
@@ -143,6 +145,8 @@ export async function GET(req: Request) {
     ...conversaPraAluna(conversa),
     whatsapp: linkWhatsApp(numeroDoSuporte(), {
       nome: conversa.quem,
+      problema: problemaDaConversa(conversa.mensagens),
+      email: conversa.emailAluna,
       conversaId: conversa.id,
     }),
   });
