@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, CheckCheck, MessageCircle, Mic, Paperclip, Send, X } from "lucide-react";
 import { Medalhao } from "@/components/marca-jayo";
+import { faltaEsperar } from "@/lib/ritmo-resposta";
 
 type Msg = {
   de: "aluno" | "atendente";
@@ -112,6 +113,16 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
   const [lupa, setLupa] = useState<string | null>(null);
   const [gravando, setGravando] = useState(false);
   const [segundos, setSegundos] = useState(0);
+  /**
+   * ⚠️ O id vive também num ref porque o envio roda dentro de um laço. Lendo do
+   * estado, a segunda mensagem da fila usaria o valor velho (null) e ABRIRIA
+   * UMA CONVERSA NOVA — a aluna mandaria duas mensagens e o time veria duas
+   * conversas separadas, cada uma pela metade.
+   */
+  const idRef = useRef<string | null>(null);
+  /** As mensagens esperando a vez. */
+  const fila = useRef<Array<{ texto: string; anexo: Anexo | null }>>([]);
+  const processando = useRef(false);
   const gravador = useRef<MediaRecorder | null>(null);
   const pedacos = useRef<BlobPart[]>([]);
   const fim = useRef<HTMLDivElement>(null);
@@ -226,16 +237,25 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
 
   function enviar(e: React.FormEvent) {
     e.preventDefault();
-    void enviarTexto(texto.trim());
+    enfileirar(texto.trim());
   }
 
-  async function enviarTexto(t: string) {
-    // Print sem legenda é comum: a pessoa manda só a imagem.
-    if ((!t && !anexo) || pensando) return;
+  /**
+   * Põe a mensagem na fila e mostra na hora.
+   *
+   * ⚠️ Antes daqui, mandar uma segunda mensagem antes da resposta era
+   * BLOQUEADO. Mas ninguém conversa assim: a pessoa manda "bom dia" e já
+   * emenda o problema. Deixar em paralelo também não serve — duas gravações ao
+   * mesmo tempo na mesma conversa se sobrescrevem, e uma das mensagens SOME.
+   * Fila resolve os dois: aparece na hora, chega em ordem, não perde nada.
+   */
+  function enfileirar(t: string) {
+    if (!t && !anexo) return;
     setErro(null);
     setTexto("");
     const enviado = anexo;
     setAnexo(null);
+
     setMsgs((m) => [
       ...m,
       {
@@ -248,21 +268,76 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         anexo: enviado ? { tipo: enviado.tipo, dataUrl: enviado.dataUrl } : undefined,
       },
     ]);
+
+    fila.current.push({ texto: t, anexo: enviado });
+    void bombear();
+  }
+
+  /**
+   * Transforma um arquivo em anexo pronto pra mandar.
+   *
+   * ⚠️ Usado pelo clipe E pelo Ctrl+V. Um só caminho: se fossem dois, o limite
+   * de tamanho valeria num e no outro não — e o print colado é justamente o
+   * que costuma ser grande.
+   */
+  function pegarArquivo(f: File | null | undefined) {
+    if (!f) return;
+    if (f.size > 4 * 1024 * 1024) {
+      setErro("Essa imagem é grande demais (máximo 4 MB).");
+      return;
+    }
+    const leitor = new FileReader();
+    leitor.onload = () =>
+      setAnexo({
+        tipo: f.type.startsWith("audio") ? "audio" : "imagem",
+        dataUrl: String(leitor.result),
+        nome: f.name || "Print colado",
+      });
+    leitor.readAsDataURL(f);
+  }
+
+  /** Manda uma de cada vez, até a fila esvaziar. */
+  async function bombear() {
+    if (processando.current) return;
+    processando.current = true;
     setPensando(true);
+    try {
+      while (fila.current.length) {
+        const item = fila.current.shift()!;
+        await mandarUma(item);
+      }
+    } finally {
+      processando.current = false;
+      setPensando(false);
+    }
+  }
+
+  async function mandarUma({ texto: t, anexo: enviado }: { texto: string; anexo: Anexo | null }) {
+    const comecou = Date.now();
     try {
       const r = await fetch("/api/ajuda", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          conversaId,
+          conversaId: idRef.current,
           texto: t,
           anexos: enviado ? [{ tipo: enviado.tipo, dataUrl: enviado.dataUrl }] : [],
         }),
       });
       const d = await r.json();
-      if (d.conversaId) setConversaId(d.conversaId);
+      if (d.conversaId) {
+        idRef.current = d.conversaId;
+        setConversaId(d.conversaId);
+      }
       if (d.comPessoa) setComPessoa(true);
       if (d.whatsapp) setWhatsapp(d.whatsapp);
+
+      // ⚠️ O ritmo humano. Resposta em 400ms entrega que é robô — e quem acabou
+      // de contar um problema estranha ser respondida antes de terminar de ler
+      // o que escreveu. É PISO: se já demorou, aparece na hora.
+      const falta = faltaEsperar(Date.now() - comecou);
+      if (falta > 0) await new Promise((ok) => setTimeout(ok, falta));
+
       if (d.reply) {
         setMsgs((m) => [
           ...m,
@@ -280,8 +355,6 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
       }
     } catch {
       setErro("Sua internet oscilou. Tenta mandar de novo?");
-    } finally {
-      setPensando(false);
     }
   }
 
@@ -322,7 +395,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
             {SUGESTOES.map((s) => (
               <button
                 key={s}
-                onClick={() => void enviarTexto(s)}
+                onClick={() => enfileirar(s)}
                 className="rounded-full border border-[#AC9751]/35 px-3.5 py-1.5 text-[12.5px] text-[#F4F1EA]/75 transition hover:border-[#AC9751] hover:bg-[#AC9751]/10 hover:text-[#F4F1EA]"
               >
                 {s}
@@ -552,19 +625,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
               onChange={(e) => {
                 const f = e.target.files?.[0];
                 e.target.value = "";
-                if (!f) return;
-                if (f.size > 4 * 1024 * 1024) {
-                  setErro("Esse arquivo é grande demais (máximo 4 MB).");
-                  return;
-                }
-                const leitor = new FileReader();
-                leitor.onload = () =>
-                  setAnexo({
-                    tipo: f.type.startsWith("audio") ? "audio" : "imagem",
-                    dataUrl: String(leitor.result),
-                    nome: f.name,
-                  });
-                leitor.readAsDataURL(f);
+                pegarArquivo(f);
               }}
             />
           </label>
@@ -572,6 +633,17 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
           <input
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
+            // ⚠️ Ctrl+V com print na área de transferência. É o caminho mais
+            // natural de quem tira print no computador — sem isso a pessoa
+            // precisa salvar em arquivo antes, e muita gente desiste no meio.
+            onPaste={(e) => {
+              const arq = Array.from(e.clipboardData.files).find((f) =>
+                f.type.startsWith("image/")
+              );
+              if (!arq) return; // texto colado segue o caminho normal
+              e.preventDefault();
+              pegarArquivo(arq);
+            }}
             placeholder="Escreve aqui…"
             // ⚠️ 16px de fonte no celular. Abaixo disso o iPhone dá zoom sozinho
             // ao focar o campo e a tela "pula" — parece bug.
@@ -585,7 +657,9 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
           {texto.trim() || anexo ? (
             <button
               type="submit"
-              disabled={pensando}
+              // ⚠️ SEM `disabled={pensando}`: era isso que impedia mandar a
+              // segunda mensagem antes da resposta. Agora a fila cuida da
+              // ordem, e a pessoa escreve no ritmo dela.
               aria-label="Enviar"
               className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#AC9751] text-[#101820] transition hover:brightness-110 disabled:opacity-30"
             >
@@ -595,7 +669,6 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
             <button
               type="button"
               onClick={comecarAGravar}
-              disabled={pensando}
               aria-label="Gravar áudio"
               title="Gravar um áudio"
               className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#AC9751]/15 text-[#AC9751] transition hover:bg-[#AC9751] hover:text-[#101820] disabled:opacity-30"
