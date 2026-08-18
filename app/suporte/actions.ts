@@ -11,6 +11,8 @@ import {
   removerLacuna,
 } from "@/lib/suporte-store";
 import { marcarReenviado } from "@/lib/reenvio-store";
+import { registrarCompra } from "@/lib/hotmart-store";
+import type { LinhaDeCompra } from "@/lib/hotmart-csv";
 
 /** Salva o que a IA sabe. É aqui que ela é treinada. */
 export async function salvarConhecimentoAction(
@@ -110,4 +112,48 @@ export async function marcarReenviadoAction(email: string): Promise<{ ok: boolea
   revalidatePath("/suporte");
   revalidatePath("/suporte/conversas");
   return { ok: true };
+}
+
+/**
+ * Grava o histórico de vendas importado do CSV da Hotmart.
+ *
+ * ⚠️ Grava no MESMO lugar do webhook (`registrarCompra`), de propósito. Duas
+ * fontes escrevendo em lugares diferentes viraria duas verdades sobre o acesso
+ * da mesma aluna — e a consulta teria que escolher uma.
+ *
+ * ⚠️ Reimportar é seguro: `registrarCompra` atualiza a compra existente em vez
+ * de duplicar. Isso importa porque o caminho natural é subir o relatório de
+ * novo daqui a um mês.
+ */
+export async function importarVendasAction(
+  comprasJson: string
+): Promise<{ ok: boolean; gravadas?: number; erro?: string }> {
+  try {
+    await requireAdmin();
+    const linhas = JSON.parse(comprasJson) as LinhaDeCompra[];
+    if (!Array.isArray(linhas)) return { ok: false, erro: "Arquivo não reconhecido." };
+    if (linhas.length > 20_000) {
+      return { ok: false, erro: "Arquivo grande demais — exporta em períodos menores." };
+    }
+
+    const agora = new Date().toISOString();
+    let gravadas = 0;
+    for (const l of linhas) {
+      if (!l?.email || !l?.compradaEm) continue;
+      await registrarCompra({
+        email: l.email,
+        nome: l.nome,
+        produto: l.produto || "curso",
+        compradaEm: l.compradaEm,
+        situacao: l.situacao || "aprovada",
+        atualizadaEm: agora,
+      });
+      gravadas++;
+    }
+    await logActivity("wp.edit", "Suporte", `${gravadas} vendas importadas da Hotmart`);
+    revalidatePath("/suporte");
+    return { ok: true, gravadas };
+  } catch (e) {
+    return { ok: false, erro: e instanceof Error ? e.message : "Erro ao importar" };
+  }
 }

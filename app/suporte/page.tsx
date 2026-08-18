@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Search, Settings2, Trash2 } from "lucide-react";
+import { FileUp, Search, Settings2, Trash2 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { ConfirmButton } from "@/components/confirm-button";
 import { PainelUso } from "@/components/painel-uso";
@@ -69,13 +69,22 @@ export default async function CaixaPage({
                     : `${todas.length} conversas.`}
               </p>
             </div>
-            <Link
-              href="/suporte/ajustes"
-              className="inline-flex shrink-0 items-center gap-1.5 text-[12.5px] font-semibold text-neutral-500 transition hover:text-white"
-            >
-              <Settings2 size={13} strokeWidth={2.2} />
-              Treinar a I.A.
-            </Link>
+            <div className="flex shrink-0 items-center gap-4">
+              <Link
+                href="/suporte/importar"
+                className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-500 transition hover:text-white"
+              >
+                <FileUp size={13} strokeWidth={2.2} />
+                Importar vendas
+              </Link>
+              <Link
+                href="/suporte/ajustes"
+                className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-500 transition hover:text-white"
+              >
+                <Settings2 size={13} strokeWidth={2.2} />
+                Treinar a I.A.
+              </Link>
+            </div>
           </div>
         </header>
 
