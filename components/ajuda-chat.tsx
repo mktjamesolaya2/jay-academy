@@ -376,11 +376,14 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
             Alinhado embaixo ele descia junto com o horário e parecia solto. */}
         <div className="flex items-start gap-2.5">
           <Medalhao tamanho={30} />
-          <div>
-            <div className="relative max-w-[72%] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-[#101820] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)]">
+          {/* ⚠️ `min-w-0 flex-1` é o que faz o balão CRESCER. Antes o `72%`
+              media contra um contêiner de largura automática — que por sua vez
+              se ajustava ao conteúdo. A conta era circular, e o texto quebrava
+              cedo com meia tela sobrando do lado. */}
+          <div className="flex min-w-0 flex-1 flex-col">
+            <div className="relative w-fit max-w-[86%] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-[#101820] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)]">
               <Bico dela={false} />
-              {saudacao}! Aqui é o suporte da Jay Academy.
-              {"\n"}Como você se chama?
+              {saudacao}! Aqui é o suporte da Jay Academy. Como você se chama?
             </div>
             <p className="mt-1 pl-1 text-[11px] text-[#F4F1EA]/35">{horaAbertura}</p>
           </div>
@@ -420,9 +423,11 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
                 ) : (
                   <span aria-hidden className="w-[30px] shrink-0" />
                 ))}
-              <div className={daAluna ? "flex flex-col items-end" : ""}>
+              <div
+                className={`flex min-w-0 flex-1 flex-col ${daAluna ? "items-end" : ""}`}
+              >
                 <div
-                  className={`relative max-w-[72%] overflow-hidden text-[15px] leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)] ${
+                  className={`relative w-fit max-w-[86%] overflow-hidden text-[15px] leading-relaxed whitespace-pre-wrap break-words [overflow-wrap:anywhere] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)] ${
                     // ⚠️ Com imagem, o balão perde o recheio: a foto encosta na
                     // borda, como no WhatsApp. Com texto, volta o respiro.
                     m.anexo?.tipo === "imagem" ? "p-1" : "px-4 py-3"
