@@ -200,3 +200,12 @@ test("resposta vazia conta como rascunho — não manda nada pra aluna", () => {
 test("citar bloco interno nosso é vazamento", () => {
   assert.equal(pareceRaciocinio("Segundo a SUA BASE DE CONHECIMENTO, o acesso é de 12 meses"), true);
 });
+
+/* ── quem somos, e cumprimentar uma vez ─────────────────────────────────── */
+
+test("proíbe cumprimentar de novo no meio da conversa", () => {
+  // ⚠️ Caso real de um teste do James: a 2ª resposta veio "Oi! Aqui é do
+  // suporte da Jay Academy..." — a pessoa já estava na conversa. Repetir a
+  // apresentação é o sinal mais rápido de que quem responde é máquina.
+  assert.match(montarPrompt("x"), /Cumprimente UMA vez só/i);
+});
