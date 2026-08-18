@@ -164,31 +164,40 @@ export async function vendasDoEmail(email: string): Promise<VendaHotmart[]> {
  * Também tenta as duas formas de mandar os parâmetros (na URL e no corpo),
  * porque a Hotmart aceita uma delas dependendo da versão.
  */
-export async function testarCredenciais(): Promise<{
+export async function testarCredenciais(
+  jogo: JogoDeCredenciais = "principal"
+): Promise<{
   ok: boolean;
   erro?: string;
   formato?: Record<string, unknown>;
   tentativas?: Array<{ como: string; status: number; resposta: string }>;
 }> {
-  if (!temCredenciais()) {
+  const sufixo = jogo === "segunda" ? "_2" : "";
+  const c = credenciais(jogo);
+  if (!(c.id && c.secret && c.basic)) {
+    // ⚠️ Diz QUAL das três está faltando, com o nome exato da variável. Um
+    // "faltam credenciais" genérico faz a pessoa conferir as três de novo sem
+    // saber qual — e o erro mais comum é justamente uma só, com nome errado.
     return {
       ok: false,
-      erro: "Faltam HOTMART_CLIENT_ID, SECRET ou BASIC.",
+      erro: `Faltam variáveis. Confira os nomes na Vercel: HOTMART_CLIENT_ID${sufixo}, HOTMART_CLIENT_SECRET${sufixo}, HOTMART_BASIC${sufixo}.`,
       formato: {
-        temClientId: !!process.env.HOTMART_CLIENT_ID,
-        temSecret: !!process.env.HOTMART_CLIENT_SECRET,
-        temBasic: !!process.env.HOTMART_BASIC,
+        [`temHOTMART_CLIENT_ID${sufixo}`]: !!c.id,
+        [`temHOTMART_CLIENT_SECRET${sufixo}`]: !!c.secret,
+        [`temHOTMART_BASIC${sufixo}`]: !!c.basic,
+        dica: "Variável nova na Vercel só entra depois de um REDEPLOY, e precisa estar marcada no ambiente Production.",
       },
     };
   }
 
-  const id = (process.env.HOTMART_CLIENT_ID ?? "").trim();
-  const secret = (process.env.HOTMART_CLIENT_SECRET ?? "").trim();
-  const basicBruto = (process.env.HOTMART_BASIC ?? "").trim();
+  const id = c.id;
+  const secret = c.secret;
+  const basicBruto = (process.env[`HOTMART_BASIC${sufixo}`] ?? "").trim();
   const basicSoValor = basicBruto.replace(/^basic\s+/i, "");
   const calculado = Buffer.from(`${id}:${secret}`).toString("base64");
 
   const formato = {
+    credencial: jogo,
     clientIdTamanho: id.length,
     secretTamanho: secret.length,
     basicComecaComPalavraBasic: /^basic\s/i.test(basicBruto),
@@ -198,7 +207,7 @@ export async function testarCredenciais(): Promise<{
   };
 
   const tentativas: Array<{ como: string; status: number; resposta: string }> = [];
-  for (const f of formasDePedirToken()) {
+  for (const f of formasDePedirToken(jogo)) {
     try {
       const r = await tentarForma(f);
       const texto = await r.text().catch(() => "");

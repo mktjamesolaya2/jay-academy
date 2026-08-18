@@ -20,7 +20,13 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Precisa estar logado" }, { status: 403 });
   }
 
-  const teste = await testarCredenciais();
+  // ⚠️ Só ESCOLHE qual jogo de credenciais usar — o segredo continua em
+  // variável de ambiente. Aceitar credencial pela URL deixaria o client_secret
+  // gravado no log de acesso.
+  const url0 = new URL(req.url);
+  const jogo = url0.searchParams.get("cred") === "2" ? "segunda" : "principal";
+
+  const teste = await testarCredenciais(jogo);
   if (!teste.ok) {
     return NextResponse.json(
       {
@@ -33,10 +39,6 @@ export async function GET(req: Request) {
     );
   }
 
-  const url0 = new URL(req.url);
-  // ⚠️ Só ESCOLHE qual jogo usar — o segredo continua em variável de ambiente.
-  // Aceitar credencial pela URL deixaria o client_secret no log de acesso.
-  const jogo = url0.searchParams.get("cred") === "2" ? "segunda" : "principal";
   if (url0.searchParams.get("sondar") === "1") {
     const { sondar } = await import("@/lib/hotmart-sonda");
     return NextResponse.json({
