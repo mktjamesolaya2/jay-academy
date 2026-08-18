@@ -21,6 +21,14 @@ import {
 export type Atalho = {
   titulo: string;
   descricao: string;
+  /**
+   * O rótulo dentro do ladrilho.
+   *
+   * ⚠️ No formato de grade o ladrilho tem ~135px e NÃO cabe a descrição. Sem um
+   * rótulo próprio, "James Olaya" ficaria sozinho e ninguém saberia que é o
+   * site dele — a descrição era o que explicava.
+   */
+  curto?: string;
   href: string;
   /** Abre em outra aba: é site/conversa que não é esta página. */
   externo?: boolean;
@@ -38,7 +46,7 @@ export const GRUPOS: Array<{ titulo: string; itens: Atalho[] }> = [
     itens: [
       { titulo: "PMU CLASS", descricao: "Seus cursos online", href: "/pmuclass", Icone: MonitorPlay },
       { titulo: "Formações presenciais", descricao: "Jay Academy", href: "/academy", Icone: GraduationCap },
-      { titulo: "James Olaya", descricao: "O site do James", href: "/jamesolaya", Icone: UserRound },
+      { titulo: "James Olaya", descricao: "O site do James", curto: "Site do James", href: "/jamesolaya", Icone: UserRound },
     ],
   },
   {
@@ -47,6 +55,7 @@ export const GRUPOS: Array<{ titulo: string; itens: Atalho[] }> = [
       {
         titulo: "Clínica James Olaya",
         descricao: "Agendar procedimento",
+        curto: "Agendar na clínica",
         href: "https://api.whatsapp.com/send/?phone=5519971450311&text=Ol%C3%A1%21+Vim+do+Instagram.+Gostaria+de+agendar+procedimentos+na+Cl%C3%ADnica+James+Olaya.&type=phone_number&app_absent=0",
         externo: true,
         Icone: CalendarHeart,
@@ -54,6 +63,7 @@ export const GRUPOS: Array<{ titulo: string; itens: Atalho[] }> = [
       {
         titulo: "Conhecer os cursos",
         descricao: "Falar no WhatsApp",
+        curto: "Conhecer cursos",
         href: "https://wa.me/5519971634567?text=Oi%21%20Quero%20conhecer%20os%20cursos%20online%20da%20JayAcademy",
         externo: true,
         Icone: Sparkles,
