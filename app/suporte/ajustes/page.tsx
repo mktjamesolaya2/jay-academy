@@ -6,11 +6,18 @@ import { canEdit, getCurrentUser } from "@/lib/auth";
 import { getConhecimento, listarLacunas } from "@/lib/suporte-store";
 import { SuporteConhecimento } from "@/components/suporte-conhecimento";
 import { SuporteLacunas } from "@/components/suporte-lacunas";
+import { SuporteChat } from "@/components/suporte-chat";
 
 /**
  * O que a IA sabe, e o que ela ainda não sabe.
  *
- * ⚠️ Isto ficava na mesma tela do chat e o James pediu pra tirar de lá — mas
+ * ⚠️ O chat de TREINO mora aqui agora. Ele ficava em `/suporte`, e James
+ * pediu: *"não quero isso de conversa teste... quero que as conversas
+ * apareçam direto aqui já mesmo"*. O portal é pra ficar de olho nas alunas;
+ * treinar é outra tarefa, e o lugar dela é ao lado da base de conhecimento —
+ * testa, vê o que saiu errado, corrige a base na mesma tela.
+ *
+ * ⚠️ A base ficava na mesma tela do chat e o James pediu pra tirar de lá — mas
  * **não pra apagar**: é aqui que ela é treinada. Fica a um clique, em "Ajustes",
  * pra tela da conversa ser só a conversa.
  */
@@ -67,6 +74,22 @@ export default async function SuporteAjustesPage() {
               O que ela ainda não sabe
             </h2>
             <SuporteLacunas lacunas={lacunas} />
+          </div>
+
+          {/* ⚠️ O chat de treino ocupa a largura toda, embaixo: é onde se
+              testa o efeito do que foi escrito ali em cima. Testar e
+              corrigir na MESMA tela é o que fecha o ciclo — separados, a
+              pessoa testa, anota num papel e esquece de voltar. */}
+          <div className="lg:col-span-2">
+            <h2 className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              Testar como se fosse uma aluna
+            </h2>
+            <div className="max-w-2xl">
+              <SuporteChat />
+            </div>
+            <p className="mt-2.5 max-w-2xl text-[12px] leading-relaxed text-neutral-500">
+              Esta conversa é de teste e não aparece na lista de alunas.
+            </p>
           </div>
         </section>
       </main>

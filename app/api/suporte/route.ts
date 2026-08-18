@@ -48,6 +48,7 @@ export async function POST(req: Request) {
     // Marca a conversa como treino, pra não se misturar com aluna de verdade
     // na caixa de entrada do time.
     quem: "Teste",
+    teste: true,
   });
 
   if (r.tipo === "erro") {

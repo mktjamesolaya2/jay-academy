@@ -1,141 +1,146 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { KeyRound, MessagesSquare, Settings2 } from "lucide-react";
+import { KeyRound, Settings2, UserRound } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { canEdit, getCurrentUser } from "@/lib/auth";
-import { SuporteChat } from "@/components/suporte-chat";
-import { listarReenvios } from "@/lib/reenvio-store";
 import { listarConversas } from "@/lib/suporte-store";
-import { ordenarCaixa, quantosEsperando } from "@/lib/caixa-conversas";
+import { ordenarCaixa, quantosEsperando, espera } from "@/lib/caixa-conversas";
+import { listarReenvios } from "@/lib/reenvio-store";
 
 /**
- * Suporte WhatsApp — a tela é **só a conversa**.
+ * A caixa de entrada do time — **a tela principal do suporte**.
  *
- * ⚠️ Aqui tinha também o editor da base de conhecimento, a lista do que ela não
- * sabe e um aviso grande de "não está conectado". James: *"não quero isso aqui.
- * Apenas o chat eu quero"*.
+ * ⚠️ James: *"não quero isso de conversa teste, nem de aluna esperando
+ * resposta; quero que as conversas apareçam direto aqui já mesmo"*. O chat
+ * de treino saiu daqui pra `/suporte/ajustes`, junto com a base — é lá que
+ * a IA é treinada, e o portal é pra **ficar de olho** nas conversas.
  *
- * Nada disso foi apagado — mudou de lugar, pra `/suporte/ajustes`. Tirar a
- * capacidade seria pior do que a poluição: é ali que ela é treinada.
+ * ⚠️ A ordem **não** é a mais recente primeiro. Quem espera uma pessoa vem no
+ * topo, e entre eles o que espera há mais tempo — porque é essa aluna que está
+ * prestes a desistir. A regra é testada em `lib/caixa-conversas.ts`.
  */
 
 export const dynamic = "force-dynamic";
 
-export default async function SuportePage() {
+export default async function CaixaPage() {
   const me = await getCurrentUser();
   if (!me) redirect("/login?redirect=/suporte");
   if (!canEdit(me)) redirect("/dashboard");
 
-  // Só aparece se tiver algo na fila — com ela vazia, a tela segue só o chat.
-  const reenvios = await listarReenvios().catch(() => []);
-
-  // ⚠️ Quantas alunas de verdade estão esperando resposta. Isto precisa estar
-  // NA CARA: a conversa nasce em `/ajuda`, e sem um número aqui ninguém do time
-  // descobriria que tem gente parada esperando — o sino toca uma vez e some.
-  const esperando = quantosEsperando(
-    ordenarCaixa(await listarConversas().catch(() => []))
+  // ⚠️ Conversa de treino NÃO entra: misturada com aluna de verdade, ela faz
+  // o time perder a de verdade de vista — e foi o que o James viu na tela.
+  const linhas = ordenarCaixa(
+    (await listarConversas().catch(() => [])).filter((c) => !c.teste)
   );
+  const reenvios = (await listarReenvios().catch(() => [])).length;
+  const esperando = quantosEsperando(linhas);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
       <Sidebar />
 
       <main className="flex-1 min-w-0 overflow-x-hidden">
-        <header className="flex items-start justify-between gap-4 border-b border-[#1f1f1f] px-5 pt-16 pb-5 lg:px-10 lg:pt-8 lg:pb-6">
-          <div>
+        <header className="border-b border-[#1f1f1f] px-5 pt-16 pb-5 lg:px-10 lg:pt-8 lg:pb-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <h1 className="text-2xl font-semibold tracking-[-0.02em] text-white">
-              Suporte WhatsApp
+              Suporte
             </h1>
-            <p className="mt-1 text-sm text-neutral-500">
-              Converse como se fosse uma aluna
-            </p>
+            <div className="flex shrink-0 items-center gap-4">
+              <Link
+                href="/suporte/reenvios"
+                className={`inline-flex items-center gap-1.5 text-[12.5px] font-semibold transition ${
+                  reenvios > 0
+                    ? "text-amber-300 hover:text-amber-200"
+                    : "text-neutral-500 hover:text-white"
+                }`}
+              >
+                <KeyRound size={13} strokeWidth={2.2} />
+                Liberar acesso
+                {reenvios > 0 && (
+                  <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[10.5px] leading-none">
+                    {reenvios}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/suporte/ajustes"
+                className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-500 transition hover:text-white"
+              >
+                <Settings2 size={13} strokeWidth={2.2} />
+                Treinar a I.A.
+              </Link>
+            </div>
           </div>
-          <div className="flex shrink-0 items-center gap-4">
-            <Link
-              href="/suporte/conversas"
-              className={`inline-flex items-center gap-1.5 text-[12.5px] font-semibold transition ${
-                esperando > 0
-                  ? "text-amber-300 hover:text-amber-200"
-                  : "text-neutral-500 hover:text-white"
-              }`}
-            >
-              <MessagesSquare size={13} strokeWidth={2.2} />
-              Conversas
-              {esperando > 0 && (
-                <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[10.5px] leading-none">
-                  {esperando}
-                </span>
-              )}
-            </Link>
-            {/* ⚠️ A liberação de acesso ganhou tela própria: é a tarefa mais
-                repetida do time, e ficar escondida numa caixa que só
-                aparecia quando tinha item fazia ninguém saber que ela
-                existe. */}
-            <Link
-              href="/suporte/reenvios"
-              className={`inline-flex items-center gap-1.5 text-[12.5px] font-semibold transition ${
-                reenvios.length > 0
-                  ? "text-amber-300 hover:text-amber-200"
-                  : "text-neutral-500 hover:text-white"
-              }`}
-            >
-              <KeyRound size={13} strokeWidth={2.2} />
-              Liberar acesso
-              {reenvios.length > 0 && (
-                <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[10.5px] leading-none">
-                  {reenvios.length}
-                </span>
-              )}
-            </Link>
-            <Link
-              href="/suporte/ajustes"
-              className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-neutral-500 transition hover:text-white"
-            >
-              <Settings2 size={13} strokeWidth={2.2} />
-              Ajustes
-            </Link>
-          </div>
+          <p className="mt-1 text-sm text-neutral-500">
+            {esperando === 0
+              ? "Ninguém esperando resposta."
+              : esperando === 1
+                ? "1 aluna esperando você responder."
+                : `${esperando} alunas esperando você responder.`}
+          </p>
         </header>
 
         <section className="px-5 py-6 lg:px-10 lg:py-8">
-          <div className="mx-auto max-w-2xl">
-            {/* ⚠️ Alunas de verdade esperando vêm ANTES do chat de teste: o
-                teste pode esperar, a pessoa do outro lado não. */}
-            {esperando > 0 && (
-              <Link
-                href="/suporte/conversas"
-                className="mb-5 flex items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/[0.06] px-4 py-3.5 transition hover:border-amber-500/50"
-              >
-                <p className="text-[13px] font-semibold text-amber-100">
-                  {esperando === 1
-                    ? "1 aluna esperando resposta"
-                    : `${esperando} alunas esperando resposta`}
-                </p>
-                <span className="shrink-0 text-[12px] font-semibold text-amber-300">
-                  Responder →
-                </span>
-              </Link>
-            )}
-            {/* ⚠️ Leva pra tela, não repete a lista. Duas telas mostrando os
-                mesmos e-mails com botões diferentes ("já reenviei" x "já
-                liberei") envelhecem separadas, e um dia uma some da outra. */}
-            {reenvios.length > 0 && (
-              <Link
-                href="/suporte/reenvios"
-                className="mb-5 flex items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/[0.06] px-4 py-3.5 transition hover:border-amber-500/50"
-              >
-                <p className="text-[13px] font-semibold text-amber-100">
-                  {reenvios.length === 1
-                    ? "1 acesso pra liberar na Hotmart"
-                    : `${reenvios.length} acessos pra liberar na Hotmart`}
-                </p>
-                <span className="shrink-0 text-[12px] font-semibold text-amber-300">
-                  Liberar →
-                </span>
-              </Link>
-            )}
-            <SuporteChat />
-          </div>
+          {linhas.length === 0 ? (
+            <div className="mx-auto max-w-lg rounded-2xl border border-[#1f1f1f] bg-[#0d0d0d] px-6 py-10 text-center">
+              <p className="text-[14px] text-neutral-300">
+                Nenhuma conversa ainda.
+              </p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-neutral-500">
+                Quando uma aluna escrever em{" "}
+                <span className="font-mono text-neutral-400">/ajuda</span>, ela
+                aparece aqui.
+              </p>
+            </div>
+          ) : (
+            <div className="mx-auto max-w-3xl space-y-2">
+              {linhas.map((l) => (
+                <Link
+                  key={l.id}
+                  href={`/suporte/conversas/${encodeURIComponent(l.id)}`}
+                  className={`block rounded-xl border px-4 py-3.5 transition ${
+                    l.esperando
+                      ? "border-amber-500/30 bg-amber-500/[0.04] hover:border-amber-500/50"
+                      : "border-[#1f1f1f] bg-[#0d0d0d] hover:border-[#2e2e2e]"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="flex items-center gap-2 text-[13.5px] font-semibold text-white">
+                        {l.quem}
+                        {l.esperando && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10.5px] font-semibold text-amber-200">
+                            <UserRound size={9} strokeWidth={2.6} />
+                            esperando
+                          </span>
+                        )}
+                      </p>
+                      <p className="mt-1 truncate text-[12.5px] text-neutral-400">
+                        {/* Quem falou por último. Se foi a aluna, ninguém
+                            respondeu ainda — e é o que o time precisa ver. */}
+                        {l.ultimaDe === "aluno" ? "" : "Você: "}
+                        {l.previa}
+                      </p>
+                      {l.email && (
+                        <p className="mt-1 truncate font-mono text-[11px] text-neutral-600">
+                          {l.email}
+                        </p>
+                      )}
+                    </div>
+                    <span
+                      className={`shrink-0 text-[11.5px] ${
+                        l.esperando && l.minutos > 30
+                          ? "font-semibold text-amber-300"
+                          : "text-neutral-600"
+                      }`}
+                    >
+                      {espera(l.minutos)}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

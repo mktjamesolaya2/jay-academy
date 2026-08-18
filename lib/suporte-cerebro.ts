@@ -65,6 +65,8 @@ export type PedidoSuporte = {
   conversaId?: string;
   texto: string;
   anexos: Anexo[];
+  /** Veio do chat de treino do painel? Não entra na lista do time. */
+  teste?: boolean;
   /** Nome de quem está falando. No chat de teste do painel, "Teste". */
   quem?: string;
   /**
@@ -109,6 +111,7 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
   const conversa: Conversa = (await getConversa(id)) ?? {
     id,
     quem: p.quem?.trim() || SEM_NOME,
+    ...(p.teste ? { teste: true } : {}),
     mensagens: [],
     aguardandoPessoa: false,
     criadaEm: agora,

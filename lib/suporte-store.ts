@@ -36,6 +36,14 @@ export type Conversa = {
    * nenhum.
    */
   emailAluna?: string;
+  /**
+   * Veio do chat de treino do painel, não de uma aluna.
+   *
+   * ⚠️ É uma MARCA no dado, não o nome "Teste". Filtrar pelo nome quebraria
+   * no dia em que alguém se chamasse Teste — e faria a conversa de uma pessoa
+   * de verdade sumir da lista sem ninguém entender por quê.
+   */
+  teste?: boolean;
   /** A conversa é sobre não conseguir acessar o curso. */
   assuntoAcesso?: boolean;
   criadaEm: string;
