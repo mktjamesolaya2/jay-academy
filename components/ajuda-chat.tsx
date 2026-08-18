@@ -189,14 +189,14 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
     // conversa empurraria o painel e o campo de escrever sairia da tela.
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-        <div className="mx-auto w-full max-w-3xl space-y-4">
+        <div className="w-full space-y-4">
         {/* ── a abertura: balão fixo, nosso, sem custo de IA ─────────────── */}
         {/* ⚠️ `items-start`: o medalhão acompanha a PRIMEIRA linha do balão.
             Alinhado embaixo ele descia junto com o horário e parecia solto. */}
         <div className="flex items-start gap-2.5">
           <Medalhao tamanho={30} />
           <div>
-            <div className="max-w-[min(84vw,26rem)] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-[#101820]">
+            <div className="max-w-[72%] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-[#101820]">
               {saudacao}! Aqui é o suporte da Jay Academy.
               {"\n"}Como você se chama?
             </div>
@@ -240,7 +240,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
                 ))}
               <div className={daAluna ? "flex flex-col items-end" : ""}>
                 <div
-                  className={`max-w-[min(84vw,30rem)] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap ${
+                  className={`max-w-[72%] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap ${
                     daAluna
                       ? "rounded-2xl rounded-tr-md bg-[#AC9751] text-[#101820]"
                       : "rounded-2xl rounded-tl-md bg-[#F4F1EA] text-[#101820]"
@@ -315,7 +315,7 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
 
       {/* ── o campo de escrever, no rodapé do painel ───────────────────── */}
       <div className="shrink-0 border-t border-[#AC9751]/12 px-4 pb-4 pt-3 sm:px-6">
-        <div className="mx-auto w-full max-w-3xl">
+        <div className="w-full">
         {erro && (
           <p className="mb-2.5 rounded-xl border border-[#AC9751]/30 bg-[#AC9751]/10 px-4 py-2.5 text-[13px] leading-relaxed text-[#F4F1EA]/85">
             {erro}

@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Meandro, Medalhao } from "@/components/marca-jayo";
+
+/** A máscara do Zeus — a mesma da planta e da LP do Jay.O Laser. */
+const MASCARA_ZEUS =
+  "linear-gradient(to right, black 0%, black 18%, rgba(0,0,0,0.5) 45%, transparent 75%), linear-gradient(to bottom, transparent 0%, black 16%, black 84%, transparent 100%)";
 import { GRUPOS, type Atalho } from "@/components/ajuda-atalhos-dados";
 
 /**
@@ -70,7 +74,7 @@ function Titulo({ children }: { children: React.ReactNode }) {
  */
 export function AtalhosBarra() {
   return (
-    <aside className="relative hidden w-[17rem] shrink-0 overflow-hidden border-r border-[#AC9751]/15 bg-[#0b1117] lg:flex lg:flex-col">
+    <aside className="relative hidden w-[26%] min-w-[15rem] max-w-[24rem] shrink-0 overflow-hidden border-r border-[#AC9751]/20 bg-[#0b1117] lg:flex lg:flex-col">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/laser/assets/zeus-BWpgiY3L.jpg"
@@ -78,21 +82,19 @@ export function AtalhosBarra() {
         aria-hidden="true"
         loading="lazy"
         decoding="async"
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        style={{ objectFit: "cover", objectPosition: "60% 38%", opacity: 0.72 }}
-      />
-      {/* ⚠️ O véu. Sem ele, a lista fica sobre o rosto e não se lê — bonito na
-          maquete, ilegível na tela. Escuro no topo (onde estão a marca e os
-          atalhos) e mais aberto embaixo, deixando o Zeus respirar. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute bottom-0 left-[-6%] top-0 h-full w-auto"
         style={{
-          background:
-            "linear-gradient(to bottom, rgba(11,17,23,0.96) 0%, rgba(11,17,23,0.88) 30%, rgba(11,17,23,0.42) 62%, rgba(11,17,23,0.62) 100%)",
+          maxWidth: "120%",
+          objectFit: "contain",
+          objectPosition: "left center",
+          opacity: 0.45,
+          // ⚠️ A MESMA máscara da planta: some pra direita e nas pontas de cima
+          // e de baixo. É ela que faz o Zeus virar textura em vez de foto
+          // colada — sem, a imagem termina numa linha reta.
+          maskImage: MASCARA_ZEUS,
+          WebkitMaskImage: MASCARA_ZEUS,
         }}
       />
-
       <div className="relative flex flex-col gap-5 overflow-y-auto px-5 py-6">
         {/* ⚠️ A marca vive AQUI no computador — o cabeçalho da direita só
             existe no celular. Sem este bloco a tela grande ficaria sem
