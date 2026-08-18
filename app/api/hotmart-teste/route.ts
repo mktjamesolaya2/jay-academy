@@ -38,7 +38,8 @@ export async function GET(req: Request) {
     const { sondar } = await import("@/lib/hotmart-sonda");
     return NextResponse.json({
       aviso: "Só leitura — nada foi executado na sua conta.",
-      achados: await sondar(),
+      dica: "Pros endereços do Club, acrescente &subdomain=<o-nome-da-area-de-membros>",
+      achados: await sondar(url0.searchParams.get("subdomain") ?? undefined),
     });
   }
 
