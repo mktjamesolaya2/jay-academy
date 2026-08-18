@@ -79,6 +79,12 @@ export async function responderComoPessoaAction(
   }
 }
 
+/**
+ * Apaga uma conversa de vez.
+ *
+ * ⚠️ Redireciona pra lista no fim: a tela da conversa apagada continuaria
+ * aberta mostrando algo que não existe mais, e o primeiro clique daria erro.
+ */
 export async function apagarConversaAction(id: string): Promise<{ ok: boolean }> {
   await requireAdmin();
   await apagarConversa(id);

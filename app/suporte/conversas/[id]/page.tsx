@@ -1,10 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Bot, UserRound } from "lucide-react";
+import { ArrowLeft, Bot, Trash2, UserRound } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { getConversa } from "@/lib/suporte-store";
 import { SuporteResponder } from "@/components/suporte-responder";
+import { ConfirmButton } from "@/components/confirm-button";
+import { apagarConversaAction } from "@/app/suporte/actions";
 import { espera, minutosDesde } from "@/lib/caixa-conversas";
 
 /**
@@ -47,15 +49,40 @@ export default async function ConversaPage({
             <ArrowLeft size={13} strokeWidth={2.2} />
             Conversas
           </Link>
-          <h1 className="mt-2 flex flex-wrap items-center gap-2.5 text-2xl font-semibold tracking-[-0.02em] text-white">
-            {c.quem}
-            {c.aguardandoPessoa && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-[11px] font-semibold text-amber-200">
-                <UserRound size={10} strokeWidth={2.6} />
-                esperando você
-              </span>
-            )}
-          </h1>
+          <div className="mt-2 flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h1 className="flex flex-wrap items-center gap-2.5 text-2xl font-semibold tracking-[-0.02em] text-white">
+                {c.quem}
+                {c.aguardandoPessoa && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-[11px] font-semibold text-amber-200">
+                    <UserRound size={10} strokeWidth={2.6} />
+                    esperando você
+                  </span>
+                )}
+              </h1>
+            </div>
+
+            {/* ⚠️ Apagar existe porque a caixa acumula conversa de teste. Sem
+                botão, a única saída era mexer no banco — e teste misturado com
+                aluna de verdade faz o time perder a de verdade de vista. */}
+            <form
+              action={async () => {
+                "use server";
+                await apagarConversaAction(id);
+                redirect("/suporte/conversas");
+              }}
+              className="shrink-0"
+            >
+              <ConfirmButton
+                message="Apagar esta conversa? Isso não tem volta."
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#262626] px-2.5 py-1.5 text-[11.5px] font-semibold text-neutral-500 transition hover:border-rose-500/40 hover:text-rose-300"
+              >
+                <Trash2 size={11} strokeWidth={2.2} />
+                Apagar
+              </ConfirmButton>
+            </form>
+          </div>
+
           <p className="mt-1 text-sm text-neutral-500">
             {c.emailAluna ? (
               <span className="font-mono text-[12.5px]">{c.emailAluna}</span>
