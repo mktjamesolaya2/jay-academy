@@ -38,6 +38,15 @@ export function primeiroNome(completo?: string): string | null {
 export type SituacaoAcesso =
   | { tipo: "sem-email" }
   | { tipo: "nao-encontrado"; email: string }
+  /**
+   * Já dissemos "não achei" pra ESTE e-mail e ela voltou a falar.
+   *
+   * ⚠️ Existe porque a conversa entrava em laço: "não achei, será que foi
+   * outro e-mail?" → "usei esse mesmo" → "não achei, será que foi outro
+   * e-mail?" → três vezes, até a IA pedir comprovante. Visto numa conversa
+   * real (protocolo 756484).
+   */
+  | { tipo: "nao-encontrado-de-novo"; email: string }
   | { tipo: "no-prazo"; email: string; compras: CompraConhecida[]; venceEm: string; dias: number }
   | { tipo: "vencido"; email: string; compras: CompraConhecida[]; venceuEm: string }
   | { tipo: "cancelado"; email: string }
@@ -105,13 +114,24 @@ export function avaliarAcesso(
   compras: CompraConhecida[],
   hoje = new Date(),
   /** A consulta na Hotmart estava disponível? Sem isso, lista vazia mente. */
-  consultaDisponivel = true
+  consultaDisponivel = true,
+  /**
+   * E-mails que a gente JÁ disse a ela que não foram encontrados.
+   *
+   * ⚠️ É o que quebra o laço. A regra "só chame uma pessoa se ela confirmar
+   * que o e-mail está certo" estava escrita no texto que vai pro modelo, e ele
+   * simplesmente não cumpriu — a aluna confirmou e ele repetiu a pergunta.
+   * Condição que decide se alguém vai ser atendido não pode morar em
+   * instrução.
+   */
+  jaAvisados: string[] = []
 ): SituacaoAcesso {
   if (!email) return { tipo: "sem-email" };
   if (!compras.length) {
-    return consultaDisponivel
-      ? { tipo: "nao-encontrado", email }
-      : { tipo: "nao-consegui-conferir", email };
+    if (!consultaDisponivel) return { tipo: "nao-consegui-conferir", email };
+    return jaAvisados.includes(email.toLowerCase())
+      ? { tipo: "nao-encontrado-de-novo", email }
+      : { tipo: "nao-encontrado", email };
   }
 
   const canceladas = ["cancelled", "canceled", "cancelada", "refunded", "reembolsada"];
@@ -178,10 +198,28 @@ DIGA ISSO A ELA, com estas duas partes na mesma mensagem:
 1. que você procurou e não encontrou compra com esse e-mail;
 2. que talvez ela tenha comprado com outro, e peça pra ela conferir.
 
+⚠️ NÃO fale de prazo, vencimento nem dos 12 meses. Sem compra encontrada você
+não tem data nenhuma — chutar "deve ter vencido" é inventar um fato sobre a
+vida dela.
+
 ⚠️ NÃO chame uma pessoa do time nesta mensagem. Ela ainda pode ter digitado
 errado ou ter comprado com outro e-mail, e chamar alguém agora é empurrar pra
-frente um caso que a própria aluna resolve na mensagem seguinte. Só chame se
-ela confirmar que o e-mail está certo.`;
+frente um caso que a própria aluna resolve na mensagem seguinte.`;
+
+    case "nao-encontrado-de-novo":
+      return `Você JÁ disse a ela que não achou compra com "${s.email}", e ela
+continuou.
+
+⚠️ NÃO pergunte de novo se foi outro e-mail. NÃO peça a data da compra. NÃO
+peça comprovante, número de transação nem print — a gente não usa nada disso.
+NÃO repita que não encontrou.
+
+Perguntar a mesma coisa duas vezes faz ela contar tudo de novo pra alguém que
+não escutou da primeira. Se a compra existe e não aparece pra gente, quem
+resolve é uma pessoa — a busca é por e-mail e ela já se esgotou aqui.
+
+Diga, numa frase, que vai chamar alguém do time pra achar a compra dela. Passe
+para uma pessoa.`;
 
     case "cancelado":
       return `A compra de "${s.email}" consta como cancelada. NÃO explique o

@@ -234,8 +234,17 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
         nome: c.nome,
       })),
       new Date(),
-      consultaDisponivel
+      consultaDisponivel,
+      conversa.naoAchados ?? []
     );
+    // Guarda ANTES de responder: é a segunda vez que muda o rumo, e ela só
+    // existe se a primeira tiver ficado registrada.
+    if (situacao.tipo === "nao-encontrado") {
+      conversa.naoAchados = [
+        ...(conversa.naoAchados ?? []),
+        situacao.email.toLowerCase(),
+      ];
+    }
     fatos = fatosDoAcesso(situacao);
 
     // ⚠️ Quem não disse o nome no chat ganha o nome da COMPRA. É o melhor nome
@@ -262,7 +271,11 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
       situacao.tipo === "no-prazo" ||
       situacao.tipo === "vencido" ||
       situacao.tipo === "cancelado" ||
-      situacao.tipo === "nao-consegui-conferir";
+      situacao.tipo === "nao-consegui-conferir" ||
+      // ⚠️ Segunda vez que a busca falha pro mesmo e-mail. Insistir daqui pra
+      // frente só faz ela repetir o que já disse — e a busca é por e-mail, que
+      // já se esgotou. Visto em laço numa conversa real (protocolo 756484).
+      situacao.tipo === "nao-encontrado-de-novo";
   }
 
   const conhecimento = await getConhecimento();

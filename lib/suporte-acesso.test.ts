@@ -228,3 +228,57 @@ test("o padrão é assumir que a consulta funcionou", () => {
   // Compatibilidade: quem chamar sem o argumento mantém o comportamento antigo.
   assert.equal(avaliarAcesso("a@b.com", [], new Date()).tipo, "nao-encontrado");
 });
+
+/* ── o laço do "não achei" (protocolo 756484) ────────────────────────────── */
+
+test("primeira vez é 'não encontrei'; segunda vez pro MESMO e-mail vira pessoa", () => {
+  // ⚠️ A conversa real: "não achei, foi outro e-mail?" → "usei esse mesmo" →
+  // "não achei, foi outro e-mail?" → "comprei em junho" → "não achei..." →
+  // pedido de comprovante. Quatro voltas sem sair do lugar.
+  const e = "dri.guima@hotmail.com";
+  const primeira = avaliarAcesso(e, [], new Date(), true, []);
+  assert.equal(primeira.tipo, "nao-encontrado");
+
+  const segunda = avaliarAcesso(e, [], new Date(), true, [e]);
+  assert.equal(segunda.tipo, "nao-encontrado-de-novo");
+});
+
+test("e-mail NOVO merece busca nova, mesmo depois de um que falhou", () => {
+  // ⚠️ Senão o segundo e-mail — que pode ser o certo — já nasceria condenado.
+  const s = avaliarAcesso("outro@exemplo.com", [], new Date(), true, [
+    "dri.guima@hotmail.com",
+  ]);
+  assert.equal(s.tipo, "nao-encontrado");
+});
+
+test("maiúscula no e-mail não faz a segunda vez virar primeira", () => {
+  const s = avaliarAcesso("Dri.Guima@Hotmail.com".toLowerCase(), [], new Date(), true, [
+    "dri.guima@hotmail.com",
+  ]);
+  assert.equal(s.tipo, "nao-encontrado-de-novo");
+});
+
+test("sem conseguir consultar, o histórico não vira 'de novo'", () => {
+  // ⚠️ "Não consegui procurar" é outra coisa, e continua tendo precedência:
+  // dizer "não achei" quando a busca não rodou nega a compra de quem pagou.
+  const e = "dri.guima@hotmail.com";
+  assert.equal(avaliarAcesso(e, [], new Date(), false, [e]).tipo, "nao-consegui-conferir");
+});
+
+test("os fatos do 'de novo' proíbem exatamente o que a IA fez", () => {
+  const f = fatosDoAcesso({ tipo: "nao-encontrado-de-novo", email: "x@y.com" });
+  assert.match(f, /NÃO\s+pergunte\s+de\s+novo\s+se\s+foi\s+outro\s+e-mail/);
+  assert.match(f, /NÃO\s+peça\s+a\s+data/);
+  assert.match(f, /comprovante/);
+  // ⚠️ \s+ e não espaço: o texto dos fatos é quebrado à mão em 76 colunas,
+  // então a frase pode nascer com um \n no meio a qualquer momento.
+  assert.match(f, /Passe\s+para uma pessoa/);
+});
+
+test("no primeiro 'não achei' ela não pode chutar vencimento", () => {
+  // ⚠️ A IA disse "se a compra foi em junho do ANO PASSADO já pode ter
+  // expirado" — sem ter achado compra nenhuma, então sem data nenhuma. E a
+  // aluna tinha dito "mês retrasado".
+  const f = fatosDoAcesso({ tipo: "nao-encontrado", email: "x@y.com" });
+  assert.match(f, /NÃO\s+fale\s+de\s+prazo,\s+vencimento\s+nem\s+dos\s+12\s+meses/);
+});

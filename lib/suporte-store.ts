@@ -38,6 +38,14 @@ export type Conversa = {
    */
   pediuNome?: boolean;
   /**
+   * E-mails que a gente já disse a ela que não foram encontrados.
+   *
+   * ⚠️ É o que quebra o laço "não achei / será que foi outro? / usei esse
+   * mesmo / não achei". Guardado por e-mail, e não como um sim/não, porque
+   * se ela mandar OUTRO e-mail a busca tem que valer de novo pra ele.
+   */
+  naoAchados?: string[];
+  /**
    * O e-mail que a aluna deu — fica guardado na conversa.
    *
    * ⚠️ Sem isto, ela teria que repetir o e-mail a cada mensagem: a consulta
