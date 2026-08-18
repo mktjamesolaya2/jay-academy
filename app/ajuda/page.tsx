@@ -90,10 +90,13 @@ export default function AjudaPage() {
         }}
       />
 
-      {/* O painel: no computador é uma peça com altura própria; no celular
-          ocupa a tela inteira, sem borda, porque moldura em tela pequena só
-          rouba espaço de leitura. */}
-      <section className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden lg:h-[min(80dvh,46rem)] lg:max-w-[62rem] lg:flex-none lg:rounded-3xl lg:border lg:border-[#AC9751]/20 lg:bg-[#0d141b] lg:shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)]">
+      {/* ⚠️ Painel e widgets são peças IRMÃS, lado a lado — não uma coluna
+          grudada dentro do chat. James: *"vamos separar ele do chat, e
+          posicionar ele à direita como se fosse widgets"*. `items-stretch` faz
+          os widgets terminarem na mesma altura do painel, senão os dois blocos
+          flutuam desencontrados e a composição desmonta. */}
+      <div className="relative z-10 flex w-full flex-1 flex-col lg:h-[min(80dvh,46rem)] lg:w-auto lg:flex-none lg:flex-row lg:items-stretch lg:gap-5">
+      <section className="flex min-h-0 w-full flex-1 flex-col overflow-hidden lg:h-full lg:w-[44rem] lg:flex-none lg:rounded-3xl lg:border lg:border-[#AC9751]/20 lg:bg-[#0d141b] lg:shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)]">
         <header className="sticky top-0 z-30 shrink-0 bg-[#101820]/95 backdrop-blur lg:static lg:bg-transparent lg:backdrop-blur-none">
           <div className="flex items-center gap-3.5 px-4 py-3.5 sm:px-6">
             <Medalhao tamanho={42} />
@@ -114,11 +117,11 @@ export default function AjudaPage() {
           <Meandro id="meandro-topo" className="text-[#AC9751]/30" altura={8} />
         </header>
 
-        <div className="flex min-h-0 flex-1">
-          <AjudaChat saudacao={saudacao()} />
-          <AtalhosDesktop />
-        </div>
+        <AjudaChat saudacao={saudacao()} />
       </section>
+
+      <AtalhosDesktop />
+      </div>
     </main>
   );
 }
