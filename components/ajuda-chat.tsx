@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MessageCircle, Paperclip, Send, X } from "lucide-react";
+import { CheckCheck, MessageCircle, Paperclip, Send, X } from "lucide-react";
 import { Medalhao } from "@/components/marca-jayo";
 
 type Msg = { de: "aluno" | "atendente"; texto: string; em?: string; anexo?: string };
@@ -19,6 +19,28 @@ const SUGESTOES = [
   "Onde fica a apostila?",
   "Meu acesso venceu?",
 ];
+
+/**
+ * O bico do balão — o triângulo que aponta pra quem falou.
+ *
+ * ⚠️ É o detalhe que o James pediu ("mais parecido com o próprio WhatsApp, os
+ * detalhes, as linhas, o contorno"). Sem ele o balão é um retângulo
+ * arredondado qualquer; com ele, a mensagem parece dita por alguém.
+ *
+ * Desenhado com recorte, não com borda: borda em triângulo precisa de dois
+ * elementos sobrepostos e desalinha em zoom.
+ */
+function Bico({ dela }: { dela: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={`absolute top-0 h-2.5 w-2.5 ${dela ? "-right-1.5 bg-[#AC9751]" : "-left-1.5 bg-[#F4F1EA]"}`}
+      style={{
+        clipPath: dela ? "polygon(0 0, 100% 0, 0 100%)" : "polygon(0 0, 100% 0, 100% 100%)",
+      }}
+    />
+  );
+}
 
 /** A hora do jeito que se lê num chat: 14:32. */
 function hora(iso?: string): string {
@@ -196,7 +218,8 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         <div className="flex items-start gap-2.5">
           <Medalhao tamanho={30} />
           <div>
-            <div className="max-w-[72%] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-[#101820]">
+            <div className="relative max-w-[72%] rounded-2xl rounded-tl-md bg-[#F4F1EA] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-[#101820] shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)]">
+              <Bico dela={false} />
               {saudacao}! Aqui é o suporte da Jay Academy.
               {"\n"}Como você se chama?
             </div>
@@ -240,12 +263,13 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
                 ))}
               <div className={daAluna ? "flex flex-col items-end" : ""}>
                 <div
-                  className={`max-w-[72%] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap ${
+                  className={`relative max-w-[72%] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap shadow-[0_2px_10px_-4px_rgba(0,0,0,0.7)] ${
                     daAluna
                       ? "rounded-2xl rounded-tr-md bg-[#AC9751] text-[#101820]"
                       : "rounded-2xl rounded-tl-md bg-[#F4F1EA] text-[#101820]"
                   }`}
                 >
+                  <Bico dela={daAluna} />
                   {m.anexo && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -257,9 +281,16 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
                   {m.texto}
                 </div>
                 <p
-                  className={`mt-1 text-[11px] text-[#F4F1EA]/35 ${daAluna ? "pr-1" : "pl-1"}`}
+                  className={`mt-1 flex items-center gap-1 text-[11px] text-[#F4F1EA]/35 ${daAluna ? "justify-end pr-1" : "pl-1"}`}
                 >
                   {hora(m.em)}
+                  {/* ⚠️ O tique só aparece nas mensagens DELA, e só quando o
+                      servidor já confirmou (a conversa tem id). É informação de
+                      verdade — "chegou aqui" — não enfeite copiado do
+                      WhatsApp. */}
+                  {daAluna && conversaId && (
+                    <CheckCheck size={13} strokeWidth={2.4} className="text-[#F4F1EA]/45" />
+                  )}
                 </p>
               </div>
             </div>

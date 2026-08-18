@@ -29,14 +29,16 @@ import { GRUPOS, type Atalho } from "@/components/ajuda-atalhos-dados";
  */
 
 /**
- * Um atalho — **cápsula com contorno próprio**, como na planta.
+ * Um atalho — cápsula com contorno próprio, como na planta.
  *
- * ⚠️ Já foi linha solta e já foi ladrilho. A planta que o James aprovou tem
- * cada item dentro do seu próprio contorno arredondado, e é isso que dá o ritmo
- * da coluna: cinco cápsulas iguais, espaçadas.
+ * ⚠️ O ícone mora dentro de uma **plaquinha**, não solto. James: *"o widget da
+ * pessoinha, da TV, da estrela, tá muito fino"*. Traço fino sobre preto some, e
+ * some ainda mais quando o ícone é pequeno e não tem nada em volta pra segurar
+ * ele. A plaqueta dá peso e área; o traço mais grosso dá presença.
  *
- * ⚠️ Uma linha só de texto. A descrição não cabe sem quebrar o ritmo — ela
- * sobrevive no `title`, pra quem passa o mouse.
+ * ⚠️ E ela **reage**: no hover a plaqueta inverte (fundo ouro, ícone preto) e a
+ * cápsula anda um fio pra direita. É o que ele chamou de *"mais animado"* — a
+ * diferença entre um link que parece impresso e um que parece vivo.
  */
 function Item({ a, aoEscolher }: { a: Atalho; aoEscolher?: () => void }) {
   return (
@@ -45,14 +47,16 @@ function Item({ a, aoEscolher }: { a: Atalho; aoEscolher?: () => void }) {
       onClick={aoEscolher}
       title={a.descricao}
       {...(a.externo ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-      className="group flex items-center gap-3 rounded-2xl border border-[#AC9751]/30 px-3.5 py-3 transition hover:border-[#AC9751]/70 hover:bg-[#AC9751]/10"
+      className="group flex items-center gap-3 rounded-2xl border border-[#AC9751]/30 px-3 py-2.5 transition-all duration-200 hover:translate-x-0.5 hover:border-[#AC9751]/70 hover:bg-[#AC9751]/10"
     >
-      <a.Icone
-        size={15}
-        strokeWidth={1.7}
-        className="shrink-0 text-[#AC9751]/80 transition group-hover:text-[#AC9751]"
-      />
-      <span className="min-w-0 truncate text-[13px] text-[#F4F1EA]/90">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#AC9751]/35 bg-[#AC9751]/12 transition-colors duration-200 group-hover:border-[#AC9751] group-hover:bg-[#AC9751]">
+        <a.Icone
+          size={15}
+          strokeWidth={2.2}
+          className="text-[#AC9751] transition-colors duration-200 group-hover:text-[#101820]"
+        />
+      </span>
+      <span className="min-w-0 truncate text-[13px] font-medium text-[#F4F1EA]/90 transition-colors group-hover:text-[#F4F1EA]">
         {a.curto ?? a.titulo}
       </span>
     </a>
