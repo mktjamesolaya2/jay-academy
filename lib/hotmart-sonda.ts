@@ -121,10 +121,40 @@ export async function sondarVendas(email: string): Promise<Achado[]> {
   const token = await pegarTokenPublico();
   const base = "https://developers.hotmart.com/payments/api/v1/sales/history";
 
+  /**
+   * ⚠️ A primeira rodada testou só PARÂMETRO, e todas as seis deram 400 —
+   * inclusive a requisição sem parâmetro nenhum. Isso descarta a hipótese: um
+   * GET pelado com token válido não dá 400 por causa de parâmetro.
+   *
+   * Então esta rodada mexe na ESTRUTURA: cabeçalho (o cliente de referência do
+   * Pipedream manda `Content-Type: application/json`, a gente não mandava),
+   * versão da API e endereço vizinho. O `subscriptions` responde 200 com o
+   * mesmo token, então o problema é deste endereço, não da credencial.
+   */
+
   const agora = Date.now();
   const doisAnos = agora - 1000 * 60 * 60 * 24 * 730;
 
-  const tentativas: Array<[string, Record<string, string>]> = [
+  type Tentativa = {
+    nome: string;
+    url?: string;
+    params?: Record<string, string>;
+    headers?: Record<string, string>;
+  };
+
+  const JSON_H = { "Content-Type": "application/json" };
+
+  const tentativas: Tentativa[] = [
+    { nome: "1) com Content-Type: application/json (como o Pipedream faz)", params: { buyer_email: email }, headers: JSON_H },
+    { nome: "2) com Accept: application/json", params: { buyer_email: email }, headers: { Accept: "application/json" } },
+    { nome: "3) v2 em vez de v1", url: "https://developers.hotmart.com/payments/api/v2/sales/history", params: { buyer_email: email }, headers: JSON_H },
+    { nome: "4) sales/users (o endereço vizinho)", url: "https://developers.hotmart.com/payments/api/v1/sales/users", params: { buyer_email: email }, headers: JSON_H },
+    { nome: "5) sales/summary", url: "https://developers.hotmart.com/payments/api/v1/sales/summary", params: {}, headers: JSON_H },
+    { nome: "6) subscriptions (este a gente SABE que funciona — é o controle)", url: "https://developers.hotmart.com/payments/api/v1/subscriptions", params: {}, headers: JSON_H },
+    { nome: "7) só transaction_status, sem e-mail", params: { transaction_status: "APPROVED" }, headers: JSON_H },
+  ];
+
+  const antigas: Array<[string, Record<string, string>]> = [
     ["só o e-mail (o que a gente faz hoje)", { buyer_email: email }],
     ["e-mail + max_results", { buyer_email: email, max_results: "50" }],
     ["e-mail + janela de 2 anos", {
@@ -142,13 +172,19 @@ export async function sondarVendas(email: string): Promise<Achado[]> {
     }],
   ];
 
+  const todas: Tentativa[] = [
+    ...tentativas,
+    ...antigas.map(([nome, params]) => ({ nome, params })),
+  ];
+
   const achados: Achado[] = [];
-  for (const [nome, params] of tentativas) {
-    const u = new URL(base);
-    for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+  for (const t of todas) {
+    const nome = t.nome;
+    const u = new URL(t.url ?? base);
+    for (const [k, v] of Object.entries(t.params ?? {})) u.searchParams.set(k, v);
     try {
       const r = await fetch(u, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, ...(t.headers ?? {}) },
         signal: AbortSignal.timeout(15000),
       });
       const cru = await r.text().catch(() => "");
