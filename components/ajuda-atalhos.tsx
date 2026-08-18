@@ -1,16 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  CalendarHeart,
-  GraduationCap,
-  Menu,
-  MonitorPlay,
-  Sparkles,
-  UserRound,
-  X,
-} from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Meandro } from "@/components/marca-jayo";
+import { GRUPOS, type Atalho } from "@/components/ajuda-atalhos-dados";
 
 /**
  * Os atalhos pro resto do mundo Jay.
@@ -30,50 +23,6 @@ import { Meandro } from "@/components/marca-jayo";
  * existir. Ele aparece só quando a conversa é encaminhada. Os dois WhatsApps
  * daqui são outra coisa: vender curso e agendar clínica.
  */
-
-type Atalho = {
-  titulo: string;
-  descricao: string;
-  href: string;
-  /** Abre em outra aba: é site/conversa que não é esta página. */
-  externo?: boolean;
-  Icone: typeof GraduationCap;
-};
-
-/**
- * Dois grupos, porque são duas intenções diferentes: **ir a um lugar** e
- * **falar com alguém agora**. Numa lista só, o WhatsApp da clínica ficava com o
- * mesmo peso visual de um link de site — e ele é um compromisso, não um clique.
- */
-const GRUPOS: Array<{ titulo: string; itens: Atalho[] }> = [
-  {
-    titulo: "Também por aqui",
-    itens: [
-      { titulo: "PMU CLASS", descricao: "Seus cursos online", href: "/pmuclass", Icone: MonitorPlay },
-      { titulo: "Formações presenciais", descricao: "Jay Academy", href: "/academy", Icone: GraduationCap },
-      { titulo: "James Olaya", descricao: "O site do James", href: "/jamesolaya", Icone: UserRound },
-    ],
-  },
-  {
-    titulo: "Falar agora",
-    itens: [
-      {
-        titulo: "Clínica James Olaya",
-        descricao: "Agendar procedimento",
-        href: "https://api.whatsapp.com/send/?phone=5519971450311&text=Ol%C3%A1%21+Vim+do+Instagram.+Gostaria+de+agendar+procedimentos+na+Cl%C3%ADnica+James+Olaya.&type=phone_number&app_absent=0",
-        externo: true,
-        Icone: CalendarHeart,
-      },
-      {
-        titulo: "Conhecer os cursos",
-        descricao: "Falar no WhatsApp",
-        href: "https://wa.me/5519971634567?text=Oi%21%20Quero%20conhecer%20os%20cursos%20online%20da%20JayAcademy",
-        externo: true,
-        Icone: Sparkles,
-      },
-    ],
-  },
-];
 
 function Item({ a, aoEscolher }: { a: Atalho; aoEscolher?: () => void }) {
   return (
