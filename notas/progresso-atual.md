@@ -6,6 +6,68 @@
 
 ---
 
+## 💬 Sessão 2026-08-18 — chat da aluna NO AR (`/ajuda`) + caixa do time
+
+**Estado: em produção**, testado nos dois domínios. James vai pedir pro time testar.
+
+### O que é
+
+James: *"vamos criar um chat separado, nada a ver com WhatsApp; uma página para as
+alunas, e a gente responde aqui pelo portal mesmo"*. Ele escolheu o modelo **A**:
+a I.A. atende primeiro, e quando não resolve a conversa cai numa caixa dentro do
+portal.
+
+- **`/ajuda`** — pública, sem login, catalogada no painel. Fora do Google de
+  propósito: é canal de quem já comprou; em busca traria gente pedindo preço.
+- **`/suporte/conversas`** — a caixa do time. Ordenada por **quem espera há mais
+  tempo**, não pela mais recente: é essa aluna que está prestes a desistir.
+- O atendimento mora em `lib/suporte-cerebro.ts`, usado pela página pública E pelo
+  chat de teste do painel. Duas cópias significaria corrigir uma regra num lado e
+  deixar errada justamente a que fala com aluna.
+
+### ⚠️ Os erros que só apareceram testando (e viraram teste)
+
+1. **"Estou com problemas para acessar" não era detectado.** O gatilho exigia a
+   construção "não consigo acessar" e deixava passar **7 de 8** jeitos de dizer a
+   mesma coisa. Sem detectar, a consulta na Hotmart nunca rodava. Rede de proteção
+   nova: **se a mensagem tem um e-mail, a consulta roda de qualquer jeito**.
+2. **"Não consegui procurar" saía como "procurei e não achei".** Sem as
+   credenciais da Hotmart, lista vazia virava negação de compra — *a frase nega a
+   compra de quem pagou*. Agora são situações diferentes.
+3. **Rascunho do modelo chegou na tela da aluna** (`"Name: Ana Paula used? Yes..."`).
+   A proteção existia mas procurava frase em 1ª pessoa; isso era lista de conferência.
+4. **Ela cumprimentava de novo no meio da conversa** — o sinal mais rápido de robô.
+5. **Ela não sabia o que é a PMU CLASS** e mandava pra atendente uma pergunta de
+   identificação. Buraco de CONTEÚDO, não de código.
+6. **Duas mensagens seguidas eram bloqueadas.** Em paralelo se sobrescreveriam e uma
+   sumiria — virou fila.
+
+### Visual
+
+Layout **"Barra lateral"**, escolhido entre 10 plantas (as vitrines `/ajuda/estilos`,
+`/ajuda/layouts` e `/ajuda/planta` foram apagadas depois de cada decisão).
+Sistema JAY.O: ouro, preto, Libre Baskerville + Poppins, medalhão. **O Zeus da LP do
+Jay.O Laser é a textura da barra** — é o que resolveu o "espaço sobrando".
+
+⚠️ O meandro foi removido: num filete fino atravessando a tela ele vira tracejado
+sujo, não assinatura. Funcionava na maquete, não na tela.
+
+Detalhes de WhatsApp: bico no balão, tique duplo (só depois do servidor confirmar),
+"digitando…", imagem que abre em tela cheia, **gravação de áudio**, Ctrl+V pra colar
+print, e resposta com **piso de 3 a 5 segundos** (piso, não soma).
+
+### O que falta
+
+- **URL da loja JAY.O** — o sexto atalho está pronto, falta o endereço.
+- **`WHATSAPP_SUPORTE`** — o encaminhamento pro WhatsApp está construído e testado,
+  mas DESLIGADO. Sem o número o botão não aparece (link quebrado seria pior).
+- **Encher a base** (`/suporte/ajustes`). O erro 5 é o retrato disso: cada teste
+  encontra mais buracos, e cada buraco vira fila desnecessária.
+- Copiar `HOTMART_CLIENT_ID/SECRET/BASIC` da Vercel pro `.env.local` (em produção
+  já estão — confirmado por teste).
+
+303 testes.
+
 ## 🤖 Sessão 2026-08-17 — a I.A do suporte trocou de fornecedor (OpenRouter → Gemini)
 
 **Estado: funcionando.** James testou no localhost: *"respondeu normal"*.
