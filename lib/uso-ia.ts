@@ -1,38 +1,38 @@
 /**
- * Quanto da cota grátis do dia já foi.
+ * Quanto a IA respondeu hoje, e se ela ainda está de pé.
  *
- * ⚠️ Isto existe porque a cota grátis **acaba**, e quando acaba a aluna é quem
- * descobre: a IA para de responder e a conversa cai pra uma pessoa. A cota da
- * OpenRouter (~50/dia) acabou no primeiro dia de teste, sem ninguém perceber
- * até alguém abrir a tela.
+ * ⚠️ Isto existe porque a cota grátis **acaba**, e quando acaba quem descobre
+ * é a aluna: a IA para de responder e a conversa cai pra uma pessoa. A cota da
+ * OpenRouter (~50/dia) acabou no primeiro dia de teste sem ninguém perceber.
  *
- * ⚠️ O número de baixo (o limite) é um **palpite configurável**, não uma
- * verdade: o Google não tem endpoint de "quanto sobrou". Quem manda de verdade
- * é o `estourou` — esse vem do 429 que o próprio fornecedor devolveu. Por isso
- * o nível olha os dois, e o 429 ganha do palpite.
+ * ⚠️ **Não existe teto conhecido.** O Google não tem endpoint de "quanto
+ * sobrou", e eu não vou inventar um número e desenhar uma barra que finge
+ * saber. Antes esta tela mostrava "de 250" — um chute meu, com cara de fato.
+ * Se alguém souber o teto de verdade, põe em `IA_LIMITE_DIA` e a barra
+ * aparece. Sem isso, mostra só o que é medido: quantas ela respondeu.
+ *
+ * ⚠️ O sinal vermelho vem do **429 do fornecedor**, e não de conta nossa. É a
+ * única fonte que sabe mesmo.
  */
 
 /**
- * O teto do dia.
+ * O teto do dia, se alguém souber qual é.
  *
- * 250 é o piso da camada grátis dos modelos flash — o número mais conservador
- * da cadeia. Errar pra baixo faz a barra assustar cedo; errar pra cima faz ela
- * mentir que está tranquilo. Cedo é melhor.
+ * `null` = ninguém disse, e a tela não finge saber.
  */
-export const LIMITE_PADRAO = 250;
-
-export function limiteDoDia(env: Record<string, string | undefined> = process.env): number {
+export function limiteDoDia(
+  env: Record<string, string | undefined> = process.env
+): number | null {
   const n = Number((env.IA_LIMITE_DIA ?? "").trim());
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : LIMITE_PADRAO;
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
 }
 
 /**
  * A chave do dia, no fuso de quem olha a tela.
  *
  * ⚠️ Fuso de São Paulo de propósito. A cota do Google vira à meia-noite do
- * Pacífico, mas quem lê esta barra é o time daqui — se ela zerasse às 4 da
- * manhã, "hoje" na tela não seria o hoje dele. A barra é pra ele se situar,
- * não pra ser um contador fiscal da cota do Google.
+ * Pacífico, mas quem lê isto é o time daqui — se zerasse às 4 da manhã, "hoje"
+ * na tela não seria o hoje dele.
  */
 export function chaveDoDia(agora: Date): string {
   const d = new Intl.DateTimeFormat("en-CA", {
@@ -44,37 +44,45 @@ export function chaveDoDia(agora: Date): string {
   return `suporte:uso:${d}`;
 }
 
-/** Quanto da barra encheu. Nunca passa de 100 — barra vazando fica feia. */
-export function percentual(usadas: number, limite: number): number {
-  if (!(limite > 0)) return 0;
-  const p = (Math.max(0, usadas) / limite) * 100;
-  return Math.min(100, Math.round(p));
+/** Quanto da barra encheu — `null` quando não há teto pra comparar. */
+export function percentual(usadas: number, limite: number | null): number | null {
+  if (!limite || limite <= 0) return null;
+  return Math.min(100, Math.round((Math.max(0, usadas) / limite) * 100));
 }
 
-export type Nivel = "tranquilo" | "chegando" | "estourou";
+export type Nivel = "tranquilo" | "chegando" | "parada";
 
 /**
  * Em que pé está.
  *
- * ⚠️ `estourou` vindo do 429 ganha de qualquer conta: o fornecedor já disse
- * "chega", e discutir com ele pelo palpite do limite seria mostrar "tranquilo"
- * numa hora em que a IA não está respondendo ninguém.
+ * ⚠️ `parada` significa **a IA não está respondendo agora** — não "passou de
+ * um número". Quem diz isso é o fornecedor, recusando a fila inteira.
  */
-export function nivel(usadas: number, limite: number, estourou = false): Nivel {
-  if (estourou) return "estourou";
+export function nivel(
+  usadas: number,
+  limite: number | null,
+  paradaPorCota = false
+): Nivel {
+  if (paradaPorCota) return "parada";
   const p = percentual(usadas, limite);
-  if (p >= 100) return "estourou";
+  if (p === null) return "tranquilo";
+  if (p >= 100) return "parada";
   return p >= 70 ? "chegando" : "tranquilo";
 }
 
-/** O que a barra escreve embaixo. */
-export function recado(usadas: number, limite: number, estourou = false): string {
-  if (estourou) {
-    return "A cota grátis de hoje acabou — a IA não está respondendo. As conversas estão indo direto pra uma pessoa.";
+/** O que a tela escreve embaixo do número. */
+export function recado(
+  usadas: number,
+  limite: number | null,
+  paradaPorCota = false
+): string {
+  if (paradaPorCota) {
+    return "A cota grátis acabou — a I.A. parou de responder e as conversas estão indo direto pra uma pessoa.";
   }
-  const sobra = Math.max(0, limite - usadas);
-  if (nivel(usadas, limite) === "chegando") {
-    return `Faltam ${sobra} mensagens pra cota de hoje acabar.`;
+  if (limite && nivel(usadas, limite) === "chegando") {
+    return `Faltam ${Math.max(0, limite - usadas)} pro teto configurado.`;
   }
-  return `${usadas} de ${limite} mensagens da IA hoje.`;
+  if (limite) return `Teto configurado: ${limite} por dia.`;
+  // ⚠️ Sem teto conhecido, a tela diz o que sabe e nada além disso.
+  return usadas === 1 ? "1 resposta hoje. A I.A. está de pé." : "A I.A. está de pé.";
 }

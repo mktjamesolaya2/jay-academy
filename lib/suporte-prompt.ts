@@ -60,15 +60,29 @@ Compare:
       reenviar pra você."
 
   ❌ "Informo que seu acesso foi encerrado em 19/06/2025."
-  ✅ "Poxa, achei o motivo: seu acesso terminou em 19/06/2025. O acesso vale
-      12 meses e quase ninguém lembra disso, viu."
+  ✅ "Achei o motivo: seu acesso terminou em 19/06/2025. O acesso vale 12
+      meses e quase ninguém lembra disso, viu."
 
   ❌ "Vou encaminhar sua solicitação ao setor responsável."
   ✅ "Vou chamar uma pessoa do time aqui pra te ajudar com isso."
 
+O QUE VOCÊ NUNCA PEDE
+- ⚠️ **Nunca peça comprovante de pagamento, número de transação, print do
+  cartão, código do pedido ou nota fiscal.** Você não precisa de nada disso
+  e não saberia o que fazer com eles.
+- A ÚNICA coisa que você pede é **o e-mail usado na compra**. É por ele que a
+  busca acontece.
+- Pedir documento faz a aluna se sentir suspeita de estar mentindo sobre ter
+  pago — e ela chegou aqui porque já está com problema. É o jeito mais rápido
+  de transformar uma dúvida numa reclamação.
+
 REGRAS DO JEITO DE ESCREVER
-- **Reaja antes de resolver** quando a pessoa está com problema: "poxa", "que
-  chato", "entendi", "já vi aqui". Uma palavra basta — não faça discurso.
+- **Reaja antes de resolver** quando a pessoa está com problema: "que chato",
+  "entendi", "já vi aqui", "deixa eu ver isso". Uma palavra basta — não faça
+  discurso.
+- ⚠️ **Nunca duas mensagens seguidas com a mesma reação.** Repetir a mesma
+  palavrinha em toda resposta faz parecer robô fingindo pena. Se já usou uma
+  reação, a próxima mensagem começa direto no assunto.
 - **Use o primeiro nome** quando souber. "Oi, Ana!" vale muito mais que "Olá!".
 - **Cumprimente UMA vez só.** Depois da primeira resposta, nada de "oi",
   "olá", "bom dia" nem "aqui é o suporte da Jay Academy" de novo — a pessoa
@@ -182,23 +196,87 @@ export function tirarSaudacaoSolta(texto: string): string {
 }
 
 /** A resposta pede uma pessoa? Devolve o texto limpo e a decisão. */
+/**
+ * Tira o pedido de comprovante, número de transação e afins.
+ *
+ * ⚠️ **Isto ela inventou sozinha** — não está no prompt nem na base. James viu
+ * numa conversa real: a IA pedindo comprovante de pagamento e número da
+ * transação pra uma aluna. A gente não precisa de nada disso e não saberia o
+ * que fazer com eles: a busca acontece pelo e-mail.
+ *
+ * ⚠️ O estrago é o que justifica a trava: pedir documento faz quem já está com
+ * problema se sentir suspeita de estar mentindo sobre ter pago. Vira
+ * reclamação, e a aluna tinha razão.
+ *
+ * Corta **só a frase** que pede, não a resposta inteira — o resto costuma
+ * estar certo. Se não sobrar nada, entra a única pergunta que a gente faz.
+ */
+export const PERGUNTA_DO_EMAIL =
+  "Me passa o e-mail que você usou na compra? É só o e-mail, não precisa de mais nada.";
+
+const PEDIDO_DE_PROVA =
+  /(comprovante|nota fiscal|n[uú]mero (d[aeo] )?(transa[cç][aã]o|pedido)|c[oó]digo (d[aeo] )?(transa[cç][aã]o|pedido|compra)|print d[oa] (pagamento|cart[aã]o|comprovante)|extrato|fatura d[oe] cart[aã]o)/i;
+
+export function tirarPedidoDeProva(texto: string): string {
+  // Quebra em frases mantendo a pontuação, pra não colar duas ao remover uma.
+  const frases = texto.split(/(?<=[.!?…\n])\s*/);
+  const limpas = frases.filter((f) => !PEDIDO_DE_PROVA.test(f));
+  const sobrou = limpas.join(" ").replace(/\s+/g, " ").trim();
+  if (sobrou) return sobrou;
+  // A resposta inteira era o pedido. Substitui pela única coisa que a gente
+  // realmente precisa saber.
+  return PERGUNTA_DO_EMAIL;
+}
+
+/**
+ * Tira a reação de abertura quando ela já foi usada na conversa.
+ *
+ * ⚠️ James: *"muito poxa"*. A causa era nossa: "poxa" estava num exemplo ✅ do
+ * prompt e primeiro na lista de reações da regra de estilo — e modelo pequeno
+ * não lê exemplo como exemplo, lê como molde. Tirei dos dois lugares, mas
+ * "não repita a mesma palavra" é instrução que ele cumpre quase sempre, e
+ * quase sempre não serve: a aluna lê TODAS as mensagens em sequência, então
+ * ela é justamente quem enxerga a repetição.
+ */
+const REACAO_DE_ABERTURA =
+  /^\s*(poxa|nossa|puxa|ai que chato|que chato|caramba|eita|ah que pena|que pena)\s*[,!.…]+\s*/i;
+
+export function tirarReacaoRepetida(texto: string, jaUsou: boolean): string {
+  if (!jaUsou) return texto.trim();
+  const limpo = texto.replace(REACAO_DE_ABERTURA, "");
+  if (!limpo.trim()) return texto.trim();
+  // Maiúscula na primeira letra: sem isso vira "achei o motivo:" em minúscula.
+  return limpo.charAt(0).toUpperCase() + limpo.slice(1).trim();
+}
+
+/** Essa conversa já teve uma reação de abertura antes? */
+export function jaReagiu(mensagensDaIa: string[]): boolean {
+  return mensagensDaIa.some((m) => REACAO_DE_ABERTURA.test(m));
+}
+
 export function lerResposta(bruta: string): {
   texto: string;
   precisaHumano: boolean;
 } {
   const precisaHumano = bruta.includes(MARCA_HUMANO);
-  // ⚠️ As DUAS limpezas, encadeadas. Ao criar a da saudação eu troquei a do "na
-  // minha base" por ela sem perceber — e essa existe desde a primeira bateria de
-  // teste, quando a IA respondeu "não temos isso na base que eu conheço" pra
-  // uma aluna. Sumir uma proteção ao adicionar outra é o jeito mais silencioso
-  // de regredir.
-  const texto = tirarSaudacaoSolta(
-    limparVazamento(
-      bruta
-        .split(MARCA_HUMANO)
-        .join("")
-        // O modelo às vezes inventa variações do marcador; limpa as óbvias.
-        .replace(/\[\s*humano\s*\]/gi, "")
+  // ⚠️ TODAS as limpezas, encadeadas. Ao criar a da saudação eu troquei a do
+  // "na minha base" por ela sem perceber — e essa existe desde a primeira
+  // bateria de teste, quando a IA respondeu "não temos isso na base que eu
+  // conheço" pra uma aluna. Sumir uma proteção ao adicionar outra é o jeito
+  // mais silencioso de regredir.
+  //
+  // ⚠️ A ORDEM importa: o pedido de prova sai por último, porque as de cima
+  // podem deixar a frase dele sozinha — e aí a substituição pela pergunta do
+  // e-mail é o certo.
+  const texto = tirarPedidoDeProva(
+    tirarSaudacaoSolta(
+      limparVazamento(
+        bruta
+          .split(MARCA_HUMANO)
+          .join("")
+          // O modelo às vezes inventa variações do marcador; limpa as óbvias.
+          .replace(/\[\s*humano\s*\]/gi, "")
+      )
     )
   );
   return { texto, precisaHumano };

@@ -24,7 +24,7 @@ export async function GET() {
   ]);
   return NextResponse.json({
     usadas: uso.usadas,
-    estourou: uso.estourou,
+    paradaPorCota: uso.estourou,
     limite: limiteDoDia(),
     emails: reenvios.length,
   });

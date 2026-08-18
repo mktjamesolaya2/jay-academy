@@ -14,12 +14,18 @@ import { nivel, percentual, recado, type Nivel } from "@/lib/uso-ia";
  */
 
 const CORES: Record<Nivel, { barra: string; texto: string; borda: string }> = {
-  tranquilo: { barra: "bg-[#AC9751]", texto: "text-neutral-400", borda: "border-[#1f1f1f]" },
+  tranquilo: { barra: "bg-[#AC9751]", texto: "text-neutral-500", borda: "border-[#1f1f1f]" },
   chegando: { barra: "bg-amber-400", texto: "text-amber-300", borda: "border-amber-500/25" },
-  estourou: { barra: "bg-rose-500", texto: "text-rose-300", borda: "border-rose-500/30" },
+  parada: { barra: "bg-rose-500", texto: "text-rose-300", borda: "border-rose-500/30" },
 };
 
-type Dados = { usadas: number; limite: number; estourou: boolean; emails: number };
+type Dados = {
+  usadas: number;
+  /** `null` quando ninguém configurou um teto — e aí não há barra. */
+  limite: number | null;
+  paradaPorCota: boolean;
+  emails: number;
+};
 
 export function PainelUso({ inicial }: { inicial: Dados }) {
   const [d, setD] = useState(inicial);
@@ -38,8 +44,9 @@ export function PainelUso({ inicial }: { inicial: Dados }) {
     return () => clearInterval(t);
   }, []);
 
-  const n = nivel(d.usadas, d.limite, d.estourou);
+  const n = nivel(d.usadas, d.limite, d.paradaPorCota);
   const c = CORES[n];
+  const p = percentual(d.usadas, d.limite);
 
   return (
     <aside className="w-full shrink-0 space-y-3 lg:w-[230px]">
@@ -49,16 +56,24 @@ export function PainelUso({ inicial }: { inicial: Dados }) {
         </p>
         <p className="mt-1.5 text-[19px] font-semibold leading-none text-white">
           {d.usadas}
-          <span className="text-[13px] font-normal text-neutral-600"> de {d.limite}</span>
+          <span className="text-[13px] font-normal text-neutral-600">
+            {" "}
+            {d.usadas === 1 ? "resposta hoje" : "respostas hoje"}
+          </span>
         </p>
-        <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-[#1a1a1a]">
-          <div
-            className={`h-full rounded-full transition-all duration-500 ${c.barra}`}
-            style={{ width: `${percentual(d.usadas, d.limite)}%` }}
-          />
-        </div>
+        {/* ⚠️ A barra só existe quando ALGUÉM configurou um teto. Sem teto,
+            desenhar barra era fingir que a gente sabe quanto falta — e o
+            número embaixo dela ("de 250") era um chute meu com cara de fato. */}
+        {p !== null && (
+          <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-[#1a1a1a]">
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${c.barra}`}
+              style={{ width: `${p}%` }}
+            />
+          </div>
+        )}
         <p className={`mt-2 text-[11.5px] leading-relaxed ${c.texto}`}>
-          {recado(d.usadas, d.limite, d.estourou)}
+          {recado(d.usadas, d.limite, d.paradaPorCota)}
         </p>
       </div>
 

@@ -214,7 +214,10 @@ type UsoDoDia = { usadas: number; estourou: boolean };
 export async function contarUsoIA(agora = new Date()): Promise<void> {
   const chave = chaveDoDia(agora);
   const atual = (await kvGet<UsoDoDia>(chave)) ?? { usadas: 0, estourou: false };
-  await kvSet(chave, { ...atual, usadas: atual.usadas + 1 });
+  // ⚠️ Uma resposta que deu certo DESMARCA a cota estourada. É prova viva de
+  // que a IA voltou — e sem isso o vermelho ficaria na tela até a meia-noite,
+  // mesmo com ela respondendo, e aí ninguém mais acreditaria nele.
+  await kvSet(chave, { usadas: atual.usadas + 1, estourou: false });
 }
 
 /** O fornecedor devolveu 429 — a cota de hoje acabou de verdade. */

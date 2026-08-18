@@ -9,6 +9,8 @@ import {
   pareceRaciocinio,
   tirarSaudacaoSolta,
   MARCA_HUMANO,
+  tirarReacaoRepetida,
+  jaReagiu,
 } from "./suporte-prompt.ts";
 
 /* ── o prompt ───────────────────────────────────────────────────────────── */
@@ -251,4 +253,73 @@ test("o prompt diz que ela OUVE áudio e VÊ imagem", () => {
   const p = montarPrompt("x");
   assert.match(p, /ouve áudio/i);
   assert.match(p, /NUNCA diga que não consegue ouvir/i);
+});
+
+/* ── o que ela nunca pede ────────────────────────────────────────────────── */
+
+test("pedido de comprovante e número de transação não chega na aluna", () => {
+  // ⚠️ Isto a IA inventou sozinha — não está no prompt nem na base. James viu
+  // numa conversa real. Pedir documento faz quem já está com problema se
+  // sentir suspeita de estar mentindo sobre ter pago.
+  const r = lerResposta(
+    "Entendi seu problema! Me envie o comprovante de pagamento. Qual o e-mail da compra?"
+  );
+  assert.ok(!/comprovante/i.test(r.texto), r.texto);
+  // O resto da resposta sobrevive — corta a frase, não a mensagem.
+  assert.match(r.texto, /Entendi seu problema/);
+  assert.match(r.texto, /e-mail da compra/);
+});
+
+test("se a resposta INTEIRA era o pedido, sobra a pergunta certa", () => {
+  const r = lerResposta("Preciso do número da transação para verificar.");
+  assert.match(r.texto, /e-mail/i);
+  assert.ok(!/transa/i.test(r.texto), r.texto);
+});
+
+test("pega as variações — nota fiscal, print do pagamento, código do pedido", () => {
+  for (const frase of [
+    "Me manda a nota fiscal.",
+    "Envie o print do pagamento, por favor.",
+    "Qual o código do pedido?",
+    "Preciso do numero da transacao.",
+  ]) {
+    const t = lerResposta(frase).texto;
+    assert.match(t, /e-mail/i, `não pegou: ${frase}`);
+  }
+});
+
+test("a aluna falando de comprovante não é afetada — só a resposta da IA passa aqui", () => {
+  // A limpeza roda no que a IA escreveu. Uma resposta que apenas MENCIONA sem
+  // pedir também some, e tudo bem: a IA não tem por que falar disso.
+  const t = lerResposta("Achei sua compra aqui, tá tudo certo 🙂").texto;
+  assert.equal(t, "Achei sua compra aqui, tá tudo certo 🙂");
+});
+
+/* ── o "poxa" repetido ───────────────────────────────────────────────────── */
+
+test("a mesma reação não abre duas mensagens seguidas", () => {
+  // ⚠️ James: "muito poxa". A causa era nossa — "poxa" estava num exemplo do
+  // prompt e primeiro na lista de reações. Tirei dos dois, mas quem lê todas
+  // as mensagens em sequência é a aluna, então a trava é de código.
+  assert.equal(
+    tirarReacaoRepetida("Poxa, achei o motivo: seu acesso venceu.", true),
+    "Achei o motivo: seu acesso venceu."
+  );
+  // Na PRIMEIRA vez ela pode reagir — reagir é o certo, repetir é que não.
+  assert.equal(
+    tirarReacaoRepetida("Poxa, achei o motivo.", false),
+    "Poxa, achei o motivo."
+  );
+});
+
+test("jaReagiu olha o que a IA já falou nesta conversa", () => {
+  assert.equal(jaReagiu(["Oi! Como posso ajudar?"]), false);
+  assert.equal(jaReagiu(["Poxa, que chato isso."]), true);
+  assert.equal(jaReagiu(["Que chato! Deixa eu ver."]), true);
+  assert.equal(jaReagiu([]), false);
+});
+
+test("resposta que é só a reação não vira mensagem vazia", () => {
+  // Melhor um "Poxa." repetido do que uma bolha em branco na tela dela.
+  assert.equal(tirarReacaoRepetida("Poxa!", true), "Poxa!");
 });

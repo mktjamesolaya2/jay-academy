@@ -27,6 +27,8 @@ import {
   pediuHumano,
   resumoPraAtendente,
   pareceRaciocinio,
+  tirarReacaoRepetida,
+  jaReagiu,
 } from "./suporte-prompt";
 import { logAnonymousActivity } from "./activity-log";
 import {
@@ -362,9 +364,12 @@ ${fatos}`
           console.error(
             `[suporte] limite diário de ${provedor.nome} atingido: ${corpoErro.slice(0, 200)}`
           );
+          // ⚠️ NÃO marque a cota como estourada aqui. Isto diz só que ESTE
+          // modelo recusou — a fila tem três, e o segundo costuma responder
+          // normal. Marcar aqui pintou a tela de vermelho ("a cota acabou")
+          // num dia em que a IA tinha respondido tudo. Quem marca é o fim da
+          // fila, lá embaixo, quando ninguém respondeu.
           limiteDiario = true;
-          // A tela do time precisa saber disso sem ninguém ler log.
-          await marcarLimiteEstourado().catch(() => {});
         } else {
           console.warn(`[suporte] ${model} falhou: ${r.status} ${corpoErro.slice(0, 120)}`);
         }
@@ -389,7 +394,14 @@ ${fatos}`
         continue;
       }
 
-      const { texto: resposta, precisaHumano } = lerResposta(bruta);
+      const { texto: bruto2, precisaHumano } = lerResposta(bruta);
+      // ⚠️ Só o cérebro sabe se ela JÁ reagiu nesta conversa — a limpeza pura
+      // não tem como saber sozinha, e é a repetição que incomoda, não a
+      // reação em si.
+      const resposta = tirarReacaoRepetida(
+        bruto2,
+        jaReagiu(conversa.mensagens.filter((m) => m.de === "ia").map((m) => m.texto))
+      );
       conversa.mensagens.push({
         de: "ia",
         texto: resposta,
@@ -472,6 +484,9 @@ ${fatos}`
   conversa.aguardandoPessoa = true;
   await salvarConversa(conversa);
   await avisarOTime(conversa, id);
+  // Chegou aqui: a fila inteira falhou. Se foi por 429, a cota acabou de
+  // verdade — e é isso que a tela do time precisa mostrar em vermelho.
+  if (limiteDiario) await marcarLimiteEstourado().catch(() => {});
 
   return {
     tipo: "erro",
