@@ -2,7 +2,7 @@ import { problemaDaConversa } from "./whatsapp-suporte.ts";
 import {
   passoDoEncaminhamento,
   perguntaDoNome,
-  recadoDeEncaminhamento,
+  comProtocolo,
 } from "./protocolo.ts";
 import "server-only";
 import { randomUUID } from "node:crypto";
@@ -466,8 +466,10 @@ ${fatos}`
         conversa.aguardandoPessoa = true;
         // O protocolo vai escrito, além de ir no botão: se ela fechar a página
         // antes de clicar, o número continua com ela.
-        conversa.mensagens[conversa.mensagens.length - 1]!.texto =
-          recadoDeEncaminhamento(id);
+        conversa.mensagens[conversa.mensagens.length - 1]!.texto = comProtocolo(
+          conversa.mensagens[conversa.mensagens.length - 1]!.texto,
+          id
+        );
         // A pergunta vai pra fila de lacunas — é o que ela ainda não sabe.
         await anotarLacuna(texto).catch(() => {});
         await avisarOTime(conversa, id);

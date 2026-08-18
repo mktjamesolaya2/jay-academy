@@ -46,7 +46,7 @@ test("conversa sem nome e sem e-mail não quebra a busca", () => {
 
 /* ── o nome antes do encaminhamento ──────────────────────────────────────── */
 
-import { passoDoEncaminhamento, recadoDeEncaminhamento, perguntaDoNome } from "./protocolo.ts";
+import { passoDoEncaminhamento, comProtocolo, perguntaDoNome } from "./protocolo.ts";
 
 test("sem nome, ela pergunta antes de transferir", () => {
   assert.equal(
@@ -78,11 +78,29 @@ test("conversa normal segue sem nada disso", () => {
   );
 });
 
-test("o recado entrega o protocolo escrito pra ela", () => {
-  // ⚠️ Na tela também, não só no botão: se ela fechar a página antes de
-  // clicar, o número ainda está com ela.
-  const r = recadoDeEncaminhamento("b4b39d37-d35d-458b");
+test("o protocolo é ACRESCENTADO, não substitui a resposta", () => {
+  // ⚠️ Substituindo, o estrago era grande: a IA achava a compra, ia dizer "tá
+  // tudo certo com seu acesso, já vou pedir pro time reenviar", e esse texto
+  // era jogado fora. A aluna recebia só "vou te passar pra uma pessoa" — a
+  // informação que ela procurou some, e parece que ninguém olhou nada.
+  const r = comProtocolo(
+    "Achei sua compra, tá tudo certo com o acesso 🙂 Já vou pedir pro time reenviar.",
+    "b4b39d37-d35d-458b"
+  );
+  assert.match(r, /Achei sua compra/);
+  assert.match(r, /pedir pro time reenviar/);
   assert.match(r, /B4B39D/);
+});
+
+test("não repete o protocolo se a resposta já falou dele", () => {
+  const r = comProtocolo("Seu protocolo é B4B39D, guarda aí.", "b4b39d37-d35d");
+  assert.equal(r.match(/B4B39D/g)!.length, 1);
+});
+
+test("modelo mudo ainda entrega o protocolo", () => {
+  const r = comProtocolo("", "b4b39d37-d35d-458b");
+  assert.match(r, /B4B39D/);
+  assert.match(r, /pessoa do time/);
   assert.match(perguntaDoNome(), /nome/i);
 });
 

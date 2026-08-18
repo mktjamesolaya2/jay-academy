@@ -90,11 +90,27 @@ export function perguntaDoNome(): string {
 }
 
 /**
- * O que ela lê quando o atendimento é encaminhado.
+ * O protocolo, ACRESCENTADO à resposta que a IA já deu.
+ *
+ * ⚠️ Acrescenta, não substitui. Eu tinha feito substituindo, e o estrago era
+ * grande: quando a IA achava a compra e ia dizer "tá tudo certo com seu
+ * acesso, já vou pedir pro time reenviar", esse texto era jogado fora e a
+ * aluna recebia só "vou te passar pra uma pessoa". A informação que ela
+ * procurou some, e a conversa vira um encaminhamento seco — parecendo que
+ * ninguém olhou nada.
  *
  * O protocolo vem escrito na tela, além de ir na mensagem do WhatsApp: se ela
  * fechar a página antes de clicar no botão, o número ainda está com ela.
  */
-export function recadoDeEncaminhamento(conversaId: string): string {
-  return `Vou te passar pra uma pessoa do time. Seu protocolo é ${protocoloDe(conversaId)} — é só mandar esse número no WhatsApp que a gente já sabe do que se trata.`;
+export function comProtocolo(resposta: string, conversaId: string): string {
+  const codigo = protocoloDe(conversaId);
+  const texto = (resposta ?? "").trim();
+  // Já falou o número? Não repete.
+  if (texto.includes(codigo)) return texto;
+
+  const recado = `Seu protocolo é ${codigo} — é só mandar esse número no WhatsApp que a gente já sabe do que se trata.`;
+  // Sem resposta nenhuma (modelo mudo), o recado sozinho ainda serve.
+  return texto ? `${texto}
+
+${recado}` : `Vou te passar pra uma pessoa do time. ${recado}`;
 }
