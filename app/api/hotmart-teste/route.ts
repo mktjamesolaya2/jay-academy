@@ -49,6 +49,15 @@ export async function GET(req: Request) {
     });
   }
 
+  if (url0.searchParams.get("permissoes") === "1") {
+    const { permissoesDoToken } = await import("@/lib/hotmart-sonda");
+    return NextResponse.json({
+      aviso: "O token em si NÃO aparece aqui — só o que ele diz que pode fazer.",
+      credencial: jogo,
+      ...(await permissoesDoToken(jogo)),
+    });
+  }
+
   if (url0.searchParams.get("sondarvendas") === "1") {
     // ⚠️ Aceita `protocolo` além de `email`: quando o caso vem de uma conversa
     // ("o protocolo EF03D5 deu erro"), quem está diagnosticando não tem o

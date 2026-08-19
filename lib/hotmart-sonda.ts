@@ -24,6 +24,19 @@ const CANDIDATOS = [
   "https://developers.hotmart.com/club/api/v1/users/resend-access",
   "https://developers.hotmart.com/club/api/v1/users/access",
   "https://developers.hotmart.com/club/api/v1/access",
+  // ⚠️ A FAMÍLIA DO QUE FUNCIONA. O /subscriptions responde 200 com a mesma
+  // credencial, então o que estiver perto dele tem chance de responder
+  // também — e assinatura tem compra pendurada. Se um destes abrir, a gente
+  // alcança dado de compra sem depender do /sales/.
+  "https://developers.hotmart.com/payments/api/v1/subscriptions",
+  "https://developers.hotmart.com/payments/api/v1/subscriptions/summary",
+  "https://developers.hotmart.com/payments/api/v1/subscriptions/purchases",
+  "https://developers.hotmart.com/payments/api/v1/subscriptions/transactions",
+  // Outros vizinhos do Payments, pra desenhar o contorno do que é permitido.
+  "https://developers.hotmart.com/payments/api/v1/sales/commissions",
+  "https://developers.hotmart.com/payments/api/v1/sales/price-details",
+  "https://developers.hotmart.com/payments/api/v1/products",
+  "https://developers.hotmart.com/payments/api/v1/coupon",
   // Payments — onde vive o histórico de vendas que já usamos
   "https://developers.hotmart.com/payments/api/v1/sales/history",
   "https://developers.hotmart.com/payments/api/v1/sales/users",
@@ -219,4 +232,60 @@ export async function sondarVendas(
     }
   }
   return achados;
+}
+
+/* ── o que o próprio token diz que pode ──────────────────────────────────── */
+
+/**
+ * Abre o token e mostra o que a Hotmart concedeu.
+ *
+ * ⚠️ O `access_token` da Hotmart é um JWT: o miolo dele é só base64, e lá
+ * dentro costuma vir a lista de permissões (`scope`, `authorities`) que a
+ * credencial recebeu. Se "sales" não estiver na lista, o 400 dos endereços de
+ * venda para de ser mistério e vira uma frase que dá pra levar pro suporte:
+ * *"minha credencial não recebeu esse escopo"*.
+ *
+ * ⚠️ **O token NUNCA é mostrado** — só o miolo decodificado, e sem a
+ * assinatura. Quem tiver o token entra na conta; quem tiver a lista de
+ * permissões não faz nada com ela.
+ */
+export async function permissoesDoToken(
+  jogo: JogoDeCredenciais = "principal"
+): Promise<Record<string, unknown>> {
+  const token = await pegarTokenPublico(jogo);
+  const partes = token.split(".");
+  if (partes.length !== 3) {
+    // Não é JWT: aí não dá pra ler nada de dentro, e isso também é resposta.
+    return { formato: "não é um JWT — não dá pra ler as permissões", pedacos: partes.length };
+  }
+
+  try {
+    const miolo = JSON.parse(
+      Buffer.from(partes[1]!.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8")
+    ) as Record<string, unknown>;
+
+    // ⚠️ Lista branca: só o que ajuda a diagnosticar. Um JWT pode carregar
+    // identificadores da conta que não têm por que aparecer numa tela.
+    const interessa = [
+      "scope",
+      "scopes",
+      "authorities",
+      "roles",
+      "client_id",
+      "resource",
+      "aud",
+      "iss",
+      "exp",
+    ];
+    const lido: Record<string, unknown> = {};
+    for (const c of interessa) if (c in miolo) lido[c] = miolo[c];
+
+    return {
+      permissoes: lido,
+      camposQueExistemNoToken: Object.keys(miolo).sort(),
+      dica: "Se 'sales' não aparecer nas permissões, o 400 é falta de escopo — e isso é o que o suporte precisa liberar.",
+    };
+  } catch (e) {
+    return { erro: e instanceof Error ? e.message : "não deu pra ler o token" };
+  }
 }
