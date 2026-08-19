@@ -289,3 +289,110 @@ export async function permissoesDoToken(
     return { erro: e instanceof Error ? e.message : "não deu pra ler o token" };
   }
 }
+
+/* ── a porta que abriu: assinaturas ──────────────────────────────────────── */
+
+/**
+ * Descobre se dá pra procurar uma pessoa pela família de assinaturas.
+ *
+ * ⚠️ Achado de 19/08: enquanto todo `/sales/` responde 400, três endereços de
+ * assinatura respondem **200 com dado real** — inclusive nome do produto
+ * ("FIO A FIO REALISTA - JAMES OLAYA [2.0] [2024]") e data. Ou seja: existe uma
+ * porta aberta pro dado de compra que não é a que a gente vinha tentando.
+ *
+ * Falta só uma coisa pra ela servir ao suporte: **filtrar por e-mail**. Sem
+ * filtro, a lista vem inteira e não dá pra responder "a compra da Fulana".
+ *
+ * ⚠️ Cada tentativa é GET. A resposta mostra só **quantos itens vieram** —
+ * nunca o conteúdo, que é dado de aluna.
+ */
+export async function sondarAssinaturas(
+  email: string,
+  jogo: JogoDeCredenciais = "principal"
+): Promise<Achado[]> {
+  const token = await pegarTokenPublico(jogo);
+  const base = "https://developers.hotmart.com/payments/api/v1";
+
+  const enderecos = [
+    ["assinaturas", `${base}/subscriptions`],
+    ["resumo", `${base}/subscriptions/summary`],
+    ["transações", `${base}/subscriptions/transactions`],
+  ] as const;
+
+  // Os nomes que uma API costuma usar pro e-mail de quem comprou. Testar todos
+  // é mais rápido que procurar numa documentação que carrega por JavaScript.
+  const filtros = [
+    "subscriber_email",
+    "buyer_email",
+    "email",
+    "subscriber",
+    "user_email",
+  ];
+
+  const achados: Achado[] = [];
+
+  for (const [nome, url] of enderecos) {
+    for (const filtro of filtros) {
+      const u = new URL(url);
+      u.searchParams.set(filtro, email);
+      try {
+        const r = await fetch(u, {
+          headers: { Authorization: `Bearer ${token}` },
+          signal: AbortSignal.timeout(15000),
+        });
+        const cru = await r.text().catch(() => "");
+        let leitura = traduzir(r.status);
+        if (r.ok) {
+          try {
+            const itens = (JSON.parse(cru)?.items ?? []).length;
+            // ⚠️ 0 item também é resposta ÚTIL: quer dizer que o filtro foi
+            // aceito e essa pessoa não tem assinatura. O que não serve é o
+            // filtro ser ignorado e vir a lista inteira.
+            leitura = `ACEITOU o filtro — ${itens} ${itens === 1 ? "item" : "itens"}`;
+          } catch {
+            leitura = "200, mas a resposta não era o JSON esperado";
+          }
+        }
+        achados.push({
+          endereco: `${nome} ?${filtro}=`,
+          status: r.status,
+          leitura,
+          ...(r.ok ? {} : { resposta: cru.replace(/\s+/g, " ").slice(0, 140) }),
+        });
+      } catch (e) {
+        achados.push({
+          endereco: `${nome} ?${filtro}=`,
+          status: 0,
+          leitura: e instanceof Error ? e.message : "erro de rede",
+        });
+      }
+    }
+  }
+
+  // ⚠️ O controle: a MESMA chamada sem filtro nenhum. Se o número de itens for
+  // igual ao das tentativas acima, o filtro foi ignorado — e "aceitou" seria
+  // uma leitura falsa. Sem esta linha, a gente sairia daqui comemorando.
+  for (const [nome, url] of enderecos) {
+    try {
+      const r = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(15000),
+      });
+      const cru = await r.text().catch(() => "");
+      let leitura = traduzir(r.status);
+      if (r.ok) {
+        try {
+          const d = JSON.parse(cru);
+          const itens = (d?.items ?? []).length;
+          const total = d?.page_info?.total_results;
+          leitura = `SEM filtro — ${itens} itens${total != null ? ` (total ${total})` : ""}`;
+        } catch {}
+      }
+      achados.push({ endereco: `${nome} (controle, sem filtro)`, status: r.status, leitura });
+    } catch {
+      /* o controle falhar não invalida o resto */
+    }
+  }
+
+  return achados;
+}

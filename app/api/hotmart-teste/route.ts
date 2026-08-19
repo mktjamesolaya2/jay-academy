@@ -49,6 +49,22 @@ export async function GET(req: Request) {
     });
   }
 
+  if (url0.searchParams.get("assinaturas") === "1") {
+    const alvo = url0.searchParams.get("email");
+    if (!alvo) {
+      return NextResponse.json(
+        { error: "Use ?assinaturas=1&email=alguem@email.com" },
+        { status: 400 }
+      );
+    }
+    const { sondarAssinaturas } = await import("@/lib/hotmart-sonda");
+    return NextResponse.json({
+      aviso: "Só leitura. Mostra apenas QUANTOS itens vieram, nunca o conteúdo.",
+      email: alvo,
+      tentativas: await sondarAssinaturas(alvo, jogo),
+    });
+  }
+
   if (url0.searchParams.get("permissoes") === "1") {
     const { permissoesDoToken } = await import("@/lib/hotmart-sonda");
     return NextResponse.json({
