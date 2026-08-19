@@ -931,6 +931,18 @@
     }
     .academy__grade .moldura { aspect-ratio: 3 / 2; }
 
+    /* Colagem dentro de UMA moldura — mesmo retângulo, duas fotos.
+       ⚠️ Divisão vertical, e não horizontal: cada metade fica 3/4, que é a
+       proporção das fotos de aula (retrato). Dividido na horizontal, cada
+       metade viraria 3/1 e cortaria as pessoas na altura do peito. */
+    .moldura--colagem {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+      background: #0b0b0b;
+    }
+    .moldura--colagem img { height: 100%; }
+
     /* ============================================================
        DOBRA 9 — PROVA SOCIAL
        ============================================================ */
@@ -1678,12 +1690,19 @@
           <img src="/lp/academy/reais/casa/casa-noite.jpg" alt="Fachada da Jay Academy iluminada ao anoitecer, entre as árvores" loading="lazy" />
         </div>
       </div>
+      <!-- ⚠️ TRÊS blocos, não cinco. A fachada em cima, a sala de prática, e
+           uma colagem com o James dando aula — que é o que faltava: a dobra
+           mostrava o espaço vazio e não quem ensina dentro dele.
+           A colagem existe porque as duas fotos de aula são RETRATO. Sozinhas
+           numa moldura 3/2 elas viravam recorte de mão e de colar; lado a
+           lado, cada metade fica 3/4 e a foto aparece inteira. -->
       <div class="academy__grade">
         <div class="moldura">
-          <img src="/lp/academy/reais/casa/lounge.jpg" alt="Lounge da Academy com poltronas de couro, tijolo branco e a escada" loading="lazy" />
-        </div>
-        <div class="moldura">
           <img src="/lp/academy/reais/casa/sala-pratica.jpg" alt="Sala de prática da Academy com as macas e bancadas alinhadas" loading="lazy" />
+        </div>
+        <div class="moldura moldura--colagem">
+          <img src="/lp/academy/reais/sala-aula.jpg" alt="A turma reunida em volta da maca acompanhando James Olaya durante a aula" loading="lazy" />
+          <img src="/lp/academy/reais/demonstracao-real.jpg" alt="James Olaya executando o procedimento na demonstração, com a turma assistindo" loading="lazy" />
         </div>
       </div>
     </div>
@@ -1804,7 +1823,12 @@
       <span class="convite__fio"></span>
       <p class="texto-lamina">Escolha a formação que corresponde ao seu momento.</p>
       <div class="acoes">
-        <a class="btn btn--ouro" href="#formacoes">Conheça as formações</a>
+        <!-- ⚠️ Vai pro comercial, não pra âncora. Aqui a pessoa JÁ leu a
+             página inteira — mandar ela de volta pra lista de formações que
+             ela acabou de ver é fechar a porta no fim do caminho.
+             O rótulo mudou junto: "Conheça as formações" abrindo o WhatsApp
+             seria botão mentindo sobre o que faz. -->
+        <a class="btn btn--ouro" href="https://wa.me/5519971634567?text=Oi!%20Quero%20saber%20sobre%20as%20forma%C3%A7%C3%B5es%20presenciais%20da%20Jay%20Academy." target="_blank" rel="noopener">Falar sobre as formações</a>
       </div>
     </div>
   </section>
