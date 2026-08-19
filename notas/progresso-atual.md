@@ -2,7 +2,143 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🔎 Sessão 2026-08-19 — a consulta da Hotmart nunca funcionou (e o conserto por CSV)
+
+**Estado: em produção.** Falta o James rodar a importação e a Hotmart responder o chamado.
+
+### A descoberta que explica meses de "não encontrei sua compra"
+
+A API de vendas da Hotmart **sempre respondeu 400 `invalid_parameter`** — pra
+qualquer e-mail. O erro era engolido por um `catch`, a lista voltava vazia, e o
+suporte dizia *"procurei e não achei compra com esse e-mail"*. Ou seja: **negava
+a compra de quem pagou**, por um erro nosso.
+
+Sondado com 13 requisições diferentes (com filtro, sem filtro, com cabeçalho
+`Content-Type`, v2, endereços vizinhos) — **todas 400, inclusive a sem nenhum
+parâmetro**. Uma chamada sem parâmetro não falha por parâmetro inválido.
+
+Controle da mesma rodada: `GET /payments/api/v1/subscriptions` responde **200
+com dados reais**, no mesmo token e no mesmo minuto. E o Club responde **403**
+com corpo vazio (com subdomain errado responde 404 `subdomain_not_found`, o que
+prova que `pmuclass` está certo e a recusa é de permissão).
+
+**Conclusão: é liberação de acesso, não código.** Chamado aberto com a Hotmart
+(atendente Danielle R.) pedindo Sales History + Club. Retorno virá por e-mail em
+`suporte@jamesolaya.com.br`.
+
+### O conserto que não depende deles: importar por CSV
+
+O painel exporta o mesmo dado. **7 arquivos (2020–2026), 12.358 linhas, 8.477
+alunas, 10.835 compras depois de agrupar. 2.788 compras nos últimos 12 meses.**
+
+- **`/suporte/importar`** — aceita vários arquivos de uma vez, lê no navegador,
+  mostra qual coluna virou cada campo e quantas linhas ficaram de fora ANTES de
+  gravar. Grava no mesmo lugar do webhook (`registrarCompras`): um cobre o
+  passado, o outro o presente. Reimportar atualiza em vez de duplicar.
+- **Histórico de importações** na própria tela (data, quantas, quem, arquivos).
+- **`lib/hotmart-csv.ts`** — leitura pura e testada.
+
+### Armadilhas que o arquivo REAL derrubou (nenhuma suposição sobreviveu)
+
+- Separador é **ponto e vírgula**, não vírgula.
+- `dd/mm/aaaa`: `new Date("05/08/2026")` daria 8 de maio. Três meses decidem se o
+  acesso de 12 meses venceu.
+- O cabeçalho tem **"Nome do Produto" ANTES de "Nome"** — casando por pedaço do
+  nome, o nome da ALUNA virava o nome do curso. Agora casa exato primeiro, e uma
+  coluna serve a um campo só.
+- `gravadas += await registrar(...)` dentro de `map` com 12 tarefas paralelas: o
+  `+=` lê a esquerda ANTES do await, então 11 de cada 12 se perdiam. Mostrou
+  **914 no lugar de 10.835** e fez parecer que a importação falhou. Os dados
+  entraram certos; era só a conta.
+- O `<input type="file">` não dispara nada ao escolher OS MESMOS arquivos — o
+  campo passa a ser zerado.
+- `*.csv` entrou no `.gitignore`: os exports têm e-mail, CPF, telefone e endereço
+  de 8 mil pessoas e estavam desprotegidos dentro da pasta do portal.
+
+### Erros de atendimento corrigidos (vistos em conversa real, protocolo 756484)
+
+- **O laço do "não achei"**: a IA repetia *"não encontrei, foi outro e-mail?"*
+  três vezes e no fim pedia comprovante. A regra *"só chame uma pessoa se ela
+  confirmar o e-mail"* estava no texto do prompt e o modelo não cumpriu. Virou
+  código: 2ª falha para o MESMO e-mail → pessoa. Guardado por e-mail, pra que um
+  e-mail novo ainda tenha busca nova.
+- **Pedir comprovante / nº de transação**: a IA inventou sozinha. Cortado no
+  código, frase a frase. Faz quem já está com problema se sentir suspeita de
+  estar mentindo sobre ter pago.
+- **"Poxa" em toda mensagem**: estava num exemplo ✅ do prompt e primeiro na lista
+  de reações. Tirado dos dois lugares + trava de código (não abre duas mensagens
+  seguidas com a mesma reação).
+- **Chute de vencimento sem ter achado compra** ("deve ter vencido em junho do ano
+  passado", com a aluna tendo dito "mês retrasado"): proibido nos fatos.
+- **Consulta que falha ≠ "não achei"**: `todasAsCompras` devolve `{compras,
+  apiFalhou}`. Havia dois jeitos de não conseguir procurar (sem credencial e
+  consulta quebrada) e só o primeiro era olhado.
+- **A IA dizia que não ouve áudio** — mentira, ela ouve. O prompt não dizia, e
+  modelo na dúvida se declara incapaz. Sem legenda ela também ignorava o anexo:
+  agora vai uma instrução de texto junto.
+
+### Painel do suporte
+
+- **`/suporte`** — coluna à esquerda com busca (protocolo, nome ou e-mail),
+  respostas da IA hoje e e-mails pra liberar. Saiu a cobrança de *"3 alunas
+  esperando você responder"*: quem responde responde no WhatsApp.
+- **Ficha da aluna** ao abrir a conversa: protocolo e e-mail copiáveis num clique
+  (o gesto seguinte é sempre colar na Hotmart) + botão de WhatsApp.
+- **Apagar** em cada linha da lista, não só dentro da conversa.
+- **`/suporte/diagnostico-hotmart`** — as chamadas reais em tela legível, feita
+  pra ser gravada em vídeo (o suporte da Hotmart pediu). Nenhuma credencial
+  aparece: no Postman o cabeçalho `Authorization` iria pro vídeo anexado.
+- **`/api/suporte/transcricao?protocolo=`** — a conversa inteira em texto puro,
+  pra depurar atendimento sem print a print.
+- **Barra de uso da IA**: mostra só o que é medido. Antes dizia "5 de 250" — o 250
+  era chute. E o vermelho só acende quando a fila INTEIRA falha por 429; antes
+  qualquer 429 de um modelo (rotina, o seguinte responde) pintava tudo.
+
+### Protocolo e encaminhamento
+
+- **Protocolo** = 6 primeiros caracteres do id da conversa. Não é contador:
+  contador daria o mesmo número pra duas alunas simultâneas. O mesmo número vai
+  na mensagem do WhatsApp e é o que a busca acha (com teste amarrando os dois).
+- **Pergunta o nome antes de encaminhar** — uma vez só; quem já pediu uma pessoa
+  não merece virar formulário. O encaminhamento pendente não se perde quando ela
+  responde só o nome.
+- **⚠️ Dois tipos de encaminhamento** (feedback do James, 19/08): *reenvio de
+  acesso é trabalho nosso* — ela já ouviu que vai receber e NÃO ganha protocolo
+  nem botão de WhatsApp; *vencido / cancelado / não conferido / pediu pessoa* é
+  conversa dela, e aí sim. Os dois caem na caixa do time.
+- O protocolo **acrescenta** a resposta, não substitui. Substituindo, a IA achava
+  a compra e a aluna recebia só "vou te passar pra uma pessoa".
+
+### Chat da aluna
+
+- A conversa **sobrevive ao fechar a aba** (guardada no navegador dela — a página
+  não tem login de propósito), com histórico das 10 últimas e "nova conversa" que
+  não apaga a anterior. Antes cada visita começava do zero e levava o protocolo
+  junto.
+- Toda leitura do `localStorage` dentro de `try`: aba anônima **lança exceção** ali.
+
+### O que ficou pendente
+
+- [ ] James rodar a importação (a de 18/08 gravou, mas o contador mentiu — vale
+      rodar de novo pra ver **10.835 compras de 8.477 alunas**)
+- [ ] Apagar os CSVs do disco depois de importar (CPF/telefone de 8 mil pessoas)
+- [ ] Gravar o vídeo do `/suporte/diagnostico-hotmart` pra Danielle
+- [ ] Resposta da Hotmart sobre Sales History + Club
+- [ ] Descobrir o subdomain REAL da 2ª área de membros (`pmuclass-2024` não existe)
+- [ ] **Base de conhecimento em `/suporte/ajustes` está vazia** — é o que faz a IA
+      resolver sozinha em vez de encaminhar
+- [ ] URL da loja JAY.O (o atalho existe, sem endereço)
+
+### Ressalva sobre o dado importado
+
+As 12.358 linhas vêm todas com status `completo` ou `aprovado` — **nenhum
+reembolso ou cancelamento**. Se alguma aluna pediu reembolso, a gente vai achar a
+compra e dizer que está tudo certo. Como o caso passa por uma pessoa antes de
+liberar qualquer coisa, ninguém libera errado — mas vale saber.
 
 ---
 
