@@ -56,6 +56,13 @@ export type Conversa = {
    */
   encaminharPraConversa?: boolean;
   /**
+   * Ela mesma encerrou o atendimento.
+   *
+   * ⚠️ Fecha o assunto do lado dela sem tirar a conversa da caixa do time —
+   * o reenvio do acesso ainda precisa ser feito à mão.
+   */
+  encerradaPelaAluna?: boolean;
+  /**
    * O e-mail que a aluna deu — fica guardado na conversa.
    *
    * ⚠️ Sem isto, ela teria que repetir o e-mail a cada mensagem: a consulta

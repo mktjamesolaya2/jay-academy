@@ -57,7 +57,26 @@ export async function POST(req: Request) {
     email?: string;
     texto?: string;
     anexos?: Anexo[];
+    /** Ela clicou em encerrar o atendimento. */
+    encerrar?: boolean;
   } | null;
+
+  // ⚠️ Encerrar é um caminho separado: não passa pela IA, não gasta cota e não
+  // depende de ela escrever "sim" de um jeito que o modelo entenda. Botão que
+  // fecha, fecha.
+  if (body?.encerrar && body?.conversaId) {
+    const { getConversa, salvarConversa } = await import("@/lib/suporte-store");
+    const c = await getConversa(body.conversaId);
+    // Mesma resposta pra "não existe" e "não é sua" — ver o GET abaixo.
+    if (!c) return NextResponse.json({ error: "Conversa não encontrada" }, { status: 404 });
+
+    const despedida =
+      "Atendimento encerrado 🙂 Qualquer coisa é só mandar mensagem aqui de novo, tá?";
+    c.encerradaPelaAluna = true;
+    c.mensagens.push({ de: "ia", texto: despedida, em: new Date().toISOString() });
+    await salvarConversa(c);
+    return NextResponse.json({ conversaId: c.id, reply: despedida, encerrada: true });
+  }
 
   const anexos = (body?.anexos ?? []).slice(0, 3);
   for (const a of anexos) {
@@ -111,6 +130,10 @@ export async function POST(req: Request) {
     // reenvio de acesso NÃO liga: ela já ouviu que vai receber, e mandar
     // procurar atendimento faria parecer que não foi resolvido.
     comPessoa: r.praConversa === true,
+    // ⚠️ Resolvido ≠ com pessoa. Aqui a gente já cuidou do assunto e ela não
+    // tem nada a fazer — então a tela oferece encerrar, não procurar
+    // atendimento.
+    resolvido: r.resolvido === true,
     whatsapp,
   });
 }

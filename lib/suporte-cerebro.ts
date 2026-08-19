@@ -110,6 +110,11 @@ export type RespostaSuporte =
        * Reenvio de acesso encaminha pro time mas não é assunto dela.
        */
       praConversa?: boolean;
+      /**
+       * Resolvido do lado dela: a gente cuida do resto e ela não precisa fazer
+       * nada. É o que troca o botão de WhatsApp pela pergunta de encerrar.
+       */
+      resolvido?: boolean;
       model?: string;
       provedor?: string;
     }
@@ -288,9 +293,13 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     }
     // Quem decide chamar uma pessoa aqui é a regra, não o modelo.
     motivoDoHumano = situacao.tipo;
+    // ⚠️ "vencido" saiu daqui. James: *"quando o acesso já tiver vencido, não
+    // precisa mandar protocolo nem botão; apenas se a pessoa responder, aí sim
+    // a gente responde"*. Faz sentido: saber que venceu já é a resposta. Quem
+    // quiser continuar pergunta — e aí o modelo pede uma pessoa sozinho,
+    // porque preço e plano ele não pode falar.
     humanoPorRegra =
       situacao.tipo === "no-prazo" ||
-      situacao.tipo === "vencido" ||
       situacao.tipo === "cancelado" ||
       situacao.tipo === "nao-consegui-conferir" ||
       // ⚠️ Segunda vez que a busca falha pro mesmo e-mail. Insistir daqui pra
@@ -484,7 +493,13 @@ ${fatos}`
         // botão. Qualquer outro motivo é conversa de verdade.
         const tipo = tipoDeEncaminhamento({
           encaminhou: true,
-          soReenvioDeAcesso: motivoDoHumano === "no-prazo" && !precisaHumano,
+          // ⚠️ `pediuHumano`, e NÃO `precisaHumano`. O segundo é o marcador do
+          // modelo — e pro caso "no-prazo" a gente MANDA ele marcar (o reenvio
+          // é feito à mão). Usar o marcador aqui anulava a regra toda: todo
+          // reenvio saía como "conversa" e ganhava botão de WhatsApp, que é
+          // exatamente o que o James viu na tela.
+          soReenvioDeAcesso:
+            motivoDoHumano === "no-prazo" && !pediuHumano(texto),
         });
         conversa.encaminharPraConversa = tipo === "conversa";
         // O protocolo vai escrito, além de ir no botão: se ela fechar a página
@@ -514,6 +529,7 @@ ${fatos}`
         reply: conversa.mensagens[conversa.mensagens.length - 1]!.texto,
         precisaHumano: passo === "encaminhar",
         praConversa: passo === "encaminhar" && conversa.encaminharPraConversa === true,
+        resolvido: passo === "encaminhar" && conversa.encaminharPraConversa === false,
         model,
         provedor: provedor.nome,
       };

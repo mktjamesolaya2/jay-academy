@@ -129,6 +129,9 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
   /** A imagem aberta em tela cheia. */
   const [lupa, setLupa] = useState<string | null>(null);
   const [gravando, setGravando] = useState(false);
+  /** A gente resolveu e ela não precisa fazer nada — só encerrar se quiser. */
+  const [resolvido, setResolvido] = useState(false);
+  const [encerrada, setEncerrada] = useState(false);
   /** As conversas anteriores dela, guardadas no navegador. */
   const [salvas, setSalvas] = useState<ConversaSalva[]>([]);
   const [vendoHistorico, setVendoHistorico] = useState(false);
@@ -288,12 +291,41 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
     );
   }, [conversaId, msgs]);
 
+  /**
+   * Ela encerra o atendimento.
+   *
+   * ⚠️ Botão, e não "responda sim": depender do modelo entender um "sim" é
+   * depender dele de novo pra uma coisa que é só um clique. E a conversa
+   * continua na caixa do time — o reenvio do acesso ainda precisa ser feito.
+   */
+  async function encerrar() {
+    if (!idRef.current) return;
+    setResolvido(false);
+    setEncerrada(true);
+    try {
+      const r = await fetch("/api/ajuda", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversaId: idRef.current, encerrar: true }),
+      });
+      const d = (await r.json()) as { reply?: string };
+      if (d.reply) {
+        setMsgs((m) => [...m, { de: "atendente", texto: d.reply!, em: new Date().toISOString() }]);
+      }
+    } catch {
+      // A rede caiu no clique. A pergunta some do mesmo jeito — insistir com
+      // "gostaria de encerrar?" depois que ela já disse que sim é pior.
+    }
+  }
+
   /** Começa do zero, sem apagar a anterior — ela continua no histórico. */
   function novaConversa() {
     idRef.current = null;
     setConversaId(null);
     setMsgs([]);
     setComPessoa(false);
+    setResolvido(false);
+    setEncerrada(false);
     setErro(null);
     setVendoHistorico(false);
   }
@@ -413,6 +445,10 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
       }
       if (d.comPessoa) setComPessoa(true);
       if (d.whatsapp) setWhatsapp(d.whatsapp);
+      // ⚠️ Some se ela escrever de novo: a pergunta de encerrar vale pra
+      // ESTA resposta. Continuando a conversa, o assunto voltou a estar aberto.
+      setResolvido(d.resolvido === true);
+      if (d.resolvido === true) setEncerrada(false);
 
       // ⚠️ O ritmo humano. Resposta em 400ms entrega que é robô — e quem acabou
       // de contar um problema estranha ser respondida antes de terminar de ler
@@ -639,6 +675,28 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
             Sem número configurado o botão não existe (nunca um botão que não
             leva a lugar nenhum), e sobra só o aviso — que continua mandando ela
             pro WhatsApp, não pedindo que espere. */}
+        {/* ── resolvido: a gente cuida do resto ──────────────────────────
+            ⚠️ Aqui ela NÃO tem nada a fazer. Oferecer WhatsApp neste ponto
+            faria parecer que não ficou resolvido — e ela iria atrás de um
+            atendimento que não precisa existir. */}
+        {resolvido && !comPessoa && !encerrada && !pensando && (
+          <div className="pt-2">
+            <div className="rounded-2xl border border-[#AC9751]/25 bg-[#AC9751]/[0.05] px-4 py-4 text-center">
+              <p className="text-[13.5px] leading-relaxed text-[#F4F1EA]/80">
+                Gostaria de encerrar seu atendimento?
+              </p>
+              <button
+                type="button"
+                onClick={encerrar}
+                className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#AC9751] px-5 py-2.5 text-[14px] font-semibold text-[#101820] transition hover:brightness-110"
+              >
+                <Check size={15} strokeWidth={2.6} />
+                Sim, pode encerrar
+              </button>
+            </div>
+          </div>
+        )}
+
         {comPessoa && !pensando && (
           <div className="pt-2">
             {whatsapp ? (
@@ -656,9 +714,6 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
                   <MessageCircle size={15} strokeWidth={2.4} />
                   Continuar no WhatsApp
                 </a>
-                <p className="mt-2.5 text-[11.5px] text-[#F4F1EA]/35">
-                  Sua conversa vai junto — não precisa contar tudo de novo.
-                </p>
               </div>
             ) : (
               <p className="px-2 text-center text-[12.5px] leading-relaxed text-[#F4F1EA]/45">

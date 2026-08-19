@@ -283,18 +283,36 @@ test("no primeiro 'não achei' ela não pode chutar vencimento", () => {
   assert.match(f, /NÃO\s+fale\s+de\s+prazo,\s+vencimento\s+nem\s+dos\s+12\s+meses/);
 });
 
-test("nenhum encaminhamento promete que o time vai procurar ela", () => {
+test("quem encaminha convida pro WhatsApp, e nunca promete ir atrás dela", () => {
   // ⚠️ Ninguém responde no portal. "Vou chamar alguém pra te ajudar" diz que a
   // gente vai atrás dela; o botão ao lado diz que ela é que tem que ir. Uma das
-  // duas está mentindo, e é a frase — visto numa conversa real (acesso vencido
-  // em 06/01/2026).
-  const conversas = [
-    fatosDoAcesso({ tipo: "vencido", email: "x@y.com", compras: [], venceuEm: "2026-01-06T00:00:00Z" }),
-    fatosDoAcesso({ tipo: "cancelado", email: "x@y.com" }),
-    fatosDoAcesso({ tipo: "nao-consegui-conferir", email: "x@y.com" }),
-  ];
-  for (const f of conversas) {
-    assert.match(f, /WhatsApp/i, "tem que convidar pro WhatsApp");
-    assert.match(f, /NÃO\s+(diga|prometa)/, "tem que proibir a promessa");
+  // duas está mentindo.
+  for (const s of [
+    { tipo: "cancelado", email: "x@y.com" },
+    { tipo: "nao-consegui-conferir", email: "x@y.com" },
+  ] as const) {
+    const f = fatosDoAcesso(s);
+    assert.match(f, /WhatsApp/i, s.tipo);
+    assert.match(f, /NÃO\s+(diga|prometa)/, s.tipo);
   }
+});
+
+test("acesso vencido NÃO oferece WhatsApp de cara", () => {
+  // ⚠️ James: *"quando o acesso já tiver vencido, não precisa mandar protocolo
+  // nem botão; apenas se a pessoa responder, aí sim"*. Saber que venceu já é a
+  // resposta — emendar um encaminhamento numa notícia dessas parece pressa de
+  // empurrar ela pra frente.
+  const f = fatosDoAcesso({
+    tipo: "vencido",
+    email: "x@y.com",
+    compras: [],
+    venceuEm: "2026-01-06T00:00:00Z",
+  });
+  // ⚠️ A palavra APARECE no texto — mas como proibição ("NÃO fale de
+  // WhatsApp"), não como convite. Testar a ausência da palavra seria testar
+  // a coisa errada.
+  assert.match(f, /NÃO fale de WhatsApp/i);
+  assert.match(f, /NÃO chame uma pessoa/i);
+  // Mas deixa a porta aberta: se ela quiser continuar, aí sim.
+  assert.match(f, /Se\s+ela\s+disser\s+que\s+sim/i);
 });

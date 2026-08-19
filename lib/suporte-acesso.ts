@@ -251,13 +251,17 @@ reenvio é feito na Hotmart, à mão.`;
 ` : ""}O acesso de "${s.email}" VENCEU em ${dataBR(s.venceuEm)}.
 Curso(s): ${lista}. Explique com gentileza que o acesso vale 12 meses e que o
 dela encerrou nessa data — é o motivo de não conseguir entrar, e quase ninguém
-sabe disso. Convide ela a continuar no WhatsApp, onde uma pessoa do time
-explica como seguir com o curso. NÃO cite preço, NÃO ofereça plano nem
-condição: quem faz isso é a pessoa. Passe para uma pessoa.
+sabe disso.
 
-⚠️ NÃO diga "vou chamar alguém pra te ajudar": ninguém responde nesta tela, e
-quem continua a conversa é ela, pelo WhatsApp. Prometer que o time vai procurar
-ela faz ela esperar por uma coisa que não vem.`;
+⚠️ **Pare por aí.** NÃO chame uma pessoa, NÃO fale de WhatsApp e NÃO ofereça
+nada. Saber que venceu já é a resposta que ela veio buscar — e emendar um
+encaminhamento numa notícia dessas parece pressa de empurrar ela pra frente.
+
+Termine perguntando se ela quer saber como continuar com o curso. Se ela
+disser que sim, AÍ você chama uma pessoa (preço e condição quem fala é gente,
+nunca você).
+
+NÃO cite preço, NÃO ofereça plano, NÃO invente prazo de renovação.`;
     }
   }
 }
