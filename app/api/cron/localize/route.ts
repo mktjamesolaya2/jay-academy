@@ -4,11 +4,20 @@ import { localizePage, buildSlugToPublic } from "@/lib/wp-localize";
 import { logActivity } from "@/lib/activity-log";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+// ⚠️ 300s: é o conserto de quem ficou pra trás. Com 60s ele mal dava conta
+// de duas páginas, e a fila só andava no dia seguinte.
+export const maxDuration = 300;
 
 // Quantas páginas localizar por execução. Cada uma baixa dezenas–centenas de
 // assets; 2 cabe no teto de 60s da function (mesmo valor do backfill manual).
-const BATCH = 2;
+/**
+ * Quantas páginas o cron conserta por execução.
+ *
+ * ⚠️ Era 2. Com uma execução por dia, três páginas pendentes levavam dois
+ * dias pra ficar prontas — e nesse meio tempo elas dependem do site de origem
+ * continuar no ar. Com 300s de orçamento dá pra fazer bem mais.
+ */
+const BATCH = 8;
 
 /**
  * Rede de segurança da localização. Roda via Vercel Cron (ver vercel.json).

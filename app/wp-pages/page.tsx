@@ -9,7 +9,14 @@ import { getCurrentUser, canEdit } from "@/lib/auth";
 import { publishAllAction, unpublishAllAction } from "./manage-actions";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+/**
+ * ⚠️ 300s, não 60. Copiar uma página é: abrir o site num Chrome de verdade
+ * (até 45s), salvar, e baixar TODAS as imagens dela. Em 60 segundos uma
+ * página pesada estourava no meio — e o estrago é silencioso: a página fica
+ * salva com as fotos ainda apontando pro site original, então parece que deu
+ * certo até o dia em que aquele site sair do ar.
+ */
+export const maxDuration = 300;
 
 // Gestão das páginas migradas do WordPress (cópias completas no KV, servidas
 // em /[slug]). A antiga seção "Importar do WordPress" — que consultava o WP
