@@ -3,6 +3,7 @@ import {
   passoDoEncaminhamento,
   perguntaDoNome,
   comProtocolo,
+  tipoDeEncaminhamento,
 } from "./protocolo.ts";
 import "server-only";
 import { randomUUID } from "node:crypto";
@@ -35,6 +36,7 @@ import {
   acharEmail,
   ehProblemaDeAcesso,
   avaliarAcesso,
+  type SituacaoAcesso,
   fatosDoAcesso,
   saudacao,
   primeiroNome,
@@ -101,6 +103,13 @@ export type RespostaSuporte =
       email?: string;
       reply: string;
       precisaHumano: boolean;
+      /**
+       * Ela precisa FALAR com alguém (≠ a gente vai resolver e avisar).
+       *
+       * ⚠️ É isto que liga o botão do WhatsApp e o protocolo na tela dela.
+       * Reenvio de acesso encaminha pro time mas não é assunto dela.
+       */
+      praConversa?: boolean;
       model?: string;
       provedor?: string;
     }
@@ -216,6 +225,10 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
 
   let fatos = "";
   let humanoPorRegra = false;
+  // ⚠️ Guardado fora do bloco porque quem decide o TIPO de encaminhamento
+  // precisa dele lá embaixo: só "no-prazo" (achou, acesso válido, falta
+  // reenviar) é trabalho nosso; o resto é conversa dela.
+  let motivoDoHumano: SituacaoAcesso["tipo"] | null = null;
   if (conversa.assuntoAcesso) {
     const busca = conversa.emailAluna
       ? await todasAsCompras(conversa.emailAluna).catch(() => ({
@@ -274,6 +287,7 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
       }).catch(() => {});
     }
     // Quem decide chamar uma pessoa aqui é a regra, não o modelo.
+    motivoDoHumano = situacao.tipo;
     humanoPorRegra =
       situacao.tipo === "no-prazo" ||
       situacao.tipo === "vencido" ||
@@ -464,12 +478,23 @@ ${fatos}`
 
       if (passo === "encaminhar") {
         conversa.aguardandoPessoa = true;
+        // ⚠️ "no-prazo" quer dizer: achamos a compra, o acesso está válido, e
+        // só falta alguém reenviar à mão na Hotmart. Ela já ouviu isso na
+        // resposta e não tem nada a fazer — então não ganha protocolo nem
+        // botão. Qualquer outro motivo é conversa de verdade.
+        const tipo = tipoDeEncaminhamento({
+          encaminhou: true,
+          soReenvioDeAcesso: motivoDoHumano === "no-prazo" && !precisaHumano,
+        });
+        conversa.encaminharPraConversa = tipo === "conversa";
         // O protocolo vai escrito, além de ir no botão: se ela fechar a página
         // antes de clicar, o número continua com ela.
-        conversa.mensagens[conversa.mensagens.length - 1]!.texto = comProtocolo(
-          conversa.mensagens[conversa.mensagens.length - 1]!.texto,
-          id
-        );
+        if (tipo === "conversa") {
+          conversa.mensagens[conversa.mensagens.length - 1]!.texto = comProtocolo(
+            conversa.mensagens[conversa.mensagens.length - 1]!.texto,
+            id
+          );
+        }
         // A pergunta vai pra fila de lacunas — é o que ela ainda não sabe.
         await anotarLacuna(texto).catch(() => {});
         await avisarOTime(conversa, id);
@@ -488,6 +513,7 @@ ${fatos}`
         email: conversa.emailAluna,
         reply: conversa.mensagens[conversa.mensagens.length - 1]!.texto,
         precisaHumano: passo === "encaminhar",
+        praConversa: passo === "encaminhar" && conversa.encaminharPraConversa === true,
         model,
         provedor: provedor.nome,
       };

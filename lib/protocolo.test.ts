@@ -46,7 +46,12 @@ test("conversa sem nome e sem e-mail não quebra a busca", () => {
 
 /* ── o nome antes do encaminhamento ──────────────────────────────────────── */
 
-import { passoDoEncaminhamento, comProtocolo, perguntaDoNome } from "./protocolo.ts";
+import {
+  passoDoEncaminhamento,
+  comProtocolo,
+  perguntaDoNome,
+  tipoDeEncaminhamento,
+} from "./protocolo.ts";
 
 test("sem nome, ela pergunta antes de transferir", () => {
   assert.equal(
@@ -114,5 +119,31 @@ test("o encaminhamento parado no nome não se perde", () => {
   assert.equal(
     passoDoEncaminhamento({ precisaHumano, temNome: true, jaPediuNome: true }),
     "encaminhar"
+  );
+});
+
+/* ── o que ELA vê no encaminhamento ──────────────────────────────────────── */
+
+test("reenvio de acesso é trabalho nosso — ela não vai pro WhatsApp", () => {
+  // ⚠️ James: "a gente já informou que o acesso vai ser reenviado, então não
+  // tem necessidade de mandar ir pro WhatsApp ou enviar protocolo". Dar
+  // protocolo aqui cria dúvida ("preciso ir lá?") por uma coisa resolvida.
+  assert.equal(
+    tipoDeEncaminhamento({ encaminhou: true, soReenvioDeAcesso: true }),
+    "interno"
+  );
+});
+
+test("acesso vencido, ou não conferido, é conversa dela", () => {
+  assert.equal(
+    tipoDeEncaminhamento({ encaminhou: true, soReenvioDeAcesso: false }),
+    "conversa"
+  );
+});
+
+test("conversa normal não encaminha nada", () => {
+  assert.equal(
+    tipoDeEncaminhamento({ encaminhou: false, soReenvioDeAcesso: true }),
+    "nenhum"
   );
 });

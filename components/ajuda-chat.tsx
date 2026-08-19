@@ -1,9 +1,26 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, CheckCheck, MessageCircle, Mic, Paperclip, Send, X } from "lucide-react";
+import {
+  Check,
+  CheckCheck,
+  History,
+  MessageCircle,
+  Mic,
+  Paperclip,
+  Plus,
+  Send,
+  X,
+} from "lucide-react";
 import { Medalhao } from "@/components/marca-jayo";
 import { faltaEsperar } from "@/lib/ritmo-resposta";
+import {
+  lerConversas,
+  salvarConversa,
+  assuntoDaConversa,
+  quando,
+  type ConversaSalva,
+} from "@/lib/conversas-salvas";
 
 type Msg = {
   de: "aluno" | "atendente";
@@ -112,6 +129,9 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
   /** A imagem aberta em tela cheia. */
   const [lupa, setLupa] = useState<string | null>(null);
   const [gravando, setGravando] = useState(false);
+  /** As conversas anteriores dela, guardadas no navegador. */
+  const [salvas, setSalvas] = useState<ConversaSalva[]>([]);
+  const [vendoHistorico, setVendoHistorico] = useState(false);
   const [segundos, setSegundos] = useState(0);
   /**
    * ⚠️ O id vive também num ref porque o envio roda dentro de um laço. Lendo do
@@ -120,6 +140,8 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
    * conversas separadas, cada uma pela metade.
    */
   const idRef = useRef<string | null>(null);
+  /** Já retomou a conversa anterior? Só uma vez, na abertura. */
+  const retomou = useRef(false);
   /** As mensagens esperando a vez. */
   const fila = useRef<Array<{ texto: string; anexo: Anexo | null }>>([]);
   const processando = useRef(false);
@@ -230,6 +252,61 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
       // com erro de conexão por causa de uma busca que se repete sozinha.
     }
   }, []);
+
+  /**
+   * Retoma a última conversa ao abrir a página.
+   *
+   * ⚠️ James: *"a conversa ficar salva no chat, para assim toda vez não ficar
+   * iniciando uma conversa nova"*. Antes, fechar a aba perdia tudo — inclusive
+   * o protocolo, que era justamente o que ligava ela ao atendimento.
+   *
+   * ⚠️ Se a conversa não existir mais no servidor (foi apagada pelo time), a
+   * busca falha calada e ela começa uma nova. Melhor que uma tela de erro por
+   * uma coisa que não é problema dela.
+   */
+  useEffect(() => {
+    if (retomou.current) return;
+    retomou.current = true;
+    const lista = lerConversas();
+    setSalvas(lista);
+    const ultima = lista[0];
+    if (!ultima) return;
+    idRef.current = ultima.id;
+    setConversaId(ultima.id);
+    buscar(ultima.id);
+  }, [buscar]);
+
+  /** Guarda a conversa da vez na lista do navegador. */
+  useEffect(() => {
+    if (!conversaId || !msgs.length) return;
+    setSalvas(
+      salvarConversa({
+        id: conversaId,
+        assunto: assuntoDaConversa(msgs),
+        em: new Date().toISOString(),
+      })
+    );
+  }, [conversaId, msgs]);
+
+  /** Começa do zero, sem apagar a anterior — ela continua no histórico. */
+  function novaConversa() {
+    idRef.current = null;
+    setConversaId(null);
+    setMsgs([]);
+    setComPessoa(false);
+    setErro(null);
+    setVendoHistorico(false);
+  }
+
+  /** Volta pra uma conversa antiga. */
+  function abrirConversa(id: string) {
+    idRef.current = id;
+    setConversaId(id);
+    setMsgs([]);
+    setComPessoa(false);
+    setVendoHistorico(false);
+    buscar(id);
+  }
 
   // ⚠️ Só busca quando está esperando uma pessoa. Enquanto a IA responde, a
   // resposta já vem na hora do envio — ficar buscando à toa só gastaria bateria
@@ -376,6 +453,56 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
         style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(172,151,81,0.3) transparent" }}
       >
         <div className="w-full space-y-4">
+        {/* ── as conversas dela ──────────────────────────────────────────
+            ⚠️ Só aparece quando existe alguma. Numa primeira visita, um botão
+            de "histórico" vazio é ruído em cima de quem já chegou com
+            problema. */}
+        {salvas.length > 0 && (
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setVendoHistorico((v) => !v)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#AC9751]/25 px-3 py-1.5 text-[12px] font-semibold text-[#F4F1EA]/60 transition hover:border-[#AC9751]/50 hover:text-[#F4F1EA]"
+            >
+              <History size={12} strokeWidth={2.4} />
+              {salvas.length === 1 ? "1 conversa" : `${salvas.length} conversas`}
+            </button>
+            {msgs.length > 0 && (
+              <button
+                type="button"
+                onClick={novaConversa}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#AC9751]/25 px-3 py-1.5 text-[12px] font-semibold text-[#F4F1EA]/60 transition hover:border-[#AC9751]/50 hover:text-[#F4F1EA]"
+              >
+                <Plus size={12} strokeWidth={2.6} />
+                Nova conversa
+              </button>
+            )}
+          </div>
+        )}
+
+        {vendoHistorico && (
+          <div className="mb-4 overflow-hidden rounded-2xl border border-[#AC9751]/20 bg-black/20">
+            {salvas.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => abrirConversa(c.id)}
+                className={`flex w-full items-center justify-between gap-3 border-b border-[#AC9751]/10 px-4 py-3 text-left transition last:border-0 hover:bg-[#AC9751]/[0.07] ${
+                  c.id === conversaId ? "bg-[#AC9751]/[0.07]" : ""
+                }`}
+              >
+                <span className="min-w-0 flex-1 truncate text-[13px] text-[#F4F1EA]/85">
+                  {c.assunto}
+                </span>
+                <span className="shrink-0 text-[11px] text-[#F4F1EA]/35">
+                  {quando(c.em)}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+
         {/* ── a abertura: balão fixo, nosso, sem custo de IA ─────────────── */}
         {/* ⚠️ `items-start`: o medalhão acompanha a PRIMEIRA linha do balão.
             Alinhado embaixo ele descia junto com o horário e parecia solto. */}

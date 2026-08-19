@@ -114,3 +114,34 @@ export function comProtocolo(resposta: string, conversaId: string): string {
 
 ${recado}` : `Vou te passar pra uma pessoa do time. ${recado}`;
 }
+
+/* ── dois tipos de encaminhamento ────────────────────────────────────────── */
+
+/**
+ * Nem todo encaminhamento é assunto dela.
+ *
+ * ⚠️ James: *"a gente já informou que o acesso vai ser reenviado, então não tem
+ * necessidade de mandar ir pro WhatsApp ou enviar protocolo"*. Tem razão: são
+ * duas coisas diferentes com o mesmo nome.
+ *
+ * - **interno** — o acesso está válido e alguém do time vai reenviar. Ela já
+ *   ouviu isso e não tem nada a fazer. Dar um protocolo aqui só cria dúvida
+ *   ("preciso ir lá?"), e o botão de WhatsApp manda ela procurar atendimento
+ *   por uma coisa que já está resolvida.
+ * - **conversa** — precisa falar com gente: o acesso venceu, a compra consta
+ *   cancelada, a gente não conseguiu conferir, ou ela pediu uma pessoa. Aí o
+ *   protocolo é o que evita ela contar tudo de novo.
+ *
+ * ⚠️ Os dois continuam aparecendo na caixa do time. A diferença é só o que ELA
+ * vê — quem trabalha precisa ver os dois.
+ */
+export type TipoDeEncaminhamento = "nenhum" | "interno" | "conversa";
+
+export function tipoDeEncaminhamento(estado: {
+  encaminhou: boolean;
+  /** Só o reenvio de acesso é trabalho nosso, sem pendência do lado dela. */
+  soReenvioDeAcesso: boolean;
+}): TipoDeEncaminhamento {
+  if (!estado.encaminhou) return "nenhum";
+  return estado.soReenvioDeAcesso ? "interno" : "conversa";
+}

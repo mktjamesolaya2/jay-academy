@@ -21,6 +21,7 @@
 export function conversaPraAluna(c: {
   mensagens: Array<{ de: string; texto: string; em: string }>;
   aguardandoPessoa: boolean;
+  encaminharPraConversa?: boolean;
 }): {
   mensagens: Array<{ de: "aluno" | "atendente"; texto: string; em: string }>;
   comPessoa: boolean;
@@ -34,6 +35,9 @@ export function conversaPraAluna(c: {
       texto: m.texto,
       em: m.em,
     })),
-    comPessoa: c.aguardandoPessoa,
+    // ⚠️ Pra ELA, "com pessoa" significa "vá falar com alguém" — é o que liga
+    // o botão do WhatsApp. Reenvio de acesso não é isso: já foi resolvido, e
+    // mandar ela procurar atendimento faria parecer que não foi.
+    comPessoa: c.aguardandoPessoa && c.encaminharPraConversa !== false,
   };
 }

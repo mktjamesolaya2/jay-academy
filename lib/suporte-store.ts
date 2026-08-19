@@ -46,6 +46,16 @@ export type Conversa = {
    */
   naoAchados?: string[];
   /**
+   * O encaminhamento é assunto DELA, ou trabalho nosso?
+   *
+   * ⚠️ Reenvio de acesso é trabalho nosso: ela já ouviu que vai receber e não
+   * tem nada a fazer. Mostrar protocolo e botão de WhatsApp nessa hora manda
+   * ela procurar atendimento por uma coisa que já está resolvida.
+   *
+   * Os dois casos aparecem na caixa do time — a diferença é só o que ela vê.
+   */
+  encaminharPraConversa?: boolean;
+  /**
    * O e-mail que a aluna deu — fica guardado na conversa.
    *
    * ⚠️ Sem isto, ela teria que repetir o e-mail a cada mensagem: a consulta

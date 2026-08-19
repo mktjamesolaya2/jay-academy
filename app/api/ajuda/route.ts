@@ -107,7 +107,10 @@ export async function POST(req: Request) {
   return NextResponse.json({
     conversaId: r.conversaId,
     reply: r.reply,
-    comPessoa: r.precisaHumano,
+    // ⚠️ `comPessoa` liga o botão do WhatsApp na tela dela. Encaminhamento de
+    // reenvio de acesso NÃO liga: ela já ouviu que vai receber, e mandar
+    // procurar atendimento faria parecer que não foi resolvido.
+    comPessoa: r.praConversa === true,
     whatsapp,
   });
 }
