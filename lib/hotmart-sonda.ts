@@ -453,3 +453,83 @@ export async function formatoDeAssinaturas(
     segundoItem: itens[1] ? descrever(itens[1]) : null,
   };
 }
+
+/* ── de onde veio a resposta ─────────────────────────────────────────────── */
+
+/**
+ * Mostra o que CADA fonte sabe sobre um e-mail, separadamente.
+ *
+ * ⚠️ Existe porque a resposta do suporte não denuncia a origem: a planilha
+ * importada e o aviso automático gravam no MESMO lugar, e a API entra por
+ * fora. Olhando só o atendimento, não dá pra saber se a consulta ao vivo está
+ * funcionando ou se é a planilha respondendo por ela — e essa diferença decide
+ * se o sistema continua funcionando quando ninguém exportar planilha no mês
+ * que vem.
+ */
+export async function fontesDoEmail(email: string): Promise<Record<string, unknown>> {
+  const alvo = email.trim().toLowerCase();
+
+  const guardadas = await (async () => {
+    try {
+      const { comprasDoEmail } = await import("./hotmart-store");
+      const c = await comprasDoEmail(alvo);
+      return {
+        quantas: c.length,
+        // Só o que é da compra, não da pessoa.
+        compras: c.map((x) => ({
+          produto: x.produto,
+          compradaEm: x.compradaEm.slice(0, 10),
+          situacao: x.situacao,
+        })),
+      };
+    } catch (e) {
+      return { erro: e instanceof Error ? e.message : "falhou" };
+    }
+  })();
+
+  const historico = await (async () => {
+    try {
+      const { temCredenciais, vendasDoEmail } = await import("./hotmart-api");
+      if (!temCredenciais()) return { estado: "sem credenciais configuradas" };
+      const v = await vendasDoEmail(alvo);
+      return { estado: "RESPONDEU", quantas: v.length };
+    } catch (e) {
+      return { estado: "falhou", motivo: (e instanceof Error ? e.message : "").slice(0, 160) };
+    }
+  })();
+
+  const assinaturas = await (async () => {
+    try {
+      const { temCredenciais, assinaturasDoEmail } = await import("./hotmart-api");
+      if (!temCredenciais()) return { estado: "sem credenciais configuradas" };
+      const v = await assinaturasDoEmail(alvo);
+      return {
+        estado: "RESPONDEU",
+        quantas: v.length,
+        compras: v.map((x) => ({
+          produto: x.produto,
+          compradaEm: x.compradaEm.slice(0, 10),
+          situacao: x.situacao,
+        })),
+      };
+    } catch (e) {
+      return { estado: "falhou", motivo: (e instanceof Error ? e.message : "").slice(0, 160) };
+    }
+  })();
+
+  return {
+    email: alvo,
+    "1_guardado_aqui": {
+      ...guardadas,
+      oQueE: "webhook de vendas novas + planilhas importadas (mesmo lugar)",
+    },
+    "2_api_historico_de_vendas": {
+      ...historico,
+      oQueE: "/payments/api/v1/sales/history — barrado pra nossa credencial",
+    },
+    "3_api_assinaturas_ao_vivo": {
+      ...assinaturas,
+      oQueE: "/payments/api/v1/subscriptions/transactions?subscriber_email=",
+    },
+  };
+}

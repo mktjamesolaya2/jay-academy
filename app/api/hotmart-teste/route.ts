@@ -49,6 +49,18 @@ export async function GET(req: Request) {
     });
   }
 
+  if (url0.searchParams.get("fontes") === "1") {
+    const alvo = url0.searchParams.get("email");
+    if (!alvo) {
+      return NextResponse.json({ error: "Use ?fontes=1&email=alguem@email.com" }, { status: 400 });
+    }
+    const { fontesDoEmail } = await import("@/lib/hotmart-sonda");
+    return NextResponse.json({
+      aviso: "O que CADA fonte sabe sobre esse e-mail, separadamente.",
+      ...(await fontesDoEmail(alvo)),
+    });
+  }
+
   if (url0.searchParams.get("formato") === "1") {
     const alvo = url0.searchParams.get("email");
     if (!alvo) {
