@@ -154,6 +154,44 @@ export async function vendasDoEmail(email: string): Promise<VendaHotmart[]> {
 }
 
 /**
+ * As compras de um e-mail pela porta das ASSINATURAS.
+ *
+ * ⚠️ Existe porque todo `/sales/` responde 400 pra nossa credencial, e este
+ * responde 200 com dado real — filtrando de verdade (6 itens contra 500 sem
+ * filtro). É o caminho vivo enquanto o outro não é liberado.
+ *
+ * ⚠️ Cobre parcelado e assinatura, que na Jay Academy é boa parte da base (as
+ * ofertas são 12x). Quem pagou em parcela única pode não aparecer — por isso
+ * ele NÃO substitui o histórico importado; soma com ele.
+ */
+export async function assinaturasDoEmail(email: string): Promise<VendaHotmart[]> {
+  const token = await pegarToken();
+  const url = new URL(`${API}/subscriptions/transactions`);
+  // ⚠️ O nome do filtro é `subscriber_email`. Os outros quatro que eu testei
+  // (`buyer_email`, `email`, `subscriber`, `user_email`) devolvem 400.
+  url.searchParams.set("subscriber_email", email.trim().toLowerCase());
+
+  const r = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!r.ok) {
+    const t = await r.text().catch(() => "");
+    throw new Error(`Consulta de assinaturas falhou (${r.status}): ${t.slice(0, 200)}`);
+  }
+
+  const { lerAssinaturas } = await import("./hotmart-assinaturas");
+  return lerAssinaturas(await r.json()).map((c) => ({
+    produto: c.produto,
+    compradaEm: c.compradaEm,
+    situacao: c.situacao,
+    // Esta resposta não traz o nome de quem comprou de um jeito que sirva —
+    // e nome errado na tela do time é pior que nome nenhum.
+    comprador: "",
+  }));
+}
+
+/**
  * Diagnóstico das credenciais, sem imprimir segredo nenhum.
  *
  * ⚠️ Só o formato: tamanho, se parece base64, se o BASIC bate com

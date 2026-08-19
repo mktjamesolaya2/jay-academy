@@ -95,8 +95,28 @@ export async function todasAsCompras(email: string): Promise<ResultadoDaBusca> {
       }));
     }
   } catch (e) {
-    apiFalhou = true;
-    console.warn("[hotmart] consulta na API falhou, usando só o webhook:", e);
+    // ⚠️ O `/sales/` está barrado pra nossa credencial (400 em tudo). Antes de
+    // desistir, tenta a porta que responde: `/subscriptions/transactions`.
+    // Ela cobre parcelado e assinatura — a maior parte das ofertas da casa.
+    console.warn("[hotmart] histórico de vendas indisponível, tentando assinaturas:", e);
+    try {
+      const { temCredenciais, assinaturasDoEmail } = await import("./hotmart-api");
+      if (temCredenciais()) {
+        daApi = (await assinaturasDoEmail(email)).map((v) => ({
+          email,
+          nome: v.comprador || undefined,
+          produto: v.produto,
+          compradaEm: v.compradaEm,
+          situacao: v.situacao,
+          atualizadaEm: new Date().toISOString(),
+        }));
+      }
+    } catch (e2) {
+      // ⚠️ Só AQUI a consulta é dada por perdida — e é isso que faz o suporte
+      // dizer "não consegui conferir" em vez de "não achei sua compra".
+      apiFalhou = true;
+      console.warn("[hotmart] assinaturas também falharam:", e2);
+    }
   }
 
   // Mesma compra nas duas fontes: fica uma só (produto + dia).
