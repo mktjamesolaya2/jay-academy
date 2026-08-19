@@ -1,6 +1,7 @@
 import "server-only";
 import { kvGet, kvSet } from "./storage";
 import { chaveDoDia } from "./uso-ia";
+import type { SituacaoGravada } from "./resumo-conversa";
 
 /**
  * Base de conhecimento e conversas do suporte.
@@ -62,6 +63,18 @@ export type Conversa = {
    * o reenvio do acesso ainda precisa ser feito à mão.
    */
   encerradaPelaAluna?: boolean;
+  /**
+   * O que a consulta de acesso concluiu na última vez.
+   *
+   * ⚠️ James: *"muitas vezes a gente abre o protocolo e tem só o e-mail pra
+   * reenviar; seria interessante o chatbot gravar — ah, esse aqui o acesso
+   * venceu"*. Guardado no momento da consulta, porque depois não dá pra
+   * refazer: a resposta da Hotmart pode mudar, e o que importa é o que a
+   * aluna ouviu.
+   */
+  situacaoAcesso?: SituacaoGravada;
+  /** A data que vai no resumo: até quando vale, ou quando venceu. */
+  acessoEm?: string;
   /**
    * O e-mail que a aluna deu — fica guardado na conversa.
    *

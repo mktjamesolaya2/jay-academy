@@ -293,6 +293,16 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     }
     // Quem decide chamar uma pessoa aqui é a regra, não o modelo.
     motivoDoHumano = situacao.tipo;
+    // ⚠️ Gravado AGORA, e não calculado depois: a resposta da Hotmart pode
+    // mudar entre hoje e a hora em que alguém abrir o protocolo — e o que
+    // importa pra quem atende é o que a aluna ouviu.
+    conversa.situacaoAcesso = situacao.tipo;
+    conversa.acessoEm =
+      situacao.tipo === "no-prazo"
+        ? situacao.venceEm
+        : situacao.tipo === "vencido"
+          ? situacao.venceuEm
+          : undefined;
     // ⚠️ "vencido" saiu daqui. James: *"quando o acesso já tiver vencido, não
     // precisa mandar protocolo nem botão; apenas se a pessoa responder, aí sim
     // a gente responde"*. Faz sentido: saber que venceu já é a resposta. Quem

@@ -16,6 +16,8 @@ import { Check, Copy, MessageCircle } from "lucide-react";
  */
 
 export function FichaAluna({
+  resumo,
+  marcas,
   protocolo,
   nome,
   email,
@@ -23,6 +25,9 @@ export function FichaAluna({
   situacao,
   whatsapp,
 }: {
+  /** O que resolve o atendimento, em uma frase. Vazio quando não é sobre acesso. */
+  resumo?: string;
+  marcas?: string[];
   protocolo: string;
   nome: string;
   email?: string;
@@ -32,6 +37,29 @@ export function FichaAluna({
 }) {
   return (
     <aside className="w-full shrink-0 space-y-3 lg:w-[250px]">
+      {/* ⚠️ O resumo vem PRIMEIRO, antes do protocolo e do e-mail. É a única
+          linha que responde "o que eu faço com esta pessoa?" — e quem abre um
+          protocolo abre por causa dessa pergunta. */}
+      {resumo && (
+        <div className="rounded-xl border border-[#AC9751]/25 bg-[#AC9751]/[0.06] px-4 py-3.5">
+          <p className="text-[13px] font-semibold leading-relaxed text-[#F4F1EA]">
+            {resumo}
+          </p>
+          {marcas && marcas.length > 0 && (
+            <p className="mt-2 flex flex-wrap gap-1.5">
+              {marcas.map((m) => (
+                <span
+                  key={m}
+                  className="rounded-md bg-black/25 px-1.5 py-0.5 text-[10.5px] text-[#F4F1EA]/60"
+                >
+                  {m}
+                </span>
+              ))}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="rounded-xl border border-[#1f1f1f] bg-[#0d0d0d] px-4 py-4">
         <Campo rotulo="Protocolo" valor={protocolo} destaque />
         <Linha rotulo="Nome" valor={nome} />

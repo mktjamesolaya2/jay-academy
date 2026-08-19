@@ -10,6 +10,8 @@
  * mais tempo. Uma conversa nova que a IA já resolveu não tem pressa nenhuma.
  */
 
+import { resumirConversa, assuntoResumido, type SituacaoGravada } from "./resumo-conversa.ts";
+
 export type ConversaResumo = {
   id: string;
   quem: string;
@@ -17,6 +19,9 @@ export type ConversaResumo = {
   aguardandoPessoa: boolean;
   mensagens: Array<{ de: string; texto: string; em: string }>;
   atualizadaEm: string;
+  situacaoAcesso?: SituacaoGravada;
+  acessoEm?: string;
+  encerradaPelaAluna?: boolean;
 };
 
 export type LinhaDaCaixa = {
@@ -30,6 +35,15 @@ export type LinhaDaCaixa = {
   ultimaDe: string;
   /** Minutos desde a última mensagem. */
   minutos: number;
+  /**
+   * O que resolve o atendimento, em uma frase — "Acesso venceu em 06/01/2026".
+   *
+   * ⚠️ Vazio quando a conversa não é sobre acesso. Melhor vazio do que um
+   * resumo chutado: quem lê age em cima do que está escrito.
+   */
+  resumo: string;
+  /** Print, áudio, encerrada por ela. */
+  marcas: string[];
 };
 
 const MAX_PREVIA = 90;
@@ -75,6 +89,12 @@ export function montarLinha(c: ConversaResumo, agora = new Date()): LinhaDaCaixa
     previa: ultima ? previa(ultima.texto) : "(sem mensagens)",
     ultimaDe: ultima?.de ?? "aluno",
     minutos: minutosDesde(ultima?.em ?? c.atualizadaEm, agora),
+    ...(() => {
+      const r = resumirConversa(c);
+      // Sem situação de acesso, o resumo vira o assunto com que ela chegou —
+      // senão uma dúvida de conteúdo apareceria sem nada escrito.
+      return { resumo: r.titulo || assuntoResumido(c.mensagens), marcas: r.marcas };
+    })(),
   };
 }
 

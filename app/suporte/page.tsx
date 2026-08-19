@@ -201,7 +201,28 @@ export default async function CaixaPage({
                             {protocoloDe(l.id)}
                           </span>
                         </p>
-                        <p className="mt-1 truncate text-[12.5px] text-neutral-400">
+                        {/* ⚠️ O RESUMO vem antes da última mensagem. Quem abre
+                            a caixa quer saber o que resolve — "acesso venceu em
+                            06/01" — não a última frase trocada, que costuma ser
+                            "obrigada". */}
+                        {l.resumo && (
+                          <p className="mt-1 truncate text-[12.5px] font-medium text-[#AC9751]">
+                            {l.resumo}
+                          </p>
+                        )}
+                        {l.marcas.length > 0 && (
+                          <p className="mt-1 flex flex-wrap gap-1.5">
+                            {l.marcas.map((m) => (
+                              <span
+                                key={m}
+                                className="rounded-md bg-[#1c1c1c] px-1.5 py-0.5 text-[10.5px] text-neutral-400"
+                              >
+                                {m}
+                              </span>
+                            ))}
+                          </p>
+                        )}
+                        <p className="mt-1 truncate text-[12.5px] text-neutral-500">
                           {l.ultimaDe === "aluno" ? "" : "IA: "}
                           {l.previa}
                         </p>

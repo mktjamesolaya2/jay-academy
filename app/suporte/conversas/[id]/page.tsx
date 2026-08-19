@@ -10,6 +10,7 @@ import { apagarConversaAction } from "@/app/suporte/actions";
 import { espera, minutosDesde } from "@/lib/caixa-conversas";
 import { FichaAluna } from "@/components/ficha-aluna";
 import { protocoloDe } from "@/lib/protocolo";
+import { resumirConversa } from "@/lib/resumo-conversa";
 import { linkWhatsApp, numeroDoSuporte, problemaDaConversa } from "@/lib/whatsapp-suporte";
 import { formatDateTimeBR } from "@/lib/format-date";
 
@@ -105,6 +106,8 @@ export default async function ConversaPage({
               celular ela aparece em cima — que é o que ele quer ver primeiro
               quando chega com um protocolo na mão. */}
           <FichaAluna
+            resumo={resumirConversa(c).titulo}
+            marcas={resumirConversa(c).marcas}
             protocolo={protocoloDe(c.id)}
             nome={c.quem}
             email={c.emailAluna}
