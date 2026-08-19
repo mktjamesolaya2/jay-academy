@@ -95,6 +95,10 @@ test("o protocolo é ACRESCENTADO, não substitui a resposta", () => {
   assert.match(r, /Achei sua compra/);
   assert.match(r, /pedir pro time reenviar/);
   assert.match(r, /B4B39D/);
+  // ⚠️ Sem repetir a instrução do WhatsApp: o bloco logo abaixo do balão já
+  // diz isso e já tem o botão. Três vezes a mesma frase na mesma tela faz
+  // parecer que a gente desconfia de quem está lendo.
+  assert.ok(!/WhatsApp/i.test(r), r);
 });
 
 test("não repete o protocolo se a resposta já falou dele", () => {

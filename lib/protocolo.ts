@@ -108,11 +108,17 @@ export function comProtocolo(resposta: string, conversaId: string): string {
   // Já falou o número? Não repete.
   if (texto.includes(codigo)) return texto;
 
-  const recado = `Seu protocolo é ${codigo} — é só mandar esse número no WhatsApp que a gente já sabe do que se trata.`;
-  // Sem resposta nenhuma (modelo mudo), o recado sozinho ainda serve.
-  return texto ? `${texto}
+  // ⚠️ Só o número. O bloco logo abaixo do balão já diz "pra continuar, é
+  // melhor falar no WhatsApp" e já tem o botão — repetir a instrução aqui faz
+  // a mesma frase aparecer três vezes na mesma tela, e uma tela que insiste
+  // parece desconfiada de quem está lendo.
+  const recado = `Seu protocolo é ${codigo}, anota aí.`;
+  // Sem resposta nenhuma (modelo mudo), o recado precisa se explicar sozinho.
+  return texto
+    ? `${texto}
 
-${recado}` : `Vou te passar pra uma pessoa do time. ${recado}`;
+${recado}`
+    : `Vou te passar pra uma pessoa do time. Seu protocolo é ${codigo} — é só mandar esse número que a gente já sabe do que se trata.`;
 }
 
 /* ── dois tipos de encaminhamento ────────────────────────────────────────── */
