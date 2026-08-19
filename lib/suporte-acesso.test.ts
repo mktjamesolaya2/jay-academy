@@ -7,6 +7,7 @@ import {
   fatosDoAcesso,
   saudacao,
   primeiroNome,
+  ehVitalicio,
 } from "./suporte-acesso.ts";
 
 const compra = (compradaEm: string, situacao = "approved") => [
@@ -315,4 +316,68 @@ test("acesso vencido NÃO oferece WhatsApp de cara", () => {
   assert.match(f, /NÃO chame uma pessoa/i);
   // Mas deixa a porta aberta: se ela quiser continuar, aí sim.
   assert.match(f, /Se\s+ela\s+disser\s+que\s+sim/i);
+});
+
+/* ── acesso vitalício ────────────────────────────────────────────────────── */
+
+test("acesso VITALÍCIO nunca vence, mesmo comprado há anos", () => {
+  // ⚠️ São 278 compras assim nas planilhas, 158 delas com mais de um ano. Sem
+  // esta regra, a IA dizia a 158 alunas que o acesso delas tinha acabado —
+  // sendo que elas pagaram justamente pra não ter prazo.
+  const s = avaliarAcesso(
+    "x@y.com",
+    [
+      {
+        produto: "[ACESSO VITALÍCIO] Fio a Fio Realista - James Olaya",
+        compradaEm: "2021-03-10T12:00:00Z",
+        situacao: "completo",
+      },
+    ],
+    new Date("2026-08-19T12:00:00Z")
+  );
+  assert.equal(s.tipo, "vitalicio");
+});
+
+test("vitalício em espanhol também conta", () => {
+  const s = avaliarAcesso(
+    "x@y.com",
+    [{ produto: "[ACCESO VITALICIO] Pelo a Pelo Realista Español", compradaEm: "2020-01-01T12:00:00Z", situacao: "completo" }],
+    new Date("2026-08-19T12:00:00Z")
+  );
+  assert.equal(s.tipo, "vitalicio");
+});
+
+test('"Perpétuo" NÃO é vitalício — é nome de campanha', () => {
+  // ⚠️ Existe uma oferta chamada "Principal Perpétuo - Tráfego pago". Casar
+  // por ela daria acesso eterno a quem não tem.
+  assert.equal(ehVitalicio("97 - Principal Perpétuo - Tráfego pago"), false);
+  assert.equal(ehVitalicio("[ACESSO VITALÍCIO] Shadow PRO"), true);
+  assert.equal(ehVitalicio(""), false);
+});
+
+test("uma compra vitalícia protege a aluna, mesmo com outra vencida", () => {
+  // ⚠️ A frase "seu acesso venceu" gruda na PESSOA, não no produto. Quem tem
+  // um curso vitalício não pode ouvir isso.
+  const s = avaliarAcesso(
+    "x@y.com",
+    [
+      { produto: "Curso comum", compradaEm: "2022-01-01T12:00:00Z", situacao: "completo" },
+      { produto: "[ACESSO VITALÍCIO] Shadow PRO", compradaEm: "2022-01-01T12:00:00Z", situacao: "completo" },
+    ],
+    new Date("2026-08-19T12:00:00Z")
+  );
+  assert.equal(s.tipo, "vitalicio");
+});
+
+test("os fatos do vitalício proíbem falar em 12 meses", () => {
+  const f = fatosDoAcesso({
+    tipo: "vitalicio",
+    email: "x@y.com",
+    compras: [{ produto: "[ACESSO VITALÍCIO] Shadow PRO", compradaEm: "2022-01-01T12:00:00Z", situacao: "completo" }],
+  });
+  assert.match(f, /VITALÍCIO/);
+  assert.match(f, /NÃO\s+fale\s+em\s+12\s+meses/i);
+  // ⚠️ A base de conhecimento diz que dura 12 meses. Os fatos têm que ganhar
+  // dela, senão o modelo repete o que está escrito lá.
+  assert.match(f, /base de conhecimento/i);
 });

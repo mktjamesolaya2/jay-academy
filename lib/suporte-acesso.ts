@@ -49,6 +49,16 @@ export type SituacaoAcesso =
   | { tipo: "nao-encontrado-de-novo"; email: string }
   | { tipo: "no-prazo"; email: string; compras: CompraConhecida[]; venceEm: string; dias: number }
   | { tipo: "vencido"; email: string; compras: CompraConhecida[]; venceuEm: string }
+  /**
+   * Comprou um curso de acesso VITALÍCIO — não vence nunca.
+   *
+   * ⚠️ Existe porque a regra dos 12 meses estava valendo pra todo mundo, e a
+   * casa vende produtos "[ACESSO VITALÍCIO]". São 278 compras assim, 158 delas
+   * com mais de um ano: sem isto, a IA dizia a 158 alunas que o acesso delas
+   * tinha vencido. Dizer isso pra quem pagou por acesso permanente é o pior
+   * erro que este sistema pode cometer.
+   */
+  | { tipo: "vitalicio"; email: string; compras: CompraConhecida[] }
   | { tipo: "cancelado"; email: string }
   /**
    * ⚠️ NÃO é "não achei" — é "não consegui procurar". A diferença importa: a
@@ -135,6 +145,7 @@ export function avaliarAcesso(
   }
 
   const canceladas = ["cancelled", "canceled", "cancelada", "refunded", "reembolsada"];
+
   const validas = compras.filter(
     (c) => !canceladas.includes(c.situacao.toLowerCase())
   );
@@ -144,6 +155,14 @@ export function avaliarAcesso(
   const maisNova = [...validas].sort(
     (a, b) => new Date(b.compradaEm).getTime() - new Date(a.compradaEm).getTime()
   )[0];
+
+  // ⚠️ Vitalício ganha de qualquer conta de prazo. Basta UMA compra vitalícia
+  // válida: quem tem acesso permanente a um curso não pode ouvir que venceu,
+  // mesmo que tenha outro curso vencido — a frase gruda na pessoa, não no
+  // produto.
+  if (validas.some((c) => ehVitalicio(c.produto))) {
+    return { tipo: "vitalicio", email, compras: validas };
+  }
 
   const dias = diasRestantes(maisNova.compradaEm, hoje);
   const vence = venceEm(maisNova.compradaEm);
@@ -162,6 +181,22 @@ export function avaliarAcesso(
     compras: validas,
     venceuEm: vence.toISOString(),
   };
+}
+
+/**
+ * O produto é de acesso vitalício?
+ *
+ * ⚠️ Pelo NOME do produto, porque é onde a informação está: a Hotmart não
+ * devolve "isto não expira" em campo nenhum que a gente alcance. Os nomes reais
+ * são "[ACESSO VITALÍCIO] Fio a Fio Realista" e "[ACCESO VITALICIO] Pelo a Pelo
+ * Realista Español".
+ *
+ * ⚠️ NÃO casa "perpétuo": existe uma oferta chamada "Principal Perpétuo -
+ * Tráfego pago" que é nome de campanha, não de acesso. Casar por ela daria
+ * acesso eterno a quem não tem.
+ */
+export function ehVitalicio(produto: string): boolean {
+  return /vital[íi]cio|vitalicio|lifetime/i.test(produto ?? "");
 }
 
 const dataBR = (iso: string) =>
@@ -225,6 +260,22 @@ resolve é uma pessoa — a busca é por e-mail e ela já se esgotou aqui.
 
 Diga, numa frase, que vai chamar alguém do time pra achar a compra dela. Passe
 para uma pessoa.`;
+
+    case "vitalicio": {
+      const lista = s.compras.map((c) => c.produto).join(", ");
+      const nome = primeiroNome(s.compras.find((c) => c.nome)?.nome);
+      return `${nome ? `A aluna se chama ${nome} — trate ela pelo nome.
+` : ""}O acesso de "${s.email}" é **VITALÍCIO**: não vence nunca.
+Curso(s): ${lista}.
+
+⚠️ NÃO fale em 12 meses, NÃO fale em vencimento e NÃO diga que o acesso
+expirou — o dela não expira. Se a base de conhecimento disser que o acesso
+dura 12 meses, essa regra NÃO vale aqui.
+
+Diga que está tudo certo, que o acesso dela é vitalício, e que você vai pedir
+pro time reenviar o acesso agora. Passe para uma pessoa, porque o reenvio é
+feito na Hotmart, à mão.`;
+    }
 
     case "cancelado":
       return `A compra de "${s.email}" consta como cancelada. NÃO explique o

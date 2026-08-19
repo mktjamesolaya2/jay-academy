@@ -74,9 +74,13 @@ export function ReenviosLista({ reenvios }: { reenvios: Reenvio[] }) {
               {r.nome ? `${r.nome} · ` : ""}
               {r.produtos.join(", ")}
               {/* A data de validade confirma que é REENVIO, não renovação —
-                  quem libera precisa saber que o acesso dela está em dia. */}
-              {" · acesso até "}
-              {new Date(r.venceEm).toLocaleDateString("pt-BR")}
+                  quem libera precisa saber que o acesso dela está em dia.
+                  ⚠️ Sem data = acesso VITALÍCIO. Escrever "acesso até" com uma
+                  data inventada faria quem libera achar que ela vai perder o
+                  curso um dia. */}
+              {r.venceEm
+                ? ` · acesso até ${new Date(r.venceEm).toLocaleDateString("pt-BR")}`
+                : " · acesso VITALÍCIO"}
             </p>
           </div>
 

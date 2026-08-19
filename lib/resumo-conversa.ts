@@ -21,6 +21,7 @@ export type SituacaoGravada =
   | "nao-encontrado-de-novo"
   | "no-prazo"
   | "vencido"
+  | "vitalicio"
   | "cancelado"
   | "nao-consegui-conferir";
 
@@ -54,6 +55,10 @@ function tituloDaSituacao(s: SituacaoGravada | undefined, quando: string | undef
         : "Acesso ativo — falta reenviar";
     case "vencido":
       return quando ? `Acesso venceu em ${dataBR(quando)}` : "Acesso vencido";
+    case "vitalicio":
+      // ⚠️ Sem data: não vence. Escrever "até" aqui já seria meio caminho pra
+      // alguém dizer pra ela que um dia acaba.
+      return "Acesso VITALÍCIO — falta reenviar";
     case "cancelado":
       return "Compra consta cancelada";
     case "nao-encontrado":

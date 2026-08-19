@@ -24,7 +24,13 @@ export type Reenvio = {
   /** Os cursos que ela comprou, pra saber o que reenviar. */
   produtos: string[];
   /** Até quando o acesso vale — confirma que é reenvio, não renovação. */
-  venceEm: string;
+  /**
+   * Até quando o acesso vale.
+   *
+   * ⚠️ Opcional porque acesso VITALÍCIO não tem data — e obrigar uma aqui
+   * faria alguém inventar um vencimento pra quem comprou acesso permanente.
+   */
+  venceEm?: string;
   pedidoEm: string;
 };
 

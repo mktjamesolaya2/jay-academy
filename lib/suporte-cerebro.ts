@@ -282,12 +282,14 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
 
     // Acesso válido = só falta reenviar o e-mail, e isso é clique humano na
     // Hotmart (não tem API). Entra na fila pra não se perder na conversa.
-    if (situacao.tipo === "no-prazo") {
+    if (situacao.tipo === "no-prazo" || situacao.tipo === "vitalicio") {
       await pedirReenvio({
         email: situacao.email,
         nome: busca.compras.find((c) => c.nome)?.nome,
         produtos: [...new Set(situacao.compras.map((c) => c.produto))],
-        venceEm: situacao.venceEm,
+        // Vitalício não tem "até quando" — e a fila de reenvio precisa
+        // aguentar isso sem inventar uma data.
+        venceEm: situacao.tipo === "no-prazo" ? situacao.venceEm : undefined,
         pedidoEm: new Date().toISOString(),
       }).catch(() => {});
     }
@@ -310,6 +312,7 @@ export async function responder(p: PedidoSuporte): Promise<RespostaSuporte> {
     // porque preço e plano ele não pode falar.
     humanoPorRegra =
       situacao.tipo === "no-prazo" ||
+      situacao.tipo === "vitalicio" ||
       situacao.tipo === "cancelado" ||
       situacao.tipo === "nao-consegui-conferir" ||
       // ⚠️ Segunda vez que a busca falha pro mesmo e-mail. Insistir daqui pra
@@ -509,7 +512,8 @@ ${fatos}`
           // reenvio saía como "conversa" e ganhava botão de WhatsApp, que é
           // exatamente o que o James viu na tela.
           soReenvioDeAcesso:
-            motivoDoHumano === "no-prazo" && !pediuHumano(texto),
+            (motivoDoHumano === "no-prazo" || motivoDoHumano === "vitalicio") &&
+            !pediuHumano(texto),
         });
         conversa.encaminharPraConversa = tipo === "conversa";
         // O protocolo vai escrito, além de ir no botão: se ela fechar a página
