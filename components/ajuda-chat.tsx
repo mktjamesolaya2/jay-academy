@@ -17,6 +17,7 @@ import { faltaEsperar } from "@/lib/ritmo-resposta";
 import {
   lerConversas,
   salvarConversa,
+  esquecerConversa,
   assuntoDaConversa,
   quando,
   type ConversaSalva,
@@ -234,10 +235,15 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
    * chegou — e o print que ela mandou continua aparecendo, porque o anexo é
    * preservado pela posição.
    */
+  /** Devolve `false` quando a conversa não existe mais no servidor. */
   const buscar = useCallback(async (id: string) => {
     try {
       const r = await fetch(`/api/ajuda?id=${encodeURIComponent(id)}`);
-      if (!r.ok) return;
+      // ⚠️ 404 quer dizer que o time apagou a conversa no painel. Quem chama
+      // precisa saber pra tirar o id daqui — senão a tela abre em branco e o
+      // histórico continua listando uma conversa que não abre.
+      if (r.status === 404) return false;
+      if (!r.ok) return true;
       const d = (await r.json()) as {
         mensagens: Msg[];
         comPessoa: boolean;
@@ -250,9 +256,11 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
           ? d.mensagens.map((m, i) => ({ ...m, anexo: prev[i]?.anexo }))
           : prev
       );
+      return true;
     } catch {
       // Rede oscilou. A próxima volta tenta de novo — não vale assustar a aluna
       // com erro de conexão por causa de uma busca que se repete sozinha.
+      return true;
     }
   }, []);
 
@@ -270,13 +278,22 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
   useEffect(() => {
     if (retomou.current) return;
     retomou.current = true;
-    const lista = lerConversas();
-    setSalvas(lista);
-    const ultima = lista[0];
-    if (!ultima) return;
-    idRef.current = ultima.id;
-    setConversaId(ultima.id);
-    buscar(ultima.id);
+    // ⚠️ Tenta da mais recente pra trás. Se o time apagou as últimas no
+    // painel, ela volta na conversa que ainda existe em vez de começar do zero
+    // — e as apagadas somem do histórico dela sozinhas.
+    void (async () => {
+      let lista = lerConversas();
+      setSalvas(lista);
+      for (const c of lista) {
+        if (await buscar(c.id)) {
+          idRef.current = c.id;
+          setConversaId(c.id);
+          return;
+        }
+        lista = esquecerConversa(c.id);
+        setSalvas(lista);
+      }
+    })();
   }, [buscar]);
 
   /** Guarda a conversa da vez na lista do navegador. */

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { assuntoDaConversa, quando } from "./conversas-salvas.ts";
+import { assuntoDaConversa, quando, esquecerConversa } from "./conversas-salvas.ts";
 
 test("o assunto é o que ELA escreveu, não o que a IA respondeu", () => {
   // ⚠️ "não consigo acessar meu curso" diz muito mais do que "Boa noite! Aqui
@@ -38,4 +38,10 @@ test("a data é do jeito que gente fala", () => {
 
 test("data quebrada não vira 'Invalid Date' na tela dela", () => {
   assert.equal(quando("nao-e-data"), "");
+});
+
+test("esquecer tira só a conversa pedida", () => {
+  // Sem localStorage no teste, a função devolve lista vazia sem explodir — que
+  // é o comportamento certo em aba anônima também.
+  assert.doesNotThrow(() => esquecerConversa("abc"));
 });

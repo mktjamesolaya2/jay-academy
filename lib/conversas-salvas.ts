@@ -80,3 +80,22 @@ export function quando(iso: string, agora = new Date()): string {
   if (dias < 7) return `há ${dias} dias`;
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 }
+
+/**
+ * Tira uma conversa da lista do navegador.
+ *
+ * ⚠️ Existe porque o time apaga conversa no painel — e aí o id guardado aqui
+ * aponta pra uma coisa que não existe mais. Sem limpar, a tela abria em branco
+ * e o histórico continuava listando conversas que não abrem: parecia que o
+ * chat tinha esquecido tudo.
+ */
+export function esquecerConversa(id: string): ConversaSalva[] {
+  const lista = lerConversas().filter((c) => c.id !== id);
+  try {
+    localStorage.setItem(CHAVE, JSON.stringify(lista));
+  } catch {
+    // Sem permissão de escrita. A conversa some desta sessão e volta na
+    // próxima — chato, mas não quebra nada.
+  }
+  return lista;
+}
