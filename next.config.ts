@@ -10,6 +10,20 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   devIndicators: false,
+  /**
+   * O Chrome sem tela precisa ficar FORA do empacotamento.
+   *
+   * ⚠️ O `@sparticuz/chromium` carrega um binário do Chrome dentro dele. O
+   * empacotador do Next reescreve os caminhos dos arquivos que processa — e
+   * aí o pacote procura o binário em `/var/task/node_modules/@sparticuz/
+   * chromium/bin`, que não existe mais porque foi movido. O erro que aparece
+   * é exatamente esse, e a própria mensagem manda externalizar.
+   *
+   * ⚠️ Só quebra em PRODUÇÃO: no computador do James o código usa o Chrome
+   * já instalado, então o problema nunca aparece local — foi por isso que
+   * passou batido.
+   */
+  serverExternalPackages: ["@sparticuz/chromium", "puppeteer-core"],
   experimental: {
     serverActions: {
       bodySizeLimit: "15mb",
