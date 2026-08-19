@@ -533,3 +533,104 @@ export async function fontesDoEmail(email: string): Promise<Record<string, unkno
     },
   };
 }
+
+/* ── a última hipótese do /sales/: parâmetro OBRIGATÓRIO faltando ────────── */
+
+/**
+ * Tenta destravar o histórico de vendas com os obrigatórios que faltam.
+ *
+ * ⚠️ O padrão diz muito: **todo** endereço sob `/sales/` responde 400
+ * `invalid_parameter`, inclusive sem nenhum parâmetro, enquanto a família
+ * `/subscriptions` responde 200. Bloqueio de permissão costuma ser 401/403 e
+ * costuma valer pra API inteira. 400 em tudo de uma família, com outra família
+ * funcionando, tem mais cara de **exigência não atendida** — algum parâmetro
+ * que a Hotmart considera obrigatório ali e não em assinaturas.
+ *
+ * O candidato mais provável é `commission_as`: nos endereços de venda, a
+ * Hotmart quer saber se você pergunta como PRODUTOR, coprodutor ou afiliado.
+ *
+ * ⚠️ E agora a gente tem munição real: `product_id` e `transaction` saíram da
+ * resposta de assinaturas. Testar com identificador que EXISTE é diferente de
+ * testar com um inventado — um 404 com id real diz "não achei"; com id
+ * inventado não diz nada.
+ */
+export async function destravarVendas(
+  email: string,
+  jogo: JogoDeCredenciais = "principal"
+): Promise<Achado[]> {
+  const token = await pegarTokenPublico(jogo);
+  const base = "https://developers.hotmart.com/payments/api/v1/sales/history";
+  const agora = Date.now();
+  const doisAnos = agora - 1000 * 60 * 60 * 24 * 730;
+
+  // Vindos de uma resposta real de /subscriptions/transactions.
+  const PRODUTO_REAL = "5193669";
+  const TRANSACAO_REAL = "HP2561203159";
+
+  const tentativas: Array<[string, Record<string, string>]> = [
+    ["commission_as=PRODUCER (a aposta)", { commission_as: "PRODUCER" }],
+    ["commission_as=PRODUCER + e-mail", { commission_as: "PRODUCER", buyer_email: email }],
+    ["commission_as=PRODUCER + janela", {
+      commission_as: "PRODUCER",
+      start_date: String(doisAnos),
+      end_date: String(agora),
+    }],
+    ["commission_as em minúscula", { commission_as: "producer" }],
+    ["product_id de um produto que EXISTE", { product_id: PRODUTO_REAL }],
+    ["product_id + janela", {
+      product_id: PRODUTO_REAL,
+      start_date: String(doisAnos),
+      end_date: String(agora),
+    }],
+    ["transaction de uma compra que EXISTE", { transaction: TRANSACAO_REAL }],
+    ["max_results sozinho", { max_results: "10" }],
+    ["sales_source", { sales_source: "ALL" }],
+    ["transaction_status=APPROVED sozinho", { transaction_status: "APPROVED" }],
+    ["tudo junto", {
+      commission_as: "PRODUCER",
+      product_id: PRODUTO_REAL,
+      start_date: String(doisAnos),
+      end_date: String(agora),
+      max_results: "10",
+    }],
+  ];
+
+  const achados: Achado[] = [];
+  for (const [nome, params] of tentativas) {
+    const u = new URL(base);
+    for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+    try {
+      const r = await fetch(u, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(20000),
+      });
+      const cru = await r.text().catch(() => "");
+      let leitura = traduzir(r.status);
+      if (r.ok) {
+        try {
+          const d = JSON.parse(cru);
+          const itens = (d?.items ?? []).length;
+          const total = d?.page_info?.total_results;
+          leitura = `🎉 FUNCIONOU — ${itens} itens${total != null ? ` (total ${total})` : ""}`;
+        } catch {
+          leitura = "200, mas a resposta não era o JSON esperado";
+        }
+      }
+      achados.push({
+        endereco: nome,
+        status: r.status,
+        leitura,
+        // ⚠️ O corpo do 400 costuma DIZER qual parâmetro ele quer. Foi assim
+        // que o Club entregou o "subdomain_not_found" e resolveu aquela dúvida.
+        ...(r.ok ? {} : { resposta: cru.replace(/\s+/g, " ").slice(0, 260) }),
+      });
+    } catch (e) {
+      achados.push({
+        endereco: nome,
+        status: 0,
+        leitura: e instanceof Error ? e.message : "erro de rede",
+      });
+    }
+  }
+  return achados;
+}

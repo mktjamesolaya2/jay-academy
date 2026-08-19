@@ -49,6 +49,15 @@ export async function GET(req: Request) {
     });
   }
 
+  if (url0.searchParams.get("destravar") === "1") {
+    const alvo = url0.searchParams.get("email") ?? "teste@exemplo.com";
+    const { destravarVendas } = await import("@/lib/hotmart-sonda");
+    return NextResponse.json({
+      aviso: "Só leitura. Testa os parâmetros obrigatórios que faltam no /sales/history.",
+      tentativas: await destravarVendas(alvo, jogo),
+    });
+  }
+
   if (url0.searchParams.get("fontes") === "1") {
     const alvo = url0.searchParams.get("email");
     if (!alvo) {
