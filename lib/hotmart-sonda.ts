@@ -396,3 +396,60 @@ export async function sondarAssinaturas(
 
   return achados;
 }
+
+/**
+ * O FORMATO da resposta de assinaturas — nomes dos campos, não os valores.
+ *
+ * ⚠️ Existe pra eu parar de adivinhar. Já perdi tempo hoje montando código
+ * contra um formato imaginado; o arquivo de vendas derrubou três suposições
+ * minhas de uma vez. Aqui a API diz o nome dos campos dela.
+ *
+ * ⚠️ **Valor só de campo que não é da pessoa**: nome de produto, data e
+ * situação saem inteiros porque preciso conferir o formato (milissegundos ou
+ * segundos? "APPROVED" ou "aprovado"?). Qualquer coisa que cheire a
+ * identificação — e-mail, nome, documento, telefone, código de assinante — sai
+ * como o TIPO apenas.
+ */
+export async function formatoDeAssinaturas(
+  email: string,
+  jogo: JogoDeCredenciais = "principal"
+): Promise<Record<string, unknown>> {
+  const token = await pegarTokenPublico(jogo);
+  const u = new URL("https://developers.hotmart.com/payments/api/v1/subscriptions/transactions");
+  u.searchParams.set("subscriber_email", email);
+
+  const r = await fetch(u, {
+    headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!r.ok) return { status: r.status, erro: (await r.text().catch(() => "")).slice(0, 200) };
+
+  const d = (await r.json()) as { items?: Array<Record<string, unknown>> };
+  const itens = d.items ?? [];
+  if (!itens.length) return { status: 200, itens: 0, aviso: "Sem itens — tente outro e-mail." };
+
+  const PESSOAL = /email|name|nome|document|cpf|phone|telefone|address|subscriber_code|buyer/i;
+
+  const descrever = (o: Record<string, unknown>, prefixo = ""): Record<string, unknown> => {
+    const saida: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(o)) {
+      const caminho = prefixo ? `${prefixo}.${k}` : k;
+      if (v && typeof v === "object" && !Array.isArray(v)) {
+        Object.assign(saida, descrever(v as Record<string, unknown>, caminho));
+      } else if (PESSOAL.test(caminho)) {
+        saida[caminho] = `<${typeof v}> (escondido: é dado da pessoa)`;
+      } else {
+        saida[caminho] = v;
+      }
+    }
+    return saida;
+  };
+
+  return {
+    status: 200,
+    itens: itens.length,
+    campos: descrever(itens[0]!),
+    // O segundo item ajuda a ver o que varia entre uma compra e outra.
+    segundoItem: itens[1] ? descrever(itens[1]) : null,
+  };
+}

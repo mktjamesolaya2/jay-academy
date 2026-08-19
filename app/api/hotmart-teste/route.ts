@@ -49,6 +49,18 @@ export async function GET(req: Request) {
     });
   }
 
+  if (url0.searchParams.get("formato") === "1") {
+    const alvo = url0.searchParams.get("email");
+    if (!alvo) {
+      return NextResponse.json({ error: "Use ?formato=1&email=alguem@email.com" }, { status: 400 });
+    }
+    const { formatoDeAssinaturas } = await import("@/lib/hotmart-sonda");
+    return NextResponse.json({
+      aviso: "Nomes dos campos. E-mail, nome e documento saem só como TIPO.",
+      ...(await formatoDeAssinaturas(alvo, jogo)),
+    });
+  }
+
   if (url0.searchParams.get("assinaturas") === "1") {
     const alvo = url0.searchParams.get("email");
     if (!alvo) {
