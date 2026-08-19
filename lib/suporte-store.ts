@@ -14,7 +14,19 @@ import type { SituacaoGravada } from "./resumo-conversa";
 
 const CHAVE_CONHECIMENTO = "suporte:conhecimento";
 const CHAVE_CONVERSAS = "suporte:conversas";
-const MAX_CONVERSAS = 200;
+/**
+ * Quantas conversas a caixa guarda.
+ *
+ * ⚠️ Era 200. Com movimento de verdade isso vira semanas — e a 201ª empurrava
+ * a mais antiga pra fora, levando junto o PROTOCOLO dela. Como o protocolo é o
+ * que a aluna leva pro WhatsApp, sumir com ele quebra exatamente o que a gente
+ * prometeu pra ela.
+ *
+ * ⚠️ Não é infinito porque tudo isso mora numa chave só no banco: cada leitura
+ * e cada escrita mexem na lista inteira. Se um dia passar de mil, o certo é
+ * separar cada conversa na sua própria chave, não aumentar este número de novo.
+ */
+const MAX_CONVERSAS = 1000;
 const MAX_MENSAGENS = 60;
 
 export type Mensagem = {
@@ -172,7 +184,29 @@ export async function salvarConversa(conversa: Conversa): Promise<void> {
   };
   if (i === -1) todas.unshift(limpa);
   else todas[i] = limpa;
-  await kvSet(CHAVE_CONVERSAS, todas.slice(0, MAX_CONVERSAS));
+  await kvSet(CHAVE_CONVERSAS, aparar(todas));
+}
+
+/**
+ * Corta a lista quando ela passa do teto — sacrificando o que menos importa.
+ *
+ * ⚠️ Cortar pela ponta (a mais antiga sai) jogaria fora uma aluna esperando
+ * atendimento só porque ela chegou primeiro. Aqui sai primeiro quem NÃO deixou
+ * rastro: conversa sem e-mail, que ninguém está esperando, e que já acabou. Na
+ * prática é quem abriu a página, escreveu "oi" e foi embora.
+ */
+function aparar(todas: Conversa[]): Conversa[] {
+  if (todas.length <= MAX_CONVERSAS) return todas;
+
+  const importa = (c: Conversa) =>
+    c.aguardandoPessoa || !!c.emailAluna || c.mensagens.length > 2;
+
+  const guardar = todas.filter(importa);
+  if (guardar.length >= MAX_CONVERSAS) return guardar.slice(0, MAX_CONVERSAS);
+
+  // Ainda cabe: completa com as descartáveis mais recentes.
+  const resto = todas.filter((c) => !importa(c));
+  return [...guardar, ...resto].slice(0, MAX_CONVERSAS);
 }
 
 export async function apagarConversa(id: string): Promise<void> {
