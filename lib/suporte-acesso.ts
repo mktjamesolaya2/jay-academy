@@ -187,8 +187,13 @@ sistema que confere isso está fora do ar do nosso lado.
 NÃO diga que não achou a compra dela: você NÃO procurou. Dizer que não achou
 nega a compra de quem pagou, e é o pior erro possível aqui.
 
-Diga que não conseguiu confirmar neste momento e que vai chamar uma pessoa do
-time pra verificar. Passe para uma pessoa.`;
+Diga que não conseguiu confirmar neste momento e que é melhor continuar a
+conversa no WhatsApp, onde uma pessoa do time consegue verificar. Passe para
+uma pessoa.
+
+⚠️ NÃO diga "vou chamar alguém pra te ajudar" nem "o time vai te procurar":
+ninguém responde nesta tela, então isso seria prometer uma coisa que não
+acontece — e ela ficaria esperando.`;
 
     case "nao-encontrado":
       return `Procuramos "${s.email}" e NÃO achamos compra nenhuma com esse
@@ -224,7 +229,9 @@ para uma pessoa.`;
     case "cancelado":
       return `A compra de "${s.email}" consta como cancelada. NÃO explique o
 motivo, NÃO fale de reembolso e NÃO afirme nada sobre dinheiro. Diga que precisa
-verificar isso com o time e passe para uma pessoa.`;
+verificar isso com o time e que é melhor continuar no WhatsApp. Passe para uma
+pessoa. NÃO prometa que alguém vai procurar ela: quem continua a conversa é
+ela, pelo WhatsApp.`;
 
     case "no-prazo": {
       const lista = s.compras.map((c) => c.produto).join(", ");
@@ -244,9 +251,13 @@ reenvio é feito na Hotmart, à mão.`;
 ` : ""}O acesso de "${s.email}" VENCEU em ${dataBR(s.venceuEm)}.
 Curso(s): ${lista}. Explique com gentileza que o acesso vale 12 meses e que o
 dela encerrou nessa data — é o motivo de não conseguir entrar, e quase ninguém
-sabe disso. Diga que o time pode explicar como seguir com o curso. NÃO cite
-preço, NÃO ofereça plano nem condição: quem faz isso é a pessoa. Passe para uma
-pessoa.`;
+sabe disso. Convide ela a continuar no WhatsApp, onde uma pessoa do time
+explica como seguir com o curso. NÃO cite preço, NÃO ofereça plano nem
+condição: quem faz isso é a pessoa. Passe para uma pessoa.
+
+⚠️ NÃO diga "vou chamar alguém pra te ajudar": ninguém responde nesta tela, e
+quem continua a conversa é ela, pelo WhatsApp. Prometer que o time vai procurar
+ela faz ela esperar por uma coisa que não vem.`;
     }
   }
 }

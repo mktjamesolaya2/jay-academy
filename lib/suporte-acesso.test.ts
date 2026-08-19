@@ -282,3 +282,19 @@ test("no primeiro 'não achei' ela não pode chutar vencimento", () => {
   const f = fatosDoAcesso({ tipo: "nao-encontrado", email: "x@y.com" });
   assert.match(f, /NÃO\s+fale\s+de\s+prazo,\s+vencimento\s+nem\s+dos\s+12\s+meses/);
 });
+
+test("nenhum encaminhamento promete que o time vai procurar ela", () => {
+  // ⚠️ Ninguém responde no portal. "Vou chamar alguém pra te ajudar" diz que a
+  // gente vai atrás dela; o botão ao lado diz que ela é que tem que ir. Uma das
+  // duas está mentindo, e é a frase — visto numa conversa real (acesso vencido
+  // em 06/01/2026).
+  const conversas = [
+    fatosDoAcesso({ tipo: "vencido", email: "x@y.com", compras: [], venceuEm: "2026-01-06T00:00:00Z" }),
+    fatosDoAcesso({ tipo: "cancelado", email: "x@y.com" }),
+    fatosDoAcesso({ tipo: "nao-consegui-conferir", email: "x@y.com" }),
+  ];
+  for (const f of conversas) {
+    assert.match(f, /WhatsApp/i, "tem que convidar pro WhatsApp");
+    assert.match(f, /NÃO\s+(diga|prometa)/, "tem que proibir a promessa");
+  }
+});
