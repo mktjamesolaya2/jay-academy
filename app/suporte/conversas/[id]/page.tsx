@@ -74,8 +74,12 @@ export default async function ConversaPage({
             <form
               action={async () => {
                 "use server";
-                await apagarConversaAction(id);
-                redirect("/suporte");
+                const r = await apagarConversaAction(id);
+                redirect(
+                  r.ok
+                    ? "/suporte"
+                    : `/suporte?erro=${encodeURIComponent(r.erro ?? "Não deu pra apagar.")}`
+                );
               }}
               className="shrink-0"
             >

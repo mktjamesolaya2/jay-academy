@@ -88,12 +88,23 @@ export async function responderComoPessoaAction(
  * ⚠️ Redireciona pra lista no fim: a tela da conversa apagada continuaria
  * aberta mostrando algo que não existe mais, e o primeiro clique daria erro.
  */
-export async function apagarConversaAction(id: string): Promise<{ ok: boolean }> {
-  await requireAdmin();
-  await apagarConversa(id);
-  revalidatePath("/suporte");
-  revalidatePath("/suporte/conversas");
-  return { ok: true };
+export async function apagarConversaAction(
+  id: string
+): Promise<{ ok: boolean; erro?: string }> {
+  // ⚠️ Erro não tratado em ação de servidor vira "This page couldn't load" —
+  // uma tela branca que não diz nada e ainda perde de vista o que a pessoa
+  // estava fazendo. Aqui ele vira uma frase que dá pra ler e pra me mandar.
+  try {
+    await requireAdmin();
+    await apagarConversa(id);
+    revalidatePath("/suporte");
+    revalidatePath("/suporte/conversas");
+    return { ok: true };
+  } catch (e) {
+    const erro = e instanceof Error ? e.message : "erro desconhecido";
+    console.error("[suporte] apagar conversa falhou:", erro);
+    return { ok: false, erro };
+  }
 }
 
 /** Tira uma pergunta da fila de lacunas (já foi respondida na base). */

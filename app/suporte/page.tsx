@@ -11,6 +11,8 @@ import { listarReenvios } from "@/lib/reenvio-store";
 import { ordenarCaixa, espera } from "@/lib/caixa-conversas";
 import { combinaBusca, protocoloDe } from "@/lib/protocolo";
 import { limiteDoDia } from "@/lib/uso-ia";
+import { listarImportacoes } from "@/lib/importacao-store";
+import { idadeDoHistorico, recadoDoHistorico } from "@/lib/idade-do-historico";
 
 /**
  * A caixa de entrada do time — **a tela principal do suporte**.
@@ -30,13 +32,15 @@ export const dynamic = "force-dynamic";
 export default async function CaixaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; erro?: string }>;
 }) {
   const me = await getCurrentUser();
   if (!me) redirect("/login?redirect=/suporte");
   if (!canEdit(me)) redirect("/dashboard");
 
-  const busca = ((await searchParams).q ?? "").trim();
+  const parametros = await searchParams;
+  const busca = (parametros.q ?? "").trim();
+  const erro = (parametros.erro ?? "").trim();
 
   // ⚠️ Conversa de treino NÃO entra: misturada com aluna de verdade, ela faz
   // o time perder a de verdade de vista — e foi o que o James viu na tela.
@@ -45,10 +49,16 @@ export default async function CaixaPage({
   );
   const linhas = todas.filter((l) => combinaBusca(l, busca));
 
-  const [uso, reenvios] = await Promise.all([
+  const [uso, reenvios, importacoes] = await Promise.all([
     lerUsoIA().catch(() => ({ usadas: 0, estourou: false })),
     listarReenvios().catch(() => []),
+    listarImportacoes().catch(() => []),
   ]);
+  // ⚠️ Enquanto a API de vendas não for liberada, o passado depende de alguém
+  // lembrar de exportar a planilha. O dia em que ninguém lembrar, o sistema
+  // não avisa sozinho: ele só passa a responder "não consegui conferir" pra
+  // quem comprou depois — e ninguém liga uma coisa na outra.
+  const historico = idadeDoHistorico(importacoes[0]?.em);
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">
@@ -88,6 +98,17 @@ export default async function CaixaPage({
           </div>
         </header>
 
+        {erro && (
+          <div className="mx-5 mt-5 rounded-xl border border-rose-500/30 bg-rose-500/[0.06] px-4 py-3 lg:mx-8">
+            <p className="text-[13px] font-semibold text-rose-200">
+              Não deu pra apagar a conversa.
+            </p>
+            <p className="mt-1 font-mono text-[12px] leading-relaxed text-rose-200/70">
+              {erro}
+            </p>
+          </div>
+        )}
+
         <section className="flex flex-col gap-5 px-5 py-6 lg:flex-row lg:items-start lg:gap-6 lg:px-8 lg:py-7">
           {/* A coluna da esquerda: buscar, e o que precisa de olho. */}
           <div className="w-full shrink-0 space-y-3 lg:w-[230px]">
@@ -108,6 +129,26 @@ export default async function CaixaPage({
                 className="w-full rounded-xl border border-[#1f1f1f] bg-[#0d0d0d] py-2.5 pl-8 pr-3 text-[12.5px] text-white placeholder:text-neutral-600 focus:border-[#AC9751]/50 focus:outline-none"
               />
             </form>
+
+            {/* Só aparece quando está velho ou nunca aconteceu. "Importado há
+                3 dias" todo dia vira paisagem, e aí o aviso de verdade some
+                junto. */}
+            {historico.tipo !== "em-dia" && (
+              <Link
+                href="/suporte/importar"
+                className="block rounded-xl border border-amber-500/25 bg-amber-500/[0.05] px-4 py-3.5 transition hover:border-amber-500/45"
+              >
+                <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-amber-300/80">
+                  Histórico de vendas
+                </p>
+                <p className="mt-1.5 text-[12.5px] leading-relaxed text-neutral-300">
+                  {recadoDoHistorico(historico)}
+                </p>
+                <p className="mt-2 text-[11.5px] font-semibold text-amber-300">
+                  Importar de novo →
+                </p>
+              </Link>
+            )}
 
             <PainelUso
               inicial={{
@@ -182,7 +223,15 @@ export default async function CaixaPage({
                   <form
                     action={async () => {
                       "use server";
-                      await apagarConversaAction(l.id);
+                      const r = await apagarConversaAction(l.id);
+                      // ⚠️ A falha volta pela URL porque isto é um formulário
+                      // de servidor: não existe estado de tela pra guardar o
+                      // recado. Sem isso, apagar que dá errado some sem dizer
+                      // nada — e a conversa continua lá, o que parece bug do
+                      // botão.
+                      if (!r.ok) {
+                        redirect(`/suporte?erro=${encodeURIComponent(r.erro ?? "Não deu pra apagar.")}`);
+                      }
                     }}
                     className="absolute right-2 top-2.5"
                   >
