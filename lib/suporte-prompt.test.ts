@@ -323,3 +323,20 @@ test("resposta que é só a reação não vira mensagem vazia", () => {
   // Melhor um "Poxa." repetido do que uma bolha em branco na tela dela.
   assert.equal(tirarReacaoRepetida("Poxa!", true), "Poxa!");
 });
+
+test("o prompt sabe que está no site, não no WhatsApp", () => {
+  // ⚠️ A primeira linha dizia "Você é o SUPORTE da Jay Academy NO WHATSAPP" —
+  // sobra da fase 1. A aluna está no site, e a IA respondia "vamos continuar
+  // aqui no WhatsApp" estando numa página web.
+  const p = montarPrompt("x");
+  assert.match(p, /chat do site/i);
+  assert.match(p, /NÃO está no WhatsApp/i);
+});
+
+test("o prompt proíbe oferecer ligação e pedir telefone", () => {
+  // ⚠️ Ela ofereceu "me passa seu número que eu te ligo". Ninguém aqui liga
+  // pra ninguém — é marcar um encontro que não vai acontecer.
+  const p = montarPrompt("x");
+  assert.match(p, /NÃO ofereça ligar/i);
+  assert.match(p, /NÃO peça o telefone/i);
+});

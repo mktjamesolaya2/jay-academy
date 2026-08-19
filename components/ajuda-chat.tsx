@@ -434,8 +434,22 @@ export function AjudaChat({ saudacao }: { saudacao: string }) {
     setPensando(true);
     try {
       while (fila.current.length) {
-        const item = fila.current.shift()!;
-        await mandarUma(item);
+        // ⚠️ Leva a fila INTEIRA de uma vez, não uma mensagem por vez. Quem
+        // escreve "oi" e emenda "aqui é a Rafaela, preciso falar com você"
+        // mandou UM recado em duas linhas — e recebia duas respostas, a
+        // primeira cumprimentando sem ter lido a segunda. Uma pessoa lendo as
+        // duas responderia uma vez só.
+        const lote = fila.current.splice(0, fila.current.length);
+        await mandarUma({
+          texto: lote
+            .map((i) => i.texto)
+            .filter(Boolean)
+            .join("\n"),
+          // ⚠️ O primeiro anexo do lote. O servidor aceita até 3, mas mandar
+          // vários prints numa resposta só confunde mais do que ajuda — e o
+          // caso real é uma pessoa mandando um print e escrevendo em seguida.
+          anexo: lote.find((i) => i.anexo)?.anexo ?? null,
+        });
       }
     } finally {
       processando.current = false;
