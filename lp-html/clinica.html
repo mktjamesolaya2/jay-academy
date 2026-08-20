@@ -599,7 +599,7 @@
       color: var(--preto);
     }
     /* Respiro a mais no topo: o conteúdo não pode nascer embaixo das gotas. */
-    .secao.claro { padding-top: clamp(70px, 8vw, 120px); }
+    .secao.claro { padding-top: clamp(96px, 13vw, 200px); }
     .claro .rotulo-lamina { color: rgba(16, 24, 32, .52); }
     .claro .titulo-lamina { color: rgba(16, 24, 32, .60); }
     .claro .titulo-lamina strong { color: var(--preto); }
@@ -717,106 +717,42 @@
     }
 
 
-
     /* ============================================================
-       A DOBRA PARTIDA — metade branca, metade preta.
+       O PIGMENTO ESCORRENDO — a borda entre a dobra escura e a clara.
 
-       James, 20/08: *"não era na divisão das dobras, é a dobra INTEIRA: o
-       fundo metade preto e metade branco"*. Antes disso eu tinha feito o
-       escorrido na horizontal, entre uma dobra e outra — era vertical,
-       dentro da mesma dobra.
+       James, 20/08: *"pega toda essa área branca e a partir do topo lá no
+       canto direito divide mais ou menos a tela, como se fosse um pigmento
+       escorrendo"*. Antes disso eu tinha entregado só uma linha reta, duas
+       vezes — não era linha, era a BORDA do branco.
 
-       O branco é o fundo da seção; o preto é uma coluna à direita; e a
-       divisa entre os dois é o pigmento escorrendo, com as línguas entrando
-       no branco.
+       ⚠️ O caminho foi gerado por código, com largura e comprimento de gota
+       irregulares. Desenhado no olho, as gotas saem todas parecidas e o
+       escorrido vira serrilha de decoração.
+       ⚠️ O pigmento é mais grosso à DIREITA e as gotas mais longas ali: é de
+       onde ele disse que o escorrido começa.
        ============================================================ */
-    .partida { position: relative; background: var(--off-white); overflow: hidden; }
-    .partida > * { position: relative; z-index: 1; }
-
-    .partida__escuro {
-      position: absolute;
-      top: 0; bottom: 0; right: 0;
-      width: 50%;
-      background: var(--fundo);
-      z-index: 0;
+    .escorrido {
+      display: block;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      height: clamp(72px, 11.4vw, 180px);
+      /* Encosta na dobra clara de baixo: sem isto sobra uma faixa escura
+         entre o escorrido e o branco, e ele deixa de ser a divisa. */
+      margin-bottom: calc(-1 * clamp(72px, 11.4vw, 180px));
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
     }
-    /* ⚠️ A divisa é um LADRILHO que se repete pra baixo, e não um desenho
-       esticado na altura da dobra: esticado, a espessura das línguas muda
-       conforme o conteúdo cresce. O ladrilho fecha em cima e embaixo na mesma
-       altura, então a emenda não aparece. */
-    .partida__escuro::before {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      right: 100%;
-      width: 240px;
-      background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22240%22%20height%3D%221000%22%20viewBox%3D%220%200%20240%201000%22%3E%3Cpath%20d%3D%22M240%2C0%20L240%2C1000%20L206.0%2C1000%20L203.4%2C940%20L204.5%2C880%20L204.8%2C865.0%20C198.9%2C843.0%20190.5%2C837.5%20183.8%2C835.1%20C175.8%2C835.1%20175.8%2C827.9%20183.8%2C827.9%20C190.5%2C825.5%20198.9%2C820.0%20204.7%2C798.0%20L205.3%2C738%20L208.1%2C686.0%20C176.6%2C664.0%2079.2%2C658.0%2070.2%2C654.8%20C59.6%2C654.8%2059.6%2C645.2%2070.2%2C645.2%20C79.2%2C642.0%20176.6%2C636.0%20208.6%2C614.0%20L206.3%2C554%20L205.9%2C522.0%20C185.0%2C500.0%20149.7%2C491.6%20129.9%2C484.6%20C106.6%2C484.6%20106.6%2C463.4%20129.9%2C463.4%20C149.7%2C456.4%20185.0%2C448.0%20205.0%2C426.0%20L202.9%2C366%20L203.4%2C325.0%20C197.7%2C303.0%20182.8%2C297.7%20177.0%2C295.6%20C170.1%2C295.6%20170.1%2C289.4%20177.0%2C289.4%20C182.8%2C287.3%20197.7%2C282.0%20206.8%2C260.0%20L207.3%2C200%20L207.0%2C178.0%20C164.1%2C156.0%2041.8%2C148.6%2026.5%2C143.2%20C8.5%2C143.2%208.5%2C126.8%2026.5%2C126.8%20C41.8%2C121.4%20164.1%2C114.0%20208.3%2C92.0%20L207.8%2C32%20L206.0%2C0%20Z%22%20fill%3D%22%23070605%22%2F%3E%3C%2Fsvg%3E");
-      background-repeat: repeat-y;
-      background-position: right top;
-    }
-    /* As gotas que já se soltaram, no branco. Sem elas a divisa lê como
-       recorte; com elas, como pigmento. */
-    .partida__gota {
-      position: absolute;
-      z-index: 0;
-      border-radius: 50%;
-      background: var(--fundo);
-    }
+    .escorrido path,
+    .escorrido ellipse { fill: var(--fundo); }
 
-    /* Cada lâmina ocupa as duas metades: a foto de um lado, o texto do outro.
-       ⚠️ As colunas são 1fr/1fr de propósito — é o que faz a foto e o texto
-       caírem cada um na sua metade de fundo. */
-    .partida .proc,
-    .partida .proc--invertida { grid-template-columns: 1fr 1fr; align-items: center; }
-    .partida .proc__foto { max-width: min(380px, 78%); }
-    .partida .proc:not(.proc--invertida) .proc__foto { justify-self: center; }
-    .partida .proc:not(.proc--invertida) .proc__texto { padding-left: clamp(20px, 3.4vw, 62px); }
-    .partida .proc--invertida .proc__foto { justify-self: center; }
-    .partida .proc--invertida .proc__texto { padding-right: clamp(20px, 3.4vw, 62px); }
-
-    /* ⚠️ O texto da PRIMEIRA lâmina cai na metade preta: os tokens dele têm
-       que virar os do escuro, senão fica cinza-chumbo sobre preto. */
-    .partida .proc:not(.proc--invertida) .proc__tecnicas { color: rgba(248,247,242,.55); }
-    .partida .proc:not(.proc--invertida) .proc__tecnicas span { color: var(--ouro); }
-    .partida .proc:not(.proc--invertida) .titulo-lamina { color: rgba(248,247,242,.82); }
-    .partida .proc:not(.proc--invertida) .titulo-lamina strong { color: var(--off-white); }
-    .partida .proc:not(.proc--invertida) .texto-lamina { color: rgba(248,247,242,.72); }
-    .partida .proc:not(.proc--invertida) .texto-lamina::before { background: rgba(248,247,242,.32); }
-    .partida .proc:not(.proc--invertida) .lista li { color: rgba(248,247,242,.78); }
-    .partida .proc:not(.proc--invertida) .lista li::before { background: var(--ouro); }
-    .partida .proc:not(.proc--invertida) .link-fino { color: var(--off-white); border-bottom-color: rgba(172,151,81,.55); }
-    .partida .proc:not(.proc--invertida) .link-fino:hover { color: var(--ouro-claro); border-bottom-color: var(--ouro); }
-
-    /* A linha entre as lâminas atravessa as duas metades, então ela muda de
-       cor no meio do caminho: metade escura no branco, metade clara no preto. */
-    .partida .fio {
-      background: linear-gradient(to right, rgba(16,24,32,.55) 0 50%, rgba(248,247,242,.22) 50% 100%);
-    }
-    .partida .fio::before { background: rgba(248,247,242,.22); }
-    .partida .fio::after { background: rgba(16,24,32,.55); }
-
-    /* O escorrido do topo só existe no celular. */
-    .partida__topo { display: none; }
-    @media (max-width: 900px) {
-      /* ⚠️ No celular NÃO dá pra partir a tela ao meio: cada lâmina vira uma
-         coluna só, e metade do texto cairia em cima da divisa. A dobra fica
-         branca inteira, e o pigmento passa a escorrer no TOPO dela — mesma
-         ideia, virada de lado. */
-      .partida__escuro { display: none; }
-      .partida__gota { display: none; }
-      .partida__topo {
-        display: block;
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        width: 100%;
-        height: min(26.3vw, 150px);
-        z-index: 0;
-      }
-      .partida__topo path, .partida__topo ellipse { fill: var(--fundo); }
-      .secao.claro { padding-top: clamp(96px, 26vw, 150px); }
-      .partida .proc, .partida .proc--invertida { grid-template-columns: 1fr; }
-      .partida .proc__texto { padding: 0 !important; }
-      .partida .proc__foto { max-width: 420px; margin: 0 auto; }
+    /* No celular, 14 gotas espremidas em 390px viram serrote. A versão
+       estreita ancora na direita e corta o resto, na proporção certa. */
+    .escorrido--largo { display: block; }
+    .escorrido--estreito { display: none; }
+    @media (max-width: 760px) {
+      .escorrido--largo { display: none; }
+      .escorrido--estreito { display: block; }
     }
 
     /* Entrada suave — um respiro, não animação de template. */
@@ -926,20 +862,32 @@
     </div>
   </section>
 
+  <!-- ⚠️ Duas versões do MESMO caminho: a larga estica na tela cheia; a
+       estreita ancora na direita e corta o resto, em vez de espremer 14 gotas
+       em 390px de tela. -->
+  <svg class="escorrido escorrido--largo" viewBox="0 0 1440 240" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M1440,0 L0,0 L0,26.0 L52.0,27.8 C60.0,27.8 64.0,35.4 69.0,44.4 A9.0,10.9 0 0 0 87.0,44.4 C92.0,35.4 96.0,27.8 104.0,27.8 L174.0,30.6 C182.0,30.6 186.0,71.8 189.3,78.5 A6.7,8.2 0 0 0 202.7,78.5 C206.0,71.8 210.0,30.6 218.0,30.6 L292.0,33.6 C300.0,33.6 304.0,39.6 310.8,50.8 A11.2,13.6 0 0 0 333.2,50.8 C340.0,39.6 344.0,33.6 352.0,33.6 L431.0,36.7 C439.0,36.7 443.0,87.3 445.8,93.4 A6.2,7.5 0 0 0 458.2,93.4 C461.0,87.3 465.0,36.7 473.0,36.7 L538.0,39.4 C546.0,39.4 550.0,54.2 555.9,64.2 A10.1,12.2 0 0 0 576.1,64.2 C582.0,54.2 586.0,39.4 594.0,39.4 L668.0,42.3 C676.0,42.3 680.0,103.5 683.3,110.2 A6.7,8.2 0 0 0 696.7,110.2 C700.0,103.5 704.0,42.3 712.0,42.3 L774.0,45.0 C782.0,45.0 786.0,58.2 793.7,70.6 A12.3,15.0 0 0 0 818.3,70.6 C826.0,58.2 830.0,45.0 838.0,45.0 L879.0,47.3 C887.0,47.3 891.0,121.1 894.7,128.4 A7.3,8.8 0 0 0 909.3,128.4 C913.0,121.1 917.0,47.3 925.0,47.3 L985.0,49.9 C993.0,49.9 997.0,80.1 1002.5,89.6 A9.5,11.6 0 0 0 1021.5,89.6 C1027.0,80.1 1031.0,49.9 1039.0,49.9 L1097.0,52.4 C1105.0,52.4 1109.0,153.0 1111.8,159.2 A6.2,7.5 0 0 0 1124.2,159.2 C1127.0,153.0 1131.0,52.4 1139.0,52.4 L1176.0,54.5 C1184.0,54.5 1188.0,88.5 1194.8,99.7 A11.2,13.6 0 0 0 1217.2,99.7 C1224.0,88.5 1228.0,54.5 1236.0,54.5 L1263.0,56.4 C1271.0,56.4 1275.0,186.2 1278.7,193.4 A7.3,8.8 0 0 0 1293.3,193.4 C1297.0,186.2 1301.0,56.4 1309.0,56.4 L1313.0,57.6 C1321.0,57.6 1325.0,129.8 1330.5,139.4 A9.5,11.6 0 0 0 1349.5,139.4 C1355.0,129.8 1359.0,57.6 1367.0,57.6 L1385.0,59.5 C1393.0,59.5 1397.0,177.3 1405.1,190.2 A12.9,15.6 0 0 0 1430.9,190.2 C1439.0,177.3 1443.0,59.5 1451.0,59.5 L1440,60.0 Z" />
+
+    <!-- As gotas que já se soltaram. Sem elas o escorrido lê como borda
+         recortada; com elas, lê como pigmento caindo. -->
+    <ellipse cx="1247" cy="222" rx="15" ry="19" />
+    <ellipse cx="1063" cy="197" rx="11" ry="14" />
+    <ellipse cx="905" cy="211" rx="8" ry="10.5" />
+    <ellipse cx="702" cy="163" rx="8.5" ry="11" />
+  </svg>
+  <svg class="escorrido escorrido--estreito" viewBox="0 0 1440 240" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
+    <path d="M1440,0 L0,0 L0,26.0 L52.0,27.8 C60.0,27.8 64.0,35.4 69.0,44.4 A9.0,10.9 0 0 0 87.0,44.4 C92.0,35.4 96.0,27.8 104.0,27.8 L174.0,30.6 C182.0,30.6 186.0,71.8 189.3,78.5 A6.7,8.2 0 0 0 202.7,78.5 C206.0,71.8 210.0,30.6 218.0,30.6 L292.0,33.6 C300.0,33.6 304.0,39.6 310.8,50.8 A11.2,13.6 0 0 0 333.2,50.8 C340.0,39.6 344.0,33.6 352.0,33.6 L431.0,36.7 C439.0,36.7 443.0,87.3 445.8,93.4 A6.2,7.5 0 0 0 458.2,93.4 C461.0,87.3 465.0,36.7 473.0,36.7 L538.0,39.4 C546.0,39.4 550.0,54.2 555.9,64.2 A10.1,12.2 0 0 0 576.1,64.2 C582.0,54.2 586.0,39.4 594.0,39.4 L668.0,42.3 C676.0,42.3 680.0,103.5 683.3,110.2 A6.7,8.2 0 0 0 696.7,110.2 C700.0,103.5 704.0,42.3 712.0,42.3 L774.0,45.0 C782.0,45.0 786.0,58.2 793.7,70.6 A12.3,15.0 0 0 0 818.3,70.6 C826.0,58.2 830.0,45.0 838.0,45.0 L879.0,47.3 C887.0,47.3 891.0,121.1 894.7,128.4 A7.3,8.8 0 0 0 909.3,128.4 C913.0,121.1 917.0,47.3 925.0,47.3 L985.0,49.9 C993.0,49.9 997.0,80.1 1002.5,89.6 A9.5,11.6 0 0 0 1021.5,89.6 C1027.0,80.1 1031.0,49.9 1039.0,49.9 L1097.0,52.4 C1105.0,52.4 1109.0,153.0 1111.8,159.2 A6.2,7.5 0 0 0 1124.2,159.2 C1127.0,153.0 1131.0,52.4 1139.0,52.4 L1176.0,54.5 C1184.0,54.5 1188.0,88.5 1194.8,99.7 A11.2,13.6 0 0 0 1217.2,99.7 C1224.0,88.5 1228.0,54.5 1236.0,54.5 L1263.0,56.4 C1271.0,56.4 1275.0,186.2 1278.7,193.4 A7.3,8.8 0 0 0 1293.3,193.4 C1297.0,186.2 1301.0,56.4 1309.0,56.4 L1313.0,57.6 C1321.0,57.6 1325.0,129.8 1330.5,139.4 A9.5,11.6 0 0 0 1349.5,139.4 C1355.0,129.8 1359.0,57.6 1367.0,57.6 L1385.0,59.5 C1393.0,59.5 1397.0,177.3 1405.1,190.2 A12.9,15.6 0 0 0 1430.9,190.2 C1439.0,177.3 1443.0,59.5 1451.0,59.5 L1440,60.0 Z" />
+
+    <!-- As gotas que já se soltaram. Sem elas o escorrido lê como borda
+         recortada; com elas, lê como pigmento caindo. -->
+    <ellipse cx="1247" cy="222" rx="15" ry="19" />
+    <ellipse cx="1063" cy="197" rx="11" ry="14" />
+    <ellipse cx="905" cy="211" rx="8" ry="10.5" />
+    <ellipse cx="702" cy="163" rx="8.5" ry="11" />
+  </svg>
+
   <!-- ============ DOBRA 3 — OS PROCEDIMENTOS ============ -->
-  <section class="secao claro partida procedimentos">
-    <div class="partida__escuro" aria-hidden="true"></div>
-    <!-- ⚠️ No celular a divisa não pode ser vertical: o texto ocupa a largura
-         toda e cairia em cima dela. O mesmo pigmento escorre do TOPO da dobra.
-         Mesma ideia, virada de lado. -->
-    <svg class="partida__topo" viewBox="0 0 760 200" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
-      <path d="M760,0 L0,0 L0,22.0 L9.0,23.2 C17.0,23.2 21.0,54.2 26.2,63.2 A7.8,9.6 0 0 0 41.8,63.2 C47.0,54.2 51.0,23.2 59.0,23.2 L108.0,26.4 C116.0,26.4 120.0,42.4 122.8,48.4 A5.2,6.4 0 0 0 133.2,48.4 C136.0,42.4 140.0,26.4 148.0,26.4 L210.0,30.1 C218.0,30.1 222.0,73.7 227.7,83.3 A8.3,10.2 0 0 0 244.3,83.3 C250.0,73.7 254.0,30.1 262.0,30.1 L315.0,33.5 C323.0,33.5 327.0,56.1 330.3,62.7 A5.7,7.0 0 0 0 341.7,62.7 C345.0,56.1 349.0,33.5 357.0,33.5 L401.0,36.7 C409.0,36.7 413.0,98.1 420.1,109.5 A9.9,12.2 0 0 0 439.9,109.5 C447.0,98.1 451.0,36.7 459.0,36.7 L500.0,39.8 C508.0,39.8 512.0,71.8 514.8,77.8 A5.2,6.4 0 0 0 525.2,77.8 C528.0,71.8 532.0,39.8 540.0,39.8 L577.0,42.7 C585.0,42.7 589.0,126.9 595.2,137.1 A8.8,10.9 0 0 0 612.8,137.1 C619.0,126.9 623.0,42.7 631.0,42.7 L645.0,44.9 C653.0,44.9 657.0,100.7 661.2,108.5 A6.8,8.3 0 0 0 674.8,108.5 C679.0,100.7 683.0,44.9 691.0,44.9 L712.0,47.4 C720.0,47.4 724.0,151.4 731.6,163.4 A10.4,12.8 0 0 0 752.4,163.4 C760.0,151.4 764.0,47.4 772.0,47.4 L760,48.0 Z" />
-      <ellipse cx="648" cy="182" rx="9" ry="11" />
-      <ellipse cx="470" cy="150" rx="6" ry="7.5" />
-    </svg>
-    <span class="partida__gota" style="left:41%; top:22%; width:16px; height:20px;" aria-hidden="true"></span>
-    <span class="partida__gota" style="left:38.5%; top:52%; width:11px; height:14px;" aria-hidden="true"></span>
-    <span class="partida__gota" style="left:43%; top:76%; width:8px; height:10px;"  aria-hidden="true"></span>
+  <section class="secao claro procedimentos">
     <div class="faixa">
       <div class="cabeca-secao surge">
         <p class="rotulo-lamina">Os procedimentos</p>
