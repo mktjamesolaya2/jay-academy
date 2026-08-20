@@ -111,6 +111,25 @@ troca pelo iframe e ficaria escurecendo o vídeo tocando. Sai junto no play
 Conferido **no navegador**, não só no print: 0 iframe antes do clique, 1 depois
 com o endereço certo, véu em `display:none`, nenhum erro de JS.
 
+### 📏 A linha entre as lâminas — e a fonte, de novo (20/08)
+
+James desenhou de vermelho por cima do filete que separa sobrancelhas de
+lábios. Eu li como "quero um traço à mão" e entreguei uma linha ondulada. Era
+outra coisa: *"a linha tem q ser reta; a referência q te enviei foi a POSIÇÃO
+da linha"*. O desenho marcava **onde**, não **como**.
+
+Ficou reta, fininha e **quase preta** na lâmina clara — antes era o dourado da
+casa, que sobre off-white quase some.
+
+**Fonte, segunda subida** (*"aumenta o tamanho dessas fonte pelo amor de
+Deus"*): parágrafo 17→**20px**, itens 16.5→**19px**, título 38→**44px**, rótulo
+e link junto. A medida da coluna caiu de 46ch pra **44ch**: com corpo maior,
+46ch estica a linha além do conforto de leitura.
+
+⚠️ Vale como régua pra próxima dobra: **a escala da /academy é pequena demais
+pra esta página**. Ela nasceu numa apresentação escura e densa; aqui é uma
+cliente lendo sobre um procedimento.
+
 ### ☀️ A dobra 3 virou lâmina CLARA — e a fonte cresceu
 
 James: *"o fundo da dobra anterior deixa em branco"* e *"a fonte nessa seção
