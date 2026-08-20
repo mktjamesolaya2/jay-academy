@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-08-20 — **tipografia de revista da /academy adotada na `/clinica`** + **dobra 2 da `/clinica` ("Sua melhor versão Hoje!", com o traço à mão se desenhando) + base do James desmanchando no preto** + **abertura da `/clinica` NO AR: casa da clínica ao fundo com fumaça preta, "James Olaya" gigante atrás e ele recortado no meio (foto do Higgsfield a partir da real)** + **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-08-20 — **dobra 3 da `/clinica` (os procedimentos, com foto real de sobrancelha e foto de IA do procedimento nos lábios) + lettering da abertura igual ao da /academy** + **tipografia de revista da /academy adotada na `/clinica`** + **dobra 2 da `/clinica` ("Sua melhor versão Hoje!", com o traço à mão se desenhando) + base do James desmanchando no preto** + **abertura da `/clinica` NO AR: casa da clínica ao fundo com fumaça preta, "James Olaya" gigante atrás e ele recortado no meio (foto do Higgsfield a partir da real)** + **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
 
 ---
 
@@ -91,6 +91,56 @@ espessura NÃO engordar junto). Sem o segundo, o rabisco vira borda oval. E ele
 palavra. Em bloco ela estica pela largura toda e o traço vira um charuto de
 ponta a ponta. Cards em **2×2**, não pilha de quatro: empilhado, o card que
 fecha (o de ouro) sai do campo de visão.
+
+### 💄 Dobra 3 — os procedimentos (20/08)
+
+"A beleza está nos detalhes", refeita do site antigo. Lá é um **carrossel de
+dois slides com seta**; aqui viraram **duas lâminas empilhadas**, alternando o
+lado da foto — no carrossel, a segunda só existe pra quem clica na seta.
+
+Padrão da /academy: foto em moldura, título em duas linhas, filete de 54px
+abrindo o parágrafo e **link fino sublinhado** no lugar de botão cheio (botão
+aqui competiria com o da abertura, que é o que a gente quer que ela clique).
+
+⚠️ **Sem filete entre os itens.** James: *"esse tanto de linhas aqui eu não
+gosto, quero algo mais clean, igual de revista"*. O que pesava não era só o
+filete — era a **largura**: a coluna de texto ia até o fim da tela e cada linha
+virava régua de 1000px. Agora a coluna tem **medida (46ch)** e o que separa os
+itens é o respiro.
+
+⚠️ **A lâmina invertida inverte as COLUNAS**, não só a ordem. Só com `order`, a
+foto caía na coluna larga e virava pôster ao lado de um texto espremido.
+
+### 📷 As fotos da dobra 3 — e a linha que eu não cruzei
+
+- **Sobrancelhas**: foto **REAL** do acervo (`macro-2.jpg`, o pigmento sendo
+  aplicado). O banco tem material bom: sempre olhar antes de gerar.
+- **Lábios**: **gerada no Higgsfield** — e de propósito é o **procedimento
+  acontecendo**, não um "depois". ⚠️ **Resultado gerado por IA numa página de
+  clínica é prova falsa de trabalho.** Se ele quiser um "antes e depois" ali,
+  tem que sair do acervo dele.
+
+Por que precisou gerar: o banco só tem "depois" de lábios **com marca d'água de
+outra profissional** (Joy Vieira) e em 800×399 — não dá nem em qualidade nem em
+direito de imagem. Fica anotado, porque isso vale pra próxima vez que alguém
+for buscar foto de lábios aqui.
+
+⚠️ A primeira escolha (`r-labios.jpg`, macro de lábios naturais) foi trocada:
+lábios **sem pigmentação** ao lado de um texto que vende lábios corados diz o
+contrário do que está escrito.
+
+### ✒️ O lettering da abertura
+
+O "James Olaya" atrás agora usa a **mesma letra da abertura da /academy** —
+Poppins 200 em **caixa alta** com **.04em**. Em caixa baixa e com espaço
+negativo ele tinha peso de logotipo; aberto, virou lettering de capa.
+
+### 🔧 `foto`: o print carrega as imagens lazy
+
+Foto com `loading="lazy"` abaixo da primeira tela saía **preta** no print de
+página inteira — o navegador não rola de verdade. Isso já me fez achar que uma
+imagem estava quebrada quando ela estava perfeita. Agora o print tira o lazy e
+espera as imagens chegarem.
 
 ### 📰 A tipografia de revista veio da /academy (20/08)
 
