@@ -1007,6 +1007,64 @@
       }
     }
 
+
+    /* ============================================================
+       DOBRA 6 — A CASA (mosaico do espaço)
+
+       Opção 1 da folha da estrutura. Texto ancorado à esquerda, mosaico de
+       quatro fotos à direita em alturas diferentes.
+
+       ⚠️ Só UMA das quatro existe hoje (o lounge, que o James mandou). As
+       outras três são MARCADOR — bloco vazio com moldura de fio de ouro, não
+       foto de banco e não a mesma foto repetida. O que falta: fachada,
+       recepção e sala de atendimento.
+
+       ⚠️ As alturas são desencontradas de propósito: quatro retângulos iguais
+       em grade certinha lêem como galeria de imobiliária.
+       ============================================================ */
+    .casa {
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(0, 1fr);
+      gap: clamp(28px, 4vw, 78px);
+      align-items: center;
+    }
+    .casa__mosaico {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(10px, 1.2vw, 18px);
+      align-items: start;
+    }
+    /* A coluna da direita desce um pouco: é o desencontro que tira a cara de
+       grade. */
+    .casa__mosaico > :nth-child(2) { margin-top: clamp(22px, 3vw, 52px); }
+    /* Cada coluna do mosaico é uma pilha com respiro próprio. */
+    .casa__mosaico > div { display: grid; gap: clamp(10px, 1.2vw, 18px); }
+    .casa__quadro { aspect-ratio: 3 / 4; }
+    .casa__quadro--baixo { aspect-ratio: 4 / 3; }
+
+    /* O marcador de foto que falta. Fio de ouro e nada dentro: tem que
+       parecer lugar reservado, não enfeite. */
+    .casa__falta {
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--linha);
+      border-radius: 20px;
+      background: var(--painel);
+    }
+    .casa__falta span {
+      font-size: clamp(8.5px, .64vw, 10px);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: rgba(172, 151, 81, .5);
+    }
+
+    @media (max-width: 900px) {
+      /* ⚠️ Uma coluna, e o mosaico continua 2×2 — em pilha de quatro a dobra
+         vira rolagem sem fim, que foi o erro da emenda com o fechamento. */
+      .casa { grid-template-columns: 1fr; gap: 30px; }
+      .casa__mosaico > :nth-child(2) { margin-top: 0; }
+    }
+
     /* Entrada suave — um respiro, não animação de template. */
     .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
     .surge.visivel { opacity: 1; transform: none; }
@@ -1270,7 +1328,46 @@
     </div>
   </section>
 
-  <!-- ============ DOBRA 6 — FECHAMENTO ============ -->
+  <!-- ============ DOBRA 6 — A CASA ============ -->
+  <section class="secao casa-secao">
+    <div class="faixa casa surge">
+      <div class="casa__texto">
+        <p class="rotulo-lamina">A casa</p>
+        <h2 class="titulo-lamina">
+          A maior e melhor estrutura
+          <strong>de Campinas e região.</strong>
+        </h2>
+        <!-- ⚠️ A frase original falava em "processo de aprendizagem": é texto
+             da escola, não da clínica. Quem lê aqui veio se tratar. -->
+        <p class="texto-lamina">
+          Um ambiente projetado para atendimento de excelência — arquitetura,
+          design e tecnologia no mesmo lugar, com <b>salas confortáveis e
+          equipamentos de última geração</b>.
+        </p>
+      </div>
+
+      <div class="casa__mosaico">
+        <div>
+          <div class="moldura casa__quadro">
+            <img src="/lp/clinica/interior-mosaico.jpg" alt="O lounge da Jay Clinic, com poltronas de couro, escada e a recepção ao fundo" loading="lazy" />
+          </div>
+  <div class="moldura casa__quadro casa__quadro--baixo casa__falta">
+            <span>foto pendente</span>
+          </div>
+        </div>
+        <div>
+  <div class="moldura casa__quadro casa__falta">
+            <span>foto pendente</span>
+          </div>
+  <div class="moldura casa__quadro casa__quadro--baixo casa__falta">
+            <span>foto pendente</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 7 — FECHAMENTO ============ -->
   <section class="secao fechamento">
     <div class="fechamento__fundo">
       <!-- O lounge da clínica, foto real que o James mandou. alt vazio: é
