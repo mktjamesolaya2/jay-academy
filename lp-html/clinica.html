@@ -201,16 +201,15 @@
       top: 40%;
       transform: translateY(-50%);
       text-align: center;
-      /* Mesma letra da abertura da /academy (`.abertura__nome`): Poppins 200
-         em CAIXA ALTA com .04em de espaço. Em caixa baixa e com o espaço
-         negativo que estava aqui, a palavra tinha peso de logotipo; aberta e
-         em caixa alta ela vira lettering de capa. */
-      font-size: min(11.6vw, 224px);
+      /* ⚠️ Caixa BAIXA e espaço fechado. Chegou a ficar em caixa alta com
+         .04em, igual à abertura da /academy — o James olhou e voltou atrás:
+         *"pior q não ficou bom, acho q da outra maneira estava melhor"*.
+         Aberta, a palavra ocupa a largura toda e disputa com o rosto dele;
+         fechada, ela vira fundo e ele continua sendo o assunto. */
+      font-size: clamp(46px, 12.4vw, 186px);
       font-weight: 200;
       line-height: .92;
-      letter-spacing: .04em;
-      margin-right: -.04em;
-      text-transform: uppercase;
+      letter-spacing: -.02em;
       white-space: nowrap;
       color: var(--off-white);
       /* Some nas pontas: a palavra é maior que a tela de propósito, e o
@@ -313,8 +312,8 @@
       /* Sobe: em 34% a palavra cruzava a boca dele e virava rasura. */
       .hero__nome {
         top: 18%;
-        font-size: min(12.4vw, 76px);
-        letter-spacing: .03em;
+        font-size: clamp(38px, 15vw, 76px);
+        letter-spacing: -.01em;
       }
       .hero__james { height: min(52vh, 520px); }
       .hero__rodape {

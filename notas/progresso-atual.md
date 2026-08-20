@@ -129,11 +129,17 @@ for buscar foto de lábios aqui.
 lábios **sem pigmentação** ao lado de um texto que vende lábios corados diz o
 contrário do que está escrito.
 
-### ✒️ O lettering da abertura
+### ✒️ O lettering da abertura — testado e DESFEITO
 
-O "James Olaya" atrás agora usa a **mesma letra da abertura da /academy** —
-Poppins 200 em **caixa alta** com **.04em**. Em caixa baixa e com espaço
-negativo ele tinha peso de logotipo; aberto, virou lettering de capa.
+O "James Olaya" atrás chegou a ficar com a letra da abertura da /academy
+(Poppins 200 em caixa alta, .04em). James olhou e voltou atrás na hora:
+*"pior q não ficou bom, acho q da outra maneira estava melhor mesmo"*.
+
+Continua em **caixa baixa com espaço fechado (-.02em)**. Motivo que dá pra
+reusar: aberta e em caixa alta, a palavra ocupa a largura toda e **disputa com
+o rosto dele**; fechada, ela vira fundo e ele segue sendo o assunto. O que
+funciona na /academy (onde o lettering É a abertura, sozinho na tela) não
+funciona aqui, onde ele está na frente.
 
 ### 🔧 `foto`: o print carrega as imagens lazy
 
