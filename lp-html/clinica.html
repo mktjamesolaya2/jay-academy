@@ -201,10 +201,16 @@
       top: 40%;
       transform: translateY(-50%);
       text-align: center;
-      font-size: clamp(46px, 12.4vw, 186px);
+      /* Mesma letra da abertura da /academy (`.abertura__nome`): Poppins 200
+         em CAIXA ALTA com .04em de espaço. Em caixa baixa e com o espaço
+         negativo que estava aqui, a palavra tinha peso de logotipo; aberta e
+         em caixa alta ela vira lettering de capa. */
+      font-size: min(11.6vw, 224px);
       font-weight: 200;
       line-height: .92;
-      letter-spacing: -.02em;
+      letter-spacing: .04em;
+      margin-right: -.04em;
+      text-transform: uppercase;
       white-space: nowrap;
       color: var(--off-white);
       /* Some nas pontas: a palavra é maior que a tela de propósito, e o
@@ -307,8 +313,8 @@
       /* Sobe: em 34% a palavra cruzava a boca dele e virava rasura. */
       .hero__nome {
         top: 18%;
-        font-size: clamp(38px, 15vw, 76px);
-        letter-spacing: -.01em;
+        font-size: min(12.4vw, 76px);
+        letter-spacing: .03em;
       }
       .hero__james { height: min(52vh, 520px); }
       .hero__rodape {
@@ -440,6 +446,110 @@
       .marca { margin-top: .28em; }
     }
 
+
+    /* ============================================================
+       DOBRA 3 — OS PROCEDIMENTOS ("A beleza está nos detalhes")
+
+       No site antigo isto é um carrossel de dois slides com seta. Aqui as
+       duas viraram lâminas empilhadas, alternando o lado da foto: quem rola
+       vê as duas: no carrossel, a segunda só existe pra quem clica na seta.
+
+       Padrão da /academy: foto em moldura, título em duas linhas, filete de
+       54px abrindo o parágrafo, ficha com filete entre as linhas e link fino
+       sublinhado no lugar de botão cheio.
+       ============================================================ */
+    .proc {
+      display: grid;
+      /* Largura FIXA pra foto e o resto pro texto. Em fração, a foto 4:5
+         crescia com a tela e a lâmina virava um pôster com legenda. */
+      grid-template-columns: minmax(0, clamp(240px, 27vw, 380px)) minmax(0, 1fr);
+      align-items: center;
+      gap: clamp(26px, 4vw, 76px);
+    }
+    /* O filete entre as duas lâminas — mesma régua do resto da página. */
+    .proc + .proc {
+      margin-top: clamp(46px, 5.6vw, 92px);
+      padding-top: clamp(46px, 5.6vw, 92px);
+      border-top: 1px solid var(--linha);
+    }
+    /* Alterna o lado: duas lâminas com a foto do mesmo lado viram catálogo.
+       ⚠️ Trocar a ORDEM não basta — as colunas também invertem, senão a foto
+       cai na coluna larga e vira um pôster do lado de um texto espremido. */
+    .proc--invertida { grid-template-columns: minmax(0, 1fr) minmax(0, clamp(240px, 27vw, 380px)); }
+    .proc--invertida .proc__foto { order: 2; }
+
+    .proc__foto { aspect-ratio: 4 / 5; width: 100%; }
+
+    .proc__tecnicas {
+      font-size: clamp(9px, .68vw, 11px);
+      font-weight: 400;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .55);
+      line-height: 2;
+    }
+    /* O nome comercial de cada técnica em ouro — é dado, não frase. */
+    .proc__tecnicas span { color: var(--ouro); }
+
+    .proc__titulo { font-size: clamp(19px, 2vw, 33px); margin-top: clamp(14px, 1.4vw, 20px); }
+
+    /* ⚠️ Medida de revista: a coluna de texto não passa disso. Solta, ela ia
+       até o fim da tela e cada filete virava uma régua de ponta a ponta —
+       "esse tanto de linhas" que o James apontou em 20/08. */
+    .proc__texto { max-width: 46ch; }
+
+    /* A ficha do que o procedimento resolve. Filete entre as linhas, e o
+       traço dourado no lugar do ✔ — marca de revista, não de formulário. */
+    /* Sem filete nenhum entre os itens: o que separa é o respiro. Uma régua
+       por linha empilhava seis linhas numa dobra que tem três frases. */
+    .lista {
+      list-style: none;
+      margin-top: clamp(20px, 2.2vw, 30px);
+    }
+    .lista li {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      padding: 7px 0;
+      font-size: clamp(12.5px, .92vw, 14.5px);
+      font-weight: 300;
+      letter-spacing: .012em;
+      line-height: 1.5;
+      color: rgba(248, 247, 242, .78);
+    }
+    .lista li::before {
+      content: '';
+      flex: none;
+      width: 16px; height: 1px;
+      background: var(--ouro);
+      transform: translateY(-4px);
+    }
+
+    /* Link fino: o mesmo "VER FORMAÇÃO" da /academy. Botão cheio aqui
+       competiria com o da abertura, que é o que a gente quer que ela clique. */
+    .link-fino {
+      display: inline-block;
+      margin-top: clamp(24px, 2.6vw, 36px);
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(172, 151, 81, .55);
+      font-size: clamp(9.5px, .72vw, 11px);
+      font-weight: 500;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--off-white);
+      transition: color .25s ease, border-color .25s ease;
+    }
+    .link-fino:hover { color: var(--ouro-claro); border-color: var(--ouro); }
+
+    @media (max-width: 900px) {
+      /* Uma coluna, e a foto SEMPRE em cima — inclusive na lâmina invertida,
+         senão ela desce pro fim e o texto abre a dobra sem imagem nenhuma. */
+      .proc { grid-template-columns: 1fr; gap: 26px; }
+      .proc--invertida .proc__foto { order: 0; }
+      .proc__foto { max-width: 420px; margin: 0 auto; }
+    }
+
     /* Entrada suave — um respiro, não animação de template. */
     .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
     .surge.visivel { opacity: 1; transform: none; }
@@ -537,6 +647,64 @@
           <p>A transformação que você procurava em um só lugar</p>
         </article>
       </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 3 — OS PROCEDIMENTOS ============ -->
+  <section class="secao procedimentos">
+    <div class="faixa">
+      <div class="cabeca-secao surge">
+        <p class="rotulo-lamina">Os procedimentos</p>
+        <h2 class="titulo-lamina">
+          A beleza está nos
+          <strong>detalhes.</strong>
+        </h2>
+      </div>
+
+      <article class="proc surge">
+        <div class="moldura proc__foto">
+          <img src="/lp/clinica/proc-sobrancelhas.jpg" alt="Close de uma sobrancelha recebendo pigmento fio a fio, com o olho fechado" loading="lazy" />
+        </div>
+        <div class="proc__texto">
+          <!-- ⚠️ Só o nome da técnica, sem o nome comercial (Jay Vogue/Shadow/Nano):
+               na coluna com medida de revista os três pares quebravam em duas
+               linhas e partiam "NANO BLADE / JAY NANO" no meio. Aqui é a
+               cliente lendo, e ela procura a técnica, não o nome do curso. -->
+          <p class="proc__tecnicas"><span>Fio a fio</span> · <span>Esfumado</span> · <span>Nano Blade</span></p>
+          <h3 class="titulo-lamina proc__titulo">Micropigmentação <strong>de sobrancelhas</strong></h3>
+          <p class="texto-lamina">Oferecemos tanto um estilo mais definido quanto uma opção mais delicada. Nossos especialistas sabem exatamente o que combina com você.</p>
+          <ul class="lista">
+            <li>Preenchimento de falhas</li>
+            <li>Aumento de volume nas sobrancelhas</li>
+            <li>Harmonização do rosto</li>
+          </ul>
+          <a class="link-fino" href="https://wa.me/5519974037997" target="_blank" rel="noopener">Entrar em contato</a>
+        </div>
+      </article>
+
+      <article class="proc proc--invertida surge">
+        <div class="moldura proc__foto">
+          <!-- ⚠️ IMAGEM GERADA (Higgsfield). É o PROCEDIMENTO acontecendo, e
+               não um "depois": resultado gerado por IA numa página de clínica
+               é prova falsa de trabalho. Foi gerada porque o banco só tem
+               "depois" de lábios com marca d'água de outra profissional
+               (Joy Vieira) e em 800×399. Resultado real aqui só com foto do
+               acervo do James. -->
+          <img src="/lp/clinica/proc-labios.jpg" alt="Aplicação de pigmento no contorno labial com dermógrafo, em close" loading="lazy" />
+        </div>
+        <div class="proc__texto">
+          <p class="proc__tecnicas">A pigmentação labial <span>dá vida aos lábios</span></p>
+          <h3 class="titulo-lamina proc__titulo">Micropigmentação <strong>de lábios</strong></h3>
+          <p class="texto-lamina">A revitalização labial devolve a cor com um efeito suave, de lip tint, para quem ama lábios corados naturalmente e quer uma aparência jovem e saudável.</p>
+          <ul class="lista">
+            <li>Neutraliza manchas nos lábios</li>
+            <li>Adeus ao batom</li>
+            <li>Mais volume e brilho</li>
+            <li>Lábios mais vivos</li>
+          </ul>
+          <a class="link-fino" href="https://wa.me/5519974037997" target="_blank" rel="noopener">Entrar em contato</a>
+        </div>
+      </article>
     </div>
   </section>
 

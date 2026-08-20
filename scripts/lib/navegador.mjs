@@ -45,10 +45,25 @@ export async function prepararPagina(pagina, espera = 600) {
   await pagina.evaluate(() => document.fonts.ready);
   await pagina.evaluate(() => {
     document.querySelectorAll('.surge').forEach((e) => e.classList.add('visivel'));
+    // ⚠️ Tira o loading="lazy": no print de página inteira o navegador não
+    // rola de verdade, então toda foto abaixo da primeira tela saía PRETA — e
+    // isso já me fez achar que uma imagem estava quebrada quando não estava.
+    document.querySelectorAll('img[loading="lazy"]').forEach((img) => {
+      img.loading = 'eager';
+      if (img.dataset.src && !img.src) img.src = img.dataset.src;
+    });
   });
   // ⚠️ 600ms cobre a entrada padrão (.surge, 700ms). Efeito mais longo que
   // isso — traço que se desenha, contador — sai pela metade no print, e aí
   // parece que quebrou. Nesses casos, passar --esperar.
+  // Espera as fotos chegarem: sem isso o de-lazy acima não adianta, o print
+  // sai no meio do download.
+  await pagina.evaluate(() => Promise.all(
+    [...document.images].filter((i) => !i.complete).map((i) => new Promise((r) => {
+      i.addEventListener('load', r, { once: true });
+      i.addEventListener('error', r, { once: true });
+    }))
+  ));
   await esperar(espera);
 }
 
