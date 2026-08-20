@@ -131,8 +131,8 @@ são **marcador** — bloco vazio com fio de ouro e "foto pendente". Nada de fot
 de banco e nada de repetir a mesma foto quatro vezes, que é o atalho que
 estraga esse tipo de dobra. **Falta: fachada, recepção e sala de atendimento.**
 
-⚠️ **Duas versões do mesmo original**:  (escura) é fundo do
-fechamento e  (cor natural) é assunto no mosaico. A
+⚠️ **Duas versões do mesmo original**: `interior.jpg` (escura) é fundo do
+fechamento e `interior-mosaico.jpg` (cor natural) é assunto no mosaico. A
 escura ali ficava cinza-morta ao lado do texto.
 
 ⚠️ **As alturas são desencontradas de propósito** — quatro retângulos iguais em
