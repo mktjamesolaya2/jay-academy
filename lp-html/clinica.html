@@ -598,6 +598,8 @@
       background: var(--off-white);
       color: var(--preto);
     }
+    /* Respiro a mais no topo: o conteúdo não pode nascer embaixo das gotas. */
+    .secao.claro { padding-top: clamp(96px, 13vw, 200px); }
     .claro .rotulo-lamina { color: rgba(16, 24, 32, .52); }
     .claro .titulo-lamina { color: rgba(16, 24, 32, .60); }
     .claro .titulo-lamina strong { color: var(--preto); }
@@ -714,6 +716,45 @@
       .depoimentos__grade { grid-template-columns: 1fr; }
     }
 
+
+    /* ============================================================
+       O PIGMENTO ESCORRENDO — a borda entre a dobra escura e a clara.
+
+       James, 20/08: *"pega toda essa área branca e a partir do topo lá no
+       canto direito divide mais ou menos a tela, como se fosse um pigmento
+       escorrendo"*. Antes disso eu tinha entregado só uma linha reta, duas
+       vezes — não era linha, era a BORDA do branco.
+
+       ⚠️ O caminho foi gerado por código, com largura e comprimento de gota
+       irregulares. Desenhado no olho, as gotas saem todas parecidas e o
+       escorrido vira serrilha de decoração.
+       ⚠️ O pigmento é mais grosso à DIREITA e as gotas mais longas ali: é de
+       onde ele disse que o escorrido começa.
+       ============================================================ */
+    .escorrido {
+      display: block;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      height: clamp(72px, 11.4vw, 180px);
+      /* Encosta na dobra clara de baixo: sem isto sobra uma faixa escura
+         entre o escorrido e o branco, e ele deixa de ser a divisa. */
+      margin-bottom: calc(-1 * clamp(72px, 11.4vw, 180px));
+      position: relative;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .escorrido path,
+    .escorrido ellipse { fill: var(--fundo); }
+
+    /* No celular, 14 gotas espremidas em 390px viram serrote. A versão
+       estreita ancora na direita e corta o resto, na proporção certa. */
+    .escorrido--largo { display: block; }
+    .escorrido--estreito { display: none; }
+    @media (max-width: 760px) {
+      .escorrido--largo { display: none; }
+      .escorrido--estreito { display: block; }
+    }
+
     /* Entrada suave — um respiro, não animação de template. */
     .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
     .surge.visivel { opacity: 1; transform: none; }
@@ -789,7 +830,14 @@
                de verdade. Círculo geométrico aqui pareceria borda. -->
           <svg class="marca__circulo" viewBox="0 0 340 150" preserveAspectRatio="none" aria-hidden="true">
             <path vector-effect="non-scaling-stroke" d="M300,26C238,7,120,4,64,24C16,41,4,68,14,92c12,29,86,45,158,45c74,0,146-17,154-49c7-27-38-45-96-53C168,27,60,29,26,52" />
-          </svg>
+        
+    <!-- As gotas que já se soltaram. Sem elas o escorrido lê como borda
+         recortada; com elas, lê como pigmento caindo. -->
+    <ellipse cx="1247" cy="222" rx="15" ry="19" />
+    <ellipse cx="1063" cy="197" rx="11" ry="14" />
+    <ellipse cx="905" cy="211" rx="8" ry="10.5" />
+    <ellipse cx="702" cy="163" rx="8.5" ry="11" />
+  </svg>
         </span>
       </h2>
 
@@ -813,6 +861,30 @@
       </div>
     </div>
   </section>
+
+  <!-- ⚠️ Duas versões do MESMO caminho: a larga estica na tela cheia; a
+       estreita ancora na direita e corta o resto, em vez de espremer 14 gotas
+       em 390px de tela. -->
+  <svg class="escorrido escorrido--largo" viewBox="0 0 1440 240" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M1440,0 L0,0 L0,26.0 L52.0,27.8 C60.0,27.8 64.0,35.4 69.0,44.4 A9.0,10.9 0 0 0 87.0,44.4 C92.0,35.4 96.0,27.8 104.0,27.8 L174.0,30.6 C182.0,30.6 186.0,71.8 189.3,78.5 A6.7,8.2 0 0 0 202.7,78.5 C206.0,71.8 210.0,30.6 218.0,30.6 L292.0,33.6 C300.0,33.6 304.0,39.6 310.8,50.8 A11.2,13.6 0 0 0 333.2,50.8 C340.0,39.6 344.0,33.6 352.0,33.6 L431.0,36.7 C439.0,36.7 443.0,87.3 445.8,93.4 A6.2,7.5 0 0 0 458.2,93.4 C461.0,87.3 465.0,36.7 473.0,36.7 L538.0,39.4 C546.0,39.4 550.0,54.2 555.9,64.2 A10.1,12.2 0 0 0 576.1,64.2 C582.0,54.2 586.0,39.4 594.0,39.4 L668.0,42.3 C676.0,42.3 680.0,103.5 683.3,110.2 A6.7,8.2 0 0 0 696.7,110.2 C700.0,103.5 704.0,42.3 712.0,42.3 L774.0,45.0 C782.0,45.0 786.0,58.2 793.7,70.6 A12.3,15.0 0 0 0 818.3,70.6 C826.0,58.2 830.0,45.0 838.0,45.0 L879.0,47.3 C887.0,47.3 891.0,121.1 894.7,128.4 A7.3,8.8 0 0 0 909.3,128.4 C913.0,121.1 917.0,47.3 925.0,47.3 L985.0,49.9 C993.0,49.9 997.0,80.1 1002.5,89.6 A9.5,11.6 0 0 0 1021.5,89.6 C1027.0,80.1 1031.0,49.9 1039.0,49.9 L1097.0,52.4 C1105.0,52.4 1109.0,153.0 1111.8,159.2 A6.2,7.5 0 0 0 1124.2,159.2 C1127.0,153.0 1131.0,52.4 1139.0,52.4 L1176.0,54.5 C1184.0,54.5 1188.0,88.5 1194.8,99.7 A11.2,13.6 0 0 0 1217.2,99.7 C1224.0,88.5 1228.0,54.5 1236.0,54.5 L1263.0,56.4 C1271.0,56.4 1275.0,186.2 1278.7,193.4 A7.3,8.8 0 0 0 1293.3,193.4 C1297.0,186.2 1301.0,56.4 1309.0,56.4 L1313.0,57.6 C1321.0,57.6 1325.0,129.8 1330.5,139.4 A9.5,11.6 0 0 0 1349.5,139.4 C1355.0,129.8 1359.0,57.6 1367.0,57.6 L1385.0,59.5 C1393.0,59.5 1397.0,177.3 1405.1,190.2 A12.9,15.6 0 0 0 1430.9,190.2 C1439.0,177.3 1443.0,59.5 1451.0,59.5 L1440,60.0 Z" />
+
+    <!-- As gotas que já se soltaram. Sem elas o escorrido lê como borda
+         recortada; com elas, lê como pigmento caindo. -->
+    <ellipse cx="1247" cy="222" rx="15" ry="19" />
+    <ellipse cx="1063" cy="197" rx="11" ry="14" />
+    <ellipse cx="905" cy="211" rx="8" ry="10.5" />
+    <ellipse cx="702" cy="163" rx="8.5" ry="11" />
+  </svg>
+  <svg class="escorrido escorrido--estreito" viewBox="0 0 1440 240" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
+    <path d="M1440,0 L0,0 L0,26.0 L52.0,27.8 C60.0,27.8 64.0,35.4 69.0,44.4 A9.0,10.9 0 0 0 87.0,44.4 C92.0,35.4 96.0,27.8 104.0,27.8 L174.0,30.6 C182.0,30.6 186.0,71.8 189.3,78.5 A6.7,8.2 0 0 0 202.7,78.5 C206.0,71.8 210.0,30.6 218.0,30.6 L292.0,33.6 C300.0,33.6 304.0,39.6 310.8,50.8 A11.2,13.6 0 0 0 333.2,50.8 C340.0,39.6 344.0,33.6 352.0,33.6 L431.0,36.7 C439.0,36.7 443.0,87.3 445.8,93.4 A6.2,7.5 0 0 0 458.2,93.4 C461.0,87.3 465.0,36.7 473.0,36.7 L538.0,39.4 C546.0,39.4 550.0,54.2 555.9,64.2 A10.1,12.2 0 0 0 576.1,64.2 C582.0,54.2 586.0,39.4 594.0,39.4 L668.0,42.3 C676.0,42.3 680.0,103.5 683.3,110.2 A6.7,8.2 0 0 0 696.7,110.2 C700.0,103.5 704.0,42.3 712.0,42.3 L774.0,45.0 C782.0,45.0 786.0,58.2 793.7,70.6 A12.3,15.0 0 0 0 818.3,70.6 C826.0,58.2 830.0,45.0 838.0,45.0 L879.0,47.3 C887.0,47.3 891.0,121.1 894.7,128.4 A7.3,8.8 0 0 0 909.3,128.4 C913.0,121.1 917.0,47.3 925.0,47.3 L985.0,49.9 C993.0,49.9 997.0,80.1 1002.5,89.6 A9.5,11.6 0 0 0 1021.5,89.6 C1027.0,80.1 1031.0,49.9 1039.0,49.9 L1097.0,52.4 C1105.0,52.4 1109.0,153.0 1111.8,159.2 A6.2,7.5 0 0 0 1124.2,159.2 C1127.0,153.0 1131.0,52.4 1139.0,52.4 L1176.0,54.5 C1184.0,54.5 1188.0,88.5 1194.8,99.7 A11.2,13.6 0 0 0 1217.2,99.7 C1224.0,88.5 1228.0,54.5 1236.0,54.5 L1263.0,56.4 C1271.0,56.4 1275.0,186.2 1278.7,193.4 A7.3,8.8 0 0 0 1293.3,193.4 C1297.0,186.2 1301.0,56.4 1309.0,56.4 L1313.0,57.6 C1321.0,57.6 1325.0,129.8 1330.5,139.4 A9.5,11.6 0 0 0 1349.5,139.4 C1355.0,129.8 1359.0,57.6 1367.0,57.6 L1385.0,59.5 C1393.0,59.5 1397.0,177.3 1405.1,190.2 A12.9,15.6 0 0 0 1430.9,190.2 C1439.0,177.3 1443.0,59.5 1451.0,59.5 L1440,60.0 Z" />
+
+    <!-- As gotas que já se soltaram. Sem elas o escorrido lê como borda
+         recortada; com elas, lê como pigmento caindo. -->
+    <ellipse cx="1247" cy="222" rx="15" ry="19" />
+    <ellipse cx="1063" cy="197" rx="11" ry="14" />
+    <ellipse cx="905" cy="211" rx="8" ry="10.5" />
+    <ellipse cx="702" cy="163" rx="8.5" ry="11" />
+  </svg>
 
   <!-- ============ DOBRA 3 — OS PROCEDIMENTOS ============ -->
   <section class="secao claro procedimentos">
