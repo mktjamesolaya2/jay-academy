@@ -939,13 +939,45 @@
        hero, bem escurecida. Bookend. E o fundo é cover com o texto empilhado
        por cima — não tem como quebrar no estreito.
        ============================================================ */
-    /* ⚠️ Ritmo mais apertado que o resto da página, de propósito: esta dobra
-       é um convite, não um texto pra ler. Solta na régua das outras ela media
-       742px pra 546px de conteúdo, e sobrava vazio embaixo do endereço. */
+    /* A seção inteira: uma foto, dois assuntos. */
+    .espaco { position: relative; overflow: hidden; }
+    .espaco__fundo { position: absolute; inset: 0; }
+    .espaco__fundo img {
+      display: block;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: 58% 46%;
+    }
+    /* ⚠️ O véu é UM só, vertical: quase transparente em cima (onde o espaço
+       é o assunto) e fechando no preto embaixo (onde o assunto é o convite).
+       Dois véus, um por bloco, deixariam uma emenda visível no meio. */
+    .espaco__veu {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(60% 40% at 72% 18%, rgba(172,151,81,.10) 0%, rgba(172,151,81,0) 70%),
+        linear-gradient(to bottom,
+          rgba(7,6,5,.62) 0%,
+          rgba(7,6,5,.50) 22%,
+          rgba(7,6,5,.72) 46%,
+          rgba(7,6,5,.90) 66%,
+          var(--fundo) 92%);
+    }
+    .espaco > .faixa { position: relative; z-index: 1; }
+
+    /* BLOCO 1 — a estrutura. Texto à direita, como no site antigo, e é a
+       única dobra da página com o texto desse lado: é o que faz a leitura
+       virar antes do convite. */
+    .estrutura {
+      padding-top: clamp(58px, 7vw, 108px);
+      display: flex;
+      justify-content: flex-end;
+    }
+    .estrutura__texto { max-width: 46ch; }
+
+    /* BLOCO 2 — o convite. Ritmo mais apertado que o resto da página, de
+       propósito: é um convite, não um texto pra ler. */
     .fechamento {
-      position: relative;
-      overflow: hidden;
-      padding-top: clamp(46px, 5.2vw, 78px);
+      padding-top: clamp(60px, 8vw, 130px);
       padding-bottom: clamp(46px, 5.2vw, 78px);
     }
     .fechamento .titulo-lamina { margin-top: clamp(15px, 1.7vw, 24px); }
@@ -953,21 +985,6 @@
       margin-top: clamp(18px, 1.9vw, 26px);
       padding-top: clamp(15px, 1.5vw, 20px);
     }
-    .fechamento__fundo { position: absolute; inset: 0; }
-    .fechamento__fundo img {
-      display: block;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: 58% 52%;
-    }
-    .fechamento__veu {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(70% 60% at 30% 50%, rgba(172,151,81,.12) 0%, rgba(172,151,81,0) 70%),
-        linear-gradient(to right, rgba(7,6,5,.94) 0%, rgba(7,6,5,.86) 46%, rgba(7,6,5,.58) 100%),
-        linear-gradient(to top, var(--fundo) 2%, rgba(7,6,5,0) 40%);
-    }
-    .fechamento .faixa { position: relative; z-index: 1; }
 
     .fechamento__titulo { max-width: 14ch; }
     .fechamento__acao { margin-top: clamp(22px, 2.2vw, 30px); }
@@ -1001,10 +1018,14 @@
     @media (max-width: 760px) {
       .fechamento__titulo { max-width: none; }
       .onde { flex-direction: column; gap: 12px; }
-      .fechamento__veu {
+      /* No estreito a foto tem menos área pra respirar: o véu fecha antes. */
+      .espaco__veu {
         background:
-          linear-gradient(to bottom, rgba(7,6,5,.80) 0%, rgba(7,6,5,.88) 62%, var(--fundo) 100%);
+          linear-gradient(to bottom, rgba(7,6,5,.58) 0%, rgba(7,6,5,.70) 26%, rgba(7,6,5,.90) 58%, var(--fundo) 88%);
       }
+      .estrutura { justify-content: flex-start; padding-top: clamp(48px, 12vw, 90px); }
+      .estrutura__texto { max-width: none; }
+      .fechamento { padding-top: clamp(44px, 11vw, 80px); }
     }
 
     /* Entrada suave — um respiro, não animação de template. */
@@ -1270,17 +1291,40 @@
     </div>
   </section>
 
-  <!-- ============ DOBRA 6 — FECHAMENTO ============ -->
-  <section class="secao fechamento">
-    <div class="fechamento__fundo">
+  <!-- ============ DOBRA 6 — O ESPAÇO (estrutura + fechamento) ============ -->
+  <!-- ⚠️ São DUAS dobras dentro de UMA seção, e a foto é UMA SÓ atravessando
+       as duas. James, 20/08: *"acho q pode emendar nessa (...) a gente faz uma
+       transiçãozinha legal nas duas pra parecer a mesma, mas passar sentidos
+       diferentes"*. Em cima a foto aparece — o espaço é o assunto. Descendo,
+       ela morre no preto e sobra o convite. A transição é a luz acabando, e
+       não uma borda entre seções. -->
+  <section class="espaco">
+    <div class="espaco__fundo">
       <!-- O lounge da clínica, foto real que o James mandou. alt vazio: é
            ambiente atrás de texto, e a descrição não acrescenta nada a quem
            usa leitor de tela. -->
       <img src="/lp/clinica/interior.jpg" alt="" />
-      <div class="fechamento__veu"></div>
+      <div class="espaco__veu"></div>
     </div>
 
-    <div class="faixa surge">
+    <div class="faixa estrutura surge">
+      <div class="estrutura__texto">
+        <p class="rotulo-lamina">A casa</p>
+        <h2 class="titulo-lamina">
+          A maior e melhor estrutura
+          <strong>de Campinas e região.</strong>
+        </h2>
+        <!-- ⚠️ A frase original falava em "processo de aprendizagem": é texto
+             da escola, não da clínica. Aqui quem lê veio se tratar. -->
+        <p class="texto-lamina">
+          Um ambiente projetado para atendimento de excelência — um conjunto de
+          arquitetura, design e tecnologia, com <b>salas confortáveis e
+          equipamentos de última geração</b>.
+        </p>
+      </div>
+    </div>
+
+    <div class="faixa fechamento surge">
       <p class="rotulo-lamina">Quando você quiser</p>
       <h2 class="titulo-lamina fechamento__titulo">
         Invista em
