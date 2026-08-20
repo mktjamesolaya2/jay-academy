@@ -121,6 +121,22 @@ final vai pra `public/lp/<pagina>/`, que é de onde a página lê.
 ⚠️ No `.gitignore` é **`assets/*`**, não `assets/`: ignorando a PASTA, o `!` não
 consegue trazer o LEIA-ME de volta — git não reabre diretório ignorado.
 
+### 🚫 A estrutura emendada no fechamento — TENTADA E REVERTIDA (20/08)
+
+Ele topou a ideia de emendar as duas dobras (*"pra parecer a mesma, mas passar
+sentidos diferentes"*) e no desktop funcionou: uma foto só, o espaço em cima,
+o convite embaixo, e a transição sendo a luz acabando.
+
+⚠️ **No celular ficou péssimo** — palavra dele. Motivo: na coluna única a seção
+vira quase 1300px de altura com dois blocos de texto empilhados sobre a MESMA
+foto. O que era "dois sentidos" vira um paredão escuro sem fim, e a foto que no
+desktop separa os assuntos no celular não separa nada.
+
+**Lição pra quando eu voltar nisso**: a dobra da estrutura continua a fazer,
+mas ela precisa de tratamento PRÓPRIO no estreito — não de carona no
+fechamento. No celular provavelmente é foto em cima, texto embaixo, como dobra
+separada mesmo.
+
 ### 🚪 O fechamento — "Invista em você" (20/08)
 
 James mandou a dobra do site antigo: uma modelo de banco sobre rosa, com a
