@@ -87,32 +87,61 @@
     }
     .moldura img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-    /* Tipografia de lâmina. ⚠️ Regra nº 1: nunca dourado no meio do texto —
-       o ouro é do rótulo e dos fios, não da frase. */
+    /* ============================================================
+       TIPOGRAFIA DE LÂMINA — os MESMOS valores da /academy.
+
+       James, 20/08: *"a gente seguir com essa tipografia das fontes, meio de
+       revista"*. O ar de revista não vem da fonte (é Poppins nas duas), vem
+       de três coisas juntas:
+
+         1. rótulo minúsculo em CAIXA ALTA com .46em de espaço entre letras;
+         2. título em duas linhas — a primeira fina e apagada, a segunda
+            cheia e branca, as duas em caixa alta;
+         3. um filete de 54px abrindo o parágrafo, como entrada de matéria.
+
+       ⚠️ Regra nº 1 continua: nunca dourado no meio do texto — o ouro é do
+       rótulo, dos fios e do que é dado (nível, preço), nunca da frase.
+       ============================================================ */
     .rotulo-lamina {
-      font-size: clamp(10px, .74vw, 11.5px);
-      letter-spacing: .3em;
+      font-size: clamp(9px, .68vw, 11px);
+      font-weight: 400;
+      letter-spacing: .46em;
       text-transform: uppercase;
-      color: var(--ouro);
-      margin-bottom: 14px;
+      color: rgba(248, 247, 242, .55);
     }
     .titulo-lamina {
-      font-size: clamp(28px, 3.6vw, 52px);
+      margin-top: clamp(22px, 2.6vw, 40px);
+      font-size: clamp(20px, 2.35vw, 40px);
       font-weight: 200;
-      line-height: 1.12;
-      letter-spacing: -.01em;
+      line-height: 1.22;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: rgba(248, 247, 242, .82);
       text-wrap: balance;
     }
-    .titulo-lamina strong { font-weight: 500; }
+    .titulo-lamina strong { display: block; font-weight: 400; color: var(--off-white); }
+
     .texto-lamina {
-      margin-top: 18px;
-      max-width: 62ch;
-      font-size: clamp(14px, 1.05vw, 16.5px);
+      position: relative;
+      margin-top: clamp(24px, 2.8vw, 40px);
+      padding-top: clamp(20px, 2.2vw, 30px);
+      max-width: 44ch;
+      font-size: clamp(12.5px, .92vw, 15px);
       font-weight: 300;
-      line-height: 1.75;
-      color: var(--texto-fraco);
+      line-height: 1.78;
+      letter-spacing: .012em;
+      color: rgba(248, 247, 242, .70);
     }
-    .texto-lamina b { font-weight: 500; color: var(--off-white); }
+    /* O filete que abre o parágrafo — o remate de revista. */
+    .texto-lamina::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 54px; height: 1px;
+      background: rgba(248, 247, 242, .32);
+    }
+    .texto-lamina b { font-weight: 400; color: var(--off-white); }
+
+    .cabeca-secao { margin-bottom: clamp(30px, 3.6vw, 58px); }
 
     /* ============================================================
        DOBRA 1 — ABERTURA
@@ -216,12 +245,15 @@
       gap: 24px;
     }
     .hero__texto { max-width: 34ch; }
+    /* Mesma régua do rótulo da /academy (tamanho, peso e o .46em de espaço).
+       Só a cor não seguiu: na abertura o ouro é a assinatura da casa. */
     .hero__rotulo {
-      font-size: clamp(10px, .74vw, 11.5px);
-      letter-spacing: .3em;
+      font-size: clamp(9px, .68vw, 11px);
+      font-weight: 400;
+      letter-spacing: .46em;
       text-transform: uppercase;
       color: var(--ouro);
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .hero__frase {
       font-size: clamp(14px, 1.05vw, 16.5px);
@@ -306,19 +338,27 @@
        O que mudou: coral virou ouro, e o card virou painel escuro.
        ============================================================ */
     .versao__titulo { text-align: center; }
-    /* No desktop a frase cabe numa linha só; a quebra só entra no celular. */
-    .quebra-cel { display: none; }
+    /* ⚠️ A primeira linha é BLOCO e a palavra circulada é INLINE-BLOCK: assim
+       ela cai sozinha na linha de baixo e continua do tamanho dela. Em bloco,
+       a palavra estica pela largura toda e o traço em volta vira um charuto
+       de ponta a ponta (tentado em 20/08, ficou ruim). */
+    .versao__linha { display: block; }
 
     /* O "Hoje!" com o traço à mão em volta. O círculo é maior que a palavra
        de propósito — traço colado vira caixa, não rabisco. */
-    .marca { position: relative; display: inline-block; white-space: nowrap; }
+    /* ⚠️ O respiro em cima é do TRAÇO, não da palavra: a ponta dele sobe
+       além da letra e, sem folga, riscava a linha de cima do título. */
+    .marca { position: relative; display: inline-block; white-space: nowrap; margin-top: .34em; }
+    /* ⚠️ Escapa da regra `.titulo-lamina strong { display:block }`: aqui o
+       strong É a linha inteira, e em bloco ele arrastaria o traço junto. */
+    .marca strong { display: inline; font-weight: 400; color: var(--off-white); }
     .marca__circulo {
       position: absolute;
       left: 50%; top: 50%;
       /* Um tico à direita e mais estreito: em 152% o traço passava por cima
          do "o" de versão e parecia acidente, não marcação. */
       transform: translate(-47%, -50%);
-      width: 138%; height: 205%;
+      width: 138%; height: 178%;
       overflow: visible;
       pointer-events: none;
     }
@@ -368,9 +408,10 @@
     }
     .cartao svg { width: clamp(38px, 3.4vw, 50px); height: auto; color: var(--ouro); }
     .cartao p {
-      font-size: clamp(13px, .98vw, 15px);
+      font-size: clamp(12px, .88vw, 13.5px);
       font-weight: 300;
       line-height: 1.62;
+      letter-spacing: .012em;
       color: var(--texto-fraco);
     }
 
@@ -396,11 +437,7 @@
          longa e o quarto card (o que fecha) some do campo de visão. */
       .versao__grade { grid-template-columns: repeat(2, 1fr); }
       .cartao { min-height: 190px; gap: 16px; }
-      /* ⚠️ A quebra é da LINHA, com um <br>, e não `display:block` na
-         palavra: em bloco ela estica pela largura toda e o traço em volta
-         vira um charuto de ponta a ponta. */
-      .quebra-cel { display: inline; }
-      .marca { margin-top: .3em; }
+      .marca { margin-top: .28em; }
     }
 
     /* Entrada suave — um respiro, não animação de template. */
@@ -468,7 +505,10 @@
   <section class="secao versao">
     <div class="faixa">
       <h2 class="titulo-lamina versao__titulo surge">
-        Sua melhor versão<br class="quebra-cel" />
+        <!-- Duas linhas, como na /academy: a primeira fina e apagada, a
+             segunda cheia. A segunda linha aqui é a palavra circulada — o
+             que o efeito marca é justamente o que o título enfatiza. -->
+        <span class="versao__linha">Sua melhor versão</span>
         <span class="marca">
           <strong>Hoje!</strong>
           <!-- Traço à mão: começa e termina passando do ponto, como caneta
