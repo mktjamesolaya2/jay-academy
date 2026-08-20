@@ -142,6 +142,8 @@
     .texto-lamina b { font-weight: 400; color: var(--off-white); }
 
     .cabeca-secao { margin-bottom: clamp(30px, 3.6vw, 58px); }
+    /* Respiro extra: é onde o corpo do dermógrafo passa. */
+    .procedimentos .cabeca-secao { margin-bottom: clamp(48px, 6.4vw, 104px); }
 
     /* ============================================================
        DOBRA 1 — ABERTURA
@@ -770,19 +772,58 @@
        ============================================================ */
     .procedimentos { position: relative; overflow: hidden; }
     .procedimentos > .faixa { position: relative; z-index: 1; }
-    .rastro {
+    .massa {
       position: absolute;
       inset: 0;
       width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
     }
-    .rastro path, .rastro ellipse { fill: var(--fundo); }
+    .massa path, .massa ellipse { fill: var(--fundo); }
+
+
+
+    /* ============================================================
+       O DERMÓGRAFO atrás da primeira foto.
+
+       James, 20/08: *"se a gente conseguisse colocar um desenho de um
+       dermógrafo atrás em preto também"*. É a ferramenta do procedimento que
+       a dobra está descrevendo — a mesma tinta da massa de pigmento.
+
+       ⚠️ É DESENHO, não foto recortada: silhueta cheia, sem sombra e sem
+       degradê. Foto recortada ali brigaria com a foto de verdade que está na
+       frente dela.
+       ============================================================ */
+    .proc { position: relative; }
+    .procedimentos .cabeca-secao { position: relative; }
+    .dermografo {
+      position: absolute;
+      z-index: 0;
+      /* ⚠️ Ela NÃO fica atrás da foto. Tentei três posições ali e em todas a
+         foto engolia justamente o que faz a caneta ser reconhecível — punho,
+         tampa e cabo — sobrando só o cone, que lê como lâmina. Aqui ela mora
+         no vazio à direita do título, inteira, com a agulha apontando pro
+         conteúdo. */
+      right: 0;
+      top: -14%;
+      width: 46%;
+      height: auto;
+      color: var(--fundo);
+      fill: var(--fundo);
+      transform: rotate(-14deg);
+      pointer-events: none;
+    }
+    /* A foto vem na frente: o que se vê da caneta é o que passa das bordas. */
+    .proc__foto { position: relative; z-index: 1; }
+    /* ⚠️ O texto TAMBÉM por cima: o SVG é posicionado, então sem isto ele
+       passaria na frente das linhas escritas e comeria o rótulo. */
+    .proc__texto { position: relative; z-index: 1; }
 
     @media (max-width: 900px) {
-      /* No celular ele encolhe pra faixa da direita: com a dobra três vezes
-         mais alta que larga, o rastro esticado viraria um risco fino. */
-      .rastro { width: 130%; left: auto; right: -6%; }
+      /* No celular a caneta encolhe e sobe: em cima da foto, do tamanho de
+         antes, ela viraria um borrão preto atrás de tudo. */
+      /* No celular ela deita acima do título, menor. */
+      .dermografo { width: 76%; right: -8%; top: -34%; }
     }
 
     /* Entrada suave — um respiro, não animação de template. */
@@ -894,18 +935,30 @@
 
   <!-- ============ DOBRA 3 — OS PROCEDIMENTOS ============ -->
   <section class="secao claro procedimentos">
-    <!-- ⚠️ O rastro corre pelas MARGENS: entra no canto superior direito,
-         escorre pela borda e se espalha no rodapé até o canto inferior
-         esquerdo. Cruzando o miolo, ele passaria por baixo do texto e a
-         dobra ficaria preto sobre preto. -->
-    <svg class="rastro" viewBox="0 0 1440 1000" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M1440,0 L1440,1000 L0,1000 L0,952 C440,948 880,944 1052,906 L1140.0,880.0 L1193.2,819.5 L1224.5,795.5 C1203.4,783.5 1148.3,781.3 1138.4,777.7 C1126.7,777.7 1126.7,767.2 1138.4,767.2 C1148.3,763.7 1203.4,761.5 1224.5,749.5 L1238.9,747.2 L1276.9,665.3 L1307.4,576.0 L1315.9,564.4 C1304.4,552.4 1277.4,550.9 1270.6,548.5 C1262.7,548.5 1262.7,541.3 1270.6,541.3 C1277.4,538.9 1304.4,537.4 1315.9,525.4 L1330.3,481.3 L1345.5,383.2 L1353.1,283.9 L1353.9,272.5 C1324.9,260.5 1239.0,258.6 1230.5,255.5 C1220.4,255.5 1220.4,246.4 1230.5,246.4 C1239.0,243.4 1324.9,241.5 1353.9,229.5 L1353.1,185.6 L1345.4,90.2 L1330.0,0.0 L1330,0 Z" />
-      <ellipse cx="1108" cy="452" rx="9" ry="11" />
-      <ellipse cx="1046" cy="655" rx="6" ry="7.5" />
-      <ellipse cx="1216" cy="238" rx="5" ry="6.5" />
+    <!-- A massa de pigmento entrando pelo canto de baixo à direita, com a
+         borda CURVA — a opção 7 da segunda folha, que ele escolheu. As gotas
+         soltas continuam o caminho dela pelo branco.
+         ⚠️ A curva passa DEPOIS do texto das duas lâminas: ela engole a foto
+         de lábios (que tem luz própria e aguenta o preto) e não encosta em
+         nenhuma linha escrita. -->
+    <svg class="massa" viewBox="0 0 1440 1900" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M1440,470 L1440,1900 L120,1900 C520,1660 760,1290 1030,900 C1180,684 1300,556 1440,470 Z" />
+      <ellipse cx="1180" cy="470" rx="13" ry="16" />
+      <ellipse cx="1006" cy="726" rx="9" ry="11" />
+      <ellipse cx="820" cy="1010" rx="7" ry="9" />
+      <ellipse cx="1290" cy="330" rx="7" ry="9" />
+      <ellipse cx="612" cy="1300" rx="10" ry="12" />
+      <ellipse cx="430" cy="1560" rx="6" ry="8" />
     </svg>
     <div class="faixa">
       <div class="cabeca-secao surge">
+        <!-- ⚠️ Desenho, não foto: a caneta é silhueta cheia, no mesmo preto do
+             pigmento. Ela nasce ATRÁS da moldura da foto — o que aparece é só o
+             que passa das bordas. -->
+        <svg class="dermografo" viewBox="0 0 760 200" aria-hidden="true">
+          <path fill-rule="evenodd" d="M0,100 L40,96 L92,80 C132,68 220,62 336,60 L336,50 C386,48 426,50 454,54 C522,62 558,71 580,81 A24,24 0 0 1 580,119 C558,129 522,138 454,146 C426,150 386,152 336,150 L336,140 C220,138 132,132 92,120 L40,104 Z" M352,78 L366,77 L366,123 L352,122 Z M386,76 L400,75 L400,125 L386,124 Z M420,76 L434,76 L434,124 L420,124 Z" />
+          <path d="M598,100 C648,96 672,74 712,66" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round" />
+        </svg>
         <p class="rotulo-lamina">Os procedimentos</p>
         <h2 class="titulo-lamina">
           A beleza está nos
