@@ -114,6 +114,182 @@
     }
     .texto-lamina b { font-weight: 500; color: var(--off-white); }
 
+    /* ============================================================
+       DOBRA 1 — ABERTURA
+
+       A planta veio de uma referência que o James aprovou: a foto do
+       profissional recortada NO MEIO, o nome dele em letra gigante ATRÁS
+       (a cabeça atravessa a palavra), e o texto curto com o botão no
+       rodapé. O fundo é a casa da própria clínica com uma fumaça preta
+       por cima.
+
+       ⚠️ A foto do James saiu do Higgsfield a partir da foto REAL do site
+       antigo, e o único pedido foi abrir o sorriso. O que NÃO podia mudar
+       foi conferido um a um: rosto, óculos, jaleco, o bordado do peito, a
+       etiqueta JAMESOLAYA e o brasão JAY.O. A foto original sem retoque
+       continua no repositório (james-hero.webp) pra poder voltar.
+       ============================================================ */
+    .hero {
+      position: relative;
+      min-height: min(94vh, 920px);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    /* A casa: já sai desfocada do arquivo (é fundo, não assunto) e a
+       fumaça preta entra por cima em três camadas — de baixo, das
+       laterais e um miolo que abre pra luz atrás dele. */
+    .hero__fundo { position: absolute; inset: 0; }
+    .hero__fundo img {
+      display: block;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: 42% 62%;
+    }
+    .hero__fumaca {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(58% 52% at 50% 40%, rgba(172,151,81,.16) 0%, rgba(172,151,81,0) 62%),
+        radial-gradient(78% 70% at 50% 46%, rgba(7,6,5,0) 22%, rgba(7,6,5,.72) 78%, rgba(7,6,5,.94) 100%),
+        linear-gradient(to top, var(--fundo) 4%, rgba(7,6,5,.72) 28%, rgba(7,6,5,.34) 58%, rgba(7,6,5,.82) 100%);
+    }
+
+    .hero__palco {
+      position: relative;
+      width: 100%;
+      min-height: inherit;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    /* O nome atrás. ⚠️ aria-hidden: pra quem usa leitor de tela isto é
+       decoração — o nome dele já está no <h1> e sairia dobrado. */
+    .hero__nome {
+      position: absolute;
+      left: 0; right: 0;
+      top: 40%;
+      transform: translateY(-50%);
+      text-align: center;
+      font-size: clamp(46px, 12.4vw, 186px);
+      font-weight: 200;
+      line-height: .92;
+      letter-spacing: -.02em;
+      white-space: nowrap;
+      color: var(--off-white);
+      /* Some nas pontas: a palavra é maior que a tela de propósito, e o
+         corte reto na borda pareceria texto vazando. */
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    }
+
+    /* Ele. A altura manda no tamanho da dobra; a largura vem junto. */
+    .hero__james {
+      position: relative;
+      z-index: 2;
+      /* ⚠️ 840px é a altura REAL do recorte. Passar disso é ampliar, e
+         aí aparece o pixel — a régua que o James cobrou em 05/08. */
+      height: min(72vh, 840px);
+      width: auto;
+      max-width: 96vw;
+      object-fit: contain;
+      object-position: bottom;
+      filter: drop-shadow(0 34px 70px rgba(0,0,0,.7));
+    }
+
+    /* Rodapé da dobra: a frase e o botão à esquerda, como na referência. */
+    .hero__rodape {
+      position: absolute;
+      z-index: 3;
+      left: 0; right: 0; bottom: clamp(34px, 4.6vw, 66px);
+      width: 90%; max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .hero__texto { max-width: 34ch; }
+    .hero__rotulo {
+      font-size: clamp(10px, .74vw, 11.5px);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--ouro);
+      margin-bottom: 12px;
+    }
+    .hero__frase {
+      font-size: clamp(14px, 1.05vw, 16.5px);
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--texto-fraco);
+    }
+    .hero__acao { margin-top: 22px; }
+
+    /* O selo da direita — quem é ele, em duas linhas. */
+    .hero__selo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px 14px 16px;
+      border: 1px solid var(--linha);
+      border-radius: 999px;
+      background: rgba(14,12,10,.62);
+      backdrop-filter: blur(8px);
+    }
+    .hero__selo span { display: block; }
+    .hero__selo b {
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: .02em;
+    }
+    .hero__selo i {
+      font-style: normal;
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--ouro);
+    }
+    .hero__selo em {
+      font-style: normal;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--linha);
+      background: url('/lp/clinica/james-jaleco.webp') center 12% / 190% no-repeat;
+    }
+
+    /* Celular: a palavra atrás encolhe pra caber sem virar rabisco, ele
+       ocupa menos altura, e o rodapé sai de cima da foto e vira bloco. */
+    @media (max-width: 900px) {
+      .hero {
+        min-height: 0;
+        flex-direction: column;
+        padding-top: clamp(96px, 26vw, 130px);
+      }
+      .hero__palco { min-height: 0; }
+      /* Sobe: em 34% a palavra cruzava a boca dele e virava rasura. */
+      .hero__nome {
+        top: 18%;
+        font-size: clamp(38px, 15vw, 76px);
+        letter-spacing: -.01em;
+      }
+      .hero__james { height: min(52vh, 520px); }
+      .hero__rodape {
+        position: static;
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: clamp(40px, 10vw, 64px);
+      }
+      .hero__texto { max-width: none; }
+      .hero__selo { align-self: stretch; }
+      .hero__fumaca {
+        background:
+          radial-gradient(70% 40% at 50% 34%, rgba(172,151,81,.14) 0%, rgba(172,151,81,0) 70%),
+          linear-gradient(to top, var(--fundo) 6%, rgba(7,6,5,.74) 34%, rgba(7,6,5,.42) 62%, rgba(7,6,5,.88) 100%);
+      }
+    }
+
+
     /* Entrada suave — um respiro, não animação de template. */
     .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
     .surge.visivel { opacity: 1; transform: none; }
@@ -126,8 +302,57 @@
 </head>
 <body>
 
+  <!-- ============ DOBRA 1 — ABERTURA ============ -->
+  <section class="hero">
+    <div class="hero__fundo">
+      <!-- A casa da clínica. alt vazio: é ambiente, e quem usa leitor de
+           tela não ganha nada ouvindo a descrição de um fundo desfocado. -->
+      <img src="/lp/clinica/hero-casa.jpg" alt="" />
+      <div class="hero__fumaca"></div>
+    </div>
+
+    <div class="hero__palco">
+      <p class="hero__nome" aria-hidden="true">James Olaya</p>
+      <!-- ⚠️ Esta foto passou pelo Higgsfield: a base é a foto REAL do site
+           antigo, e o único pedido foi abrir o sorriso. Rosto, óculos,
+           jaleco, o bordado "DR. JAMES OLAYA / Biomédico Esteta", a
+           etiqueta "JAMESOLAYA" e o brasão JAY.O foram conferidos um a um
+           contra o original. A foto real sem retoque continua no
+           repositório em james-hero.webp, caso ele prefira voltar. -->
+      <img
+        class="hero__james"
+        src="/lp/clinica/james-hero-ia.webp"
+        width="1100" height="1691"
+        alt="James Olaya de jaleco branco, de braços cruzados, sorrindo"
+      />
+    </div>
+
+    <div class="hero__rodape">
+      <div class="hero__texto">
+        <p class="hero__rotulo">Jay Clinic · Campinas</p>
+        <!-- ⚠️ Texto provisório até o James mandar o dele. O que está aqui
+             é só o que dá pra afirmar: o que é, de quem é e onde fica. -->
+        <h1 class="hero__frase">
+          A clínica de James Olaya no Parque Taquaral: micropigmentação e
+          estética avançada, com a mesma técnica que ele ensina.
+        </h1>
+        <div class="hero__acao">
+          <a class="btn btn--ouro" href="https://wa.me/5519974037997" target="_blank" rel="noopener">Agendar atendimento</a>
+        </div>
+      </div>
+
+      <div class="hero__selo">
+        <em></em>
+        <span>
+          <b>Dr. James Olaya</b>
+          <i>Biomédico esteta</i>
+        </span>
+      </div>
+    </div>
+  </section>
+
   <!-- ============================================================
-       PÁGINA EM BRANCO, de propósito.
+       O RESTO DA PÁGINA ENTRA AQUI, de propósito em branco.
 
        Cada dobra que o James mandar entra aqui como:
 
