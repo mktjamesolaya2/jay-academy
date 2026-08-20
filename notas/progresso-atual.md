@@ -2,7 +2,112 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-08-20 — **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+
+---
+
+## 🏛️ Frente `/academy` + `/jamesolaya` + `/clinica` (19–20/08)
+
+⚠️ **Tudo isto está na branch `lp-academy-deploy`, com 8 commits AINDA NÃO
+enviados pro `origin/main`** — ou seja, **nada disso está no ar**. A branch não
+tem cópia no GitHub; o trabalho existe só neste computador.
+
+### 🚧 `/clinica` — começada, esqueleto pronto, conteúdo zero
+
+Página nova pra clínica, no **mesmo sistema visual da `/academy` e da
+`/jamesolaya`** (ouro `#AC9751`, preto, Poppins, filete dourado entre dobras,
+entrada suave uma vez ao aparecer — nada de escala seguindo a rolagem).
+
+- [lp-html/clinica.html](../lp-html/clinica.html) — 159 linhas: o `<style>`
+  inteiro pronto e o **`<body>` em branco de propósito**, com o molde de dobra
+  comentado dentro. Cada dobra que o James mandar nasce no padrão, sem remendo.
+- [app/clinica/route.ts](../app/clinica/route.ts) + entrada no
+  [lib/lp-html-registry.ts](../lib/lp-html-registry.ts) como *"Jay Clinic (em
+  construção)"*.
+- ⚠️ **`noindex, nofollow` no `<head>`** — tirar é o ÚLTIMO passo antes de
+  publicar. Página pela metade indexada é pior que página nenhuma.
+- **7 fotos já em `public/lp/clinica/`, nenhuma usada ainda**: `BG-CLINICA.jpg`,
+  `INVISTA-EM-VOCE.jpg`, `bg-james.jpg`, `james-jaleco.webp`, `sem-titulo-3.png`,
+  `bg-1.jpg`, `bg-2.jpg`.
+- Nada disso está commitado (arquivos novos + registry modificado).
+
+**Próximo passo**: montar a primeira dobra com essas fotos.
+
+### Os CTAs que davam em beco sem saída
+
+- **`/academy`, botão do fim** mandava de volta pra lista de formações que a
+  pessoa acabou de ver. Agora abre o **WhatsApp do comercial**, e o rótulo mudou
+  junto — "Conheça as formações" abrindo conversa seria botão mentindo.
+- **As 5 formações** (`jay-beauty`, `jay-brows`, `jay-nano`, `jay-pixel`,
+  `jay-vogue-brows`): "Falar sobre esta formação" voltava pra `/academy#comecar`,
+  andando em círculo. Agora vai pro WhatsApp **com o nome da formação escrito na
+  mensagem** — sem isso quem atende pergunta qual, que é o que a pessoa já
+  respondeu clicando. Formação presencial não tem preço nem checkout no site:
+  quem fecha é gente.
+- **`/jamesolaya`**: o banner "Compre agora" do pigmento só rolava a página até a
+  seção da loja logo abaixo — agora abre **jayloja.com.br**. E o bloco "Jay
+  Academy" dizia "Conhecer os cursos" abrindo WhatsApp, pulando justamente a
+  parte de conhecer — agora vai pra **`/academy`** (sem aba nova, é o próprio
+  site). O bloco da clínica ficou como estava, esperando confirmação de site.
+
+### A dobra do espaço da `/academy` mostrava o lugar vazio
+
+Fachada, lounge e sala de prática — e **ninguém ensinando dentro**. Agora são
+três blocos: fachada, sala de prática e uma **colagem com duas fotos reais do
+James dando aula**.
+
+⚠️ Colagem com **divisão vertical**: as fotos de aula são retrato. Sozinhas numa
+moldura 3/2 viram recorte de mão e de colar (foi tentado). Lado a lado cada
+metade fica 3/4, que é a proporção nativa delas — dividido na horizontal cada
+metade viraria 3/1 e cortaria as pessoas na altura do peito.
+
+### 🤖 O robô de copiar página estava quebrado EM PRODUÇÃO
+
+Forçar a cópia devolvia *"The input directory /var/task/node_modules/
+@sparticuz/chromium/bin does not exist"*.
+
+O `@sparticuz/chromium` carrega um binário do Chrome dentro dele; o empacotador
+do Next reescreve os caminhos e o pacote procura o binário de onde ele já foi
+movido. Conserto: **`serverExternalPackages` no `next.config.ts`** — a própria
+mensagem de erro manda externalizar.
+
+⚠️ **Só quebrava em produção**: no computador do James o código usa o Chrome
+instalado, então nunca aparecia local. Por isso passou batido — e explica a
+cópia vindo incompleta: `jayclinic.com.br` é WordPress com Elementor, 123 KB de
+HTML com 52 parágrafos e **só 7 tags de imagem**, porque o Elementor adia o
+carregamento e usa foto como fundo de CSS. Sem o robô, chega o texto sem as
+imagens.
+
+### Tempo: copiar não cabia em 60 segundos
+
+Copiar é abrir o site num Chrome de verdade (até 45s), salvar e baixar TODAS as
+imagens. Quando estourava, **o estrago era silencioso**: a página ficava salva
+com as fotos ainda apontando pro site de origem. Parece que deu certo — até o
+dia em que aquele site sair do ar, mudar de endereço ou bloquear link externo, e
+aí quebra uma página publicada há semanas.
+
+- `app/wp-pages/page.tsx`: `maxDuration` 60 → **300s**.
+- `app/api/cron/localize`: **300s** e lote de 2 → **8 páginas** por execução. Com
+  uma execução por dia, três páginas pendentes levavam dois dias pra ficar
+  prontas — dois dias dependendo do site alheio continuar no ar.
+
+### 💬 Chat da aluna: duas mensagens seguidas viram UMA resposta
+
+Rafaela escreveu *"Oi boa tarde"* e emendou *"aqui é a Rafaela, preciso falar com
+você"* — e recebeu **duas** respostas, a primeira cumprimentando sem ter lido a
+segunda. Era um recado em duas linhas; uma pessoa responderia uma vez só. A fila
+agora vai inteira numa requisição.
+
+E o prompt ainda começava com *"Você é o SUPORTE da Jay Academy NO WHATSAPP"* —
+sobra da fase 1. A aluna está numa página do site, e a IA respondeu *"podemos
+continuar aqui no WhatsApp"* estando num navegador. Agora ela sabe onde está: o
+WhatsApp é pra onde a conversa **vai** quando uma pessoa precisa entrar, e quem
+oferece isso é a tela.
+
+⚠️ Ela também ofereceu *"me passa seu número que eu te ligo"*. **Ninguém aqui
+liga pra ninguém** — é marcar um encontro que não vai acontecer. Proibido pedir
+telefone, oferecer ligação e marcar horário; o único dado que ela pede é o
+e-mail da compra.
 
 ---
 
