@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-08-20 — **dobra 4 da `/clinica` (depoimentos em vídeo, sem carregar YouTube) + dobra 3 virou lâmina CLARA com fonte maior** + **dobra 3 da `/clinica` (os procedimentos, com foto real de sobrancelha e foto de IA do procedimento nos lábios) + lettering da abertura igual ao da /academy** + **tipografia de revista da /academy adotada na `/clinica`** + **dobra 2 da `/clinica` ("Sua melhor versão Hoje!", com o traço à mão se desenhando) + base do James desmanchando no preto** + **abertura da `/clinica` NO AR: casa da clínica ao fundo com fumaça preta, "James Olaya" gigante atrás e ele recortado no meio (foto do Higgsfield a partir da real)** + **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-08-20 — **massa de pigmento com borda curva + dermógrafo desenhado na dobra 3 da `/clinica` (escolhidos numa folha de 20 opções feita no Claude)** + **dobra 4 da `/clinica` (depoimentos em vídeo, sem carregar YouTube) + dobra 3 virou lâmina CLARA com fonte maior** + **dobra 3 da `/clinica` (os procedimentos, com foto real de sobrancelha e foto de IA do procedimento nos lábios) + lettering da abertura igual ao da /academy** + **tipografia de revista da /academy adotada na `/clinica`** + **dobra 2 da `/clinica` ("Sua melhor versão Hoje!", com o traço à mão se desenhando) + base do James desmanchando no preto** + **abertura da `/clinica` NO AR: casa da clínica ao fundo com fumaça preta, "James Olaya" gigante atrás e ele recortado no meio (foto do Higgsfield a partir da real)** + **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
 
 ---
 
@@ -111,7 +111,47 @@ troca pelo iframe e ficaria escurecendo o vídeo tocando. Sai junto no play
 Conferido **no navegador**, não só no print: 0 iframe antes do clique, 1 depois
 com o endereço certo, véu em `display:none`, nenhum erro de JS.
 
-### 🖤 A DOBRA PARTIDA — metade branca, metade preta (20/08)
+### 🎨 O pigmento da dobra 3 — resolvido por catálogo (20/08)
+
+Depois de **quatro leituras erradas** minhas (risco reto, escorrido horizontal,
+dobra partida ao meio, rastro pelas margens), o James pediu: *"consegue me
+mandar uns exemplos por aquele site da Claude? Manda uns 10"*.
+
+Duas folhas publicadas como artifact, com os quadros desenhados em canvas —
+cada um mostrando onde o pigmento passa **e onde ficam a foto e o texto**, que
+é o que decide se a ideia cabe:
+
+- 1ª folha, 10 percursos: <https://claude.ai/code/artifact/a93ad556-1e5a-468c-af56-8d4e74a45947>
+- 2ª folha, 10 variações da que ele gostou: <https://claude.ai/code/artifact/fabe8235-ee50-46b2-98f2-dd9d77d98b41>
+
+**Escolha dele**: a *borda curva* — massa entrando pelo canto de baixo à
+direita com a borda curva, mais as gotas soltas atravessando o branco.
+
+⚠️ **A curva passa DEPOIS do texto das duas lâminas.** Ela engole a foto de
+lábios (foto tem luz própria e aguenta o preto) e não encosta em linha escrita
+nenhuma — por isso nenhum texto precisou trocar de cor.
+
+⚠️ **A régua que saiu disso**: quando ele descreve algo visual e eu erro duas
+vezes, **desenhar as opções sai mais barato que adivinhar de novo**. As folhas
+levaram uma rodada; as quatro tentativas anteriores levaram cinco.
+
+### 🖊️ O dermógrafo desenhado
+
+James: *"se a gente conseguisse colocar um desenho de um dermógrafo atrás em
+preto também"*. É a ferramenta do procedimento que a dobra descreve, na mesma
+tinta do pigmento. Feito em **SVG à mão** — silhueta cheia: agulha, cone,
+corpo, punho canelado, tampa e o cabo saindo.
+
+⚠️ **Ele NÃO ficou atrás da foto**, que era o pedido literal. Três posições
+tentadas ali: em todas a foto engole justamente o que torna a caneta
+reconhecível — punho, tampa e cabo — e sobra só o cone, que lê como **lâmina**.
+Agora ele mora inteiro no vazio à direita do título da dobra, com a agulha
+apontando pro conteúdo.
+
+⚠️ `.proc__texto` precisou de `z-index: 1`: o SVG é posicionado, e sem isso
+passaria na frente das linhas escritas.
+
+### 🖤 A DOBRA PARTIDA — metade branca, metade preta — DESCARTADA (20/08)
 
 Levei **três leituras erradas** até chegar: risco reto, depois escorrido
 horizontal entre as dobras, e só então o certo. James: *"não era na divisão
