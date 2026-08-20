@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-08-20 — **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-08-20 — **abertura da `/clinica` NO AR: casa da clínica ao fundo com fumaça preta, "James Olaya" gigante atrás e ele recortado no meio (foto do Higgsfield a partir da real)** + **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
 
 ---
 
@@ -12,26 +12,75 @@
 enviados pro `origin/main`** — ou seja, **nada disso está no ar**. A branch não
 tem cópia no GitHub; o trabalho existe só neste computador.
 
-### 🚧 `/clinica` — começada, esqueleto pronto, conteúdo zero
+### 🖼️ A abertura da `/clinica` (20/08) — planta da referência do James
+
+Ele mandou um print de referência e disse o que queria: **a foto dele recortada
+no meio, o nome em letra gigante ATRÁS** (a cabeça atravessa a palavra), texto
+curto com botão no rodapé, **a casa como fundo** e **"um degradê meio esfumaçado
+em preto"** por cima.
+
+- **Fundo**: a casa da PRÓPRIA clínica — `bg-james.jpg`, a foto do site antigo.
+  Ela vinha quase preta (brilho médio 26 de 255, máximo 84), então foi levantada
+  de exposição e desfocada: é ambiente, não assunto. Vira `hero-casa.jpg`, 37 KB.
+- **A fumaça** é CSS em três camadas — de baixo, das bordas e um miolo que abre
+  pra luz atrás dele. Assim o preto some no rosto e fecha nas pontas.
+- **O nome atrás** some nas pontas por máscara: a palavra é maior que a tela de
+  propósito, e o corte reto na borda pareceria texto vazando.
+- **Selo** no canto: "Dr. James Olaya · Biomédico esteta".
+- **Botão**: WhatsApp do agendamento (`5519974037997`, o mesmo da /jamesolaya).
+
+⚠️ **Endereço e telefone saíram da `/jamesolaya`**, não foram inventados:
+R. José Lins do Rego, 708 · Parque Taquaral · Campinas.
+
+### 🤖 A foto do James veio do Higgsfield — e o que foi conferido
+
+Ele pediu explicitamente pra usar o Higgsfield, com duas travas: **jaleco 100%
+idêntico** (tem o nome e os brasões) e **rosto 100% idêntico**. O único pedido
+foi **abrir o sorriso**.
+
+Base: a foto REAL do site antigo (`sem-titulo-3.png`) como referência, no
+`nano_banana_pro`. Conferido um a um contra o original: rosto, óculos, cabelo,
+barba, pose, jaleco, o bordado "DR. JAMES OLAYA / Biomédico Esteta" e o brasão
+JAY.O da manga.
+
+⚠️ **A etiquetinha do peito saiu embaralhada nas três primeiras** — "CENVEPLATA",
+"YENVEPLATA", "GANTJEES OLAYA" no lugar de "JAMESOLAYA". Texto miúdo bordado é
+onde esse tipo de modelo sempre escorrega. Consertado numa **segunda passada que
+só mexeu na etiqueta**, com a própria imagem como referência — refazer do zero
+teria trocado o rosto de novo.
+
+**A foto real sem retoque ficou no repositório** (`james-hero.webp`, recorte de
+564×840). Se o James preferir a original, é trocar o `src`.
+
+⚠️ **Nenhuma imagem é ampliada**: o recorte da IA tem 1489×2289 reais e é
+servido em 1100 de largura; a figura na tela nunca passa da altura do arquivo.
+
+**Medido no celular junto com o desktop**: a palavra atrás desce pra 18% da
+dobra — em 34% ela cruzava a boca dele e virava rasura.
+
+Sobrou uma arte que NÃO entrou: um mármore preto com veio dourado e o meandro
+grego (`hero-fundo.jpg`), gerada antes de ele mandar a referência. Fica
+guardada — serve de textura pra uma dobra mais pra frente.
+
+### 🚧 `/clinica` — o resto da página
 
 Página nova pra clínica, no **mesmo sistema visual da `/academy` e da
 `/jamesolaya`** (ouro `#AC9751`, preto, Poppins, filete dourado entre dobras,
 entrada suave uma vez ao aparecer — nada de escala seguindo a rolagem).
 
-- [lp-html/clinica.html](../lp-html/clinica.html) — 159 linhas: o `<style>`
-  inteiro pronto e o **`<body>` em branco de propósito**, com o molde de dobra
-  comentado dentro. Cada dobra que o James mandar nasce no padrão, sem remendo.
+- [lp-html/clinica.html](../lp-html/clinica.html) — o `<style>` do sistema, a
+  abertura montada e o resto do `<body>` **em branco de propósito**, com o molde
+  de dobra comentado dentro. Cada dobra que o James mandar nasce no padrão.
 - [app/clinica/route.ts](../app/clinica/route.ts) + entrada no
   [lib/lp-html-registry.ts](../lib/lp-html-registry.ts) como *"Jay Clinic (em
   construção)"*.
 - ⚠️ **`noindex, nofollow` no `<head>`** — tirar é o ÚLTIMO passo antes de
   publicar. Página pela metade indexada é pior que página nenhuma.
-- **7 fotos já em `public/lp/clinica/`, nenhuma usada ainda**: `BG-CLINICA.jpg`,
-  `INVISTA-EM-VOCE.jpg`, `bg-james.jpg`, `james-jaleco.webp`, `sem-titulo-3.png`,
-  `bg-1.jpg`, `bg-2.jpg`.
-- Nada disso está commitado (arquivos novos + registry modificado).
+- Ainda sem uso em `public/lp/clinica/`: `BG-CLINICA.jpg`, `INVISTA-EM-VOCE.jpg`,
+  `bg-1.jpg`, `bg-2.jpg`, `james-jaleco.webp` (440×522 — pequena demais pra foto
+  grande; hoje só serve de avatar no selo).
 
-**Próximo passo**: montar a primeira dobra com essas fotos.
+**Próximo passo**: a dobra 2, quando ele mandar o conteúdo.
 
 ### Os CTAs que davam em beco sem saída
 
