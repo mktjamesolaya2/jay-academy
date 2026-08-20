@@ -111,6 +111,28 @@ troca pelo iframe e ficaria escurecendo o vídeo tocando. Sai junto no play
 Conferido **no navegador**, não só no print: 0 iframe antes do clique, 1 depois
 com o endereço certo, véu em `display:none`, nenhum erro de JS.
 
+### 🩸 A divisa vira PIGMENTO ESCORRENDO (20/08)
+
+Depois de duas tentativas minhas de linha reta, o James mandou uma referência
+em preto e branco e a frase que resolveu: *"pega toda essa área branca e a
+partir do topo lá no canto direito divide mais ou menos a tela, como se fosse
+um pigmento escorrendo"*.
+
+**Não era uma linha — era a BORDA do branco.** É a divisa entre a dobra escura
+e a lâmina clara, e ela escorre.
+
+- ⚠️ **O caminho é gerado por código**, com largura e comprimento de gota
+  irregulares (14 gotas). Desenhado no olho, elas saem todas parecidas e o
+  escorrido vira serrilha de decoração.
+- **Mais grosso à direita**, com as gotas mais longas ali — é de onde ele
+  disse que o escorrido começa.
+- **Quatro gotas SOLTAS** abaixo da borda: é o detalhe que faz a leitura virar.
+  Sem elas aquilo lê como recorte; com elas, como tinta caindo. ⚠️ Nasceram
+  com raio 4-7 e viraram pontinho de mosca, porque `preserveAspectRatio="none"`
+  achata o desenho na vertical (240 de viewBox em ~165px). Foram pra 8-19.
+- **Celular**: duas versões do MESMO caminho. A larga estica na tela cheia; a
+  estreita ancora na direita e corta o resto — 14 gotas em 390px viram serrote.
+
 ### 📏 A linha entre as lâminas — e a fonte, de novo (20/08)
 
 James desenhou de vermelho por cima do filete que separa sobrancelhas de
