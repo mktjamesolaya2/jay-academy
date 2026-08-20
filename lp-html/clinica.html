@@ -599,7 +599,7 @@
       color: var(--preto);
     }
     /* Respiro a mais no topo: o conteúdo não pode nascer embaixo das gotas. */
-    .secao.claro { padding-top: clamp(96px, 13vw, 200px); }
+    .secao.claro { padding-top: clamp(70px, 8vw, 120px); }
     .claro .rotulo-lamina { color: rgba(16, 24, 32, .52); }
     .claro .titulo-lamina { color: rgba(16, 24, 32, .60); }
     .claro .titulo-lamina strong { color: var(--preto); }
@@ -755,6 +755,36 @@
       .escorrido--estreito { display: block; }
     }
 
+
+    /* ============================================================
+       O RASTRO DE PIGMENTO da dobra clara.
+
+       James, 20/08, depois de eu partir a tela ao meio e ele cortar: *"eu
+       queria que ele fosse escorrido, não dividindo a tela totalmente,
+       pegando por exemplo do canto superior direito lá no topo e fosse
+       escorrendo levemente até o canto inferior esquerdo"*.
+
+       ⚠️ Ele corre pelas MARGENS — borda direita e rodapé da dobra — e não
+       pelo meio. Cortando o miolo, ele passaria por baixo do texto e a dobra
+       viraria preto sobre preto.
+       ============================================================ */
+    .procedimentos { position: relative; overflow: hidden; }
+    .procedimentos > .faixa { position: relative; z-index: 1; }
+    .rastro {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .rastro path, .rastro ellipse { fill: var(--fundo); }
+
+    @media (max-width: 900px) {
+      /* No celular ele encolhe pra faixa da direita: com a dobra três vezes
+         mais alta que larga, o rastro esticado viraria um risco fino. */
+      .rastro { width: 130%; left: auto; right: -6%; }
+    }
+
     /* Entrada suave — um respiro, não animação de template. */
     .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
     .surge.visivel { opacity: 1; transform: none; }
@@ -862,32 +892,18 @@
     </div>
   </section>
 
-  <!-- ⚠️ Duas versões do MESMO caminho: a larga estica na tela cheia; a
-       estreita ancora na direita e corta o resto, em vez de espremer 14 gotas
-       em 390px de tela. -->
-  <svg class="escorrido escorrido--largo" viewBox="0 0 1440 240" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M1440,0 L0,0 L0,26.0 L52.0,27.8 C60.0,27.8 64.0,35.4 69.0,44.4 A9.0,10.9 0 0 0 87.0,44.4 C92.0,35.4 96.0,27.8 104.0,27.8 L174.0,30.6 C182.0,30.6 186.0,71.8 189.3,78.5 A6.7,8.2 0 0 0 202.7,78.5 C206.0,71.8 210.0,30.6 218.0,30.6 L292.0,33.6 C300.0,33.6 304.0,39.6 310.8,50.8 A11.2,13.6 0 0 0 333.2,50.8 C340.0,39.6 344.0,33.6 352.0,33.6 L431.0,36.7 C439.0,36.7 443.0,87.3 445.8,93.4 A6.2,7.5 0 0 0 458.2,93.4 C461.0,87.3 465.0,36.7 473.0,36.7 L538.0,39.4 C546.0,39.4 550.0,54.2 555.9,64.2 A10.1,12.2 0 0 0 576.1,64.2 C582.0,54.2 586.0,39.4 594.0,39.4 L668.0,42.3 C676.0,42.3 680.0,103.5 683.3,110.2 A6.7,8.2 0 0 0 696.7,110.2 C700.0,103.5 704.0,42.3 712.0,42.3 L774.0,45.0 C782.0,45.0 786.0,58.2 793.7,70.6 A12.3,15.0 0 0 0 818.3,70.6 C826.0,58.2 830.0,45.0 838.0,45.0 L879.0,47.3 C887.0,47.3 891.0,121.1 894.7,128.4 A7.3,8.8 0 0 0 909.3,128.4 C913.0,121.1 917.0,47.3 925.0,47.3 L985.0,49.9 C993.0,49.9 997.0,80.1 1002.5,89.6 A9.5,11.6 0 0 0 1021.5,89.6 C1027.0,80.1 1031.0,49.9 1039.0,49.9 L1097.0,52.4 C1105.0,52.4 1109.0,153.0 1111.8,159.2 A6.2,7.5 0 0 0 1124.2,159.2 C1127.0,153.0 1131.0,52.4 1139.0,52.4 L1176.0,54.5 C1184.0,54.5 1188.0,88.5 1194.8,99.7 A11.2,13.6 0 0 0 1217.2,99.7 C1224.0,88.5 1228.0,54.5 1236.0,54.5 L1263.0,56.4 C1271.0,56.4 1275.0,186.2 1278.7,193.4 A7.3,8.8 0 0 0 1293.3,193.4 C1297.0,186.2 1301.0,56.4 1309.0,56.4 L1313.0,57.6 C1321.0,57.6 1325.0,129.8 1330.5,139.4 A9.5,11.6 0 0 0 1349.5,139.4 C1355.0,129.8 1359.0,57.6 1367.0,57.6 L1385.0,59.5 C1393.0,59.5 1397.0,177.3 1405.1,190.2 A12.9,15.6 0 0 0 1430.9,190.2 C1439.0,177.3 1443.0,59.5 1451.0,59.5 L1440,60.0 Z" />
-
-    <!-- As gotas que já se soltaram. Sem elas o escorrido lê como borda
-         recortada; com elas, lê como pigmento caindo. -->
-    <ellipse cx="1247" cy="222" rx="15" ry="19" />
-    <ellipse cx="1063" cy="197" rx="11" ry="14" />
-    <ellipse cx="905" cy="211" rx="8" ry="10.5" />
-    <ellipse cx="702" cy="163" rx="8.5" ry="11" />
-  </svg>
-  <svg class="escorrido escorrido--estreito" viewBox="0 0 1440 240" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
-    <path d="M1440,0 L0,0 L0,26.0 L52.0,27.8 C60.0,27.8 64.0,35.4 69.0,44.4 A9.0,10.9 0 0 0 87.0,44.4 C92.0,35.4 96.0,27.8 104.0,27.8 L174.0,30.6 C182.0,30.6 186.0,71.8 189.3,78.5 A6.7,8.2 0 0 0 202.7,78.5 C206.0,71.8 210.0,30.6 218.0,30.6 L292.0,33.6 C300.0,33.6 304.0,39.6 310.8,50.8 A11.2,13.6 0 0 0 333.2,50.8 C340.0,39.6 344.0,33.6 352.0,33.6 L431.0,36.7 C439.0,36.7 443.0,87.3 445.8,93.4 A6.2,7.5 0 0 0 458.2,93.4 C461.0,87.3 465.0,36.7 473.0,36.7 L538.0,39.4 C546.0,39.4 550.0,54.2 555.9,64.2 A10.1,12.2 0 0 0 576.1,64.2 C582.0,54.2 586.0,39.4 594.0,39.4 L668.0,42.3 C676.0,42.3 680.0,103.5 683.3,110.2 A6.7,8.2 0 0 0 696.7,110.2 C700.0,103.5 704.0,42.3 712.0,42.3 L774.0,45.0 C782.0,45.0 786.0,58.2 793.7,70.6 A12.3,15.0 0 0 0 818.3,70.6 C826.0,58.2 830.0,45.0 838.0,45.0 L879.0,47.3 C887.0,47.3 891.0,121.1 894.7,128.4 A7.3,8.8 0 0 0 909.3,128.4 C913.0,121.1 917.0,47.3 925.0,47.3 L985.0,49.9 C993.0,49.9 997.0,80.1 1002.5,89.6 A9.5,11.6 0 0 0 1021.5,89.6 C1027.0,80.1 1031.0,49.9 1039.0,49.9 L1097.0,52.4 C1105.0,52.4 1109.0,153.0 1111.8,159.2 A6.2,7.5 0 0 0 1124.2,159.2 C1127.0,153.0 1131.0,52.4 1139.0,52.4 L1176.0,54.5 C1184.0,54.5 1188.0,88.5 1194.8,99.7 A11.2,13.6 0 0 0 1217.2,99.7 C1224.0,88.5 1228.0,54.5 1236.0,54.5 L1263.0,56.4 C1271.0,56.4 1275.0,186.2 1278.7,193.4 A7.3,8.8 0 0 0 1293.3,193.4 C1297.0,186.2 1301.0,56.4 1309.0,56.4 L1313.0,57.6 C1321.0,57.6 1325.0,129.8 1330.5,139.4 A9.5,11.6 0 0 0 1349.5,139.4 C1355.0,129.8 1359.0,57.6 1367.0,57.6 L1385.0,59.5 C1393.0,59.5 1397.0,177.3 1405.1,190.2 A12.9,15.6 0 0 0 1430.9,190.2 C1439.0,177.3 1443.0,59.5 1451.0,59.5 L1440,60.0 Z" />
-
-    <!-- As gotas que já se soltaram. Sem elas o escorrido lê como borda
-         recortada; com elas, lê como pigmento caindo. -->
-    <ellipse cx="1247" cy="222" rx="15" ry="19" />
-    <ellipse cx="1063" cy="197" rx="11" ry="14" />
-    <ellipse cx="905" cy="211" rx="8" ry="10.5" />
-    <ellipse cx="702" cy="163" rx="8.5" ry="11" />
-  </svg>
-
   <!-- ============ DOBRA 3 — OS PROCEDIMENTOS ============ -->
   <section class="secao claro procedimentos">
+    <!-- ⚠️ O rastro corre pelas MARGENS: entra no canto superior direito,
+         escorre pela borda e se espalha no rodapé até o canto inferior
+         esquerdo. Cruzando o miolo, ele passaria por baixo do texto e a
+         dobra ficaria preto sobre preto. -->
+    <svg class="rastro" viewBox="0 0 1440 1000" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M1440,0 L1440,1000 L0,1000 L0,952 C440,948 880,944 1052,906 L1140.0,880.0 L1193.2,819.5 L1224.5,795.5 C1203.4,783.5 1148.3,781.3 1138.4,777.7 C1126.7,777.7 1126.7,767.2 1138.4,767.2 C1148.3,763.7 1203.4,761.5 1224.5,749.5 L1238.9,747.2 L1276.9,665.3 L1307.4,576.0 L1315.9,564.4 C1304.4,552.4 1277.4,550.9 1270.6,548.5 C1262.7,548.5 1262.7,541.3 1270.6,541.3 C1277.4,538.9 1304.4,537.4 1315.9,525.4 L1330.3,481.3 L1345.5,383.2 L1353.1,283.9 L1353.9,272.5 C1324.9,260.5 1239.0,258.6 1230.5,255.5 C1220.4,255.5 1220.4,246.4 1230.5,246.4 C1239.0,243.4 1324.9,241.5 1353.9,229.5 L1353.1,185.6 L1345.4,90.2 L1330.0,0.0 L1330,0 Z" />
+      <ellipse cx="1108" cy="452" rx="9" ry="11" />
+      <ellipse cx="1046" cy="655" rx="6" ry="7.5" />
+      <ellipse cx="1216" cy="238" rx="5" ry="6.5" />
+    </svg>
     <div class="faixa">
       <div class="cabeca-secao surge">
         <p class="rotulo-lamina">Os procedimentos</p>
