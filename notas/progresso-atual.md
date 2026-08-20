@@ -111,6 +111,16 @@ troca pelo iframe e ficaria escurecendo o vídeo tocando. Sai junto no play
 Conferido **no navegador**, não só no print: 0 iframe antes do clique, 1 depois
 com o endereço certo, véu em `display:none`, nenhum erro de JS.
 
+### 📁 `portal/assets/` — onde o material bruto passa a morar (20/08)
+
+James: *"cria uma pasta assets dentro da pasta portal e coloquei a imagem lá"*.
+Foto original, export de Canva, arquivo grande: larga ali. **Nada dessa pasta é
+servido.** O caminho é sempre: chega inteiro em `assets/` → eu trato → a versão
+final vai pra `public/lp/<pagina>/`, que é de onde a página lê.
+
+⚠️ No `.gitignore` é **`assets/*`**, não `assets/`: ignorando a PASTA, o `!` não
+consegue trazer o LEIA-ME de volta — git não reabre diretório ignorado.
+
 ### 🚪 O fechamento — "Invista em você" (20/08)
 
 James mandou a dobra do site antigo: uma modelo de banco sobre rosa, com a
@@ -128,6 +138,12 @@ cima, não há o que quebrar no celular — ele só empilha.
 Entrou junto o que a pessoa precisa **depois** de decidir e que hoje ela teria
 que caçar no Instagram: **endereço e "como chegar"** abrindo a rota no mapa. Os
 dois saíram da /jamesolaya, não foram inventados.
+
+**Depois ele mandou a foto do lounge** (3888×2592, o espaço de verdade) e ela
+virou o fundo, no lugar da casa. ⚠️ O *"esfumaçado em preto"* que ele pediu é
+feito **no arquivo** (saturação 0.18, brilho 0.72), não só com véu de CSS: véu
+por cima de foto colorida deixa a cor vazando por baixo e some com o preto.
+Reduzida pra 1920 de largura, nunca ampliada.
 
 ### 👥 Dobra da EQUIPE — NO AR com marcadores (20/08)
 
