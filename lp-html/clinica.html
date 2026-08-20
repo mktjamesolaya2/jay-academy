@@ -126,9 +126,9 @@
       margin-top: clamp(24px, 2.8vw, 40px);
       padding-top: clamp(20px, 2.2vw, 30px);
       max-width: 44ch;
-      font-size: clamp(12.5px, .92vw, 15px);
+      font-size: clamp(14px, 1.05vw, 17px);
       font-weight: 300;
-      line-height: 1.78;
+      line-height: 1.75;
       letter-spacing: .012em;
       color: rgba(248, 247, 242, .70);
     }
@@ -480,7 +480,7 @@
     .proc__foto { aspect-ratio: 4 / 5; width: 100%; }
 
     .proc__tecnicas {
-      font-size: clamp(9px, .68vw, 11px);
+      font-size: clamp(10px, .76vw, 12px);
       font-weight: 400;
       letter-spacing: .3em;
       text-transform: uppercase;
@@ -490,7 +490,7 @@
     /* O nome comercial de cada técnica em ouro — é dado, não frase. */
     .proc__tecnicas span { color: var(--ouro); }
 
-    .proc__titulo { font-size: clamp(19px, 2vw, 33px); margin-top: clamp(14px, 1.4vw, 20px); }
+    .proc__titulo { font-size: clamp(22px, 2.3vw, 38px); margin-top: clamp(14px, 1.4vw, 20px); }
 
     /* ⚠️ Medida de revista: a coluna de texto não passa disso. Solta, ela ia
        até o fim da tela e cada filete virava uma régua de ponta a ponta —
@@ -509,8 +509,8 @@
       display: flex;
       align-items: baseline;
       gap: 16px;
-      padding: 7px 0;
-      font-size: clamp(12.5px, .92vw, 14.5px);
+      padding: 8px 0;
+      font-size: clamp(14px, 1.02vw, 16.5px);
       font-weight: 300;
       letter-spacing: .012em;
       line-height: 1.5;
@@ -531,7 +531,7 @@
       margin-top: clamp(24px, 2.6vw, 36px);
       padding-bottom: 7px;
       border-bottom: 1px solid rgba(172, 151, 81, .55);
-      font-size: clamp(9.5px, .72vw, 11px);
+      font-size: clamp(10.5px, .78vw, 12px);
       font-weight: 500;
       letter-spacing: .26em;
       text-transform: uppercase;
@@ -547,6 +547,134 @@
       .proc { grid-template-columns: 1fr; gap: 26px; }
       .proc--invertida .proc__foto { order: 0; }
       .proc__foto { max-width: 420px; margin: 0 auto; }
+    }
+
+
+    /* ============================================================
+       LÂMINA CLARA — os tokens invertidos, como na /academy.
+
+       A página alterna escuro e claro: sem a virada, cinco dobras pretas
+       seguidas viram um túnel e a pessoa perde a conta de onde está.
+       ⚠️ O ouro muda de tom no claro: #AC9751 sobre off-white quase some.
+       ============================================================ */
+    .claro {
+      background: var(--off-white);
+      color: var(--preto);
+    }
+    .claro .rotulo-lamina { color: rgba(16, 24, 32, .52); }
+    .claro .titulo-lamina { color: rgba(16, 24, 32, .60); }
+    .claro .titulo-lamina strong { color: var(--preto); }
+    .claro .texto-lamina { color: rgba(16, 24, 32, .72); }
+    .claro .texto-lamina::before { background: rgba(16, 24, 32, .30); }
+    .claro .texto-lamina b { color: var(--preto); }
+    .claro .proc__tecnicas { color: rgba(16, 24, 32, .52); }
+    .claro .proc__tecnicas span { color: #8A7A3E; }
+    .claro .lista li { color: rgba(16, 24, 32, .74); }
+    .claro .lista li::before { background: #8A7A3E; }
+    .claro .link-fino { color: var(--preto); border-bottom-color: rgba(138, 122, 62, .5); }
+    .claro .link-fino:hover { color: #8A7A3E; border-bottom-color: #8A7A3E; }
+    .claro .proc + .proc { border-top-color: rgba(16, 24, 32, .14); }
+    .claro .moldura { box-shadow: 0 26px 60px rgba(16, 24, 32, .18); }
+    /* O filete dourado entre dobras não existe quando um dos lados é claro —
+       ali quem separa é a própria virada de fundo. */
+    .claro::before { display: none !important; }
+    .secao.claro + .secao::before { display: none; }
+
+
+    /* ============================================================
+       DOBRA 4 — DEPOIMENTOS
+
+       ⚠️ O vídeo do YouTube NÃO carrega junto com a página. Dois embeds
+       trazem ~1,5 MB de script do Google e três domínios de terceiro em toda
+       visita, mesmo de quem nunca clica em play. Aqui entra a capa (a própria
+       miniatura do vídeo, servida por nós) e o iframe só nasce no clique.
+       ============================================================ */
+    .depoimentos__grade {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(18px, 2.2vw, 34px);
+    }
+
+    .video {
+      position: relative;
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 1px solid var(--linha);
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+      transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    }
+    .video:hover { transform: translateY(-4px); border-color: rgba(172,151,81,.5); box-shadow: 0 26px 60px rgba(0,0,0,.55); }
+    .video__capa { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; opacity: .82; transition: opacity .3s ease; }
+    .video:hover .video__capa { opacity: 1; }
+
+    /* Véu por cima da capa: a miniatura do YouTube tem título e rosto, e o
+       texto branco por cima dela sem véu fica ilegível em metade dos casos. */
+    .video::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(7,6,5,.88) 0%, rgba(7,6,5,.20) 46%, rgba(7,6,5,.10) 100%);
+      pointer-events: none;
+    }
+
+    .video__play {
+      position: absolute;
+      left: 50%; top: 46%;
+      transform: translate(-50%, -50%);
+      width: clamp(54px, 5vw, 72px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(172,151,81,.65);
+      border-radius: 50%;
+      background: rgba(7,6,5,.42);
+      backdrop-filter: blur(6px);
+      z-index: 2;
+      transition: background .3s ease, transform .3s ease;
+    }
+    .video:hover .video__play { background: rgba(172,151,81,.9); transform: translate(-50%, -50%) scale(1.06); }
+    .video__play svg { width: 34%; height: auto; margin-left: 8%; fill: var(--off-white); }
+    .video:hover .video__play svg { fill: var(--preto); }
+
+    .video__legenda {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      z-index: 2;
+      padding: clamp(16px, 1.8vw, 24px);
+    }
+    .video__legenda b {
+      display: block;
+      font-size: clamp(13.5px, 1.05vw, 16px);
+      font-weight: 400;
+      letter-spacing: .01em;
+      color: var(--off-white);
+    }
+    .video__legenda i {
+      display: block;
+      margin-top: 5px;
+      font-style: normal;
+      font-size: clamp(9.5px, .72vw, 11px);
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: var(--ouro);
+    }
+
+    /* Depois do clique o iframe ocupa o mesmo retângulo — sem pulo de layout. */
+    .video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
+    /* ⚠️ O véu TEM que sair junto com a capa: ele é um ::after do botão, então
+       sobrevive à troca pelo iframe e ficaria escurecendo o vídeo tocando. */
+    .video[data-aberto]::after { display: none; }
+    .video[data-aberto] { cursor: default; transform: none; }
+    .video[data-aberto]:hover { transform: none; box-shadow: none; border-color: var(--linha); }
+
+    @media (max-width: 760px) {
+      .depoimentos__grade { grid-template-columns: 1fr; }
     }
 
     /* Entrada suave — um respiro, não animação de template. */
@@ -650,7 +778,7 @@
   </section>
 
   <!-- ============ DOBRA 3 — OS PROCEDIMENTOS ============ -->
-  <section class="secao procedimentos">
+  <section class="secao claro procedimentos">
     <div class="faixa">
       <div class="cabeca-secao surge">
         <p class="rotulo-lamina">Os procedimentos</p>
@@ -707,6 +835,38 @@
     </div>
   </section>
 
+  <!-- ============ DOBRA 4 — DEPOIMENTOS ============ -->
+  <section class="secao depoimentos">
+    <div class="faixa">
+      <div class="cabeca-secao surge">
+        <p class="rotulo-lamina">Quem já sentou nessa cadeira</p>
+        <h2 class="titulo-lamina">
+          Depoimento de
+          <strong>nossos clientes.</strong>
+        </h2>
+      </div>
+
+      <div class="depoimentos__grade">
+        <button class="video surge" type="button" data-video="pKtGVSFXOXU" aria-label="Assistir: Depoimento da Nossa Cliente - Nadia Brasil">
+          <img class="video__capa" src="/lp/clinica/dep-pKtGVSFXOXU.jpg" alt="" loading="lazy" />
+          <span class="video__play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="video__legenda">
+            <b>Nadia Brasil</b>
+            <i>Cliente</i>
+          </span>
+        </button>
+        <button class="video surge" type="button" data-video="lgbTFOMLYOk" aria-label="Assistir: Reconstrução Total de sobrancelhas com Fio a Fio by James Olaya">
+          <img class="video__capa" src="/lp/clinica/dep-lgbTFOMLYOk.jpg" alt="" loading="lazy" />
+          <span class="video__play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+          <span class="video__legenda">
+            <b>Reconstrução total de sobrancelhas</b>
+            <i>Fio a fio</i>
+          </span>
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- ============================================================
        O RESTO DA PÁGINA ENTRA AQUI, de propósito em branco.
 
@@ -736,5 +896,24 @@
     document.querySelectorAll('.surge').forEach((el) => olho.observe(el));
   </script>
 
+
+  <script>
+    // O vídeo só chega no clique. ⚠️ 'autoplay=1' é obrigatório aqui: a
+    // pessoa JÁ clicou em play; sem isso ela precisa clicar duas vezes.
+    document.querySelectorAll('.video').forEach((botao) => {
+      botao.addEventListener('click', () => {
+        const id = botao.dataset.video;
+        if (!id || botao.dataset.aberto) return;
+        botao.dataset.aberto = '1';
+        const quadro = document.createElement('iframe');
+        quadro.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
+        quadro.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+        quadro.allowFullscreen = true;
+        quadro.title = botao.getAttribute('aria-label') || 'Depoimento';
+        botao.replaceChildren(quadro);
+        botao.style.cursor = 'default';
+      }, { once: true });
+    });
+  </script>
 </body>
 </html>
