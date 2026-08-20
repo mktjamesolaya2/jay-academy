@@ -478,8 +478,34 @@
        Fininha e quase preta na lâmina clara, atravessando a faixa inteira.
        ============================================================ */
     .fio {
+      position: relative;
       height: 1px;
       background: rgba(248, 247, 242, .22);
+      /* ⚠️ Sangra até as bordas da TELA, não até a margem do conteúdo: é onde
+         o James desenhou a ponta dela. `overflow-x: hidden` no body segura a
+         barra de rolagem que os 100vw criariam. */
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+    }
+    /* O degrau da direita: sobe da linha até mais ou menos a altura do título
+       "MICROPIGMENTAÇÃO DE SOBRANCELHAS". Medido no navegador: 599px em
+       1440 de largura — daí o 41.6vw. */
+    .fio::before {
+      content: '';
+      position: absolute;
+      right: 0; bottom: 0;
+      width: 1px;
+      height: clamp(200px, 41.6vw, 620px);
+      background: inherit;
+    }
+    /* O degrau da esquerda: desce por trás do texto dos lábios. */
+    .fio::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 1px;
+      height: clamp(160px, 30.5vw, 460px);
+      background: inherit;
     }
     .claro .fio { background: rgba(16, 24, 32, .55); }
     /* Alterna o lado: duas lâminas com a foto do mesmo lado viram catálogo.
