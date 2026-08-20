@@ -121,6 +121,23 @@ final vai pra `public/lp/<pagina>/`, que é de onde a página lê.
 ⚠️ No `.gitignore` é **`assets/*`**, não `assets/`: ignorando a PASTA, o `!` não
 consegue trazer o LEIA-ME de volta — git não reabre diretório ignorado.
 
+### 🏛️ A dobra da estrutura — 10 caminhos desenhados (20/08)
+
+James: *"o que a gente pode fazer de diferente aqui? me dê 10 sugestões"*.
+Folha publicada: <https://claude.ai/code/artifact/1b897d66-0183-4761-9b8c-c100701c996b>
+
+⚠️ **O problema da dobra atual não é o layout, é o argumento.** *"A maior e
+melhor infraestrutura"* é adjetivo: quem lê não tem como conferir e desconta.
+Três das opções trocam o elogio por prova — os números da casa, a lista do que
+tem, a planta.
+
+**Três dão pra fazer hoje, com o que já existe**: a foto do lounge inteira (2),
+os números da casa (3, que não precisa de foto nenhuma) e a legenda de livro de
+foto (9).
+
+Cada opção está catalogada pelo **material que exige** — mesma régua da folha da
+equipe, que é o que decide na prática.
+
 ### 🚫 A estrutura emendada no fechamento — TENTADA E REVERTIDA (20/08)
 
 Ele topou a ideia de emendar as duas dobras (*"pra parecer a mesma, mas passar
