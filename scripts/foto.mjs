@@ -8,6 +8,7 @@
  *   npm run foto -- academy --dobras            um arquivo por dobra
  *   npm run foto -- academy --dobra experiencia só uma dobra
  *   npm run foto -- academy --so mobile         só um tamanho
+ *   npm run foto -- clinica --esperar 2500      espera mais (efeito longo na tela)
  *   npm run foto -- academy --url https://...   contra produção em vez do localhost
  *
  * Sai em tmp/fotos/<slug>/ (fora do git).
@@ -54,7 +55,7 @@ try {
     if (!resposta || !resposta.ok()) {
       throw new Error(`${endereco} respondeu ${resposta ? resposta.status() : 'nada'}. O dev está rodando? (npm run dev)`);
     }
-    await prepararPagina(pagina);
+    await prepararPagina(pagina, Number(opcoes.esperar) || 600);
 
     if (opcoes.dobras || opcoes.dobra) {
       const dobras = await pagina.evaluate(() => {

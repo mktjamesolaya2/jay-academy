@@ -41,12 +41,15 @@ export async function abrirNavegador() {
  * - liga as animações de entrada `.surge`, que começam invisíveis e só acendem
  *   quando entram na tela — sem isso metade da página sai em branco
  */
-export async function prepararPagina(pagina) {
+export async function prepararPagina(pagina, espera = 600) {
   await pagina.evaluate(() => document.fonts.ready);
   await pagina.evaluate(() => {
     document.querySelectorAll('.surge').forEach((e) => e.classList.add('visivel'));
   });
-  await esperar(600);
+  // ⚠️ 600ms cobre a entrada padrão (.surge, 700ms). Efeito mais longo que
+  // isso — traço que se desenha, contador — sai pela metade no print, e aí
+  // parece que quebrou. Nesses casos, passar --esperar.
+  await esperar(espera);
 }
 
 export const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
