@@ -2,7 +2,7 @@
 
 > **Estado vivo do portal.** Atualizar ao fim de CADA sessão. Substitui handoffs.
 >
-> **Última atualização**: 2026-08-20 — **abertura da `/clinica` NO AR: casa da clínica ao fundo com fumaça preta, "James Olaya" gigante atrás e ele recortado no meio (foto do Higgsfield a partir da real)** + **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
+> **Última atualização**: 2026-08-20 — **dobra 2 da `/clinica` ("Sua melhor versão Hoje!", com o traço à mão se desenhando) + base do James desmanchando no preto** + **abertura da `/clinica` NO AR: casa da clínica ao fundo com fumaça preta, "James Olaya" gigante atrás e ele recortado no meio (foto do Higgsfield a partir da real)** + **`/clinica` começada (só o esqueleto no sistema da /academy) + CTAs da /academy, das 5 formações e da /jamesolaya apontando pro lugar certo + o robô de copiar página consertado em produção** + 2026-08-19 — **a consulta da Hotmart nunca funcionou: API de vendas barrada (400 em tudo, com o subscriptions respondendo 200), conserto por importação de CSV (12.358 compras, 8.477 alunas) + laço do "não achei" quebrado + protocolo só quando ela precisa falar com alguém + conversa que não se perde ao fechar a aba** + 2026-08-10 — **galeria de mídia no formato do app Fotos do iPhone + imagens das LPs finalmente entrando na biblioteca (manifesto de build + sincronizar)** + **as 2 sugestões abertas da caixa de ideias resolvidas ("ver no celular" nas páginas WP + corrente de modelos da I.A do PMU CLASS) e o bug do seed que ressuscitava sugestões apagadas** + **layout N aplicado às 5 formações presenciais, com foto própria por curso (build quebra se repetir)** + 2026-08-05 — **"Ver no celular" no painel (/lps/[slug]/celular) + caixa de ferramentas scripts/ (npm run foto e cortar)** + **LP Academy: abertura em lettering (dobra 0), hero de volta ao título original e as 3 fotos da dobra 3 finalmente coloridas** + 2026-07-31 — **carrossel de resultados 4:5 sem cortes na `/fio-a-fio-realista-v2`** + **revisão mobile integral da `/fio-a-fio-realista-v2`** + **nova `/fio-a-fio-realista-v2` isolada para validação** + **rebranding público de `/basic-magic-shadow` para Shadow PRO** + **home pública em `/` e conta principal como “Administrador”** + **overflow lateral móvel corrigido na `/metodo-shadow-pro`** + **nova foto antes/depois na `/metodo-shadow-pro`** + **fórmula vertical do método na `/metodo-shadow-pro`** + **WhatsApp e oferta refinada na `/metodo-shadow-pro`** + **autoplay móvel robusto no carrossel e vídeo da `/metodo-shadow-pro`** + **novo hero responsivo da `/metodo-shadow-pro` com `Generated image 1`** + **“James Olaya” destacado no topo da seção do professor da `/metodo-shadow-pro`** + **espaçamento uniforme nos 7 pontos da ficha técnica da `/metodo-shadow-pro`** + **vídeo da ficha técnica comprimido (21 MB → 1,8 MB) + `.claude/`/`tmp/` no gitignore** + **quebra de linha no título do hero da `/metodo-shadow-pro`** + **cards e fotos da seção “Cicatrizados reais” da `/metodo-shadow-pro`** + **nova diagramação e CTA animado na oferta da `/metodo-shadow-pro`** + **carrossel da `/metodo-shadow-pro` reconstruído só com `OK_RESULTADOS`** + **certificado correto do Shadow PRO na `/metodo-shadow-pro`** + **vídeo em autoplay na ficha técnica da `/metodo-shadow-pro`** + **novas fotos nos 4 pilares da `/metodo-shadow-pro`** + **slug `/metodo-shadow-pro` + GTM-NGVQTHXT + `_fbp`/`_fbc` no CAPI** + **UX mobile da `/metodo-shadow-pro-2` (hero maior, fotos quadradas, prova subiu pro topo)** + mais prova visual na `/metodo-shadow-pro-2` (antes-e-depois + carrossel dobrado) + copy da `/basic-magic-shadow` (CTAs imperativos + fim da escassez) + GTM por página (mapa slug → container) + política de tracking por página + auditoria dos links de checkout Hotmart + Basic Magic Shadow v2 promovida ao slug oficial + auditoria do Meta Pixel + varredura de segurança**
 
 ---
 
@@ -61,6 +61,48 @@ dobra — em 34% ela cruzava a boca dele e virava rasura.
 Sobrou uma arte que NÃO entrou: um mármore preto com veio dourado e o meandro
 grego (`hero-fundo.jpg`), gerada antes de ele mandar a referência. Fica
 guardada — serve de textura pra uma dobra mais pra frente.
+
+### ✨ Dobra 2 — "Sua melhor versão Hoje!" (20/08)
+
+James: *"vamos para a proxima dobra q é essa, da uma lida nela, que ela tem uns
+efeitos especiais"*.
+
+Fui ler a dobra no site que está no ar. Os "efeitos especiais" são três, e
+todos vieram — refeitos, não copiados:
+
+| no site antigo | aqui |
+|---|---|
+| *Animated Headline* do Elementor: círculo à mão no "Hoje!", `loop: yes`, repete a cada 8s | traço em SVG que se desenha **uma vez**, quando a dobra entra |
+| 4 colunas com `fadeInUp` | os mesmos 4 cards subindo em fila (atraso de .09s entre eles) |
+| 4º card com fundo coral cheio, ícone e texto brancos | 4º card em **ouro** cheio, ícone e texto pretos |
+
+**Os ícones são os MESMOS arquivos do site** (calendário, lábios, sobrancelha,
+brilhos) — extraídos do HTML, limpos do lixo do svgjs e com a cor trocada por
+`currentColor`. Desenhar ícone novo aqui seria inventar o que já existe.
+
+⚠️ **O traço não repete.** Em laço de 8 em 8 segundos vira tique nervoso.
+
+⚠️ **Como o círculo abraça a palavra**: `preserveAspectRatio="none"` (pra ele
+esticar até a largura do "Hoje!") + `vector-effect="non-scaling-stroke"` (pra a
+espessura NÃO engordar junto). Sem o segundo, o rabisco vira borda oval. E ele
+é maior que a palavra de propósito — traço colado lê como caixa, não caneta.
+
+⚠️ **No celular a quebra é da LINHA, com `<br>`** — não `display:block` na
+palavra. Em bloco ela estica pela largura toda e o traço vira um charuto de
+ponta a ponta. Cards em **2×2**, não pilha de quatro: empilhado, o card que
+fecha (o de ouro) sai do campo de visão.
+
+### 🩹 A base do James, na abertura
+
+James: *"ficou feio o james recortado assim (...) adiciona um gradiente preto
+nessa divisão"*. O recorte terminava numa linha reta na altura da cintura —
+efeito de foto colada. Agora ele se desmancha no preto por `mask-image`.
+
+### 🔧 `npm run foto -- --esperar`
+
+A espera antes do print era **fixa em 600ms**, o suficiente pra entrada padrão
+(`.surge`, 700ms). O traço do "Hoje!" leva 1,6s: o print pegava só o começo do
+risco e **parecia que tinha quebrado**. Agora dá pra pedir mais tempo.
 
 ### 🚧 `/clinica` — o resto da página
 
