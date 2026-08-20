@@ -111,7 +111,37 @@ troca pelo iframe e ficaria escurecendo o vídeo tocando. Sai junto no play
 Conferido **no navegador**, não só no print: 0 iframe antes do clique, 1 depois
 com o endereço certo, véu em `display:none`, nenhum erro de JS.
 
-### 🩸 A divisa vira PIGMENTO ESCORRENDO (20/08)
+### 🖤 A DOBRA PARTIDA — metade branca, metade preta (20/08)
+
+Levei **três leituras erradas** até chegar: risco reto, depois escorrido
+horizontal entre as dobras, e só então o certo. James: *"não era na divisão
+das dobras, é a dobra INTEIRA: o fundo metade preto e metade branco"*.
+
+O branco é o fundo da seção, o preto é uma coluna à direita, e a divisa entre
+os dois é o **pigmento escorrendo**, com as línguas entrando no branco.
+
+- ⚠️ **É um LADRILHO que se repete pra baixo**, não um desenho esticado na
+  altura da dobra: esticado, a espessura das línguas muda conforme o conteúdo
+  cresce. A onda da borda é **periódica na altura do ladrilho** — senão a
+  emenda vira um degrauzinho visível a cada repetição.
+- ⚠️ **As línguas escorrem do preto PARA o branco** (x diminuindo). Na primeira
+  versão eu somei o comprimento em vez de subtrair e saíram dedos brancos
+  entrando no preto, o contrário da referência.
+- ⚠️ **5 línguas em 1000px, de 28 a 196.** A primeira tentativa tinha 11 em
+  620px, todas parecidas: o olho lê serrilha de recorte. O que faz parecer
+  pigmento é a **desigualdade** e a pausa entre elas.
+
+**O texto por cima muda de lado**: a lâmina de sobrancelhas cai na metade
+preta, então os tokens dela viram os do escuro — senão fica cinza-chumbo sobre
+preto. A de lábios segue escura sobre branco. A linha entre as duas atravessa
+as duas metades e **muda de cor no meio do caminho**.
+
+**Celular**: a tela não pode ser partida ao meio — o texto ocupa a largura toda
+e cairia em cima da divisa. Lá o mesmo pigmento escorre do **topo** da dobra.
+⚠️ A altura do bloco tem que bater com a proporção do desenho (760×200), senão
+o `slice` corta as gotas em ponta reta.
+
+### 🩸 A divisa vira PIGMENTO ESCORRENDO — versão descartada (20/08)
 
 Depois de duas tentativas minhas de linha reta, o James mandou uma referência
 em preto e branco e a frase que resolveu: *"pega toda essa área branca e a
