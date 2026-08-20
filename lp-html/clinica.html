@@ -781,6 +781,21 @@
     }
     .massa path, .massa ellipse { fill: var(--fundo); }
 
+    @media (max-width: 900px) {
+      /* ⚠️ No celular NÃO existe área vazia: é uma coluna só, e o texto ocupa
+         a largura inteira. Qualquer massa no meio cai em cima de palavra. Ela
+         vira então uma POÇA no pé da dobra, dentro de um respiro criado só pra
+         ela — a curva vira o topo inclinado da poça.
+         As gotas somem aqui: espremidas nessa faixa elas viram traços. */
+      .procedimentos { padding-bottom: 190px; }
+      .massa {
+        inset: auto 0 0 0;
+        width: 100%;
+        height: 190px;
+      }
+      .massa ellipse { display: none; }
+    }
+
 
 
     /* ============================================================
@@ -824,6 +839,91 @@
          antes, ela viraria um borrão preto atrás de tudo. */
       /* No celular ela deita acima do título, menor. */
       .dermografo { width: 76%; right: -8%; top: -34%; }
+    }
+
+
+    /* ============================================================
+       DOBRA 4 — A EQUIPE (opção 4 da folha: recortadas no preto)
+
+       Os retratos sem fundo, alinhados na MESMA linha do chão — o mesmo
+       gesto da abertura da página, onde o James está recortado sobre o preto.
+
+       ⚠️ Ela existe porque a dobra dos procedimentos promete "nossos
+       especialistas sabem exatamente o que combina com você" e nunca mostra
+       quem são. Por isso vem logo depois dela, e antes dos depoimentos: o que
+       é feito → quem faz → quem já foi atendido.
+
+       ⚠️ AS FOTOS AINDA NÃO EXISTEM. O que está aqui é marcador: silhueta, sem
+       rosto e sem nome inventado. Quando o material chegar, troca-se a
+       silhueta pela foto recortada e o marcador pelo nome — a dobra não muda.
+       O que as fotos precisam ter: fundo liso e claro (pra recortar), corpo
+       até a cintura e a MESMA distância de câmera nas quatro.
+       ============================================================ */
+    .equipe__fila {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      column-gap: clamp(14px, 2vw, 34px);
+      align-items: end;
+    }
+    /* A linha do chão: é ela que faz quatro recortes soltos virarem um grupo. */
+    .equipe__chao {
+      grid-column: 1 / -1;
+      height: 1px;
+      margin-top: 0;
+      background: linear-gradient(to right, rgba(172,151,81,0), rgba(172,151,81,.45) 10%, rgba(172,151,81,.45) 90%, rgba(172,151,81,0));
+    }
+
+    .pessoa__id { text-align: center; padding-top: clamp(16px, 1.7vw, 24px); }
+    .pessoa__foto {
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .pessoa__foto img, .pessoa__foto svg { display: block; width: 100%; height: auto; }
+    /* ⚠️ Alturas diferentes de propósito: quatro recortes na mesma altura
+       exata lêem como fileira de crachá. A variação é pequena — 6% — e é o
+       que dá naturalidade sem virar bagunça. */
+    .pessoa__foto:nth-child(2) { transform: scale(.94); transform-origin: bottom center; }
+    .pessoa__foto:nth-child(4) { transform: scale(.96); transform-origin: bottom center; }
+
+    .pessoa__nome {
+      font-size: clamp(13px, 1vw, 15.5px);
+      font-weight: 400;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--off-white);
+    }
+    .pessoa__papel {
+      margin-top: 7px;
+      font-size: clamp(9.5px, .72vw, 11px);
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: var(--ouro);
+    }
+
+    /* O marcador de foto: silhueta, sem rosto. Não é foto de banco nem rosto
+       de IA — é um lugar reservado, e tem que parecer um. */
+    .silhueta { fill: rgba(248, 247, 242, .075); }
+
+    @media (max-width: 900px) {
+      /* 2×2: quatro numa linha em 390px viram selo de tamanho de unha. */
+      .equipe__fila { grid-template-columns: repeat(2, 1fr); }
+      /* ⚠️ Em 2 colunas a ordem natural da grade joga as QUATRO fotos primeiro
+         e os quatro nomes depois — cada nome longe da sua foto. Aqui cada um
+         é posto no seu lugar na mão. */
+      .equipe__fila > :nth-child(1) { grid-area: 1 / 1; }
+      .equipe__fila > :nth-child(6) { grid-area: 2 / 1; }
+      .equipe__fila > :nth-child(2) { grid-area: 1 / 2; }
+      .equipe__fila > :nth-child(7) { grid-area: 2 / 2; }
+      .equipe__fila > :nth-child(3) { grid-area: 3 / 1; }
+      .equipe__fila > :nth-child(8) { grid-area: 4 / 1; }
+      .equipe__fila > :nth-child(4) { grid-area: 3 / 2; }
+      .equipe__fila > :nth-child(9) { grid-area: 4 / 2; }
+      /* Em 2×2 o chão atravessando os quatro não faz sentido: cada um ganha
+         o seu, embaixo do nome. */
+      .equipe__chao { display: none; }
+      .pessoa__id { padding-bottom: 26px; border-bottom: 1px solid rgba(172,151,81,.26); margin-bottom: 8px; }
     }
 
     /* Entrada suave — um respiro, não animação de template. */
@@ -1017,7 +1117,47 @@
     </div>
   </section>
 
-  <!-- ============ DOBRA 4 — DEPOIMENTOS ============ -->
+  <!-- ============ DOBRA 4 — A EQUIPE ============ -->
+  <section class="secao equipe">
+    <div class="faixa">
+      <div class="cabeca-secao surge">
+        <p class="rotulo-lamina">Quem atende</p>
+        <h2 class="titulo-lamina">
+          A equipe da
+          <strong>Jay Clinic.</strong>
+        </h2>
+      </div>
+
+      <!-- ⚠️ Três fileiras na MESMA grade: as fotos, o chão atravessando as
+           quatro, e os nomes embaixo. O chão precisa ser um item da grade —
+           como borda de cada foto ele sairia picotado nos vãos entre elas. -->
+      <div class="equipe__fila">
+        <div class="pessoa__foto surge"><svg class="silhueta" viewBox="0 0 200 300" aria-hidden="true"><path d="M100,52 C122,52 138,70 138,94 C138,118 122,140 100,140 C78,140 62,118 62,94 C62,70 78,52 100,52 Z M100,152 C142,152 176,186 182,232 L188,300 L12,300 L18,232 C24,186 58,152 100,152 Z"/></svg></div>
+        <div class="pessoa__foto surge"><svg class="silhueta" viewBox="0 0 200 300" aria-hidden="true"><path d="M100,52 C122,52 138,70 138,94 C138,118 122,140 100,140 C78,140 62,118 62,94 C62,70 78,52 100,52 Z M100,152 C142,152 176,186 182,232 L188,300 L12,300 L18,232 C24,186 58,152 100,152 Z"/></svg></div>
+        <div class="pessoa__foto surge"><svg class="silhueta" viewBox="0 0 200 300" aria-hidden="true"><path d="M100,52 C122,52 138,70 138,94 C138,118 122,140 100,140 C78,140 62,118 62,94 C62,70 78,52 100,52 Z M100,152 C142,152 176,186 182,232 L188,300 L12,300 L18,232 C24,186 58,152 100,152 Z"/></svg></div>
+        <div class="pessoa__foto surge"><svg class="silhueta" viewBox="0 0 200 300" aria-hidden="true"><path d="M100,52 C122,52 138,70 138,94 C138,118 122,140 100,140 C78,140 62,118 62,94 C62,70 78,52 100,52 Z M100,152 C142,152 176,186 182,232 L188,300 L12,300 L18,232 C24,186 58,152 100,152 Z"/></svg></div>
+        <span class="equipe__chao" aria-hidden="true"></span>
+        <div class="pessoa__id surge">
+          <p class="pessoa__nome">Nome</p>
+          <p class="pessoa__papel">Especialidade</p>
+        </div>
+        <div class="pessoa__id surge">
+          <p class="pessoa__nome">Nome</p>
+          <p class="pessoa__papel">Especialidade</p>
+        </div>
+        <div class="pessoa__id surge">
+          <p class="pessoa__nome">Nome</p>
+          <p class="pessoa__papel">Especialidade</p>
+        </div>
+        <div class="pessoa__id surge">
+          <p class="pessoa__nome">Nome</p>
+          <p class="pessoa__papel">Especialidade</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 5 — DEPOIMENTOS ============ -->
   <section class="secao depoimentos">
     <div class="faixa">
       <div class="cabeca-secao surge">
