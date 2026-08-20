@@ -121,6 +121,18 @@ da linha"*. O desenho marcava **onde**, não **como**.
 Ficou reta, fininha e **quase preta** na lâmina clara — antes era o dourado da
 casa, que sobre off-white quase some.
 
+E não é só uma horizontal: é um **degrau**. *"Nas sobrancelhas ela começa mais
+ou menos na altura do MICROPIGMENTAÇÃO DE SOBRANCELHAS, no canto direito, bem
+na borda; aí desce, faz o mesmo caminho reto que existe hoje; e no canto
+esquerdo desce por trás do texto dos lábios."* Foi isso que o desenho vermelho
+marcava — eu tinha lido só a horizontal, duas vezes.
+
+- Sangra até a borda da **tela** (`100vw`), não até a margem do conteúdo.
+- Os dois degraus são **pseudo-elementos da própria linha**: nascem colados
+  nela e acompanham qualquer mudança de posição dela.
+- ⚠️ A altura foi **medida no navegador**, não chutada: 599px do topo do título
+  até a linha em 1440 — daí o `41.6vw`.
+
 **Fonte, segunda subida** (*"aumenta o tamanho dessas fonte pelo amor de
 Deus"*): parágrafo 17→**20px**, itens 16.5→**19px**, título 38→**44px**, rótulo
 e link junto. A medida da coluna caiu de 46ch pra **44ch**: com corpo maior,
