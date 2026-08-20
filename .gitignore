@@ -51,6 +51,7 @@ videos-lips-sense-backup/
 # antes de virarem asset em public/) — local, não vai pro repo
 .claude/
 tmp/
+scratchpad/
 
 # ⚠️ Relatório de vendas exportado da Hotmart: tem e-mail, CPF, telefone e
 # endereço das alunas. NUNCA no repositório. A importação é feita pela tela

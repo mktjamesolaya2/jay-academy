@@ -76,6 +76,16 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // A clínica, reconstruída a partir da cópia do site antigo (Elementor).
+    // Em construção: o conteúdo entra dobra a dobra, do que o James manda.
+    slug: "clinica",
+    title: "Jay Clinic (em construção)",
+    htmlFile: "lp-html/clinica.html",
+    assetsDir: "public/lp/clinica",
+    category: "website",
+    accent: "gold-black",
+  },
+  {
     // Site institucional recriado no sistema dark cinematográfico (21/07).
     slug: "jamesolaya",
     title: "James Olaya (institucional)",

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jay Clinic — clínica de micropigmentação e estética avançada em Campinas</title>
+  <meta name="description" content="A clínica de James Olaya em Campinas: micropigmentação de sobrancelhas e lábios, estética avançada e uma estrutura pensada para o seu atendimento." />
+  <!-- ⚠️ Fora do Google enquanto está em construção. Tirar o noindex é o
+       último passo antes de publicar — página pela metade indexada é pior que
+       página nenhuma. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ============================================================
+       SISTEMA — o mesmo da /academy e da /jamesolaya.
+       Não é cópia por preguiça: as três páginas são da mesma casa, e quem
+       vem de uma pra outra tem que sentir que continua no mesmo lugar.
+       ============================================================ */
+    :root {
+      --ouro: #AC9751;
+      --ouro-claro: #DCC383;
+      --preto: #101820;
+      --off-white: #F8F7F2;
+      --fundo: #070605;
+      --painel: #0E0C0A;
+      --linha: rgba(172, 151, 81, .22);
+      --texto-fraco: rgba(248, 247, 242, .70);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--fundo);
+      color: var(--off-white);
+      font-family: 'Poppins', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .faixa { width: 90%; max-width: 1440px; margin: 0 auto; }
+
+    /* O intervalo entre dobras separa, não esvazia. ~100px em tela cheia. */
+    .secao { padding: clamp(58px, 6.8vw, 104px) 0; position: relative; }
+
+    /* Filete dourado entre dobras irmãs — o respiro de revista. Nunca logo
+       abaixo da abertura. */
+    .secao + .secao::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 1440px;
+      height: 1px;
+      background: linear-gradient(to right, rgba(172,151,81,0), rgba(172,151,81,.28) 18%, rgba(172,151,81,.28) 82%, rgba(172,151,81,0));
+    }
+
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      font-size: clamp(10.5px, .78vw, 12px);
+      font-weight: 500;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      padding: 16px clamp(26px, 2.4vw, 40px);
+      border-radius: 999px;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn--ouro {
+      background: linear-gradient(120deg, var(--ouro-claro) 0%, var(--ouro) 58%, #8e7c40 100%);
+      color: var(--preto);
+      box-shadow: 0 14px 34px rgba(172,151,81,.26);
+    }
+    .btn--ouro:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(172,151,81,.38); }
+    .btn--linha { border: 1px solid rgba(172,151,81,.55); color: var(--off-white); }
+
+    /* Moldura de foto — mesma das outras páginas. */
+    .moldura {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+    }
+    .moldura img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+    /* Tipografia de lâmina. ⚠️ Regra nº 1: nunca dourado no meio do texto —
+       o ouro é do rótulo e dos fios, não da frase. */
+    .rotulo-lamina {
+      font-size: clamp(10px, .74vw, 11.5px);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--ouro);
+      margin-bottom: 14px;
+    }
+    .titulo-lamina {
+      font-size: clamp(28px, 3.6vw, 52px);
+      font-weight: 200;
+      line-height: 1.12;
+      letter-spacing: -.01em;
+      text-wrap: balance;
+    }
+    .titulo-lamina strong { font-weight: 500; }
+    .texto-lamina {
+      margin-top: 18px;
+      max-width: 62ch;
+      font-size: clamp(14px, 1.05vw, 16.5px);
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--texto-fraco);
+    }
+    .texto-lamina b { font-weight: 500; color: var(--off-white); }
+
+    /* Entrada suave — um respiro, não animação de template. */
+    .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+    .surge.visivel { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .surge { opacity: 1; transform: none; transition: none; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       PÁGINA EM BRANCO, de propósito.
+
+       Cada dobra que o James mandar entra aqui como:
+
+         <section class="secao">
+           <div class="faixa surge">
+             <p class="rotulo-lamina">Rótulo</p>
+             <h2 class="titulo-lamina">Título <strong>com peso</strong></h2>
+             <p class="texto-lamina">Texto.</p>
+           </div>
+         </section>
+
+       O sistema visual (cores, tipografia, molduras, espaçamento e o filete
+       entre dobras) já está no <style> acima — então cada pedaço nasce no
+       padrão da /academy e da /jamesolaya, sem remendo depois.
+       ============================================================ -->
+
+  <script>
+    // Entrada suave das dobras. Uma vez ao aparecer — nada de escala seguindo
+    // a rolagem, que o James lê como bug ("está dando zoom").
+    const olho = new IntersectionObserver((entradas) => {
+      for (const e of entradas) {
+        if (e.isIntersecting) { e.target.classList.add('visivel'); olho.unobserve(e.target); }
+      }
+    }, { threshold: .12 });
+    document.querySelectorAll('.surge').forEach((el) => olho.observe(el));
+  </script>
+
+</body>
+</html>
