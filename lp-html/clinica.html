@@ -926,6 +926,74 @@
       .pessoa__id { padding-bottom: 26px; border-bottom: 1px solid rgba(172,151,81,.26); margin-bottom: 8px; }
     }
 
+
+    /* ============================================================
+       DOBRA 6 — O FECHAMENTO ("Invista em você")
+
+       ⚠️ SEM foto de modelo. No site antigo esta dobra é uma modelo de banco
+       sobre rosa, posta como FUNDO com ponto focal fixo — e no celular sobra
+       um ombro. James, 20/08: *"se olhar no mobile ficou bem ruim"*. Foto de
+       banco também destoa do resto da página, que só tem foto real.
+
+       Aqui a página fecha onde abriu: na casa da clínica, a mesma imagem do
+       hero, bem escurecida. Bookend. E o fundo é cover com o texto empilhado
+       por cima — não tem como quebrar no estreito.
+       ============================================================ */
+    .fechamento { position: relative; overflow: hidden; }
+    .fechamento__fundo { position: absolute; inset: 0; }
+    .fechamento__fundo img {
+      display: block;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: 42% 58%;
+    }
+    .fechamento__veu {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(70% 60% at 30% 50%, rgba(172,151,81,.12) 0%, rgba(172,151,81,0) 70%),
+        linear-gradient(to right, rgba(7,6,5,.92) 0%, rgba(7,6,5,.80) 46%, rgba(7,6,5,.42) 100%),
+        linear-gradient(to top, var(--fundo) 2%, rgba(7,6,5,0) 40%);
+    }
+    .fechamento .faixa { position: relative; z-index: 1; }
+
+    .fechamento__titulo { max-width: 14ch; }
+    .fechamento__acao { margin-top: clamp(28px, 3vw, 42px); }
+
+    /* Onde fica. Fecha a página com a informação que a pessoa vai precisar
+       depois de decidir — e que hoje ela teria que caçar no Instagram. */
+    .onde {
+      margin-top: clamp(44px, 5vw, 76px);
+      padding-top: clamp(22px, 2.4vw, 34px);
+      border-top: 1px solid var(--linha);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: clamp(14px, 2vw, 42px);
+    }
+    .onde__rotulo {
+      font-size: clamp(9px, .68vw, 11px);
+      font-weight: 400;
+      letter-spacing: .46em;
+      text-transform: uppercase;
+      color: var(--ouro);
+    }
+    .onde__endereco {
+      font-size: clamp(14px, 1.05vw, 16.5px);
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--texto-fraco);
+    }
+    .onde__endereco b { font-weight: 400; color: var(--off-white); }
+
+    @media (max-width: 760px) {
+      .fechamento__titulo { max-width: none; }
+      .onde { flex-direction: column; gap: 12px; }
+      .fechamento__veu {
+        background:
+          linear-gradient(to bottom, rgba(7,6,5,.80) 0%, rgba(7,6,5,.88) 62%, var(--fundo) 100%);
+      }
+    }
+
     /* Entrada suave — um respiro, não animação de template. */
     .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
     .surge.visivel { opacity: 1; transform: none; }
@@ -1185,6 +1253,38 @@
             <i>Fio a fio</i>
           </span>
         </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA 6 — FECHAMENTO ============ -->
+  <section class="secao fechamento">
+    <div class="fechamento__fundo">
+      <img src="/lp/clinica/hero-casa.jpg" alt="" />
+      <div class="fechamento__veu"></div>
+    </div>
+
+    <div class="faixa surge">
+      <p class="rotulo-lamina">Quando você quiser</p>
+      <h2 class="titulo-lamina fechamento__titulo">
+        Invista em
+        <strong>você.</strong>
+      </h2>
+      <p class="texto-lamina">
+        Conheça o procedimento capaz de transformar seu olhar e te deixar ainda
+        mais incrível.
+      </p>
+      <div class="fechamento__acao">
+        <a class="btn btn--ouro" href="https://wa.me/5519974037997" target="_blank" rel="noopener">Agendar atendimento</a>
+      </div>
+
+      <div class="onde">
+        <p class="onde__rotulo">Onde fica</p>
+        <p class="onde__endereco">
+          <b>R. José Lins do Rego, 708</b><br />
+          Parque Taquaral · Campinas — SP
+        </p>
+        <a class="link-fino" href="https://www.google.com/maps/dir/?api=1&amp;destination=R.+Jos%C3%A9+Lins+do+Rego%2C+708+-+Parque+Taquaral%2C+Campinas+-+SP%2C+13087-789" target="_blank" rel="noopener">Como chegar</a>
       </div>
     </div>
   </section>
