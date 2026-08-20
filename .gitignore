@@ -58,3 +58,8 @@ scratchpad/
 # (/suporte/importar) e o dado vai direto pro KV, sem passar pelo git.
 *.csv
 hotmart-planilha*
+
+# material bruto que o James manda (foto original, export de Canva) — vira
+# asset tratado em public/ e não precisa ir pro repositório
+assets/*
+!assets/LEIA-ME.md
