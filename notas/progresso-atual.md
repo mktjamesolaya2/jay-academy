@@ -121,6 +121,29 @@ final vai pra `public/lp/<pagina>/`, que é de onde a página lê.
 ⚠️ No `.gitignore` é **`assets/*`**, não `assets/`: ignorando a PASTA, o `!` não
 consegue trazer o LEIA-ME de volta — git não reabre diretório ignorado.
 
+### 🏠 A dobra da CASA — mosaico no ar (opção 1) (20/08)
+
+Ele escolheu a **1 — mosaico do espaço**: texto à esquerda, quatro fotos à
+direita em alturas desencontradas.
+
+⚠️ **Só uma das quatro existe.** O lounge ocupa o lugar grande; as outras três
+são **marcador** — bloco vazio com fio de ouro e "foto pendente". Nada de foto
+de banco e nada de repetir a mesma foto quatro vezes, que é o atalho que
+estraga esse tipo de dobra. **Falta: fachada, recepção e sala de atendimento.**
+
+⚠️ **Duas versões do mesmo original**:  (escura) é fundo do
+fechamento e  (cor natural) é assunto no mosaico. A
+escura ali ficava cinza-morta ao lado do texto.
+
+⚠️ **As alturas são desencontradas de propósito** — quatro retângulos iguais em
+grade certinha lêem como galeria de imobiliária. E no celular o mosaico
+continua **2×2**: pilha de quatro foi o que fez a emenda com o fechamento dar
+errado.
+
+**Pendência conhecida**: o lounge aparece duas vezes na página — no mosaico e
+(quase invisível) no fundo do fechamento. Some se o fechamento voltar pra foto
+da fachada.
+
 ### 🏛️ A dobra da estrutura — 10 caminhos desenhados (20/08)
 
 James: *"o que a gente pode fazer de diferente aqui? me dê 10 sugestões"*.
