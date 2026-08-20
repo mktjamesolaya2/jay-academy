@@ -111,6 +111,33 @@ troca pelo iframe e ficaria escurecendo o vídeo tocando. Sai junto no play
 Conferido **no navegador**, não só no print: 0 iframe antes do clique, 1 depois
 com o endereço certo, véu em `display:none`, nenhum erro de JS.
 
+### 👥 Dobra da EQUIPE — desenhada, ainda não construída (20/08)
+
+James quer uma dobra com os profissionais que atendem na clínica, mas **não tem
+as fotos**: *"não tenho os profissionais aqui comigo, então só vamos criar
+depois (...) melhor seria você me mandar as opções"*.
+
+**Onde ela vai**: entre a dobra dos procedimentos e a dos depoimentos. Motivo
+que decide: a dobra dos procedimentos já promete *"nossos especialistas sabem
+exatamente o que combina com você"* — e hoje essa frase morre ali. A equipe
+paga essa promessa, e na ordem certa: o que é feito → quem faz → quem já foi
+atendido.
+
+⚠️ **Ritmo**: procedimentos é a lâmina clara e depoimentos é escura. Se a nova
+entrar escura, ficam duas escuras seguidas. A saída elegante é ela continuar no
+branco e passar a ser ELA que o pigmento fecha (é a opção 8 da folha).
+
+⚠️ **A dobra muda a promessa da página.** A página inteira é o James; colocar
+equipe significa que quem agenda pode ser atendida por outra pessoa. A dobra
+precisa dizer quem faz o quê — senão o problema aparece na recepção, não no site.
+
+**Folha com 8 opções**: <https://claude.ai/code/artifact/74452185-4f5f-4c0d-b1b1-f963fa0305b5>
+
+⚠️ Cada opção está catalogada pelo **tipo de foto que exige**, não pelo desenho
+— é a foto que decide. Meia dúzia de retratos com fundo e enquadramento
+diferentes derruba a dobra por melhor que seja o layout. A **opção 7 (só os
+nomes)** sobe hoje, sem foto nenhuma, e ganha as imagens depois sem refazer.
+
 ### 🎨 O pigmento da dobra 3 — resolvido por catálogo (20/08)
 
 Depois de **quatro leituras erradas** minhas (risco reto, escorrido horizontal,
