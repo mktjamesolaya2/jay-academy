@@ -145,6 +145,10 @@ feito **no arquivo** (saturação 0.18, brilho 0.72), não só com véu de CSS: 
 por cima de foto colorida deixa a cor vazando por baixo e some com o preto.
 Reduzida pra 1920 de largura, nunca ampliada.
 
+Depois ele pediu **menor e mais escura**: a dobra caiu de **742px pra 610px**
+(ritmo interno mais apertado que o do resto da página — ela é um convite, não
+um texto pra ler) e o brilho médio da foto caiu de **80 pra 43**.
+
 ### 👥 Dobra da EQUIPE — NO AR com marcadores (20/08)
 
 James quer uma dobra com os profissionais que atendem na clínica, mas **não tem
