@@ -1009,91 +1009,95 @@
 
 
     /* ============================================================
-       DOBRA 7 — QUEM ESTÁ POR TRÁS (o nome atravessando)
+       DOBRA 7 — QUEM ESTÁ POR TRÁS (retrato em pé, cartão deitado)
 
-       Opção 4 da folha do perfil. O nome dele em letra gigante ATRÁS do
-       retrato — o mesmo gesto da abertura da página, agora fechando. A página
-       abre com ele e termina com ele.
-
-       ⚠️ Escura, e não clara: a foto é preto e branco sobre preto. Numa lâmina
-       clara ela viraria um selo cinza no meio do off-white.
-
-       ⚠️ A letra é a MESMA da abertura — caixa baixa, espaço fechado, peso
-       200. Em caixa alta ele já testou e voltou atrás.
+       Opção 8 da folha do cartão, na pegada da referência que ele mandou: o
+       recorte dele de pé e o painel de identificação encostando na cintura,
+       pela direita. O cartão SOBREPÕE a foto — é a sobreposição que faz os
+       dois virarem uma peça só em vez de duas coisas lado a lado.
        ============================================================ */
     .perfil { position: relative; }
     .perfil__palco {
       position: relative;
-      margin-top: clamp(30px, 4vw, 60px);
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
+      margin-top: clamp(24px, 3vw, 44px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, .92fr);
+      align-items: end;
     }
-    .perfil__nome {
-      position: absolute;
-      left: 0; right: 0;
-      top: 42%;
-      transform: translateY(-50%);
-      text-align: center;
-      font-size: min(12.4vw, 190px);
-      font-weight: 200;
-      line-height: .92;
-      letter-spacing: -.02em;
-      white-space: nowrap;
-      color: var(--off-white);
-      /* Some nas pontas, como na abertura: a palavra é maior que a faixa de
-         propósito, e o corte reto na borda pareceria texto vazando. */
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
-              mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
-    }
-    /* ⚠️ Recorte SEM fundo, como na abertura. Com o retângulo da foto, a
-       moldura aparecia: o cinza do estúdio é mais claro que o preto da página
-       e denunciava a caixa. Recortado, o nome atravessa em volta dele. */
     .perfil__retrato {
-      position: relative;
-      z-index: 1;
+      grid-column: 1;
+      grid-row: 1;
+      /* ⚠️ Encostada na direita da coluna: centralizada, sobrava um vão e o
+         cartão só encostava nela — a sobreposição é o que faz os dois virarem
+         uma peça só. */
+      justify-self: end;
       display: block;
-      width: min(400px, 54%);
+      width: min(430px, 100%);
       height: auto;
       filter: drop-shadow(0 34px 70px rgba(0,0,0,.75));
-      /* A base se desmancha no preto, mesma razão da abertura. */
-      -webkit-mask-image: linear-gradient(to bottom, #000 78%, rgba(0,0,0,.5) 92%, transparent 100%);
-              mask-image: linear-gradient(to bottom, #000 78%, rgba(0,0,0,.5) 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 82%, rgba(0,0,0,.5) 94%, transparent 100%);
+              mask-image: linear-gradient(to bottom, #000 82%, rgba(0,0,0,.5) 94%, transparent 100%);
     }
-
-    /* A ficha vira uma FILEIRA no rodapé da dobra: em coluna ela brigaria com
-       o retrato pelo centro. */
-    .perfil__rodape {
-      margin-top: clamp(30px, 3.6vw, 52px);
-      padding-top: clamp(20px, 2.2vw, 30px);
-      border-top: 1px solid var(--linha);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: clamp(18px, 2.4vw, 40px);
+    /* ⚠️ O cartão AVANÇA sobre a foto (margem negativa) e fica por cima:
+       encostado sem sobrepor, viraria uma legenda ao lado. */
+    .perfil__cartao {
+      grid-column: 2;
+      grid-row: 1;
+      position: relative;
+      z-index: 1;
+      margin-left: clamp(-150px, -9vw, -64px);
+      margin-bottom: clamp(40px, 6vw, 92px);
+      padding: clamp(24px, 2.6vw, 38px);
+      border: 1px solid var(--linha);
+      border-radius: 10px;
+      background: rgba(14, 12, 10, .86);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 70px rgba(0,0,0,.55);
     }
-    .perfil__dado dt {
-      font-size: clamp(9px, .68vw, 10.5px);
-      letter-spacing: .26em;
+    /* O filete de ouro em cima do nome — o gesto da referência. */
+    .perfil__cartao::before {
+      content: '';
+      display: block;
+      width: 46px; height: 3px;
+      background: var(--ouro);
+      margin-bottom: clamp(16px, 1.6vw, 22px);
+    }
+    .perfil__nome {
+      font-size: clamp(24px, 2.6vw, 40px);
+      font-weight: 500;
+      letter-spacing: -.01em;
+      line-height: 1.1;
+      color: var(--off-white);
+    }
+    .perfil__papel {
+      margin-top: 8px;
+      font-size: clamp(10px, .76vw, 12px);
+      letter-spacing: .24em;
       text-transform: uppercase;
       color: rgba(248, 247, 242, .45);
     }
-    .perfil__dado dd {
-      margin-top: 7px;
-      font-size: clamp(13px, 1vw, 15.5px);
+    .perfil__texto {
+      margin-top: clamp(18px, 1.9vw, 26px);
+      font-size: clamp(13.5px, 1vw, 15.5px);
       font-weight: 300;
-      color: var(--off-white);
+      line-height: 1.7;
+      color: rgba(248, 247, 242, .70);
     }
-    .perfil__dado dd b { font-weight: 400; color: var(--ouro); }
+    .perfil__texto b { font-weight: 400; color: var(--ouro); }
+    .perfil__cartao .link-fino { margin-top: clamp(20px, 2.2vw, 30px); }
 
     @media (max-width: 900px) {
-      .perfil__nome { top: 34%; font-size: min(15vw, 90px); }
-      .perfil__retrato { width: min(300px, 72%); }
-      /* Os dados em duas colunas: em fileira única viram uma linha de quatro
-         itens espremidos. */
-      .perfil__rodape { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 18px; }
-      .perfil__rodape .link-fino { grid-column: 1 / -1; }
+      /* ⚠️ No celular o cartão desce pra BAIXO da foto, sem sobreposição: em
+         cima dela ele cobriria o rosto, que é a única coisa que essa dobra
+         tem pra mostrar. */
+      .perfil__palco { grid-template-columns: 1fr; }
+      .perfil__retrato { grid-column: 1; grid-row: 1; width: min(340px, 82%); }
+      .perfil__cartao {
+        grid-column: 1;
+        grid-row: 2;
+        margin: -28px 0 0;
+        border-radius: 12px;
+      }
     }
 
     /* Entrada suave — um respiro, não animação de template. */
@@ -1399,25 +1403,25 @@
       <p class="rotulo-lamina">Quem está por trás</p>
 
       <div class="perfil__palco">
-        <!-- ⚠️ aria-hidden: pra leitor de tela isto é decoração — o nome dele
-             já está na ficha logo abaixo e sairia dobrado. -->
-        <p class="perfil__nome" aria-hidden="true">James Olaya</p>
         <img
           class="perfil__retrato"
           src="/lp/clinica/james-pose.webp"
-          width="900" height="1195"
+          width="860" height="1773"
           alt="James Olaya de camiseta preta, mãos unidas à frente do rosto, olhando para a câmera"
           loading="lazy"
         />
-      </div>
 
-      <dl class="perfil__rodape">
-        <div class="perfil__dado"><dt>Formação</dt><dd>Biomédico esteta</dd></div>
-        <div class="perfil__dado"><dt>Especialidade</dt><dd>Sobrancelhas e lábios</dd></div>
-        <div class="perfil__dado"><dt>Técnica própria</dt><dd><b>Free Hand</b></dd></div>
-        <div class="perfil__dado"><dt>Também</dt><dd>Master Trainer Internacional</dd></div>
-        <a class="link-fino" href="https://www.instagram.com/jamesolaya" target="_blank" rel="noopener">Conheça o trabalho no Instagram</a>
-      </dl>
+        <div class="perfil__cartao">
+          <p class="perfil__nome">James Olaya</p>
+          <p class="perfil__papel">Biomédico esteta · Micropigmentação</p>
+          <p class="perfil__texto">
+            Especialista em sobrancelhas e lábios, criador da técnica
+            <b>Free Hand</b> e Master Trainer internacional. Eleito melhor
+            micropigmentador do ano por votação do público.
+          </p>
+          <a class="link-fino" href="https://www.instagram.com/jamesolaya" target="_blank" rel="noopener">Conheça o trabalho no Instagram</a>
+        </div>
+      </div>
     </div>
   </section>
 
