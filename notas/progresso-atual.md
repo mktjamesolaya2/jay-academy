@@ -164,6 +164,22 @@ atravessa em volta dele, que é justamente o efeito escolhido.
 A ficha virou **fileira** no rodapé da dobra (em coluna brigaria com o retrato
 pelo centro) e vira 2×2 no celular.
 
+### 🪪 Dez versões em formato de CARTÃO (21/08)
+
+Ele mandou uma referência (o cartão do Elon Musk da SpaceX: painel sobre o
+fundo, retrato emoldurado, filete dourado, assinatura, redes) e pediu dez na
+mesma pegada. Folha:
+<https://claude.ai/code/artifact/df29f5d4-d745-4866-b029-cf4ff15a3f10>
+
+⚠️ **Duas coisas da referência que a gente NÃO tem**, e que estão marcadas nas
+opções que dependem delas:
+- **a assinatura à mão do James** — dá pra resolver em cinco minutos: ele assina
+  numa folha branca, foto, e eu vetorizo;
+- **perfis além do Instagram** — hoje só temos um link real.
+
+A de número **10 cruza as duas folhas**: o cartão com o nome gigante
+atravessando por trás.
+
 ### 🔤 Dez variações do nome atravessando (21/08)
 
 Ele pediu *"me envia nessa linha de raciocínio"* — mais caminhos a partir da
