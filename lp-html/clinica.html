@@ -1007,6 +1007,88 @@
       }
     }
 
+
+    /* ============================================================
+       DOBRA — QUEM ESTÁ POR TRÁS (o perfil do James)
+
+       Lâmina CLARA, entre os depoimentos e o fechamento: escuro, escuro,
+       CLARO, escuro. Sem essa virada são quatro dobras pretas seguidas.
+
+       ⚠️ A foto é a REAL, sem o retoque de IA — esse ficou na abertura. E é
+       recorte de BUSTO: na abertura ele aparece de corpo, aqui de perto. Mesma
+       pessoa, enquadramento diferente, senão a página repete a mesma imagem.
+
+       ⚠️ O texto do site antigo era uma parede de adjetivo ("ganhador de
+       muitos prêmios", "muito famoso pela arte e delicadeza"). Aqui virou
+       FICHA: o que ele é, o que faz, o que criou. Quem lê confere; adjetivo
+       ela desconta.
+       ============================================================ */
+    .perfil {
+      display: grid;
+      grid-template-columns: minmax(0, .68fr) minmax(0, 1fr);
+      gap: clamp(24px, 4vw, 76px);
+      align-items: center;
+    }
+    .perfil__foto { justify-self: center; width: 100%; max-width: 340px; }
+    .perfil__foto img {
+      display: block;
+      width: 100%; height: auto;
+      /* ⚠️ 564px é a largura real do recorte — passar disso é ampliar. */
+      max-width: 564px;
+      filter: drop-shadow(0 26px 50px rgba(16,24,32,.18));
+      /* Mesmo desmanche da abertura: sem isto o busto termina numa linha reta
+         no meio do tronco e vira figurinha colada. */
+      -webkit-mask-image: linear-gradient(to bottom, #000 74%, rgba(0,0,0,.5) 90%, transparent 100%);
+              mask-image: linear-gradient(to bottom, #000 74%, rgba(0,0,0,.5) 90%, transparent 100%);
+    }
+
+    .perfil__nome {
+      font-size: clamp(26px, 3.1vw, 46px);
+      font-weight: 200;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--preto);
+      line-height: 1.1;
+    }
+    .perfil__nome strong { font-weight: 500; }
+
+    /* A ficha: filete entre as linhas, rótulo à esquerda e o dado à direita —
+       o mesmo device das formações da /academy. */
+    .perfil__ficha {
+      margin-top: clamp(24px, 2.6vw, 36px);
+      border-top: 1px solid rgba(16, 24, 32, .20);
+      max-width: 46ch;
+    }
+    .perfil__ficha div {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(16, 24, 32, .10);
+    }
+    .perfil__ficha dt {
+      flex: none;
+      font-size: clamp(9px, .68vw, 10.5px);
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: rgba(16, 24, 32, .48);
+    }
+    .perfil__ficha dd {
+      text-align: right;
+      font-size: clamp(13px, 1vw, 15.5px);
+      font-weight: 300;
+      color: rgba(16, 24, 32, .82);
+    }
+    .perfil__ficha dd b { font-weight: 500; color: #8A7A3E; }
+
+    @media (max-width: 900px) {
+      .perfil { grid-template-columns: 1fr; gap: 26px; }
+      .perfil__foto { max-width: 260px; }
+      .perfil__ficha div { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .perfil__ficha dd { text-align: left; }
+    }
+
     /* Entrada suave — um respiro, não animação de template. */
     .surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
     .surge.visivel { opacity: 1; transform: none; }
@@ -1266,6 +1348,35 @@
             <i>Fio a fio</i>
           </span>
         </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DOBRA — QUEM ESTÁ POR TRÁS ============ -->
+  <section class="secao claro">
+    <div class="faixa perfil surge">
+      <div class="perfil__foto">
+        <img src="/lp/clinica/james-perfil.webp" width="564" height="600" alt="James Olaya de jaleco branco, sorrindo, de braços cruzados" />
+      </div>
+
+      <div class="perfil__texto">
+        <p class="rotulo-lamina">Quem está por trás</p>
+        <h2 class="perfil__nome">James <strong>Olaya</strong></h2>
+        <p class="texto-lamina">
+          Biomédico esteta, especialista em micropigmentação de sobrancelhas e
+          lábios. Criador da técnica <b>Free Hand</b> e eleito melhor
+          micropigmentador do ano por votação do público.
+        </p>
+
+        <dl class="perfil__ficha">
+          <div><dt>Formação</dt><dd>Biomédico esteta</dd></div>
+          <div><dt>Especialidade</dt><dd>Sobrancelhas e lábios</dd></div>
+          <div><dt>Técnica própria</dt><dd><b>Free Hand</b></dd></div>
+          <div><dt>Também</dt><dd>Master Trainer Internacional</dd></div>
+          <div><dt>À frente do</dt><dd>Instituto James Olaya Beauty &amp; Academy</dd></div>
+        </dl>
+
+        <a class="link-fino" href="https://www.instagram.com/jamesolaya" target="_blank" rel="noopener">Conheça o trabalho no Instagram</a>
       </div>
     </div>
   </section>
