@@ -1021,7 +1021,7 @@
       position: relative;
       margin-top: clamp(24px, 3vw, 44px);
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, .92fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, .8fr);
       align-items: end;
     }
     .perfil__retrato {
@@ -1032,8 +1032,12 @@
          uma peça só. */
       justify-self: end;
       display: block;
-      width: min(430px, 100%);
-      height: auto;
+      /* ⚠️ O tamanho vem da ALTURA, não da largura. O recorte é muito mais
+         alto que largo (860×1773): amarrado pela largura, 430px viravam 887px
+         de altura e a dobra inteira passava de 1140px. */
+      height: clamp(400px, 44vw, 620px);
+      width: auto;
+      max-width: 100%;
       filter: drop-shadow(0 34px 70px rgba(0,0,0,.75));
       -webkit-mask-image: linear-gradient(to bottom, #000 82%, rgba(0,0,0,.5) 94%, transparent 100%);
               mask-image: linear-gradient(to bottom, #000 82%, rgba(0,0,0,.5) 94%, transparent 100%);
