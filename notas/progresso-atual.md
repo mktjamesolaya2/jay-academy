@@ -164,6 +164,20 @@ atravessa em volta dele, que é justamente o efeito escolhido.
 A ficha virou **fileira** no rodapé da dobra (em coluna brigaria com o retrato
 pelo centro) e vira 2×2 no celular.
 
+### 🗂️ A /clinica não aparecia no painel — faltava o segundo registro (21/08)
+
+Ela estava no ar e servindo, mas fora da lista "Todos os projetos".
+
+⚠️ **São DOIS registros**, e eu tinha feito só um:
+- `lib/lp-html-registry.ts` — **serve** a página (rota, arquivo, assets);
+- `lib/landing-pages.ts` — é a lista que o **catálogo do painel** lê.
+
+É literalmente a regra de 02/06 ("todo projeto criado dentro do portal precisa
+aparecer no dashboard"). O comentário ficou no código, no meio da entrada nova.
+
+Entra como **rascunho**, não publicada: a dobra da equipe está com marcador e a
+página segue com `noindex`. Marcar publicada agora seria mentir no painel.
+
 ### ✅ A dobra do James ficou no CARTÃO (opção 8) (21/08)
 
 *"É desse jeito que eu quero, mas quero que você refaça a imagem."*
