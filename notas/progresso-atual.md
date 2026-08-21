@@ -121,10 +121,17 @@ final vai pra `public/lp/<pagina>/`, que é de onde a página lê.
 ⚠️ No `.gitignore` é **`assets/*`**, não `assets/`: ignorando a PASTA, o `!` não
 consegue trazer o LEIA-ME de volta — git não reabre diretório ignorado.
 
-### 🏠 A dobra da CASA — mosaico no ar (opção 1) (20/08)
+### 🏠 A dobra da CASA — mosaico TENTADO E REMOVIDO (20/08)
 
-Ele escolheu a **1 — mosaico do espaço**: texto à esquerda, quatro fotos à
-direita em alturas desencontradas.
+Ele escolheu a **1 — mosaico do espaço** (texto à esquerda, quatro fotos à
+direita em alturas desencontradas), viu no ar e cortou: *"não curti não, exclui
+isso"*. Depois: *"vamos deixar essa dobra mais para baixo"*.
+
+⚠️ **O que provavelmente derrubou**: três dos quatro quadros eram marcador
+vazio, então o que a dobra mostrava era mais buraco do que casa. Marcador
+funcionou na dobra da equipe (silhueta lê como pessoa que falta) e não aqui —
+retângulo vazio não lê como foto que falta, lê como espaço morto. **Lição: só
+montar com marcador quando o marcador ainda conta a história.**
 
 ⚠️ **Só uma das quatro existe.** O lounge ocupa o lugar grande; as outras três
 são **marcador** — bloco vazio com fio de ouro e "foto pendente". Nada de foto
