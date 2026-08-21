@@ -166,6 +166,25 @@ export const landingPages: LandingPage[] = [
     createdAt: "2026-08-04",
     contentSource: "lp-html",
   },
+  {
+    // ⚠️ Só aqui a página aparece no painel. O lp-html-registry SERVE a
+    // página; esta lista é a que o catálogo lê. Registrar num e esquecer o
+    // outro é o erro que fez a /clinica ficar no ar sem aparecer em
+    // "Todos os projetos" — regra do projeto desde 02/06.
+    slug: "clinica",
+    name: "Jay Clinic — Clínica",
+    tagline: "A clínica de James Olaya em Campinas",
+    description:
+      "Recriação da jayclinic.com.br no sistema dark cinematográfico: abertura com o nome em lettering e o James recortado, os 4 ganhos em cards, os procedimentos em lâmina clara com o pigmento escorrendo, a equipe recortada sobre o preto, depoimentos em vídeo sem carregar o YouTube, o convite sobre a foto da casa e o perfil dele em cartão. Em construção: a dobra da equipe está com marcadores até as fotos chegarem, e a página segue com noindex.",
+    stack: "HTML + CSS + JS (rota interna do portal)",
+    status: "draft",
+    type: "website",
+    localPath: "portal/lp-html/clinica.html",
+    productionUrl: "/clinica",
+    accent: "gold-black",
+    createdAt: "2026-08-19",
+    contentSource: "lp-html",
+  },
   // __INSERT_LP_HERE__
 ];
 
