@@ -164,6 +164,24 @@ atravessa em volta dele, que é justamente o efeito escolhido.
 A ficha virou **fileira** no rodapé da dobra (em coluna brigaria com o retrato
 pelo centro) e vira 2×2 no celular.
 
+### 🔤 Dez variações do nome atravessando (21/08)
+
+Ele pediu *"me envia nessa linha de raciocínio"* — mais caminhos a partir da
+opção 4. Folha: <https://claude.ai/code/artifact/d28474f4-0bcc-4ab1-af05-559f78e27efa>
+
+⚠️ **A regra que faz esse efeito funcionar**, e que virou o texto de abertura da
+folha: **a palavra precisa ficar parcialmente escondida**. Inteira, vira um
+título com uma foto na frente; escondida demais, ninguém lê o nome. O ponto
+certo é quando o olho completa a palavra sozinho — e é só isso que muda de uma
+opção pra outra.
+
+As dez variam **a altura em que a palavra cruza** (mãos, olhos, chão), **o peso
+dela** (cheia, contorno, ouro, repetida) e **o quanto ele esconde**. A 1 é a que
+está no ar.
+
+⚠️ As maquetes desenham o nome com **texto de verdade no canvas**, não barras
+cinza — sem isso não dá pra julgar o efeito, que é justamente sobre legibilidade.
+
 ### 🎓 A dobra do James — primeira versão, com ficha (20/08)
 
 Lâmina **clara** entre os depoimentos e o fechamento: sem essa virada são
