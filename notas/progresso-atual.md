@@ -121,6 +121,26 @@ final vai pra `public/lp/<pagina>/`, que é de onde a página lê.
 ⚠️ No `.gitignore` é **`assets/*`**, não `assets/`: ignorando a PASTA, o `!` não
 consegue trazer o LEIA-ME de volta — git não reabre diretório ignorado.
 
+### 📸 O acervo de fotos do James (achado em 20/08)
+
+Ele pediu *"busca melhores imagens do james"*. **Tem material muito melhor do que
+o que estava no ar**, guardado na pasta da /academy:
+
+| arquivo | o que é |
+|---|---|
+| `/lp/academy/reais/james-retrato.jpg` (1200×1600) | retrato de estúdio, blazer de veludo preto sobre fundo preto — **veste a página** |
+| `/lp/academy/reais/james-professor.jpg` (1200×1600) | o mesmo ensaio, outro enquadramento |
+| `/lp/academy/reais/james-dark.jpg` (1400×1867) | preto e branco dramático, óculos redondos — foto de capa de revista |
+| `/lp/academy/reais/james-street.jpg` (1536×2048) | corpo inteiro na faixa de pedestre, visto de cima |
+| `/lp/clinica/james-perfil.webp` | o busto de jaleco que está no ar hoje |
+
+⚠️ **Lição**: o acervo do repositório é grande (95 arquivos com "james" no nome).
+Vale varrer `lib/midia-assets.json` antes de qualquer coisa — foi ele que
+apontou esses quatro.
+
+**Folha com 10 layouts, montada com as fotos DE VERDADE** (não blocos cinza):
+<https://claude.ai/code/artifact/c744e25a-0be2-4a8c-a55f-9578e6f43c33>
+
 ### 🎓 A dobra do James — "quem está por trás" (20/08)
 
 Lâmina **clara** entre os depoimentos e o fechamento: sem essa virada são
