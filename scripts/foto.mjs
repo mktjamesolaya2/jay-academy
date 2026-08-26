@@ -52,7 +52,11 @@ try {
     await pagina.setViewport(tamanho);
 
     const resposta = await pagina.goto(endereco, { waitUntil: 'networkidle2', timeout: 60000 });
-    if (!resposta || !resposta.ok()) {
+    // ⚠️ `ok()` é falso pra 304, que é RESPOSTA BOA — é o cache do navegador
+    // dizendo "não mudou". Fotografando produção isso derrubava o script com
+    // a mensagem errada ("o dev está rodando?"). O que interroga de verdade é
+    // 4xx/5xx.
+    if (!resposta || resposta.status() >= 400) {
       throw new Error(`${endereco} respondeu ${resposta ? resposta.status() : 'nada'}. O dev está rodando? (npm run dev)`);
     }
     await prepararPagina(pagina, Number(opcoes.esperar) || 600);
