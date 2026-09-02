@@ -35,6 +35,14 @@ function pick(fields: Record<string, string>, keys: string[]): string {
   return "";
 }
 
+function emailValido(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+}
+
+function whatsappBrasilValido(whatsapp: string): boolean {
+  return /^55[1-9]\d\d{8,9}$/.test(whatsapp.replace(/\D/g, ""));
+}
+
 export async function POST(req: Request) {
   // Anti-abuso: cap de tamanho + rate-limit por IP (leads legítimos são poucos).
   if (payloadTooLarge(req, 64 * 1024)) {
@@ -103,6 +111,24 @@ export async function POST(req: Request) {
       const p = new URL(referer, "https://jayacademy.com.br").pathname;
       slug = p.replace(/^\/+|\/+$/g, "").split("/")[0] || "lp";
     } catch {}
+
+    // O formulário do Transforma atende ao Brasil: a mesma checagem existe no
+    // navegador, mas fica aqui também para impedir dados inválidos enviados
+    // diretamente à API antes de chegarem ao CRM.
+    if (slug === "transforma") {
+      if (!emailValido(email)) {
+        return NextResponse.json(
+          { success: false, data: { message: "Digite um e-mail válido." } },
+          { status: 400 }
+        );
+      }
+      if (!whatsappBrasilValido(whatsapp)) {
+        return NextResponse.json(
+          { success: false, data: { message: "Digite um WhatsApp brasileiro válido, com DDD." } },
+          { status: 400 }
+        );
+      }
+    }
 
     // Webhook/redirect: config explícita por LP (lp-form-config) tem prioridade;
     // senão cai na página gêmea no KV (se publicada e configurada no painel).
