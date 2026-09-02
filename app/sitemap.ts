@@ -15,6 +15,7 @@ const STATIC_LPS = [
   "pmuclass",
   "metodo-shadow-pro",
   "inmersion-pelo-a-pelo",
+  "transforma",
 ];
 
 export const revalidate = 3600;

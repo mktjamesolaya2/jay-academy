@@ -123,6 +123,15 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "rose",
   },
   {
+    // Evento online gratuito (3 dias). Sem assetsDir: reaproveita os assets do
+    // Shadow PRO até o James mandar a arte própria do evento.
+    slug: "transforma",
+    title: "Jay Transforma",
+    htmlFile: "lp-html/transforma.html",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     slug: "pmuclass",
     title: "PMU CLASS",
     htmlFile: "lp-html/pmuclass.html",
