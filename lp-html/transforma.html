@@ -166,7 +166,7 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 .pergunta__opcoes label{display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border:1px solid var(--line2);border-radius:11px;background:rgba(255,255,255,.02);color:#d9d1c5;font-size:13.5px;line-height:1.4;cursor:pointer;transition:border-color .2s,background .2s;}
 .pergunta__opcoes label:has(input:checked){border-color:rgba(217,180,88,.7);background:rgba(217,180,88,.08);color:#fff;}
 .pergunta__opcoes input{width:17px;height:17px;margin:1px 0 0;accent-color:var(--gold2);flex:0 0 auto;}
-.num-poppins{font-family:'Poppins',sans-serif;font-style:normal;letter-spacing:0;font-weight:700;}
+.num-poppins{font-family:'Beau',Georgia,serif;font-style:normal;letter-spacing:.02em;font-weight:400;}
 @keyframes revela{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .insc__card .cta{width:100%;margin-top:8px;}
 .insc__nota{color:var(--muted);font-size:13px;line-height:1.55;margin-top:16px;text-align:center;}
@@ -223,8 +223,59 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   .para{grid-template-columns:1fr;}
 }
 @media(max-width:640px){
+  .wrap{padding-left:18px;padding-right:18px;}
+  .sec{padding:64px 0;}
+  .sec-title{font-size:clamp(31px,9.2vw,40px);line-height:1.01;margin-bottom:16px;}
+  .sec-sub{font-size:15px;line-height:1.62;}
+  .eyebrow{font-size:10px;letter-spacing:.2em;margin-bottom:13px;gap:8px;}
+  .eyebrow::before,.eyebrow.c::after{width:21px;}
+  .hero__in{padding:calc(min(76vw,440px) - 32px) 0 50px;}
+  .hero__logo{margin-bottom:20px;}
+  .hero__logo b{font-size:clamp(28px,8vw,39px);letter-spacing:.055em;}
+  .hero h1{font-size:clamp(36px,10.3vw,45px);line-height:1;max-width:12.2ch;margin:0 auto 18px;}
+  .hero__sub{font-size:16px;line-height:1.42;margin-bottom:15px;}
+  .hero__lead{font-size:14px;line-height:1.58;margin-bottom:21px;}
+  .hero .selo{padding:8px 13px;gap:5px 10px;letter-spacing:.13em;}
+  .hero .data-ev{margin:15px 0 22px;font-size:10px;letter-spacing:.12em;}
+  .hero .cta{width:min(100%,390px);padding:16px 18px;font-size:12px;line-height:1.35;}
+  .hero__note{font-size:12px;max-width:35ch;}
   .passos{grid-template-columns:1fr;}
   .situ__row{gap:14px;padding:22px 4px;}
+  .situ__n{font-size:48px;min-width:48px;}
+  .situ__t{font-size:15px;line-height:1.55;}
+  .situ-fecho{font-size:25px;line-height:1.12;margin-top:30px;}
+  .dias,.trilhas{margin-top:34px;gap:14px;}
+  .dia{padding:25px 20px;border-radius:17px;}
+  .dia__n{font-size:62px;margin-bottom:12px;}
+  .dia h3{font-size:31px;line-height:1;margin-bottom:13px;}
+  .dia__q{font-size:21px;line-height:1.13;margin-bottom:17px;}
+  .dia__p,.trilha p{font-size:14px;line-height:1.6;}
+  .trilha{padding:24px 20px;border-radius:16px;}
+  .trilha h4{font-size:28px;}
+  .para{margin-top:32px;gap:12px;}
+  .para li{padding:15px 16px;font-size:14px;}
+  .bio{padding-bottom:54px;}
+  .bio::after{height:335px;background-position:center 10%;}
+  .bio__in{padding-top:281px;}
+  .bio__professor{font-size:46px;line-height:.98;margin-bottom:22px;}
+  .bio__txt p{font-size:14px;line-height:1.62;margin-bottom:13px;}
+  .bio__txt p.big{font-size:26px;line-height:1.1;margin-bottom:26px;}
+  .cert{gap:24px;}
+  .cert__doc{padding:29px 19px;transform:none;}
+  .cert__tit{font-size:31px;}
+  .cert__nome{font-size:33px;}
+  .passo{padding:23px 20px;}
+  .insc__card{margin-top:28px;padding:25px 18px;border-radius:18px;}
+  .insc__card input{padding:14px;font-size:16px;}
+  .pergunta legend{font-size:13.5px;line-height:1.48;}
+  .pergunta__opcoes label{padding:11px 12px;font-size:13px;}
+  .faq{margin-top:30px;gap:10px;}
+  .qa__q{padding:17px 16px;font-size:14px;line-height:1.4;}
+  .qa__a p{padding:0 16px 17px;font-size:13.5px;}
+  .final__perg{gap:8px;margin-bottom:24px;}
+  .final__perg p{font-size:24px;line-height:1.1;}
+  .final__mark{font-size:39px;}
+  .foot{padding:32px 0 38px;}
 }
 @media(max-width:600px){
   .hero::after{background-image:url("/lp/shadow-pro/hero-scene-mobile.webp");background-position:center top;}
