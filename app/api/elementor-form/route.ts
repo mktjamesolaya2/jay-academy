@@ -3,7 +3,7 @@ import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
-import { montarCorpoDoLead } from "@/lib/crm-envio";
+import { montarCorpoDoLead, montarPerfilTransforma } from "@/lib/crm-envio";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
@@ -184,6 +184,7 @@ export async function POST(req: Request) {
                 whatsapp,
                 slug,
               }),
+              ...(slug === "transforma" ? montarPerfilTransforma(fields) : {}),
               // Este funil foi pedido com etiqueta própria para recuperação e
               // negociação no comercial. As demais LPs mantêm a regra delas.
               ...(slug === "transforma" ? { tag: "JAY Transforma" } : {}),

@@ -40,3 +40,29 @@ export function montarCorpoDoLead(d: DadosDoLead): Record<string, string> {
     pagina: d.slug,
   };
 }
+
+/** Campos de perfil aceitos pelo webhook do JAY Transforma. */
+export function montarPerfilTransforma(
+  fields: Record<string, string>
+): Record<string, string> {
+  const prontidao = (fields.prontidao_proximo_passo || "").trim();
+  const barreira = (fields.barreira_proximo_passo || "").trim();
+  const resumo = [
+    "Evento: JAY Transforma",
+    prontidao && `Prontidão: ${prontidao}`,
+    barreira && `Barreira: ${barreira}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return {
+    perfil_do_lead: prontidao || "Participante do JAY Transforma",
+    interesse_tecnico: "JAY Transforma",
+    curso_de_interesse: "JAY Transforma",
+    modalidade_e_momento: prontidao
+      ? `Online e gratuito — ${prontidao}`
+      : "Online e gratuito",
+    resumo_completo: resumo,
+    mensagem: resumo,
+  };
+}
