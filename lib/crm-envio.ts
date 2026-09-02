@@ -41,28 +41,23 @@ export function montarCorpoDoLead(d: DadosDoLead): Record<string, string> {
   };
 }
 
-/** Campos de perfil aceitos pelo webhook do JAY Transforma. */
-export function montarPerfilTransforma(
-  fields: Record<string, string>
+/**
+ * O Transforma só precisa identificar o contato e registrar as respostas no
+ * campo de observações do CRM. Campos desconhecidos pelo webhook viram
+ * observações; por isso não enviamos perfil, curso ou resumo duplicados.
+ */
+export function montarCorpoTransforma(
+  d: Pick<DadosDoLead, "fields" | "name" | "email" | "whatsapp">
 ): Record<string, string> {
-  const prontidao = (fields.prontidao_proximo_passo || "").trim();
-  const barreira = (fields.barreira_proximo_passo || "").trim();
-  const resumo = [
-    "Evento: JAY Transforma",
-    prontidao && `Prontidão: ${prontidao}`,
-    barreira && `Barreira: ${barreira}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  const prontidao = (d.fields.prontidao_proximo_passo || "").trim();
+  const barreira = (d.fields.barreira_proximo_passo || "").trim();
 
   return {
-    perfil_do_lead: prontidao || "Participante do JAY Transforma",
-    interesse_tecnico: "JAY Transforma",
-    curso_de_interesse: "JAY Transforma",
-    modalidade_e_momento: prontidao
-      ? `Online e gratuito — ${prontidao}`
-      : "Online e gratuito",
-    resumo_completo: resumo,
-    mensagem: resumo,
+    nome: d.name,
+    email: d.email,
+    telefone: d.whatsapp,
+    tag: "JAY Transforma",
+    ...(prontidao ? { prontidao_proximo_passo: prontidao } : {}),
+    ...(barreira ? { barreira_proximo_passo: barreira } : {}),
   };
 }

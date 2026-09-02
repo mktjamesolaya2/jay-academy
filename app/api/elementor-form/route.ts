@@ -3,7 +3,7 @@ import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
-import { montarCorpoDoLead, montarPerfilTransforma } from "@/lib/crm-envio";
+import { montarCorpoDoLead, montarCorpoTransforma } from "@/lib/crm-envio";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
@@ -202,19 +202,11 @@ export async function POST(req: Request) {
             // O corpo é montado por uma função pura e testada (lib/crm-envio).
             // ⚠️ Foi aqui que a tag sumiu sem ninguém ver, em 13/08 — por isso
             // agora existe teste olhando o objeto que sai.
-            body: JSON.stringify({
-              ...montarCorpoDoLead({
-                fields,
-                name,
-                email,
-                whatsapp,
-                slug,
-              }),
-              ...(slug === "transforma" ? montarPerfilTransforma(fields) : {}),
-              // Este funil foi pedido com etiqueta própria para recuperação e
-              // negociação no comercial. As demais LPs mantêm a regra delas.
-              ...(slug === "transforma" ? { tag: "JAY Transforma" } : {}),
-            }),
+            body: JSON.stringify(
+              slug === "transforma"
+                ? montarCorpoTransforma({ fields, name, email, whatsapp })
+                : montarCorpoDoLead({ fields, name, email, whatsapp, slug })
+            ),
             signal: AbortSignal.timeout(8000),
           }
         );

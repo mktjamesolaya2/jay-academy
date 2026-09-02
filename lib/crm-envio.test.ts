@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { montarCorpoDoLead, montarPerfilTransforma } from "./crm-envio.ts";
+import { montarCorpoDoLead, montarCorpoTransforma } from "./crm-envio.ts";
 
 const base = {
   fields: { nome: "Maria", whatsapp: "11999998888" },
@@ -44,15 +44,21 @@ test("campo extra do formulário viaja junto", () => {
   assert.equal(c.cidade, "Campinas");
 });
 
-test("JAY Transforma preenche os campos de perfil e o resumo do CRM", () => {
-  const c = montarPerfilTransforma({
-    prontidao_proximo_passo: "Estou pronta para avançar",
-    barreira_proximo_passo: "Investimento",
+test("JAY Transforma envia só contato, etiqueta e respostas para observações", () => {
+  const c = montarCorpoTransforma({
+    ...base,
+    fields: {
+      prontidao_proximo_passo: "Estou pronta para avançar",
+      barreira_proximo_passo: "Investimento",
+      campo_que_nao_deve_ir: "não enviar",
+    },
   });
-  assert.equal(c.perfil_do_lead, "Estou pronta para avançar");
-  assert.equal(c.interesse_tecnico, "JAY Transforma");
-  assert.equal(c.curso_de_interesse, "JAY Transforma");
-  assert.equal(c.modalidade_e_momento, "Online e gratuito — Estou pronta para avançar");
-  assert.match(c.resumo_completo, /Barreira: Investimento/);
-  assert.equal(c.mensagem, c.resumo_completo);
+  assert.equal(c.nome, "Maria");
+  assert.equal(c.telefone, "11999998888");
+  assert.equal(c.tag, "JAY Transforma");
+  assert.equal(c.prontidao_proximo_passo, "Estou pronta para avançar");
+  assert.equal(c.barreira_proximo_passo, "Investimento");
+  assert.equal("perfil_do_lead" in c, false);
+  assert.equal("resumo_completo" in c, false);
+  assert.equal("campo_que_nao_deve_ir" in c, false);
 });
