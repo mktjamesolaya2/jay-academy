@@ -2116,6 +2116,8 @@ conferida. **Só funciona no localhost**: em produção a env é obrigatória.
   impedindo a coluna desktop vazia de comprimir os textos no mobile.
 - O retrato do professor agora sangra até a borda direita da seção em todas as larguras, compensando
   dinamicamente a margem do container no desktop e os gutters de 20/18 px em tablets e celulares.
+- Aplicada máscara gradual na base do retrato para dissolver o corte horizontal do corpo no fundo marfim,
+  sem afetar a nitidez do card do Instagram sobreposto.
 - Ritmo vertical e legibilidade refinados em todas as seções: manifesto, fórmula, pilares, treino,
   currículo, acesso, professor, oferta, garantia, FAQ e fechamento.
 - Carrosséis agora deixam uma margem/preview consistente, usam cards proporcionais à viewport e entregam
