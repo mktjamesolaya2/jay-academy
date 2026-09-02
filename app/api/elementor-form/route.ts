@@ -239,6 +239,23 @@ export async function POST(req: Request) {
       `popup Elementor na LP${webhookStatus === "sent" ? " — webhook ok" : ""}`
     );
 
+    // No Transforma, o próximo passo é entrar no grupo. Não confirmamos nem
+    // redirecionamos enquanto o CRM não aceitar o lead: assim o comercial não
+    // perde uma inscrição silenciosamente. O contato já ficou salvo no painel
+    // com o motivo para recuperação/reenvio.
+    if (slug === "transforma" && crmStatus !== "ok") {
+      return NextResponse.json(
+        {
+          success: false,
+          data: {
+            message:
+              "Não conseguimos confirmar sua inscrição agora. Tente novamente em instantes.",
+          },
+        },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       data: {
