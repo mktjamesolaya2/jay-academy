@@ -143,6 +143,10 @@ test("a ponte SÓ encosta em formulário do Elementor", () => {
     ondeChecaClasse < ondeSegura,
     "a checagem de classe vem ANTES de segurar o envio"
   );
+  assert.ok(
+    guarda.includes("(^|\\s)elementor-form(\\s|$)"),
+    "o regex entregue ao navegador preserva \\s, em vez de virar a letra s"
+  );
 });
 
 test("mesmaPagina reconhece o que iria pro vazio", () => {

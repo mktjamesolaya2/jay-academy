@@ -112,7 +112,7 @@ export function montarGuardaDeFormularios(): string {
     // dele e o comportamento dele (redirecionar pro WhatsApp, animação de
     // sucesso) — a ponte encostou num desses e o James viu logo: "a animação
     // que ele tinha antes mudou". Não é nosso, não mexemos.
-    if (!/(^|\s)elementor-form(\s|$)/.test(form.className || "")) return;
+    if (!/(^|\\s)elementor-form(\\s|$)/.test(form.className || "")) return;
     // Alguém já cuidou (Elementor funcionando, script próprio): não encosta.
     if (evento.defaultPrevented) return;
     // Formulário com destino de verdade (Hotmart, outro site): deixa seguir.
