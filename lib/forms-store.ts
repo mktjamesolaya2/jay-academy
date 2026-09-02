@@ -37,6 +37,8 @@ export type FormSubmission = {
   crmErro?: string;
   /** Página de origem — é ela que sabe qual chave usar num reenvio. */
   paginaSlug?: string;
+  /** Respostas de qualificação, preservadas para o comercial e para o CSV. */
+  respostas?: Record<string, string>;
 };
 
 const FORMS_KEY = "forms:all";

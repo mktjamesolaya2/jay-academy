@@ -218,6 +218,7 @@ export async function POST(req: Request) {
       crmStatus,
       crmErro,
       paginaSlug: slug,
+      respostas: fields,
     });
 
     await logAnonymousActivity(

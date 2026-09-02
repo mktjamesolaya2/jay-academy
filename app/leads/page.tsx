@@ -143,6 +143,7 @@ export default async function LeadsPage({
                     <tr className="border-b border-[#1f1f1f] bg-[#0d0d0d] text-left text-[10px] uppercase tracking-[0.14em] text-neutral-500 font-semibold">
                       <th className="px-4 py-3">Nome</th>
                       <th className="px-4 py-3">Contato</th>
+                      <th className="px-4 py-3">Perfil</th>
                       <th className="px-4 py-3">Origem</th>
                       <th className="px-4 py-3">Quando</th>
                       <th className="px-4 py-3">Webhook</th>
@@ -165,6 +166,11 @@ export default async function LeadsPage({
                               {s.whatsapp}
                             </p>
                           )}
+                        </td>
+                        <td className="px-4 py-3 text-[12px] leading-5 text-neutral-400 min-w-[240px]">
+                          {s.respostas?.prontidao_proximo_passo && <p><span className="text-neutral-600">Prontidão: </span>{s.respostas.prontidao_proximo_passo}</p>}
+                          {s.respostas?.barreira_proximo_passo && <p><span className="text-neutral-600">Barreira: </span>{s.respostas.barreira_proximo_passo}</p>}
+                          {!s.respostas?.prontidao_proximo_passo && !s.respostas?.barreira_proximo_passo && "—"}
                         </td>
                         <td className="px-4 py-3 text-neutral-400 text-[13px] whitespace-nowrap">
                           {originLabel(s.formId, formNames)}

@@ -156,6 +156,16 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 .insc__card input{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px;padding:15px 16px;color:#fff;font-family:'Poppins',sans-serif;font-size:16px;transition:border-color .2s,background .2s;}
 .insc__card input:focus{outline:none;border-color:var(--gold);background:rgba(217,180,88,.06);}
 .insc__card input::placeholder{color:#6c6577;}
+.perguntas{display:none;margin-top:24px;padding-top:24px;border-top:1px solid var(--line2);}
+.perguntas.show{display:block;animation:revela .28s ease both;}
+.pergunta{border:0;padding:0;margin:0 0 24px;}
+.pergunta legend{font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;line-height:1.45;color:#f4eee3;margin-bottom:12px;}
+.pergunta__opcoes{display:grid;gap:9px;}
+.pergunta__opcoes label{display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border:1px solid var(--line2);border-radius:11px;background:rgba(255,255,255,.02);color:#d9d1c5;font-size:13.5px;line-height:1.4;cursor:pointer;transition:border-color .2s,background .2s;}
+.pergunta__opcoes label:has(input:checked){border-color:rgba(217,180,88,.7);background:rgba(217,180,88,.08);color:#fff;}
+.pergunta__opcoes input{width:17px;height:17px;margin:1px 0 0;accent-color:var(--gold2);flex:0 0 auto;}
+.num-poppins{font-family:'Poppins',sans-serif;font-style:normal;letter-spacing:0;font-weight:700;}
+@keyframes revela{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .insc__card .cta{width:100%;margin-top:8px;}
 .insc__nota{color:var(--muted);font-size:13px;line-height:1.55;margin-top:16px;text-align:center;}
 .insc__card .jayo-aviso,.insc__card [data-jayo-aviso]{text-align:center;}
@@ -233,7 +243,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
         <b>Jay <i>Transforma</i></b>
         <span>JAY.O Academy</span>
       </div>
-      <h1>3 dias para transformar sua <b>técnica</b>, sua <b>imagem</b> e sua <b>carreira</b>.</h1>
+      <h1><span class="num-poppins">3</span> dias para transformar sua <b>técnica</b>, sua <b>imagem</b> e sua <b>carreira</b>.</h1>
       <p class="hero__sub">Um evento online e gratuito da JAY.O Academy para quem quer entrar, evoluir ou construir uma carreira mais forte no mercado da beleza e da micropigmentação.</p>
       <p class="hero__lead">Durante 3 dias, James Olaya e especialistas da Academy vão mostrar o que precisa ser desenvolvido para transformar conhecimento em uma atuação mais profissional — da técnica à forma como você se posiciona e constrói sua carreira.</p>
       <div class="selo">Online <i>•</i> Gratuito <i>•</i> Com certificado</div>
@@ -263,7 +273,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
 <section class="sec">
   <div class="wrap center">
     <span class="eyebrow c">A jornada</span>
-    <h2 class="sec-title">3 dias. <span class="gold">3 transformações.</span></h2>
+    <h2 class="sec-title"><span class="num-poppins">3</span> dias. <span class="gold"><span class="num-poppins">3</span> transformações.</span></h2>
     <p class="sec-sub">Uma sequência pensada para você sair enxergando com clareza o que precisa ser desenvolvido no seu próximo momento profissional.</p>
     <div class="dias">
       <article class="dia">
@@ -283,8 +293,8 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
         <p class="dia__p">Porque não basta realizar um bom trabalho. As pessoas também precisam conseguir perceber que ele é bom.</p>
       </article>
       <article class="dia">
-        <div class="dia__n">03</div>
-        <div class="dia__k">Dia 3</div>
+        <div class="dia__n">0<span class="num-poppins">3</span></div>
+        <div class="dia__k">Dia <span class="num-poppins">3</span></div>
         <h3>Transforme sua <span class="gold">carreira</span></h3>
         <p class="dia__q">Como transformo aquilo que sei em uma carreira?</p>
         <div class="dia__tags"><span>Clientes</span><span>Vendas</span><span>Atendimento</span><span>Recorrência</span><span>Crescimento</span><span>Organização</span><span>Visão profissional</span><span>Próximos passos</span></div>
@@ -299,7 +309,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   <div class="wrap">
     <h3>Sua participação é <span class="gold">gratuita</span>.</h3>
     <a class="cta" href="#inscricao">Quero garantir minha participação gratuita</a>
-    <div class="trust" style="display:flex;justify-content:center;"><b>3 dias</b> • Online • Gratuito • Com certificado</div>
+    <div class="trust" style="display:flex;justify-content:center;"><b><span class="num-poppins">3</span> dias</b> • Online • Gratuito • Com certificado</div>
   </div>
 </section>
 
@@ -377,7 +387,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
           <div class="cert__nome">Seu nome aqui</div>
           <div class="cert__linha"></div>
           <p class="cert__txt">participou dos três dias do evento JAY TRANSFORMA — técnica, imagem e carreira.</p>
-          <div class="cert__pe"><span><b>3</b> dias</span><span>Online</span><span>James Olaya</span></div>
+          <div class="cert__pe"><span><b class="num-poppins">3</b> dias</span><span>Online</span><span>James Olaya</span></div>
           <div class="cert__selo"><b>JT</b><span>Jay</span></div>
         </div>
       </div>
@@ -410,7 +420,7 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
         <p>Depois da inscrição, você será direcionada para o grupo do evento. É lá que você receberá os avisos, conteúdos de aquecimento, bastidores e informações de acesso.</p>
       </article>
       <article class="passo">
-        <b>3</b>
+        <b class="num-poppins">3</b>
         <h4>Participe dos três dias</h4>
         <p>Dia 1: Transforme sua Técnica. Dia 2: Transforme sua Imagem. Dia 3: Transforme sua Carreira.</p>
       </article>
@@ -446,6 +456,27 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
         <span>WhatsApp</span>
         <input type="tel" name="whatsapp" placeholder="(00) 00000-0000" required autocomplete="tel">
       </label>
+      <div class="perguntas" id="perguntas-qualificacao" aria-hidden="true">
+        <fieldset class="pergunta">
+          <legend>Se você encontrasse o caminho certo para evoluir profissionalmente, quão pronta você estaria para dar esse próximo passo ainda este ano?</legend>
+          <div class="pergunta__opcoes">
+            <label><input type="radio" name="prontidao_proximo_passo" value="Estou pronta para avançar" required>Estou pronta para avançar</label>
+            <label><input type="radio" name="prontidao_proximo_passo" value="Quero avançar, mas preciso entender melhor o caminho">Quero avançar, mas preciso entender melhor o caminho</label>
+            <label><input type="radio" name="prontidao_proximo_passo" value="Quero, mas o investimento é uma barreira hoje">Quero, mas o investimento é uma barreira hoje</label>
+            <label><input type="radio" name="prontidao_proximo_passo" value="Ainda estou explorando possibilidades">Ainda estou explorando possibilidades</label>
+          </div>
+        </fieldset>
+        <fieldset class="pergunta">
+          <legend>O que te impediria de dar o próximo passo hoje?</legend>
+          <div class="pergunta__opcoes">
+            <label><input type="radio" name="barreira_proximo_passo" value="Investimento" required>Investimento</label>
+            <label><input type="radio" name="barreira_proximo_passo" value="Falta de clareza">Falta de clareza</label>
+            <label><input type="radio" name="barreira_proximo_passo" value="Tempo / agenda">Tempo / agenda</label>
+            <label><input type="radio" name="barreira_proximo_passo" value="Segurança para decidir">Segurança para decidir</label>
+            <label><input type="radio" name="barreira_proximo_passo" value="Se eu sentir confiança, eu avanço">Se eu sentir confiança, eu avanço</label>
+          </div>
+        </fieldset>
+      </div>
       <button type="submit" class="cta">Quero garantir minha participação gratuita</button>
       <p class="jayo-aviso" data-jayo-aviso style="margin:12px 0 0;font-size:15px;line-height:1.5;font-weight:600;"></p>
       <p class="insc__nota">Inscrição gratuita. Após se cadastrar, você receberá o acesso ao grupo exclusivo do evento.</p>
@@ -504,6 +535,20 @@ h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;line-hei
   document.addEventListener('touchmove',function(ev){
     if(ev.touches&&ev.touches.length>1)ev.preventDefault();
   },{passive:false});
+  // As perguntas de qualificação só entram depois que o contato está completo.
+  var form=document.querySelector('.insc__card');
+  var bloco=document.getElementById('perguntas-qualificacao');
+  if(form&&bloco){
+    var nome=form.querySelector('[name="nome"]');
+    var email=form.querySelector('[name="email"]');
+    var whats=form.querySelector('[name="whatsapp"]');
+    function atualizarPerguntas(){
+      var pronto=nome.value.trim().length>1&&email.checkValidity()&&whats.value.replace(/\D/g,'').length>=10;
+      bloco.classList.toggle('show',pronto);
+      bloco.setAttribute('aria-hidden',String(!pronto));
+    }
+    [nome,email,whats].forEach(function(c){c.addEventListener('input',atualizarPerguntas);c.addEventListener('change',atualizarPerguntas);});
+  }
   // accordion do FAQ
   document.querySelectorAll('.qa__q').forEach(function(b){
     b.addEventListener('click',function(){ b.closest('.qa').classList.toggle('open'); });

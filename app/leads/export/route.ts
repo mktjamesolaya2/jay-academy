@@ -35,7 +35,7 @@ export async function GET(req: Request) {
 
   const rows = submissions.filter((s) => !origem || s.formId === origem);
 
-  const header = ["Nome", "Email", "WhatsApp", "Origem", "Data", "Webhook"];
+  const header = ["Nome", "Email", "WhatsApp", "Origem", "Data", "Webhook", "Prontidão para o próximo passo", "Barreira para o próximo passo"];
   const lines = [header.map(csvCell).join(",")];
   for (const s of rows) {
     lines.push(
@@ -46,6 +46,8 @@ export async function GET(req: Request) {
         originLabel(s.formId, formNames),
         s.submittedAt || "",
         s.webhookStatus || "",
+        s.respostas?.prontidao_proximo_passo || "",
+        s.respostas?.barreira_proximo_passo || "",
       ]
         .map(csvCell)
         .join(",")
