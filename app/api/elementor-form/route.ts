@@ -4,6 +4,7 @@ import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
 import { montarCorpoDoLead, montarCorpoTransforma } from "@/lib/crm-envio";
+import { normalizarTelefone, mensagemDeErro } from "@/lib/telefone";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
 import { rateLimit, tooManyRequests, payloadTooLarge } from "@/lib/rate-limit";
@@ -37,10 +38,6 @@ function pick(fields: Record<string, string>, keys: string[]): string {
 
 function emailValido(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-}
-
-function whatsappBrasilValido(whatsapp: string): boolean {
-  return /^55[1-9]\d\d{8,9}$/.test(whatsapp.replace(/\D/g, ""));
 }
 
 export async function POST(req: Request) {
@@ -112,9 +109,11 @@ export async function POST(req: Request) {
       slug = p.replace(/^\/+|\/+$/g, "").split("/")[0] || "lp";
     } catch {}
 
-    // O formulário do Transforma atende ao Brasil: a mesma checagem existe no
-    // navegador, mas fica aqui também para impedir dados inválidos enviados
-    // diretamente à API antes de chegarem ao CRM.
+    // A mesma conferência existe no navegador; aqui ela impede dado inválido
+    // enviado direto na API de chegar ao CRM. O telefone que segue daqui pra
+    // frente é o normalizado (só dígitos, com DDI): sem máscara e sem dúvida
+    // sobre o DDD, que é o formato que o CRM não recusa.
+    let whatsappEnvio = whatsapp;
     if (slug === "transforma") {
       if (!emailValido(email)) {
         return NextResponse.json(
@@ -122,12 +121,14 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
-      if (!whatsappBrasilValido(whatsapp)) {
+      const tel = normalizarTelefone(whatsapp);
+      if (!tel.ok) {
         return NextResponse.json(
-          { success: false, data: { message: "Digite um WhatsApp brasileiro válido, com DDD." } },
+          { success: false, data: { message: mensagemDeErro(tel.motivo) } },
           { status: 400 }
         );
       }
+      whatsappEnvio = tel.digitos;
     }
 
     // Webhook/redirect: config explícita por LP (lp-form-config) tem prioridade;
@@ -152,8 +153,8 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             name,
             email,
-            phone: whatsapp,
-            whatsapp,
+            phone: whatsappEnvio,
+            whatsapp: whatsappEnvio,
             submitted_at: new Date().toISOString(),
             form_name: form.get("form_id")?.toString() || content?.title || slug,
             form_slug: slug,
@@ -204,8 +205,8 @@ export async function POST(req: Request) {
             // agora existe teste olhando o objeto que sai.
             body: JSON.stringify(
               slug === "transforma"
-                ? montarCorpoTransforma({ fields, name, email, whatsapp })
-                : montarCorpoDoLead({ fields, name, email, whatsapp, slug })
+                ? montarCorpoTransforma({ fields, name, email, whatsapp: whatsappEnvio })
+                : montarCorpoDoLead({ fields, name, email, whatsapp: whatsappEnvio, slug })
             ),
             signal: AbortSignal.timeout(8000),
           }
@@ -240,7 +241,7 @@ export async function POST(req: Request) {
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       formId: `wp:${slug}`,
       name: name || "(sem nome)",
-      whatsapp: whatsapp || "",
+      whatsapp: whatsappEnvio || "",
       email: email || "",
       submittedAt: new Date().toISOString(),
       webhookStatus,

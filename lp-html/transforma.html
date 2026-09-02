@@ -507,7 +507,7 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
       </label>
       <label class="campo">
         <span>WhatsApp</span>
-        <input type="tel" name="whatsapp" value="+55 " placeholder="+55 (00) 00000-0000" required autocomplete="tel" inputmode="numeric" maxlength="19">
+        <input type="tel" name="whatsapp" value="+55 " placeholder="+55 (00) 00000-0000" required autocomplete="tel" inputmode="tel" maxlength="24">
       </label>
       <div class="perguntas" id="perguntas-qualificacao" aria-hidden="true">
         <fieldset class="pergunta">
@@ -595,38 +595,109 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
     var nome=form.querySelector('[name="nome"]');
     var email=form.querySelector('[name="email"]');
     var whats=form.querySelector('[name="whatsapp"]');
-    function telefoneValido(valor){
-      return /^55[1-9]\d\d{8,9}$/.test(String(valor||'').replace(/\D/g,''));
+    // Espelho da regra de lib/telefone.ts (HTML puro não importa módulo; o
+    // servidor continua sendo a autoridade). Brasil confere de verdade; outro
+    // país só precisa caber na faixa da E.164 — recusar formato de país que a
+    // gente não conhece é perder aluna de fora.
+    function conferirTelefone(valor){
+      var texto=String(valor||'').trim();
+      var d=texto.replace(/\D/g,'');
+      if(d.length<=3)return 'Digite seu WhatsApp com DDD.';
+      var temMais=texto.charAt(0)==='+';
+      // ⚠️ DDD 55 (Santa Maria/RS) x DDI 55: só é DDI a partir de 12 dígitos.
+      var br=null;
+      if(d.slice(0,2)==='55'&&d.length>=12)br=d.slice(2);
+      else if(!temMais&&d.length>=10&&d.length<=11)br=d;
+      else if(!temMais&&d.length<10)return 'Faltam números. Confira o DDD (ou use + e o código do país).';
+      if(br){
+        var ddd=br.slice(0,2),local=br.slice(2);
+        if(ddd.charAt(0)==='0'||ddd==='10')return 'Confira o DDD — ele vai de 11 a 99, sem o zero na frente.';
+        if(local.length<8)return 'Faltam números no WhatsApp.';
+        if(local.length>9)return 'Esse número tem dígitos demais.';
+        if(local.length===9&&local.charAt(0)!=='9')return 'Confira o número: celular brasileiro começa com 9 depois do DDD.';
+        return '';
+      }
+      if(d.length<8)return 'Faltam números no WhatsApp.';
+      if(d.length>15)return 'Esse número tem dígitos demais.';
+      return '';
+    }
+    function telefoneValido(valor){ return conferirTelefone(valor)===''; }
+    // Dois modos: enquanto for número brasileiro, a máscara ajuda; assim que a
+    // pessoa troca o DDI, ela sai do caminho e o campo vira texto livre.
+    function ehModoBrasil(texto){
+      var t=String(texto||'').trim();
+      if(!t)return true;
+      if(t.charAt(0)!=='+')return /^[\d\s().-]*$/.test(t);
+      return t.replace(/\D/g,'').slice(0,2)==='55';
     }
     function formatarWhats(valor){
-      var digitos=String(valor||'').replace(/\D/g,'');
-      if(digitos.slice(0,2)==='55')digitos=digitos.slice(2);
+      var texto=String(valor||'').trim();
+      if(!ehModoBrasil(texto)){
+        // Modo livre: só limpa o que não é telefone e respeita o limite do campo.
+        return texto.replace(/[^\d+\s().-]/g,'').slice(0,24);
+      }
+      // O "+55" escrito é prefixo, não DDD: o que conta como DDD vem depois dele.
+      var temPrefixo=/^\+\s*55/.test(texto);
+      var digitos=(temPrefixo?texto.replace(/^\+\s*55/,''):texto).replace(/\D/g,'');
+      // 12 dígitos ou mais só acontece em número colado com DDI junto.
+      if(digitos.length>=12&&digitos.slice(0,2)==='55')digitos=digitos.slice(2);
       digitos=digitos.slice(0,11);
-      if(!digitos)return '+55 ';
+      // Sem dígito nenhum o campo esvazia de vez — era isto que prendia todo
+      // mundo no +55: a versão anterior devolvia '+55 ' e a tecla apagar não saía do lugar.
+      if(!digitos)return temPrefixo?'+55':'';
       if(digitos.length<=2)return '+55 ('+digitos;
       var local=digitos.slice(2);
       if(local.length<=4)return '+55 ('+digitos.slice(0,2)+') '+local;
       var corte=local.length===9?5:4;
       return '+55 ('+digitos.slice(0,2)+') '+local.slice(0,corte)+'-'+local.slice(corte);
     }
+    // Onde termina o "+55" literal — os dígitos dele não são do número.
+    function inicioLocal(texto){
+      var m=/^\+\s*55/.exec(String(texto||''));
+      return m?m[0].length:0;
+    }
+    // Reposiciona o cursor contando os dígitos do número (ignorando o prefixo),
+    // senão ele pula pro fim a cada tecla e a pessoa não consegue corrigir o meio.
+    function aplicarMascara(){
+      var antes=whats.value,pos=whats.selectionStart;
+      var depois=formatarWhats(antes);
+      if(depois===antes)return;
+      var ini=inicioLocal(antes);
+      var corte=pos===null?antes.length:Math.max(pos,ini);
+      var digitosAntes=antes.slice(ini,corte).replace(/\D/g,'').length;
+      whats.value=depois;
+      if(pos===null)return;
+      var novaPos=depois.length;
+      if(digitosAntes>0){
+        var vistos=0;
+        for(var i=inicioLocal(depois);i<depois.length;i++){
+          if(/\d/.test(depois.charAt(i)))vistos++;
+          if(vistos>=digitosAntes){novaPos=i+1;break;}
+        }
+      }
+      try{whats.setSelectionRange(novaPos,novaPos);}catch(e){}
+    }
     function atualizarValidadeEmail(){
       email.setCustomValidity('');
       if(email.value.trim()&&!email.validity.valid)email.setCustomValidity('Digite um e-mail válido.');
     }
     function atualizarValidadeWhats(){
-      whats.setCustomValidity(telefoneValido(whats.value)?'':'Digite um WhatsApp brasileiro válido, com DDD.');
+      whats.setCustomValidity(conferirTelefone(whats.value));
     }
+    // Rádio obrigatório dentro de bloco escondido trava o envio sem mostrar
+    // mensagem nenhuma — o botão parece morto. Some com o required junto.
+    var radios=bloco.querySelectorAll('input[type="radio"]');
     function atualizarPerguntas(){
       atualizarValidadeEmail();
       atualizarValidadeWhats();
       var pronto=nome.value.trim().length>1&&email.validity.valid&&telefoneValido(whats.value);
       bloco.classList.toggle('show',pronto);
       bloco.setAttribute('aria-hidden',String(!pronto));
+      for(var i=0;i<radios.length;i++)radios[i].required=pronto;
     }
-    whats.value=formatarWhats(whats.value);
     [nome,email].forEach(function(c){c.addEventListener('input',atualizarPerguntas);c.addEventListener('change',atualizarPerguntas);c.addEventListener('blur',atualizarPerguntas);});
     whats.addEventListener('input',function(){
-      whats.value=formatarWhats(whats.value);
+      aplicarMascara();
       atualizarPerguntas();
     });
     whats.addEventListener('change',atualizarPerguntas);
