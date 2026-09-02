@@ -18,6 +18,9 @@ import { getLpFormConfig } from "@/lib/lp-form-config";
 // gêmea no KV, se configurados no painel.
 
 export const dynamic = "force-dynamic";
+// O CRM cria contato, negócio e anotação antes de responder — já foi
+// medido levando mais de 8s. A função precisa de folga pra esperar.
+export const maxDuration = 30;
 
 const REDIRECT_PADRAO_POR_LP: Record<string, string> = {
   transforma: "https://chat.whatsapp.com/I4fpwbQWJl84p9M2aL6mQz?mode=gi_t",
@@ -128,7 +131,10 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
-      whatsappEnvio = tel.digitos;
+      // O "+" não é enfeite: é ele que faz o CRM respeitar o país. Sem o
+      // sinal, um telefone de Portugal (351...) é guardado lá como
+      // +55 51..., ou seja, vira um número brasileiro que não existe.
+      whatsappEnvio = tel.e164;
     }
 
     // Webhook/redirect: config explícita por LP (lp-form-config) tem prioridade;
@@ -177,6 +183,8 @@ export async function POST(req: Request) {
     // Chave da página, ou a padrão do site (ver lib/crm-chave.ts).
     const chaveCrm = await chaveDoSlug(slug).catch(() => null);
     let crmStatus: FormSubmission["crmStatus"] = "sem-chave";
+    // Recusa e silêncio são coisas diferentes — ver o desfecho lá embaixo.
+    let crmRespondeu = false;
     let crmErro: string | undefined;
     if (chaveCrm) {
       let status = 0;
@@ -208,9 +216,10 @@ export async function POST(req: Request) {
                 ? montarCorpoTransforma({ fields, name, email, whatsapp: whatsappEnvio })
                 : montarCorpoDoLead({ fields, name, email, whatsapp: whatsappEnvio, slug })
             ),
-            signal: AbortSignal.timeout(8000),
+            signal: AbortSignal.timeout(20000),
           }
         );
+        crmRespondeu = true;
         status = r.status;
         const texto = await r.text().catch(() => "");
         let ok = r.ok;
@@ -260,10 +269,16 @@ export async function POST(req: Request) {
     );
 
     // No Transforma, o próximo passo é entrar no grupo. Não confirmamos nem
-    // redirecionamos enquanto o CRM não aceitar o lead: assim o comercial não
-    // perde uma inscrição silenciosamente. O contato já ficou salvo no painel
-    // com o motivo para recuperação/reenvio.
-    if (slug === "transforma" && crmStatus !== "ok") {
+    // redirecionamos quando o CRM RECUSA o lead: assim o comercial não perde
+    // uma inscrição silenciosamente. O contato já ficou salvo no painel com o
+    // motivo para recuperação/reenvio.
+    //
+    // ⚠️ Estourar o tempo é diferente de recusar. Aconteceu de verdade: o CRM
+    // cadastrou o contato e o negócio, demorou mais que o limite pra dizer
+    // isso, e a pessoa levou "não conseguimos confirmar" e nunca entrou no
+    // grupo — inscrita no CRM e perdida na jornada. Sem resposta, a gente
+    // segue com ela e registra o ocorrido em "Últimos envios".
+    if (slug === "transforma" && crmStatus !== "ok" && crmRespondeu) {
       return NextResponse.json(
         {
           success: false,

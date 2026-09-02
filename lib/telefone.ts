@@ -8,7 +8,12 @@
 // resto do mundo (só faixa de tamanho, sem palpitar formato de país que a gente
 // não conhece).
 
-export type TelefoneOk = { ok: true; digitos: string; pais: "BR" | "outro" };
+/**
+ * `digitos` são só os números com DDI; `e164` é a forma com "+" na frente.
+ * ⚠️ Mande o `e164` pra fora: sem o "+", o CRM assume que todo telefone é
+ * brasileiro e guarda um número de Portugal (351...) como +55 51... .
+ */
+export type TelefoneOk = { ok: true; digitos: string; e164: string; pais: "BR" | "outro" };
 export type MotivoErro = "vazio" | "curto" | "longo" | "ddd" | "nono";
 export type TelefoneErro = { ok: false; motivo: MotivoErro };
 export type Telefone = TelefoneOk | TelefoneErro;
@@ -30,7 +35,8 @@ function brasileiro(dddELocal: string): Telefone {
   // começa com 9 é quase certeza erro de digitação — vale pedir conferida.
   if (local.length === 9 && local[0] !== "9") return { ok: false, motivo: "nono" };
 
-  return { ok: true, digitos: "55" + dddELocal, pais: "BR" };
+  const digitos = "55" + dddELocal;
+  return { ok: true, digitos, e164: "+" + digitos, pais: "BR" };
 }
 
 /**
@@ -65,7 +71,7 @@ export function normalizarTelefone(bruto: string): Telefone {
   // Resto do mundo: só faixa de tamanho, sem palpitar formato.
   if (digitos.length < MIN_DIGITOS) return { ok: false, motivo: "curto" };
   if (digitos.length > MAX_DIGITOS) return { ok: false, motivo: "longo" };
-  return { ok: true, digitos, pais: "outro" };
+  return { ok: true, digitos, e164: "+" + digitos, pais: "outro" };
 }
 
 /** Texto mostrado a quem preencheu — direto, sem jargão. */

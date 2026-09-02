@@ -5,7 +5,7 @@ import { normalizarTelefone, mensagemDeErro } from "./telefone.ts";
 function ok(bruto: string) {
   const r = normalizarTelefone(bruto);
   assert.equal(r.ok, true, `esperava aceitar ${JSON.stringify(bruto)}`);
-  return r as { ok: true; digitos: string; pais: "BR" | "outro" };
+  return r as { ok: true; digitos: string; e164: string; pais: "BR" | "outro" };
 }
 
 function erro(bruto: string) {
@@ -70,6 +70,11 @@ test("vazio e lixo sem dígito nenhum", () => {
   assert.equal(erro("   ").motivo, "vazio");
   assert.equal(erro("meu whats").motivo, "vazio");
   assert.equal(erro("+55 ").motivo, "vazio");
+});
+
+test("o e164 é o que sai pro CRM — sem o + ele vira número brasileiro errado", () => {
+  assert.equal(ok("+351 912 345 678").e164, "+351912345678");
+  assert.equal(ok("11999998888").e164, "+5511999998888");
 });
 
 test("todo motivo tem uma mensagem em português pra mostrar na tela", () => {
