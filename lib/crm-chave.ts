@@ -17,6 +17,12 @@ import { extrairChave } from "./webhook-codigo";
 
 const KEY = "crm:chave-padrao";
 
+// Chaves de páginas com um funil próprio. Ficam na Vercel, nunca no HTML nem
+// no repositório; a configuração gravada pelo painel continua tendo prioridade.
+const CHAVE_POR_LP: Record<string, string | undefined> = {
+  transforma: process.env.CRM_TRANSFORMA_KEY,
+};
+
 export async function getChavePadrao(): Promise<string | null> {
   return (await kvGet<string>(KEY)) || null;
 }
@@ -31,5 +37,7 @@ export async function chaveDoSlug(slug: string): Promise<string | null> {
   const cfg = await getLpFormConfig(slug).catch(() => null);
   const daPagina = cfg?.codigoCrm ? extrairChave(cfg.codigoCrm) : null;
   if (daPagina) return daPagina;
+  const daEnv = CHAVE_POR_LP[slug]?.trim();
+  if (daEnv) return daEnv;
   return await getChavePadrao();
 }

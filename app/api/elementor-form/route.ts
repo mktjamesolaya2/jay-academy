@@ -18,6 +18,10 @@ import { getLpFormConfig } from "@/lib/lp-form-config";
 
 export const dynamic = "force-dynamic";
 
+const REDIRECT_PADRAO_POR_LP: Record<string, string> = {
+  transforma: "https://chat.whatsapp.com/I4fpwbQWJl84p9M2aL6mQz?mode=gi_t",
+};
+
 function pick(fields: Record<string, string>, keys: string[]): string {
   for (const k of keys) {
     const exact = fields[k];
@@ -109,7 +113,11 @@ export async function POST(req: Request) {
     const content = index ? await loadContent(index.domain, index.slug).catch(() => null) : null;
     const lpCfg = await getLpFormConfig(slug).catch(() => null);
     const webhookUrl = lpCfg?.formWebhookUrl || content?.formWebhookUrl;
-    redirectUrl = lpCfg?.formRedirectUrl || content?.formRedirectUrl || null;
+    redirectUrl =
+      lpCfg?.formRedirectUrl ||
+      content?.formRedirectUrl ||
+      REDIRECT_PADRAO_POR_LP[slug] ||
+      null;
     if (webhookUrl) {
       try {
         const r = await fetch(webhookUrl, {
@@ -168,15 +176,18 @@ export async function POST(req: Request) {
             // O corpo é montado por uma função pura e testada (lib/crm-envio).
             // ⚠️ Foi aqui que a tag sumiu sem ninguém ver, em 13/08 — por isso
             // agora existe teste olhando o objeto que sai.
-            body: JSON.stringify(
-              montarCorpoDoLead({
+            body: JSON.stringify({
+              ...montarCorpoDoLead({
                 fields,
                 name,
                 email,
                 whatsapp,
-                slug,
-              })
-            ),
+                slug,
+              }),
+              // Este funil foi pedido com etiqueta própria para recuperação e
+              // negociação no comercial. As demais LPs mantêm a regra delas.
+              ...(slug === "transforma" ? { tag: "JAY Transforma" } : {}),
+            }),
             signal: AbortSignal.timeout(8000),
           }
         );
@@ -231,7 +242,9 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       data: {
-        message: "Recebido com sucesso! Em breve entraremos em contato.",
+        message: redirectUrl
+          ? "Inscrição confirmada! Você será direcionada ao grupo do evento."
+          : "Recebido com sucesso!",
         ...(redirectUrl ? { redirect_url: redirectUrl } : {}),
       },
     });
