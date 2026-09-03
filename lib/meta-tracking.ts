@@ -26,6 +26,7 @@
 
 import { withGoogleTag, gtmIdForSlug } from "@/lib/google-tag";
 import { stripGoogleTagManager, stripPixelInits } from "@/lib/tracking-clean";
+import { buildUtmHotmartForwarder } from "@/lib/utm-checkout";
 
 export const META_PIXEL_ID = "1841776429524244";
 /** GA4 do site (fluxo "site" de jayacademy.com.br, código 4463452239). */
@@ -280,6 +281,12 @@ export async function withTracking(
   // GA4 — em todas as páginas.
   out = withGa4Site(out);
   out = withFbDomainVerification(out);
+
+  // UTM → checkout da Hotmart. Em TODAS as páginas, independente de Pixel: saber
+  // qual campanha gerou a venda vale mesmo onde não há Meta (ver lib/utm-checkout.ts).
+  if (!out.includes('data-portal-utm-hotmart="1"')) {
+    out = injectBody(out, buildUtmHotmartForwarder());
+  }
 
   // Pixel
   if (slugHasPixel(opts.slug)) {

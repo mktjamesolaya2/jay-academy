@@ -122,7 +122,10 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
 - **Auth**: `auth.ts` (`UserRole`, `signIn/getCurrentUser`, `requireAdmin/requireSenior/canEdit`,
   `adminCreateUser/setUserRole`), `auth-secret.ts` (`AUTH_SECRET`).
 - **Tracking**: `meta-tracking.ts` (pipeline `withTracking`, `META_PIXEL_ID`), `meta-capi.ts`
-  (`sendMetaCapiEvent`), `google-tag.ts` (`GTM_ID`), `analytics-store.ts` (`recordVisit/getPageStats`).
+  (`sendMetaCapiEvent`), `google-tag.ts` (`GTM_ID`), `analytics-store.ts` (`recordVisit/getPageStats`),
+  `utm-checkout.ts` (`buildUtmHotmartForwarder`): leva os `utm_*` da LP + `src`/`sck` pro checkout
+  da Hotmart reescrevendo o `href` no browser (as rotas são `force-static`, o servidor não vê a
+  querystring). Injetado por `withTracking` em TODA página, com Pixel ou sem.
 - **Forms/Mídia/Leads**: `forms-store.ts` (`FormConfig`, `listForms/addSubmission/listAllSubmissions`),
   `lp-form-config.ts` (`getLpFormConfig/setLpFormConfig`), `media-store.ts`, `media-pages-store.ts`.
 - **Infra**: `rate-limit{,-core}.ts` (`rateLimit`, `clientIp/tooManyRequests`), `activity-log.ts`
@@ -155,8 +158,8 @@ Três papéis: `senior` (conta fixa `suporte@jamesolaya.com.br`, único que gere
 ## Convenções
 - Comentários e docs de projeto (README, `notas/`) em português — manter o padrão.
 - Editar LPs de `lp-html/` como HTML puro, commit por página.
-- **Testes**: `npm test` (5 arquivos: page-catalog, rate-limit, wp-localize-core, media-nomes,
-  variantes, media-albuns, ; 128 casos).
+- **Testes**: `npm test` (page-catalog, rate-limit, wp-localize-core, telefone, utm-checkout, media-nomes,
+  variantes, media-albuns e outros; 436 casos).
 - Scripts: `npm run dev|build|start`. ⚠️ **`npm run lint` NÃO funciona** — `next lint` saiu no Next 16 e
   o projeto não tem `eslint.config.js` nem dependência de eslint. Vale `npx tsc --noEmit`, que passa limpo.
   `npm run checar-modelos` valida a cadeia de IA do chat contra o catálogo público da OpenRouter.
