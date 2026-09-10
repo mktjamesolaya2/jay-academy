@@ -7,6 +7,7 @@ import { DashboardTopbar } from "@/components/dashboard-topbar";
 import { EmptyState } from "@/components/empty-state";
 import { getCurrentUser, canEdit } from "@/lib/auth";
 import { listAllSubmissions, listForms } from "@/lib/forms-store";
+import { PERGUNTAS_TRANSFORMA } from "@/lib/crm-envio";
 import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import { relativeTime } from "@/lib/landing-pages";
@@ -168,9 +169,14 @@ export default async function LeadsPage({
                           )}
                         </td>
                         <td className="px-4 py-3 text-[12px] leading-5 text-neutral-400 min-w-[240px]">
-                          {s.respostas?.prontidao_proximo_passo && <p><span className="text-neutral-600">Prontidão: </span>{s.respostas.prontidao_proximo_passo}</p>}
-                          {s.respostas?.barreira_proximo_passo && <p><span className="text-neutral-600">Barreira: </span>{s.respostas.barreira_proximo_passo}</p>}
-                          {!s.respostas?.prontidao_proximo_passo && !s.respostas?.barreira_proximo_passo && "—"}
+                          {PERGUNTAS_TRANSFORMA.some((p) => s.respostas?.[p.campo])
+                            ? PERGUNTAS_TRANSFORMA.filter((p) => s.respostas?.[p.campo]).map((p) => (
+                                <p key={p.campo}>
+                                  <span className="text-neutral-600">{p.rotulo}: </span>
+                                  {s.respostas?.[p.campo]}
+                                </p>
+                              ))
+                            : "—"}
                         </td>
                         <td className="px-4 py-3 text-neutral-400 text-[13px] whitespace-nowrap">
                           {originLabel(s.formId, formNames)}

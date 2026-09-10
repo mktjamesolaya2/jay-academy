@@ -42,6 +42,34 @@ export function montarCorpoDoLead(d: DadosDoLead): Record<string, string> {
 }
 
 /**
+ * As perguntas de qualificação do formulário da /transforma — FONTE ÚNICA.
+ *
+ * ⚠️ Esta lista estava copiada em três lugares (envio ao CRM, coluna "Perfil"
+ * do /leads e o CSV do /leads/export), então pergunta nova no HTML era coletada
+ * e descartada em silêncio nos três. Quem mexer no formulário mexe AQUI, e os
+ * três lugares acompanham sozinhos.
+ *
+ * `campo` é o `name` do rádio no HTML. `rotulo` é o texto curto do painel (a
+ * coluna é estreita, não cabe a pergunta inteira) e `colunaCsv` é o cabeçalho
+ * da planilha, onde há espaço pra dizer a pergunta por inteiro.
+ *
+ * ⚠️ Ao criar campo novo, fugir das substrings que o pick() do
+ * /api/elementor-form usa como atalho (nome, email, mail, tel, fone, phone,
+ * celular): um `name` que as contenha é sequestrado e vira o contato do lead.
+ */
+export const PERGUNTAS_TRANSFORMA = [
+  { campo: "incomodo_atual", rotulo: "Incômodo", colunaCsv: "O que mais incomoda hoje" },
+  { campo: "quando_comecar", rotulo: "Quando", colunaCsv: "Quando quer começar" },
+  { campo: "adiar_decisao", rotulo: "Adia por", colunaCsv: "O que faria adiar a decisão" },
+  { campo: "proximo_passo", rotulo: "Próximo passo", colunaCsv: "O que faria diante da formação certa" },
+  // Perguntas antigas (saíram do formulário em 10/09). Ficam na lista porque os
+  // leads captados antes disso têm essas respostas gravadas — tirar daqui faria
+  // o histórico sumir do painel e do CSV.
+  { campo: "prontidao_proximo_passo", rotulo: "Prontidão", colunaCsv: "Prontidão para o próximo passo" },
+  { campo: "barreira_proximo_passo", rotulo: "Barreira", colunaCsv: "Barreira para o próximo passo" },
+] as const;
+
+/**
  * O Transforma só precisa identificar o contato e registrar as respostas no
  * campo de observações do CRM. Campos desconhecidos pelo webhook viram
  * observações; por isso não enviamos perfil, curso ou resumo duplicados.
@@ -49,15 +77,18 @@ export function montarCorpoDoLead(d: DadosDoLead): Record<string, string> {
 export function montarCorpoTransforma(
   d: Pick<DadosDoLead, "fields" | "name" | "email" | "whatsapp">
 ): Record<string, string> {
-  const prontidao = (d.fields.prontidao_proximo_passo || "").trim();
-  const barreira = (d.fields.barreira_proximo_passo || "").trim();
+  const respostas: Record<string, string> = {};
+  for (const { campo } of PERGUNTAS_TRANSFORMA) {
+    const valor = (d.fields[campo] || "").trim();
+    // Pergunta sem resposta não vira chave vazia — o CRM não precisa saber.
+    if (valor) respostas[campo] = valor;
+  }
 
   return {
     nome: d.name,
     email: d.email,
     telefone: d.whatsapp,
     tag: "JAY Transforma",
-    ...(prontidao ? { prontidao_proximo_passo: prontidao } : {}),
-    ...(barreira ? { barreira_proximo_passo: barreira } : {}),
+    ...respostas,
   };
 }
