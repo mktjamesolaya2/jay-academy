@@ -6,9 +6,10 @@
 // NUNCA duplicamos, senão infla volume/quebra dedup no Events Manager.
 //
 // POLÍTICA POR PÁGINA (29/07, decisão do James) — antes era tudo global:
-//   - Pixel DSTV → SÓ nas LPs de curso online (PIXEL_SLUGS abaixo). Nas outras
-//     páginas os inits são REMOVIDOS, inclusive os que vêm embutidos do
-//     WordPress (Pixel Cat colava 935630436819595 e 872802227099574).
+//   - Pixel DSTV → SÓ nas LPs de venda e na captação do evento JAY TRANSFORMA
+//     (PIXEL_SLUGS abaixo). Nas outras páginas os inits são REMOVIDOS,
+//     inclusive os que vêm embutidos do WordPress (Pixel Cat colava
+//     935630436819595 e 872802227099574).
 //   - GTM        → um container POR PÁGINA (GTM_BY_SLUG em lib/google-tag.ts):
 //     GTM-TVLJSVJZ na /magicshadow, GTM-W394J499 na /basic-magic-shadow,
 //     GTM-NB2WK5SJ na /fio-a-fio-realista-by-james-olaya. Nas demais páginas o
@@ -33,7 +34,7 @@ export const META_PIXEL_ID = "1841776429524244";
 export const GA4_SITE_ID = "G-N93TQZV050";
 export const FB_DOMAIN_VERIFICATION_CONTENT = "61zuhji4fdykwgd7q89ed8j9uxrfkt";
 
-/** LPs de curso online — as únicas páginas que levam o Pixel DSTV. */
+/** LPs de venda e de captação de evento — as únicas páginas que levam o Pixel DSTV. */
 export const PIXEL_SLUGS = [
   "basic-magic-shadow",
   "basic-nanofios",
@@ -42,6 +43,9 @@ export const PIXEL_SLUGS = [
   "metodo-shadow-pro",
   "pdv-lips-sense-technique",
   "pmuclass",
+  // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
+  // Lead do formulário de inscrição é a conversão que a campanha otimiza.
+  "transforma",
 ];
 
 /** O Pixel DSTV vale nesta página? */

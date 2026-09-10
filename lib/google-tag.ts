@@ -21,6 +21,9 @@ export const GTM_BY_SLUG: Record<string, string> = {
   "fio-a-fio-realista-by-james-olaya": "GTM-NB2WK5SJ",
   // Container da LP Método Shadow PRO (pedido de 30/07).
   "metodo-shadow-pro": "GTM-NGVQTHXT",
+  // Evento JAY TRANSFORMA (pedido de 10/09): mesmo container do marketing da
+  // magicshadow — o GA4 do evento é configurado por dentro dele.
+  transforma: "GTM-TVLJSVJZ",
 };
 
 /** Container padrão do marketing (referenciado nas notas e no CLAUDE.md). */
