@@ -92,3 +92,16 @@ export function montarCorpoTransforma(
     ...respostas,
   };
 }
+
+/**
+ * Qual corpo esta página manda ao CRM.
+ *
+ * ⚠️ FONTE ÚNICA: a captura (/api/elementor-form) e o reenvio manual do painel
+ * chamam ESTA função. A escolha morava só dentro da rota de captura, e o
+ * reenvio reinventou um corpo mais pobre — passou de 13/08 a 10/09 mandando
+ * lead sem as respostas de qualificação e sem a etiqueta do Transforma,
+ * justamente no caminho que existe pra recuperar lead que não chegou lá.
+ */
+export function corpoParaOCrm(d: DadosDoLead): Record<string, string> {
+  return d.slug === "transforma" ? montarCorpoTransforma(d) : montarCorpoDoLead(d);
+}

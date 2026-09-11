@@ -3,7 +3,7 @@ import { logAnonymousActivity } from "@/lib/activity-log";
 import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
-import { montarCorpoDoLead, montarCorpoTransforma } from "@/lib/crm-envio";
+import { corpoParaOCrm } from "@/lib/crm-envio";
 import { normalizarTelefone, mensagemDeErro } from "@/lib/telefone";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
@@ -212,9 +212,7 @@ export async function POST(req: Request) {
             // ⚠️ Foi aqui que a tag sumiu sem ninguém ver, em 13/08 — por isso
             // agora existe teste olhando o objeto que sai.
             body: JSON.stringify(
-              slug === "transforma"
-                ? montarCorpoTransforma({ fields, name, email, whatsapp: whatsappEnvio })
-                : montarCorpoDoLead({ fields, name, email, whatsapp: whatsappEnvio, slug })
+              corpoParaOCrm({ fields, name, email, whatsapp: whatsappEnvio, slug })
             ),
             signal: AbortSignal.timeout(20000),
           }

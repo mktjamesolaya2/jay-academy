@@ -1,6 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { montarCorpoDoLead, montarCorpoTransforma } from "./crm-envio.ts";
+import {
+  montarCorpoDoLead,
+  montarCorpoTransforma,
+  corpoParaOCrm,
+} from "./crm-envio.ts";
 
 const base = {
   fields: { nome: "Maria", whatsapp: "11999998888" },
@@ -89,4 +93,54 @@ test("lead antigo, com as perguntas que saíram do formulário, ainda chega ao C
   });
   assert.equal(c.prontidao_proximo_passo, "Estou pronta para avançar");
   assert.equal(c.barreira_proximo_passo, "Investimento");
+});
+
+test("corpoParaOCrm manda a /transforma pelo caminho do Transforma", () => {
+  const c = corpoParaOCrm({
+    ...base,
+    slug: "transforma",
+    fields: { incomodo_atual: "Ver meus planos continuarem só no papel" },
+  });
+  assert.equal(c.tag, "JAY Transforma");
+  assert.equal(c.incomodo_atual, "Ver meus planos continuarem só no papel");
+  // O Transforma não manda `pagina` — a etiqueta já diz de onde veio.
+  assert.equal("pagina" in c, false);
+});
+
+test("corpoParaOCrm manda as outras páginas pelo caminho comum", () => {
+  const c = corpoParaOCrm({ ...base, fields: { ...base.fields, cidade: "Campinas" } });
+  assert.equal(c.pagina, "ciafol-luz");
+  assert.equal(c.cidade, "Campinas");
+  assert.equal("tag" in c, false);
+});
+
+test("reenvio: lead remontado das respostas guardadas chega inteiro no CRM", () => {
+  // O reenvio manual do painel monta o corpo a partir de `lead.respostas`. Ele
+  // já mandou só nome/email/telefone por quase um mês — este teste é pra isso
+  // não voltar a acontecer em silêncio.
+  const respostasGuardadas = {
+    nome: "Maria",
+    email: "maria@teste.com",
+    whatsapp: "+5511999998888",
+    incomodo_atual: "Continuar ganhando menos do que gostaria",
+    quando_comecar: "O quanto antes",
+    adiar_decisao: "Precisar conciliar com minha rotina",
+    proximo_passo: "Quero ver valores e condições para decidir",
+  };
+  const c = corpoParaOCrm({
+    fields: respostasGuardadas,
+    name: "Maria",
+    email: "maria@teste.com",
+    whatsapp: "+5511999998888",
+    slug: "transforma",
+  });
+  assert.equal(c.tag, "JAY Transforma");
+  for (const campo of [
+    "incomodo_atual",
+    "quando_comecar",
+    "adiar_decisao",
+    "proximo_passo",
+  ]) {
+    assert.equal(c[campo], respostasGuardadas[campo as keyof typeof respostasGuardadas]);
+  }
 });

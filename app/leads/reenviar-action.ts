@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
 import { listAllSubmissions, atualizarSubmissao } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
+import { corpoParaOCrm } from "@/lib/crm-envio";
 import { logActivity } from "@/lib/activity-log";
 
 /**
@@ -48,13 +49,22 @@ export async function reenviarProCrmAction(
             Origin: "https://www.jayacademy.com.br",
             Referer: origem,
           },
-          body: JSON.stringify({
-            nome: lead.name,
-            email: lead.email,
-            telefone: lead.whatsapp,
-            pagina: slug,
-          }),
-          signal: AbortSignal.timeout(10000),
+          // ⚠️ O MESMO corpo da captura. Antes era um objeto montado à mão aqui,
+          // só com contato — o reenvio chegava no CRM sem as respostas de
+          // qualificação e sem a etiqueta do Transforma. As respostas estavam
+          // guardadas em `lead.respostas` o tempo todo; era só usar.
+          body: JSON.stringify(
+            corpoParaOCrm({
+              fields: lead.respostas ?? {},
+              name: lead.name,
+              email: lead.email,
+              whatsapp: lead.whatsapp,
+              slug,
+            })
+          ),
+          // 20s, igual à captura: o CRM já foi medido acima de 8s, e é
+          // justamente quando ele está lento que alguém aperta "Reenviar".
+          signal: AbortSignal.timeout(20000),
         }
       );
       status = r.status;

@@ -187,6 +187,12 @@ export default async function LeadsPage({
                         <td className="px-4 py-3">
                           <WebhookBadge status={s.webhookStatus} />
                         </td>
+                        {/* ⚠️ Esta célula faltou desde 13/08: o cabeçalho "CRM"
+                            existia, a coluna não. O selo de "não chegou no CRM"
+                            e o botão de reenviar nunca apareceram na tela. */}
+                        <td className="px-4 py-3">
+                          <CrmStatusLead id={s.id} status={s.crmStatus} erro={s.crmErro} />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
