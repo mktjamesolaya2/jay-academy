@@ -73,10 +73,10 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 .center .prazo,.hero__in.c .prazo{justify-content:center;}
 /* ===== HERO ===== */
 .hero{position:relative;min-height:min(90vh,780px);display:flex;align-items:center;overflow:hidden;background:#0a090c;padding:80px 0;}
-/* Capa OFICIAL da formação (public/lp/academy/capas/beauty.jpg). Antes daqui
-   passava a hero-scene do Shadow PRO, que é cena de micropigmentação — tema
-   errado pra uma página que vende design de sobrancelhas e serviços de beleza. */
-.hero::after{content:"";position:absolute;inset:0;z-index:0;background:url("/lp/academy/capas/beauty.jpg") 78% center / cover no-repeat;}
+/* Mesmo hero da /transforma (assets do Shadow PRO) — decisão do James: as duas
+   páginas do funil precisam abrir igual. A capa oficial do Beauty
+   (/lp/academy/capas/beauty.jpg) fica guardada pra usar em outro lugar. */
+.hero::after{content:"";position:absolute;inset:0;z-index:0;background:url("/lp/shadow-pro/hero-scene.webp") center right / cover no-repeat;}
 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:
   linear-gradient(90deg,#0a090c 6%,rgba(10,9,12,.9) 30%,rgba(10,9,12,.45) 54%,transparent 76%),
   linear-gradient(180deg,transparent 72%,rgba(10,9,12,.55));}
@@ -279,8 +279,7 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   .ficha dd{font-size:13.5px;}
 }
 @media(max-width:600px){
-  /* No celular a foto vira faixa no topo: centraliza no rosto em vez de cortar. */
-  .hero::after{background-position:62% 22%;}
+  .hero::after{background-image:url("/lp/shadow-pro/hero-scene-mobile.webp");background-position:center top;}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
