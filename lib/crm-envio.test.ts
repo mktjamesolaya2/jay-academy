@@ -4,7 +4,9 @@ import {
   montarCorpoDoLead,
   montarCorpoTransforma,
   montarCorpoBeauty,
+  montarCorpoRemove,
   TAG_BEAUTY,
+  TAG_REMOVE,
   corpoParaOCrm,
 } from "./crm-envio.ts";
 
@@ -227,4 +229,73 @@ test("JAY Beauty: utm vazio não vira chave vazia", () => {
 test("corpoParaOCrm despacha a /jaytransforma-beauty pelo montador dela", () => {
   const c = corpoParaOCrm({ ...base, slug: "jaytransforma-beauty" });
   assert.equal(c.tag, TAG_BEAUTY);
+});
+
+test("JAY Remove manda o mesmo corpo do Beauty, com a etiqueta dele", () => {
+  const c = montarCorpoRemove({
+    fields: {
+      pagina: "https://www.jayacademy.com.br/jaytransforma-remove?utm_source=instagram",
+      utm_source: "instagram",
+      campo_que_nao_deve_ir: "não enviar",
+    },
+    name: "Maria",
+    email: "maria@teste.com",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-remove",
+  });
+  assert.equal(c.nome, "Maria");
+  assert.equal(c.telefone, "+5511999998888");
+  assert.equal(c.email, "maria@teste.com");
+  assert.equal(c.tag, TAG_REMOVE);
+  assert.equal(c.pagina, "https://www.jayacademy.com.br/jaytransforma-remove?utm_source=instagram");
+  assert.equal(c.utm_source, "instagram");
+  assert.equal("campo_que_nao_deve_ir" in c, false);
+});
+
+test("JAY Remove: as duas ofertas de fechamento NÃO compartilham etiqueta", () => {
+  // Uma etiqueta só mandaria os dois funis pra mesma etapa do CRM, e o
+  // comercial não saberia qual formação a pessoa quis.
+  assert.notEqual(TAG_BEAUTY, TAG_REMOVE);
+});
+
+test("JAY Remove: a forma de pagamento escolhida chega ao CRM", () => {
+  // ⚠️ Este campo não é só informação: é ele que decide para qual dos dois
+  // checkouts a pessoa vai (REDIRECT_POR_ESCOLHA em /api/elementor-form).
+  const c = montarCorpoRemove({
+    fields: { pagamento: "cartao" },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-remove",
+  });
+  assert.equal(c.pagamento, "cartao");
+});
+
+test("JAY Remove: pagamento em branco não vira chave vazia", () => {
+  const c = montarCorpoRemove({
+    fields: { pagamento: "   " },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-remove",
+  });
+  assert.equal("pagamento" in c, false);
+});
+
+test("JAY Remove: o campo do Beauty não vaza pro corpo dele", () => {
+  // Os dois montadores saem da mesma fábrica; o que os separa é a lista de
+  // campos extras. Se ela fosse compartilhada por engano, `turma` passaria.
+  const c = montarCorpoRemove({
+    fields: { turma: "05 a 08/10/2026" },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-remove",
+  });
+  assert.equal("turma" in c, false);
+});
+
+test("corpoParaOCrm despacha a /jaytransforma-remove pelo montador dela", () => {
+  const c = corpoParaOCrm({ ...base, slug: "jaytransforma-remove" });
+  assert.equal(c.tag, TAG_REMOVE);
 });

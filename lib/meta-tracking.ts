@@ -49,6 +49,7 @@ export const PIXEL_SLUGS = [
   // A oferta de fechamento do Transforma. Página de venda de verdade: o Lead do
   // formulário e o InitiateCheckout do clique no checkout são o que interessa.
   "jaytransforma-beauty",
+  "jaytransforma-remove",
 ];
 
 /** O Pixel DSTV vale nesta página? */

@@ -142,6 +142,15 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // A segunda oferta de fechamento do JAY TRANSFORMA, irmã da de cima:
+    // mesma identidade, mesmo funil. Também fora do sitemap, também noindex.
+    slug: "jaytransforma-remove",
+    title: "JAY Remove (oferta JAY Transforma)",
+    htmlFile: "lp-html/jaytransforma-remove.html",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     slug: "pmuclass",
     title: "PMU CLASS",
     htmlFile: "lp-html/pmuclass.html",

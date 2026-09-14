@@ -94,54 +94,75 @@ export function montarCorpoTransforma(
 }
 
 /**
- * A ETIQUETA do lead da /jaytransforma-beauty.
+ * As ETIQUETAS dos leads das ofertas de fechamento do JAY TRANSFORMA.
  *
- * ⚠️ É ela que decide em que etapa o negócio cai no CRM — o destino é a etapa
- * "Checkout BEAUTY". Se o negócio chegar no CRM mas na etapa errada, o problema
- * é ESTA string, e trocar aqui resolve: ela não está escrita em mais lugar
- * nenhum (o HTML da página não carrega etiqueta).
+ * ⚠️ É ela que decide em que etapa o negócio cai no CRM. Se o negócio chegar
+ * lá mas na etapa errada, o problema é ESTA string, e trocar aqui resolve:
+ * ela não está escrita em mais lugar nenhum (o HTML não carrega etiqueta).
  */
+/** Destino: a etapa "Checkout BEAUTY". */
 export const TAG_BEAUTY = "Check BEAUTY";
+/** Destino: a etapa de checkout do JAY Remove. */
+export const TAG_REMOVE = "Check Remove";
 
 /**
- * A oferta de fechamento do JAY TRANSFORMA (/jaytransforma-beauty).
+ * A fábrica dos montadores das ofertas de fechamento do JAY TRANSFORMA
+ * (/jaytransforma-beauty e /jaytransforma-remove).
  *
  * O corpo é o MESMO que o formulário oficial do CRM manda — nome, telefone,
  * email, tag, pagina e os utm_* — só que postado pelo servidor, não pelo
  * navegador. Do browser, a verificação prévia do POST com JSON barra o envio
  * quando o domínio não está liberado na chave, e o lead some sem erro nenhum.
  *
+ * As duas páginas só diferem na etiqueta e em UM campo de decisão: o Beauty
+ * pergunta a turma, o Remove pergunta a forma de pagamento. Era barato copiar
+ * a função inteira e caro descobrir depois que só uma das cópias foi corrigida.
+ *
  * ⚠️ Chave vazia não é enviada: quem chega aqui quase sempre já é contato do
  * CRM (veio do evento), e mandar `email: ""` apagaria o e-mail que ele já tem.
  */
-export function montarCorpoBeauty(d: DadosDoLead): Record<string, string> {
-  const corpo: Record<string, string> = {
-    nome: d.name,
-    telefone: d.whatsapp,
-    tag: TAG_BEAUTY,
+function montarCorpoDeFechamento(tag: string, camposExtras: readonly string[]) {
+  return (d: DadosDoLead): Record<string, string> => {
+    const corpo: Record<string, string> = {
+      nome: d.name,
+      telefone: d.whatsapp,
+      tag,
+    };
+
+    const email = (d.email || "").trim();
+    if (email) corpo.email = email;
+
+    // `pagina` é a URL inteira (o formulário preenche com location.href), não o
+    // slug: é o que o CRM mostra na anotação do negócio.
+    const pagina = (d.fields.pagina || "").trim();
+    corpo.pagina = pagina || d.slug;
+
+    // O campo que decide a conversa do comercial. Campo em branco não vira
+    // chave vazia — o CRM não precisa saber o que a pessoa não respondeu.
+    for (const campo of camposExtras) {
+      const valor = (d.fields[campo] || "").trim();
+      if (valor) corpo[campo] = valor;
+    }
+
+    for (const [campo, valor] of Object.entries(d.fields)) {
+      if (!campo.startsWith("utm_")) continue;
+      const limpo = (valor || "").trim();
+      if (limpo) corpo[campo] = limpo;
+    }
+
+    return corpo;
   };
-
-  const email = (d.email || "").trim();
-  if (email) corpo.email = email;
-
-  // `pagina` é a URL inteira (o formulário preenche com location.href), não o
-  // slug: é o que o CRM mostra na anotação do negócio.
-  const pagina = (d.fields.pagina || "").trim();
-  corpo.pagina = pagina || d.slug;
-
-  // Qual das duas turmas de 2026 ela quer. É a informação que decide a conversa
-  // do comercial, e o campo é opcional — quem não escolheu não vira chave vazia.
-  const turma = (d.fields.turma || "").trim();
-  if (turma) corpo.turma = turma;
-
-  for (const [campo, valor] of Object.entries(d.fields)) {
-    if (!campo.startsWith("utm_")) continue;
-    const limpo = (valor || "").trim();
-    if (limpo) corpo[campo] = limpo;
-  }
-
-  return corpo;
 }
+
+/** Qual das duas turmas de 2026 ela quer. */
+export const montarCorpoBeauty = montarCorpoDeFechamento(TAG_BEAUTY, ["turma"]);
+
+/**
+ * Pix ou cartão. ⚠️ Este campo não é só informação: é ele que decide para qual
+ * dos dois checkouts a pessoa é mandada (REDIRECT_POR_ESCOLHA em
+ * app/api/elementor-form/route.ts).
+ */
+export const montarCorpoRemove = montarCorpoDeFechamento(TAG_REMOVE, ["pagamento"]);
 
 /**
  * Qual corpo esta página manda ao CRM.
@@ -157,6 +178,7 @@ export function montarCorpoBeauty(d: DadosDoLead): Record<string, string> {
 const MONTADORES_POR_SLUG: Record<string, (d: DadosDoLead) => Record<string, string>> = {
   transforma: montarCorpoTransforma,
   "jaytransforma-beauty": montarCorpoBeauty,
+  "jaytransforma-remove": montarCorpoRemove,
 };
 
 export function corpoParaOCrm(d: DadosDoLead): Record<string, string> {
