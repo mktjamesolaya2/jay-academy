@@ -5,8 +5,10 @@ import {
   montarCorpoTransforma,
   montarCorpoBeauty,
   montarCorpoRemove,
+  montarCorpoStart,
   TAG_BEAUTY,
   TAG_REMOVE,
+  TAG_START,
   corpoParaOCrm,
 } from "./crm-envio.ts";
 
@@ -298,4 +300,44 @@ test("JAY Remove: o campo do Beauty não vaza pro corpo dele", () => {
 test("corpoParaOCrm despacha a /jaytransforma-remove pelo montador dela", () => {
   const c = corpoParaOCrm({ ...base, slug: "jaytransforma-remove" });
   assert.equal(c.tag, TAG_REMOVE);
+});
+
+test("JAY Start: a turma e a forma de pagamento chegam ao CRM", () => {
+  // ⚠️ Estes dois campos não são só informação. A turma diz QUAL das duas
+  // formações a pessoa quis (a página vende duas), e juntos eles escolhem para
+  // qual dos quatro checkouts ela é mandada (lib/redirect-escolha.ts).
+  const c = montarCorpoStart({
+    fields: { turma: "brows-dez", pagamento: "pix" },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-start",
+  });
+  assert.equal(c.turma, "brows-dez");
+  assert.equal(c.pagamento, "pix");
+  assert.equal(c.tag, TAG_START);
+});
+
+test("JAY Start: campo em branco não vira chave vazia", () => {
+  const c = montarCorpoStart({
+    fields: { turma: "   ", pagamento: "" },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-start",
+  });
+  assert.equal("turma" in c, false);
+  assert.equal("pagamento" in c, false);
+});
+
+test("as três ofertas de fechamento têm etiquetas distintas", () => {
+  // Etiqueta repetida mandaria funis diferentes pra mesma etapa do CRM, e o
+  // comercial não saberia qual formação a pessoa quis.
+  const tags = [TAG_BEAUTY, TAG_REMOVE, TAG_START];
+  assert.equal(new Set(tags).size, tags.length);
+});
+
+test("corpoParaOCrm despacha a /jaytransforma-start pelo montador dela", () => {
+  const c = corpoParaOCrm({ ...base, slug: "jaytransforma-start" });
+  assert.equal(c.tag, TAG_START);
 });

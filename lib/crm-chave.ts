@@ -25,6 +25,8 @@ const CHAVE_POR_LP: Record<string, string | undefined> = {
   "jaytransforma-beauty": process.env.CRM_BEAUTY_KEY,
   // Oferta de fechamento do JAY TRANSFORMA (etiqueta "Check Remove").
   "jaytransforma-remove": process.env.CRM_REMOVE_KEY,
+  // Oferta de fechamento do JAY TRANSFORMA (etiqueta "Check START").
+  "jaytransforma-start": process.env.CRM_START_KEY,
 };
 
 export async function getChavePadrao(): Promise<string | null> {

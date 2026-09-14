@@ -50,6 +50,7 @@ export const PIXEL_SLUGS = [
   // formulário e o InitiateCheckout do clique no checkout são o que interessa.
   "jaytransforma-beauty",
   "jaytransforma-remove",
+  "jaytransforma-start",
 ];
 
 /** O Pixel DSTV vale nesta página? */

@@ -4,6 +4,7 @@ import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
 import { corpoParaOCrm } from "@/lib/crm-envio";
+import { destinoDaEscolha } from "@/lib/redirect-escolha";
 import { normalizarTelefone, mensagemDeErro } from "@/lib/telefone";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
@@ -30,41 +31,6 @@ const REDIRECT_PADRAO_POR_LP: Record<string, string> = {
   // não exige deploy.
   "jaytransforma-beauty": "https://cielolink.com.br/4xAzXCw",
 };
-
-/**
- * Páginas em que o destino depende do que a pessoa ESCOLHEU, não só do slug.
- *
- * O JAY Remove tem dois checkouts (Pix e cartão) e o campo de redirect do
- * painel é UM só — ele não consegue expressar dois destinos. Por isso este
- * mapa passa na frente dele, e só para os slugs listados aqui. O preço dessa
- * escolha: trocar um dos dois links exige deploy.
- *
- * ⚠️ As chaves de `destinos` são comparadas em minúsculas contra o `value` do
- * rádio no HTML, que é ASCII de propósito — acento viajando por
- * form-urlencoded é uma forma silenciosa de o destino não casar.
- */
-const REDIRECT_POR_ESCOLHA: Record<
-  string,
-  { campo: string; destinos: Record<string, string> }
-> = {
-  "jaytransforma-remove": {
-    campo: "pagamento",
-    destinos: {
-      pix: "https://cielolink.com.br/4iXIpI8",
-      cartao: "https://cielolink.com.br/4cGaboO",
-    },
-  },
-};
-
-function destinoDaEscolha(slug: string, fields: Record<string, string>): string | null {
-  // hasOwn nos dois níveis: o slug vem da URL e o valor vem do formulário —
-  // nenhum dos dois pode alcançar o Object.prototype.
-  if (!Object.hasOwn(REDIRECT_POR_ESCOLHA, slug)) return null;
-  const regra = REDIRECT_POR_ESCOLHA[slug];
-  const escolha = (fields[regra.campo] || "").trim().toLowerCase();
-  if (!escolha || !Object.hasOwn(regra.destinos, escolha)) return null;
-  return regra.destinos[escolha];
-}
 
 /**
  * As LPs com funil próprio, onde o lead é a conversão que a campanha paga e um
@@ -216,10 +182,10 @@ export async function POST(req: Request) {
     const content = index ? await loadContent(index.domain, index.slug).catch(() => null) : null;
     const lpCfg = await getLpFormConfig(slug).catch(() => null);
     const webhookUrl = lpCfg?.formWebhookUrl || content?.formWebhookUrl;
-    // Duas formas de pagamento = dois checkouts, e o campo do painel é UM só.
-    // Por isso, e só nos slugs de REDIRECT_POR_ESCOLHA, a escolha da pessoa
-    // passa na frente dele. Escolha ausente ou desconhecida cai na cascata
-    // normal, então a página nunca fica sem destino.
+    // O destino pode depender do que a pessoa escolheu, não só do slug: ver
+    // lib/redirect-escolha.ts. Quando ela responde, a escolha passa na frente
+    // do campo do painel (que é um só e não expressa dois checkouts); quando
+    // não dá pra saber, cai na cascata de sempre e a página não fica sem rumo.
     redirectUrl =
       destinoDaEscolha(slug, fields) ||
       lpCfg?.formRedirectUrl ||

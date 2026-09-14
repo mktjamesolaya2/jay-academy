@@ -104,6 +104,8 @@ export function montarCorpoTransforma(
 export const TAG_BEAUTY = "Check BEAUTY";
 /** Destino: a etapa de checkout do JAY Remove. */
 export const TAG_REMOVE = "Check Remove";
+/** Destino: a etapa de checkout do JAY Start. */
+export const TAG_START = "Check START";
 
 /**
  * A fábrica dos montadores das ofertas de fechamento do JAY TRANSFORMA
@@ -165,6 +167,13 @@ export const montarCorpoBeauty = montarCorpoDeFechamento(TAG_BEAUTY, ["turma"]);
 export const montarCorpoRemove = montarCorpoDeFechamento(TAG_REMOVE, ["pagamento"]);
 
 /**
+ * A página do Start vende DUAS formações, então aqui a turma não é só a data:
+ * é ela que diz ao comercial qual das duas a pessoa quis. Junto com a forma de
+ * pagamento, é também o par que escolhe o checkout (lib/redirect-escolha.ts).
+ */
+export const montarCorpoStart = montarCorpoDeFechamento(TAG_START, ["turma", "pagamento"]);
+
+/**
  * Qual corpo esta página manda ao CRM.
  *
  * ⚠️ FONTE ÚNICA: a captura (/api/elementor-form) e o reenvio manual do painel
@@ -179,6 +188,7 @@ const MONTADORES_POR_SLUG: Record<string, (d: DadosDoLead) => Record<string, str
   transforma: montarCorpoTransforma,
   "jaytransforma-beauty": montarCorpoBeauty,
   "jaytransforma-remove": montarCorpoRemove,
+  "jaytransforma-start": montarCorpoStart,
 };
 
 export function corpoParaOCrm(d: DadosDoLead): Record<string, string> {

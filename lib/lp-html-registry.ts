@@ -151,6 +151,16 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // A terceira oferta de fechamento, e a única que vende DUAS formações na
+    // mesma página (Jay Brows Shadow & Nano e Jay Nano Brows & Lips). Fora do
+    // sitemap e com noindex, como as irmãs.
+    slug: "jaytransforma-start",
+    title: "JAY Start (oferta JAY Transforma)",
+    htmlFile: "lp-html/jaytransforma-start.html",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     slug: "pmuclass",
     title: "PMU CLASS",
     htmlFile: "lp-html/pmuclass.html",

@@ -28,6 +28,7 @@ export const GTM_BY_SLUG: Record<string, string> = {
   // jornada inteira (inscrição → evento → compra) cair no mesmo lugar.
   "jaytransforma-beauty": "GTM-TVLJSVJZ",
   "jaytransforma-remove": "GTM-TVLJSVJZ",
+  "jaytransforma-start": "GTM-TVLJSVJZ",
 };
 
 /** Container padrão do marketing (referenciado nas notas e no CLAUDE.md). */

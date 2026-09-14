@@ -17,7 +17,7 @@ const RESERVED = new Set([
   "inmersion-pelo-a-pelo", "jamesolaya", "metodo-shadow-pro", "metodo-shadow-pro-2",
   "pdv-lips-sense-technique", "pmuclass", "laser", "magicshadow",
   "transforma", "jaytransforma-beauty", "jaytransforma_beauty",
-  "jaytransforma-remove",
+  "jaytransforma-remove", "jaytransforma-start",
   "academy",
 ]);
 
