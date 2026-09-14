@@ -535,8 +535,9 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 <!-- ⚠️ class="elementor-form" + action pra própria página é o que faz a ponte injetada
      pelo serveLp interceptar o submit e mandar pro /api/elementor-form (CRM + /leads).
      Trocar a classe ou o action QUEBRA a captura de lead.
-     O link do checkout NÃO fica aqui: o redirect pós-envio vem do painel
-     (/lps/jaytransforma-beauty → "redirecionar após envio"), pra trocar sem deploy. -->
+     O link do checkout não fica no HTML: o redirect pós-envio é decidido no
+     servidor (REDIRECT_PADRAO_POR_LP em /api/elementor-form), e o campo do
+     painel (/lps/jaytransforma-beauty) vence esse padrão sem exigir deploy. -->
 <section class="sec insc" id="inscricao">
   <div class="wrap center">
     <span class="eyebrow c">Garanta sua vaga</span>
