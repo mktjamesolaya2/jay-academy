@@ -4,6 +4,7 @@ import {
   montarCorpoDoLead,
   montarCorpoTransforma,
   montarCorpoBeauty,
+  TAG_BEAUTY,
   corpoParaOCrm,
 } from "./crm-envio.ts";
 
@@ -146,25 +147,60 @@ test("reenvio: lead remontado das respostas guardadas chega inteiro no CRM", () 
   }
 });
 
-test("JAY Beauty manda só contato e etiqueta — e nunca e-mail vazio", () => {
-  // O formulário da oferta pede nome e telefone. Mandar `email: ""` faria o CRM
-  // apagar o e-mail que o contato já tinha da inscrição no evento.
-  const c = montarCorpoBeauty({ name: "Maria", whatsapp: "+5511999998888" });
+test("JAY Beauty manda o mesmo corpo do formulário oficial do CRM", () => {
+  const c = montarCorpoBeauty({
+    fields: {
+      pagina: "https://www.jayacademy.com.br/jaytransforma-beauty?utm_source=instagram",
+      utm_source: "instagram",
+      utm_campaign: "transforma-set",
+      campo_que_nao_deve_ir: "não enviar",
+    },
+    name: "Maria",
+    email: "maria@teste.com",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-beauty",
+  });
   assert.equal(c.nome, "Maria");
   assert.equal(c.telefone, "+5511999998888");
-  assert.equal(c.tag, "Check BEAUTY");
+  assert.equal(c.email, "maria@teste.com");
+  assert.equal(c.tag, TAG_BEAUTY);
+  // `pagina` é a URL inteira que o formulário preencheu, não o slug.
+  assert.equal(c.pagina, "https://www.jayacademy.com.br/jaytransforma-beauty?utm_source=instagram");
+  assert.equal(c.utm_source, "instagram");
+  assert.equal(c.utm_campaign, "transforma-set");
+  // Campo cru que não é utm_ não viaja: o CRM transformaria em observação.
+  assert.equal("campo_que_nao_deve_ir" in c, false);
+});
+
+test("JAY Beauty: e-mail vazio não vira chave (não apaga o que o CRM já tem)", () => {
+  // O e-mail é opcional no formulário. Mandar `email: ""` faria o CRM apagar o
+  // e-mail que o contato já tinha da inscrição no evento.
+  const c = montarCorpoBeauty({
+    fields: {},
+    name: "Maria",
+    email: "   ",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-beauty",
+  });
   assert.equal("email" in c, false);
-  assert.equal("pagina" in c, false);
+  assert.equal(c.tag, TAG_BEAUTY);
+  // Sem o campo `pagina` preenchido, cai no slug — nunca fica vazio.
+  assert.equal(c.pagina, "jaytransforma-beauty");
+});
+
+test("JAY Beauty: utm vazio não vira chave vazia", () => {
+  const c = montarCorpoBeauty({
+    fields: { utm_source: "  ", utm_medium: "cpc" },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-beauty",
+  });
+  assert.equal("utm_source" in c, false);
+  assert.equal(c.utm_medium, "cpc");
 });
 
 test("corpoParaOCrm despacha a /jaytransforma-beauty pelo montador dela", () => {
-  const c = corpoParaOCrm({
-    ...base,
-    slug: "jaytransforma-beauty",
-    // Campos crus da página não podem vazar pro CRM: a etiqueta é o que conta.
-    fields: { ...base.fields, utm_source: "instagram" },
-  });
-  assert.equal(c.tag, "Check BEAUTY");
-  assert.equal("utm_source" in c, false);
-  assert.equal("email" in c, false);
+  const c = corpoParaOCrm({ ...base, slug: "jaytransforma-beauty" });
+  assert.equal(c.tag, TAG_BEAUTY);
 });

@@ -564,6 +564,20 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
         <span>WhatsApp</span>
         <input type="tel" name="telefone" value="+55 " placeholder="+55 (00) 00000-0000" required autocomplete="tel" inputmode="tel" maxlength="24">
       </label>
+      <label class="campo">
+        <span>Seu e-mail <i style="font-style:normal;color:var(--muted);letter-spacing:0;text-transform:none;font-weight:500;">(opcional)</i></span>
+        <input type="email" name="email" placeholder="voce@email.com" autocomplete="email" inputmode="email" maxlength="120">
+      </label>
+      <!-- Vão junto pro CRM, preenchidos pelo script: a URL de onde o lead veio
+           e os utm_* da campanha. Campo vazio o servidor descarta. -->
+      <input type="hidden" name="pagina">
+      <input type="hidden" name="utm_source">
+      <input type="hidden" name="utm_medium">
+      <input type="hidden" name="utm_campaign">
+      <input type="hidden" name="utm_content">
+      <input type="hidden" name="utm_term">
+      <!-- Isca de robô: gente nunca preenche. O servidor ignora este campo. -->
+      <input name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
       <button type="submit" class="cta">Garantir minha vaga</button>
       <p class="jayo-aviso" data-jayo-aviso style="margin:12px 0 0;font-size:15px;line-height:1.5;font-weight:600;"></p>
       <p class="insc__nota">Pagamento integral. Matrícula confirmada. Condição reservada aos participantes do JAY TRANSFORMA.</p>
@@ -705,6 +719,20 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   function atualizarValidadeWhats(){
     whats.setCustomValidity(conferirTelefone(whats.value));
   }
+
+  // A origem do lead: a URL inteira e os utm_* da querystring. O CRM guarda
+  // isso na anotação do negócio — é assim que o comercial sabe de onde veio.
+  (function preencherOrigem(){
+    var oculto=function(nome){ return form.querySelector('[name="'+nome+'"]'); };
+    var campoPagina=oculto('pagina');
+    if(campoPagina)campoPagina.value=location.href;
+    var busca=new URLSearchParams(location.search);
+    busca.forEach(function(valor,chave){
+      if(chave.indexOf('utm_')!==0)return;
+      var campo=oculto(chave);
+      if(campo)campo.value=valor;
+    });
+  })();
   whats.addEventListener('input',function(){
     aplicarMascara();
     atualizarValidadeWhats();

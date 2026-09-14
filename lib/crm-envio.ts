@@ -94,25 +94,48 @@ export function montarCorpoTransforma(
 }
 
 /**
+ * A ETIQUETA do lead da /jaytransforma-beauty.
+ *
+ * ⚠️ É ela que decide em que etapa o negócio cai no CRM — o destino é a etapa
+ * "Checkout BEAUTY". Se o negócio chegar no CRM mas na etapa errada, o problema
+ * é ESTA string, e trocar aqui resolve: ela não está escrita em mais lugar
+ * nenhum (o HTML da página não carrega etiqueta).
+ */
+export const TAG_BEAUTY = "Check BEAUTY";
+
+/**
  * A oferta de fechamento do JAY TRANSFORMA (/jaytransforma-beauty).
  *
- * Só contato e etiqueta: o formulário pede apenas nome e telefone, porque quem
- * chega aqui já é contato do CRM — veio do evento. A etiqueta PRÓPRIA é o
- * ponto: o CRM reaproveita o negócio e responde `duplicated: true`, e é a
- * etiqueta diferente que deixa o James ver a progressão (cadastrou no evento →
- * participou → foi tentar comprar).
+ * O corpo é o MESMO que o formulário oficial do CRM manda — nome, telefone,
+ * email, tag, pagina e os utm_* — só que postado pelo servidor, não pelo
+ * navegador. Do browser, a verificação prévia do POST com JSON barra o envio
+ * quando o domínio não está liberado na chave, e o lead some sem erro nenhum.
  *
- * ⚠️ Sem `email`: o campo não existe no formulário, e chave vazia no corpo faz
- * o CRM sobrescrever com nada o e-mail que o contato já tinha do Transforma.
+ * ⚠️ Chave vazia não é enviada: quem chega aqui quase sempre já é contato do
+ * CRM (veio do evento), e mandar `email: ""` apagaria o e-mail que ele já tem.
  */
-export function montarCorpoBeauty(
-  d: Pick<DadosDoLead, "name" | "whatsapp">
-): Record<string, string> {
-  return {
+export function montarCorpoBeauty(d: DadosDoLead): Record<string, string> {
+  const corpo: Record<string, string> = {
     nome: d.name,
     telefone: d.whatsapp,
-    tag: "Check BEAUTY",
+    tag: TAG_BEAUTY,
   };
+
+  const email = (d.email || "").trim();
+  if (email) corpo.email = email;
+
+  // `pagina` é a URL inteira (o formulário preenche com location.href), não o
+  // slug: é o que o CRM mostra na anotação do negócio.
+  const pagina = (d.fields.pagina || "").trim();
+  corpo.pagina = pagina || d.slug;
+
+  for (const [campo, valor] of Object.entries(d.fields)) {
+    if (!campo.startsWith("utm_")) continue;
+    const limpo = (valor || "").trim();
+    if (limpo) corpo[campo] = limpo;
+  }
+
+  return corpo;
 }
 
 /**
