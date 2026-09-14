@@ -21,6 +21,8 @@ const KEY = "crm:chave-padrao";
 // no repositório; a configuração gravada pelo painel continua tendo prioridade.
 const CHAVE_POR_LP: Record<string, string | undefined> = {
   transforma: process.env.CRM_TRANSFORMA_KEY,
+  // Oferta de fechamento do JAY TRANSFORMA (etiqueta "Check BEAUTY").
+  "jaytransforma-beauty": process.env.CRM_BEAUTY_KEY,
 };
 
 export async function getChavePadrao(): Promise<string | null> {

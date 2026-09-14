@@ -16,7 +16,7 @@ const RESERVED = new Set([
   "curso-online-profissao-remove", "fio-a-fio-realista-by-james-olaya",
   "inmersion-pelo-a-pelo", "jamesolaya", "metodo-shadow-pro", "metodo-shadow-pro-2",
   "pdv-lips-sense-technique", "pmuclass", "laser", "magicshadow",
-  "transforma",
+  "transforma", "jaytransforma-beauty", "jaytransforma_beauty",
   "academy",
 ]);
 

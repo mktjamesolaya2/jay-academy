@@ -46,6 +46,9 @@ export const PIXEL_SLUGS = [
   // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
   // Lead do formulário de inscrição é a conversão que a campanha otimiza.
   "transforma",
+  // A oferta de fechamento do Transforma. Página de venda de verdade: o Lead do
+  // formulário e o InitiateCheckout do clique no checkout são o que interessa.
+  "jaytransforma-beauty",
 ];
 
 /** O Pixel DSTV vale nesta página? */

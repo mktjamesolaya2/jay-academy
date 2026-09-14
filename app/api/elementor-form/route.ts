@@ -24,6 +24,31 @@ export const maxDuration = 30;
 
 const REDIRECT_PADRAO_POR_LP: Record<string, string> = {
   transforma: "https://chat.whatsapp.com/I4fpwbQWJl84p9M2aL6mQz?mode=gi_t",
+  // A /jaytransforma-beauty não entra aqui de propósito: o destino é o checkout,
+  // que muda a cada turma. Fica em lp-form-config (painel /lps/<slug>), pra
+  // trocar sem deploy.
+};
+
+/**
+ * As LPs com funil próprio, onde o lead é a conversão que a campanha paga e um
+ * envio que não chega ao CRM é prejuízo. Nelas valem três coisas que NÃO valem
+ * nas outras páginas: validação estrita antes de mandar, telefone normalizado em
+ * E.164 (com o "+") e recusa explícita quando o CRM diz não.
+ *
+ * Era um `slug === "transforma"` espalhado em dois pontos do arquivo. Virou mapa
+ * quando chegou a segunda LP — que, diferente da primeira, não pede e-mail.
+ */
+const REGRAS_POR_LP: Record<string, { exigeEmail: boolean; mensagemOk: string }> = {
+  transforma: {
+    exigeEmail: true,
+    mensagemOk: "Inscrição confirmada! Você será direcionada ao grupo do evento.",
+  },
+  "jaytransforma-beauty": {
+    // O formulário pede só nome e telefone — quem chega aqui já deu o e-mail na
+    // inscrição do evento, e cada campo a mais é gente que desiste na oferta.
+    exigeEmail: false,
+    mensagemOk: "Tudo certo! Você será direcionada para garantir sua vaga.",
+  },
 };
 
 function pick(fields: Record<string, string>, keys: string[]): string {
@@ -117,8 +142,10 @@ export async function POST(req: Request) {
     // frente é o normalizado (só dígitos, com DDI): sem máscara e sem dúvida
     // sobre o DDD, que é o formato que o CRM não recusa.
     let whatsappEnvio = whatsapp;
-    if (slug === "transforma") {
-      if (!emailValido(email)) {
+    // hasOwn: o slug vem da URL, não pode alcançar o Object.prototype.
+    const regras = Object.hasOwn(REGRAS_POR_LP, slug) ? REGRAS_POR_LP[slug] : null;
+    if (regras) {
+      if (regras.exigeEmail && !emailValido(email)) {
         return NextResponse.json(
           { success: false, data: { message: "Digite um e-mail válido." } },
           { status: 400 }
@@ -266,9 +293,9 @@ export async function POST(req: Request) {
       `popup Elementor na LP${webhookStatus === "sent" ? " — webhook ok" : ""}`
     );
 
-    // No Transforma, o próximo passo é entrar no grupo. Não confirmamos nem
-    // redirecionamos quando o CRM RECUSA o lead: assim o comercial não perde
-    // uma inscrição silenciosamente. O contato já ficou salvo no painel com o
+    // Nas LPs de REGRAS_POR_LP o próximo passo mora fora da página (o grupo do
+    // evento, o checkout da oferta). Não confirmamos nem redirecionamos quando o
+    // CRM RECUSA o lead: assim o comercial não perde uma inscrição silenciosamente. O contato já ficou salvo no painel com o
     // motivo para recuperação/reenvio.
     //
     // ⚠️ Estourar o tempo é diferente de recusar. Aconteceu de verdade: o CRM
@@ -276,7 +303,7 @@ export async function POST(req: Request) {
     // isso, e a pessoa levou "não conseguimos confirmar" e nunca entrou no
     // grupo — inscrita no CRM e perdida na jornada. Sem resposta, a gente
     // segue com ela e registra o ocorrido em "Últimos envios".
-    if (slug === "transforma" && crmStatus !== "ok" && crmRespondeu) {
+    if (regras && crmStatus !== "ok" && crmRespondeu) {
       return NextResponse.json(
         {
           success: false,
@@ -293,7 +320,8 @@ export async function POST(req: Request) {
       success: true,
       data: {
         message: redirectUrl
-          ? "Inscrição confirmada! Você será direcionada ao grupo do evento."
+          ? regras?.mensagemOk ||
+            "Inscrição confirmada! Você será direcionada ao grupo do evento."
           : "Recebido com sucesso!",
         ...(redirectUrl ? { redirect_url: redirectUrl } : {}),
       },

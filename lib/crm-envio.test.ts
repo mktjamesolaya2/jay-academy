@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   montarCorpoDoLead,
   montarCorpoTransforma,
+  montarCorpoBeauty,
   corpoParaOCrm,
 } from "./crm-envio.ts";
 
@@ -143,4 +144,27 @@ test("reenvio: lead remontado das respostas guardadas chega inteiro no CRM", () 
   ]) {
     assert.equal(c[campo], respostasGuardadas[campo as keyof typeof respostasGuardadas]);
   }
+});
+
+test("JAY Beauty manda só contato e etiqueta — e nunca e-mail vazio", () => {
+  // O formulário da oferta pede nome e telefone. Mandar `email: ""` faria o CRM
+  // apagar o e-mail que o contato já tinha da inscrição no evento.
+  const c = montarCorpoBeauty({ name: "Maria", whatsapp: "+5511999998888" });
+  assert.equal(c.nome, "Maria");
+  assert.equal(c.telefone, "+5511999998888");
+  assert.equal(c.tag, "Check BEAUTY");
+  assert.equal("email" in c, false);
+  assert.equal("pagina" in c, false);
+});
+
+test("corpoParaOCrm despacha a /jaytransforma-beauty pelo montador dela", () => {
+  const c = corpoParaOCrm({
+    ...base,
+    slug: "jaytransforma-beauty",
+    // Campos crus da página não podem vazar pro CRM: a etiqueta é o que conta.
+    fields: { ...base.fields, utm_source: "instagram" },
+  });
+  assert.equal(c.tag, "Check BEAUTY");
+  assert.equal("utm_source" in c, false);
+  assert.equal("email" in c, false);
 });

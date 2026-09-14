@@ -94,6 +94,28 @@ export function montarCorpoTransforma(
 }
 
 /**
+ * A oferta de fechamento do JAY TRANSFORMA (/jaytransforma-beauty).
+ *
+ * Só contato e etiqueta: o formulário pede apenas nome e telefone, porque quem
+ * chega aqui já é contato do CRM — veio do evento. A etiqueta PRÓPRIA é o
+ * ponto: o CRM reaproveita o negócio e responde `duplicated: true`, e é a
+ * etiqueta diferente que deixa o James ver a progressão (cadastrou no evento →
+ * participou → foi tentar comprar).
+ *
+ * ⚠️ Sem `email`: o campo não existe no formulário, e chave vazia no corpo faz
+ * o CRM sobrescrever com nada o e-mail que o contato já tinha do Transforma.
+ */
+export function montarCorpoBeauty(
+  d: Pick<DadosDoLead, "name" | "whatsapp">
+): Record<string, string> {
+  return {
+    nome: d.name,
+    telefone: d.whatsapp,
+    tag: "Check BEAUTY",
+  };
+}
+
+/**
  * Qual corpo esta página manda ao CRM.
  *
  * ⚠️ FONTE ÚNICA: a captura (/api/elementor-form) e o reenvio manual do painel
@@ -101,7 +123,18 @@ export function montarCorpoTransforma(
  * reenvio reinventou um corpo mais pobre — passou de 13/08 a 10/09 mandando
  * lead sem as respostas de qualificação e sem a etiqueta do Transforma,
  * justamente no caminho que existe pra recuperar lead que não chegou lá.
+ *
+ * Um mapa, não uma cadeia de ifs: a segunda LP com funil próprio já chegou.
  */
+const MONTADORES_POR_SLUG: Record<string, (d: DadosDoLead) => Record<string, string>> = {
+  transforma: montarCorpoTransforma,
+  "jaytransforma-beauty": montarCorpoBeauty,
+};
+
 export function corpoParaOCrm(d: DadosDoLead): Record<string, string> {
-  return d.slug === "transforma" ? montarCorpoTransforma(d) : montarCorpoDoLead(d);
+  // hasOwn: o slug vem da URL, não pode alcançar o Object.prototype.
+  const montar = Object.hasOwn(MONTADORES_POR_SLUG, d.slug)
+    ? MONTADORES_POR_SLUG[d.slug]
+    : montarCorpoDoLead;
+  return montar(d);
 }

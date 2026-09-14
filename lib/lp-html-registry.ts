@@ -132,6 +132,16 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // Oferta de fechamento do JAY TRANSFORMA: só quem participou do evento vê.
+    // Não entra no sitemap e leva noindex — a condição não é pra público geral.
+    // Sem assetsDir: reaproveita os assets do Shadow PRO, como a /transforma.
+    slug: "jaytransforma-beauty",
+    title: "JAY Beauty (oferta JAY Transforma)",
+    htmlFile: "lp-html/jaytransforma-beauty.html",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     slug: "pmuclass",
     title: "PMU CLASS",
     htmlFile: "lp-html/pmuclass.html",
@@ -150,6 +160,9 @@ export const lpHtmlRedirects: { from: string; to: string }[] = [
     from: "metodo-fio-a-fio-by-james-olaya",
     to: "fio-a-fio-realista-by-james-olaya",
   },
+  // O endereço com underscore foi o divulgado primeiro; o canônico segue o
+  // padrão de hífen do resto do repo.
+  { from: "jaytransforma_beauty", to: "jaytransforma-beauty" },
 ];
 
 export function getLpHtmlEntry(slug: string): LpHtmlEntry | undefined {

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>JAY Beauty — Condição exclusiva JAY TRANSFORMA</title>
+<meta name="description" content="A formação presencial de 4 dias da JAY Academy em uma condição reservada a quem participou do JAY TRANSFORMA. Design de sobrancelhas, visagismo, henna, tintura, epilação, Brow Lamination, Lash Lifting e protocolos de reconstrução.">
+<!-- ⚠️ noindex de propósito: a condição é reservada a quem participou do evento,
+     não é campanha aberta. Pelo mesmo motivo a página fica FORA do sitemap
+     (app/sitemap.ts) — não adicionar lá. -->
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="JAY Beauty — Condição exclusiva JAY TRANSFORMA">
+<meta property="og:description" content="4 dias presenciais dentro da JAY Academy. Condição limitadíssima para quem viveu o JAY TRANSFORMA.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://jayacademy.com.br/lp/shadow-pro/hero-scene.webp">
+<style>
+/* Identidade herdada da /transforma (que herdou do Método Shadow PRO) — mesmos
+   tokens, mesmas fontes: quem sai do evento e cai aqui tem que reconhecer a casa.
+   Diferença: aqui EXISTE preço, escassez e checkout. A conversão é o formulário
+   em #inscricao, que manda o lead pro CRM e leva a pessoa pro checkout. */
+:root{
+  --bg:#0a090c; --bg2:#110e15; --card:#15121c; --card2:#1b1622;
+  --gold:#d9b458; --gold2:#f2d38a; --gold3:#b8933f; --bronze:#8a6a2e;
+  --text:#ece7f0; --muted:#a09aad; --line:rgba(230,198,132,.14); --line2:rgba(255,255,255,.07);
+}
+@font-face{font-family:'Beau';src:url('/fonts/Beau-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'Poppins';src:url('/fonts/Poppins-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'Poppins';src:url('/fonts/Poppins-Medium.ttf') format('truetype');font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:'Poppins';src:url('/fonts/Poppins-SemiBold.ttf') format('truetype');font-weight:600;font-style:normal;font-display:swap;}
+@font-face{font-family:'Poppins';src:url('/fonts/Poppins-Bold.ttf') format('truetype');font-weight:700 900;font-style:normal;font-display:swap;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;width:100%;max-width:100%;overflow-x:hidden;background:var(--bg);overscroll-behavior-x:none;}
+body{position:relative;width:100%;max-width:100%;background:var(--bg);color:var(--text);font-family:'Poppins',system-ui,sans-serif;overflow-x:hidden;overscroll-behavior-x:none;line-height:1.55;-webkit-font-smoothing:antialiased;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body>*{max-width:100%;}
+@supports(overflow:clip){html,body{overflow-x:clip;}}
+img{max-width:100%;display:block;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
+.serif{font-family:'Beau',Georgia,serif;}
+h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter-spacing:.024em;overflow-wrap:break-word;}
+.gold{color:var(--gold2);}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;margin-bottom:16px;}
+.eyebrow::before{content:"";width:30px;height:1.5px;background:linear-gradient(90deg,transparent,var(--gold));}
+.eyebrow.c{justify-content:center;}
+.eyebrow.c::after{content:"";width:30px;height:1.5px;background:linear-gradient(90deg,var(--gold),transparent);}
+.sec{padding:clamp(60px,8vw,110px) 0;position:relative;}
+.sec-title{font-size:clamp(32px,4.6vw,58px);color:#fff;margin-bottom:20px;text-wrap:balance;}
+.sec-sub{color:var(--muted);font-size:clamp(15px,1.7vw,18px);max-width:60ch;line-height:1.6;}
+.sec-sub + .sec-sub{margin-top:14px;}
+.center{text-align:center;}
+.center .sec-sub{margin-left:auto;margin-right:auto;}
+.faixa{background:linear-gradient(180deg,#0a090c 0%, var(--bg2) 12%, var(--bg2) 88%, #0a090c 100%);}
+/* CTA */
+.cta{display:inline-block;font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(14px,1.5vw,16px);letter-spacing:.03em;text-transform:uppercase;color:#1a1206;text-decoration:none;padding:17px 40px;border-radius:12px;
+  background:linear-gradient(180deg,var(--gold2),var(--gold3));box-shadow:0 14px 34px rgba(184,147,63,.4),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .18s ease,box-shadow .18s ease;text-align:center;border:none;cursor:pointer;}
+.cta:hover{transform:translateY(-2px);box-shadow:0 20px 44px rgba(184,147,63,.55),inset 0 1px 0 rgba(255,255,255,.5);}
+.cta--ghost{background:transparent;color:var(--gold2);border:1px solid var(--gold);box-shadow:none;}
+.cta--ghost:hover{background:rgba(217,180,88,.1);box-shadow:none;}
+.trust{display:inline-flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:12.5px;font-weight:500;margin-top:18px;}
+.trust b{color:var(--gold2);font-weight:600;}
+.chk{flex:0 0 auto;width:23px;height:23px;border-radius:50%;background:linear-gradient(150deg,var(--gold2),var(--gold3));display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.chk svg{width:12px;height:12px;}
+.num-poppins{font-family:'Beau',Georgia,serif;font-style:normal;letter-spacing:.02em;font-weight:400;}
+/* ⚠️ PLACEHOLDER — tudo que estiver em .ph precisa ser trocado antes de publicar.
+   Rode `grep -n 'class="ph"' lp-html/jaytransforma-beauty.html` pra achar todos. */
+.ph{display:inline-block;border-bottom:1.5px dashed rgba(217,180,88,.55);padding:0 2px;color:var(--gold2);}
+/* selo */
+.selo{display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 14px;border:1px solid rgba(217,180,88,.34);background:rgba(217,180,88,.06);border-radius:999px;padding:9px 20px;font-family:'Poppins',sans-serif;font-size:clamp(9.5px,2.6vw,11px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);}
+.selo i{font-style:normal;color:var(--gold3);}
+.prazo{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:18px 0 26px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);}
+.prazo b{font-weight:400;color:var(--gold2);}
+.prazo span{flex:1 0 100%;opacity:.8;}
+.prazo::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold2);box-shadow:0 0 0 4px rgba(217,180,88,.18);}
+.center .prazo,.hero__in.c .prazo{justify-content:center;}
+/* ===== HERO ===== */
+.hero{position:relative;min-height:min(90vh,780px);display:flex;align-items:center;overflow:hidden;background:#0a090c;padding:80px 0;}
+.hero::after{content:"";position:absolute;inset:0;z-index:0;background:url("/lp/shadow-pro/hero-scene.webp") center right / cover no-repeat;}
+.hero::before{content:"";position:absolute;inset:0;z-index:1;background:
+  linear-gradient(90deg,#0a090c 6%,rgba(10,9,12,.9) 30%,rgba(10,9,12,.45) 54%,transparent 76%),
+  linear-gradient(180deg,transparent 72%,rgba(10,9,12,.55));}
+.hero__in{position:relative;z-index:2;max-width:600px;}
+@media(min-width:901px){.hero .wrap{max-width:min(52vw,680px);margin:0;padding-left:clamp(30px,5vw,86px);padding-right:24px;}}
+.hero__logo{margin-bottom:24px;}
+.hero__logo b{display:block;font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(25px,6.7vw,48px);letter-spacing:.075em;text-transform:uppercase;color:#fff;line-height:.9;}
+.hero__logo b i{font-style:normal;color:var(--gold2);}
+.hero__logo span{display:block;font-size:clamp(9px,2.6vw,10.5px);letter-spacing:.36em;color:var(--gold);font-family:'Poppins',sans-serif;font-weight:600;margin-top:8px;text-transform:uppercase;}
+.hero h1{font-size:clamp(33px,4.3vw,55px);color:#fff;margin-bottom:22px;max-width:17ch;text-wrap:balance;}
+.hero h1 b{color:var(--gold2);font-weight:700;}
+.hero__lead{color:var(--muted);font-size:clamp(15px,1.6vw,17px);line-height:1.6;margin-bottom:18px;max-width:54ch;}
+.hero__lead b{color:#e6dfd2;font-weight:600;}
+.hero__note{color:var(--muted);font-size:13px;line-height:1.55;margin-top:16px;max-width:46ch;}
+/* ===== BLOCO DE OFERTA ===== */
+.oferta{max-width:560px;margin:34px auto 0;background:linear-gradient(160deg,var(--card2),var(--card) 62%);border:1px solid rgba(217,180,88,.34);border-radius:22px;padding:clamp(26px,3.6vw,38px) clamp(22px,3vw,34px);text-align:center;box-shadow:0 30px 70px rgba(0,0,0,.5);}
+.oferta__curso{font-family:'Beau',Georgia,serif;font-size:clamp(23px,2.8vw,31px);line-height:1.05;letter-spacing:.02em;color:var(--gold2);}
+.oferta__de{color:var(--muted);font-size:14px;margin-top:12px;}
+.oferta__de s{text-decoration-color:rgba(217,180,88,.6);}
+.oferta__hr{width:min(260px,72%);height:1px;margin:20px auto;background:linear-gradient(90deg,transparent,rgba(217,180,88,.5),transparent);}
+.oferta__k{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.oferta__valor{font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(42px,6.4vw,66px);line-height:.92;letter-spacing:.02em;color:#fff;}
+.oferta__cond{color:#d0c8bc;font-size:14.5px;margin-top:10px;}
+.oferta .cta{width:100%;margin-top:24px;}
+.oferta__nota{color:var(--muted);font-size:12.5px;line-height:1.55;margin-top:14px;}
+/* hero em duas colunas quando há espaço: texto | oferta */
+@media(min-width:1101px){
+  .hero{padding:96px 0;}
+  .hero .wrap{max-width:1180px;margin:0 auto;padding:0 clamp(24px,4vw,48px);}
+  .hero__grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,4vw,64px);align-items:center;}
+  .hero__in{max-width:none;}
+  .oferta{margin:0;}
+  .hero::before{background:linear-gradient(90deg,#0a090c 4%,rgba(10,9,12,.92) 34%,rgba(10,9,12,.78) 62%,rgba(10,9,12,.6) 100%),linear-gradient(180deg,transparent 72%,rgba(10,9,12,.55));}
+}
+/* ===== SITUAÇÕES ===== */
+.situ{max-width:900px;margin:46px auto 0;text-align:left;display:grid;gap:0;}
+.situ__row{display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,3vw,36px);align-items:center;padding:26px 6px;border-top:1px solid var(--line);}
+.situ__row:last-child{border-bottom:1px solid var(--line);}
+.situ__n{font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(44px,5.8vw,70px);line-height:.82;letter-spacing:.04em;color:rgba(217,180,88,.1);-webkit-text-stroke:1.1px rgba(217,180,88,.55);min-width:58px;}
+.situ__t{font-size:clamp(15.5px,1.8vw,19px);color:#e6dfd2;line-height:1.5;}
+.situ__t b{color:#fff;font-weight:600;}
+.situ-fecho{max-width:760px;margin:38px auto 0;font-family:'Beau',Georgia,serif;font-style:normal;font-size:clamp(24px,2.9vw,33px);line-height:1.1;letter-spacing:.018em;color:var(--gold2);}
+/* ===== FAIXA DE CTA ===== */
+.band{text-align:center;padding:clamp(48px,6vw,80px) 0;background:radial-gradient(120% 100% at 50% 0,#1c1710,#0a090c 66%);border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);}
+.band h3{font-size:clamp(24px,3.2vw,38px);color:#fff;margin-bottom:24px;}
+/* ===== SERVIÇOS ===== */
+.servicos{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:900px;margin:40px auto 0;}
+.servicos span{font-size:13.5px;color:#e6dfd2;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:11px 19px;}
+/* ===== DOIS PERFIS ===== */
+.dois{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2vw,24px);margin-top:44px;text-align:left;}
+.perfil{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(26px,3vw,34px) clamp(22px,2.6vw,30px);transition:transform .3s,border-color .3s;}
+.perfil:hover{transform:translateY(-4px);border-color:rgba(217,180,88,.4);}
+.perfil h3{font-size:clamp(25px,2.8vw,33px);color:#fff;margin-bottom:14px;}
+.perfil p{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:12px;}
+.perfil p:last-child{margin-bottom:0;}
+.perfil .q{font-family:'Beau',Georgia,serif;font-style:normal;font-size:clamp(19px,2.15vw,23px);line-height:1.12;letter-spacing:.01em;color:var(--gold2);padding-left:16px;border-left:2px solid rgba(217,180,88,.45);margin-bottom:16px;}
+/* ===== COMO FUNCIONA ===== */
+.passos{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,1.8vw,22px);margin-top:46px;text-align:left;}
+.passo{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 24px;}
+.passo b{display:block;font-family:'Beau',Georgia,serif;font-weight:400;font-size:47px;line-height:.85;color:var(--gold2);margin-bottom:14px;}
+.passo h4{font-family:'Poppins',sans-serif;font-size:16px;font-weight:600;color:#fff;margin-bottom:8px;}
+.passo p{color:var(--muted);font-size:14px;line-height:1.55;}
+.saidas{max-width:940px;margin:40px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:14px 26px;text-align:left;}
+.saidas li{list-style:none;display:flex;align-items:flex-start;gap:12px;color:#e6dfd2;font-size:clamp(14.5px,1.6vw,16px);line-height:1.5;background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:16px 18px;}
+/* ===== RESULTADOS ===== */
+.result{max-width:760px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(24px,3vw,32px);}
+.result p{color:#d0c8bc;font-size:clamp(14.5px,1.6vw,16.5px);line-height:1.62;}
+.result .disc{color:var(--muted);font-size:12.5px;line-height:1.6;margin-top:14px;}
+/* ===== CARD DA TURMA ===== */
+.turma{max-width:520px;margin:38px auto 0;text-align:center;border:1px solid rgba(217,180,88,.3);border-radius:20px;padding:clamp(26px,3.4vw,36px);background:var(--card);}
+.turma__marca{font-family:'Beau',Georgia,serif;font-size:clamp(30px,4vw,42px);letter-spacing:.06em;text-transform:uppercase;color:#fff;line-height:1;}
+.turma__linha{color:var(--muted);font-size:14.5px;margin-top:10px;}
+/* ===== INSCRIÇÃO ===== */
+.insc{background:radial-gradient(120% 100% at 50% 0,#1c1710,#0a090c 62%);}
+.insc__card{max-width:560px;margin:34px auto 0;background:var(--card);border:1px solid rgba(217,180,88,.3);border-radius:24px;padding:clamp(28px,4vw,42px);box-shadow:0 30px 70px rgba(0,0,0,.5);text-align:left;}
+.insc__card .campo{display:block;margin-bottom:16px;}
+.insc__card .campo span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
+.insc__card input{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px;padding:15px 16px;color:#fff;font-family:'Poppins',sans-serif;font-size:16px;transition:border-color .2s,background .2s;}
+.insc__card input:focus{outline:none;border-color:var(--gold);background:rgba(217,180,88,.06);}
+.insc__card input::placeholder{color:#6c6577;}
+.insc__card .cta{width:100%;margin-top:8px;}
+.insc__nota{color:var(--muted);font-size:13px;line-height:1.55;margin-top:16px;text-align:center;}
+.insc__card .jayo-aviso,.insc__card [data-jayo-aviso]{text-align:center;}
+/* ===== RESERVA ===== */
+.reserva{max-width:680px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(26px,3.4vw,36px);text-align:center;}
+.reserva h3{font-size:clamp(24px,3vw,34px);color:#fff;margin-bottom:16px;}
+.reserva p{color:var(--muted);font-size:clamp(14.5px,1.6vw,16px);line-height:1.6;margin-bottom:12px;}
+.reserva .cta{margin-top:14px;}
+/* ===== FINAL / FOOTER ===== */
+.final{text-align:center;background:radial-gradient(120% 100% at 50% 100%,#1c1710,#0a090c 62%);}
+.final__mark{font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(27px,7vw,58px);letter-spacing:.07em;text-transform:uppercase;color:#fff;margin-bottom:10px;}
+.final__mark i{font-style:normal;color:var(--gold2);}
+.final__sub{color:var(--gold);font-family:'Poppins',sans-serif;font-size:clamp(9.5px,2.6vw,11px);font-weight:600;letter-spacing:.3em;text-transform:uppercase;margin-bottom:28px;}
+.foot{padding:40px 0 46px;text-align:center;border-top:1px solid var(--line2);}
+.foot p{color:var(--muted);font-size:13px;margin:4px 0;}
+.foot .b{font-family:'Beau',Georgia,serif;font-weight:400;color:var(--gold2);font-size:23px;font-style:normal;letter-spacing:.035em;}
+/* ===== RESPONSIVE ===== */
+@media(max-width:980px){
+  .dois{grid-template-columns:1fr;}
+  .passos{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:900px){
+  .hero{min-height:auto;display:block;padding:0;}
+  .hero::after{height:76vw;max-height:440px;bottom:auto;background-position:92% top;-webkit-mask-image:linear-gradient(180deg,#000 74%,transparent 99%);mask-image:linear-gradient(180deg,#000 74%,transparent 99%);}
+  .hero::before{background:linear-gradient(180deg,transparent 40%,rgba(10,9,12,.7) 66%,#0a090c 82%);}
+  .hero__in{padding:calc(min(76vw,440px) - 46px) 0 0;max-width:none;text-align:center;}
+  .hero__lead,.hero__note{margin-left:auto;margin-right:auto;}
+  .hero .prazo{justify-content:center;}
+  .hero__grid{padding-bottom:54px;}
+  .saidas{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .wrap{padding-left:18px;padding-right:18px;}
+  .sec{padding:64px 0;}
+  .sec-title{font-size:clamp(29px,8.4vw,38px);line-height:1.04;margin-bottom:16px;}
+  .sec-sub{font-size:15px;line-height:1.62;}
+  .eyebrow{font-size:10px;letter-spacing:.2em;margin-bottom:13px;gap:8px;}
+  .eyebrow::before,.eyebrow.c::after{width:21px;}
+  .hero__in{padding:calc(min(76vw,440px) - 32px) 0 0;}
+  .hero__logo{margin-bottom:20px;}
+  .hero__logo b{font-size:clamp(25px,7.2vw,35px);letter-spacing:.055em;}
+  .hero h1{font-size:clamp(30px,8.4vw,38px);line-height:1.04;max-width:none;margin:0 auto 18px;}
+  .hero__lead{font-size:14px;line-height:1.58;margin-bottom:16px;}
+  .hero .selo{padding:8px 13px;gap:5px 10px;letter-spacing:.13em;}
+  .hero .prazo{margin:15px 0 22px;font-size:10px;letter-spacing:.12em;}
+  .hero__note{font-size:12px;max-width:35ch;}
+  .oferta{margin-top:26px;padding:25px 19px;border-radius:18px;}
+  .oferta__valor{font-size:clamp(40px,12vw,52px);}
+  .oferta .cta{padding:16px 16px;font-size:12.5px;line-height:1.35;}
+  .situ__row{gap:14px;padding:22px 4px;}
+  .situ__n{font-size:48px;min-width:48px;}
+  .situ__t{font-size:15px;line-height:1.55;}
+  .situ-fecho{font-size:24px;line-height:1.14;margin-top:30px;}
+  .servicos{gap:8px;margin-top:30px;}
+  .servicos span{font-size:12.5px;padding:9px 15px;}
+  .dois{margin-top:32px;gap:14px;}
+  .perfil{padding:25px 20px;border-radius:17px;}
+  .perfil h3{font-size:27px;margin-bottom:12px;}
+  .perfil .q{font-size:20px;line-height:1.14;margin-bottom:14px;}
+  .perfil p{font-size:14px;}
+  .passos{grid-template-columns:1fr;}
+  .passo{padding:23px 20px;}
+  .saidas{margin-top:30px;gap:12px;}
+  .saidas li{padding:15px 16px;font-size:14px;}
+  .band h3{font-size:25px;line-height:1.1;}
+  .band .cta{width:min(100%,390px);padding:16px 18px;font-size:12.5px;line-height:1.35;}
+  .turma__marca{font-size:33px;}
+  .insc__card{margin-top:28px;padding:25px 18px;border-radius:18px;}
+  .insc__card input{padding:14px;font-size:16px;}
+  .reserva{padding:25px 19px;border-radius:17px;}
+  .reserva h3{font-size:25px;line-height:1.1;}
+  .reserva .cta{width:min(100%,390px);padding:16px 18px;font-size:12.5px;line-height:1.35;}
+  .final__mark{font-size:36px;}
+  .foot{padding:32px 0 38px;}
+}
+@media(max-width:600px){
+  .hero::after{background-image:url("/lp/shadow-pro/hero-scene-mobile.webp");background-position:center top;}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important;animation:none !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HERO + OFERTA ===== -->
+<!-- TROCAR: [DATA] e [HORÁRIO] do encerramento da condição -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero__grid">
+      <div class="hero__in">
+        <div class="hero__logo">
+          <b>Jay <i>Beauty</i></b>
+          <span>JAY.O Academy</span>
+        </div>
+        <div class="selo">Condição exclusiva <i>•</i> Jay Transforma</div>
+        <h1 style="margin-top:20px;">O JAY TRANSFORMA termina. O que ele <b>despertou em você</b> pode começar agora.</h1>
+        <p class="hero__lead">Você passou três dias dentro de um ambiente pensado para ampliar sua visão sobre técnica, imagem e carreira. Agora, a JAY Academy abriu para participantes do JAY TRANSFORMA uma <b>condição limitadíssima</b> para o JAY Beauty: a formação presencial para quem quer começar na beleza ou ampliar sua atuação e sair pronta para atender.</p>
+        <p class="hero__lead">Entrar no JAY Beauty também significa viver uma formação dentro da academia de James Olaya, um dos grandes nomes mundiais da beleza, em um ambiente reconhecido por técnica, método e excelência profissional.</p>
+        <p class="prazo"><b>Disponível até <span class="ph">[DATA]</span></b> <span>às <span class="ph">[HORÁRIO]</span></span></p>
+      </div>
+
+      <!-- TROCAR: [VALOR EXCLUSIVO] e [CONDIÇÃO DE PAGAMENTO INTEGRAL] -->
+      <aside class="oferta">
+        <div class="oferta__curso">JAY Beauty<br><span style="font-size:.62em;letter-spacing:.14em;text-transform:uppercase;font-family:'Poppins',sans-serif;font-weight:700;color:var(--gold);">4 dias presenciais</span></div>
+        <p class="oferta__de">Valor regular: <s>R$ 3.500</s></p>
+        <div class="oferta__hr"></div>
+        <div class="oferta__k">Condição exclusiva Jay Transforma</div>
+        <div class="oferta__valor">R$ <span class="ph">[VALOR EXCLUSIVO]</span></div>
+        <p class="oferta__cond"><span class="ph">[CONDIÇÃO DE PAGAMENTO INTEGRAL]</span></p>
+        <a class="cta" href="#inscricao">Garantir minha vaga</a>
+        <p class="oferta__nota">Condição reservada aos participantes do JAY TRANSFORMA até <span class="ph">[DATA/HORA]</span> e limitada às vagas destinadas ao evento.</p>
+      </aside>
+    </div>
+  </div>
+</header>
+
+<!-- ===== O QUE O TRANSFORMA MOSTROU ===== -->
+<section class="sec faixa">
+  <div class="wrap center">
+    <span class="eyebrow c">O próximo passo</span>
+    <h2 class="sec-title">O JAY TRANSFORMA mostrou o que é possível. O <span class="gold">Beauty coloca tudo isso nas suas mãos.</span></h2>
+    <p class="sec-sub">Talvez você já trabalhe com beleza e tenha percebido quantas possibilidades ainda existem dentro da cliente que hoje já senta na sua cadeira. Talvez esteja começando e tenha entendido que uma carreira na beleza pode ser construída com método, prática e direção.</p>
+    <p class="situ-fecho">O JAY Beauty foi criado para transformar essa percepção em capacidade profissional. Você aprende, pratica, recebe acompanhamento, executa em modelo real e sai pronta para começar seus próprios atendimentos.</p>
+  </div>
+</section>
+
+<!-- ===== FAIXA DE CTA ===== -->
+<section class="band">
+  <div class="wrap">
+    <h3>Quero garantir minha <span class="gold">vaga</span>.</h3>
+    <a class="cta" href="#inscricao">Quero garantir minha vaga</a>
+    <div class="trust" style="display:flex;justify-content:center;"><b>4 dias presenciais</b> • JAY.O Academy • Vagas limitadas</div>
+  </div>
+</section>
+
+<!-- ===== QUATRO DIAS / SERVIÇOS ===== -->
+<section class="sec">
+  <div class="wrap center">
+    <span class="eyebrow c">A formação</span>
+    <h2 class="sec-title">Quatro dias para mudar o que você é capaz de <span class="gold">oferecer profissionalmente.</span></h2>
+    <p class="sec-sub">O JAY Beauty reúne em uma mesma formação:</p>
+    <div class="servicos">
+      <span>Design de sobrancelhas</span>
+      <span>Visagismo</span>
+      <span>Henna</span>
+      <span>Tintura</span>
+      <span>Epilação com linha</span>
+      <span>Epilação com cera</span>
+      <span>Brow Lamination</span>
+      <span>Lash Lifting</span>
+      <span>Reconstrução e fortalecimento</span>
+    </div>
+    <p class="situ-fecho">A lógica não é acumular técnicas. É sair capaz de olhar para uma cliente e enxergar possibilidades de atendimento, continuidade e recorrência.</p>
+    <p class="sec-sub" style="margin:26px auto 0;">Uma cliente pode chegar por um serviço, voltar para manutenção, conhecer outro procedimento e permanecer por mais tempo na sua carteira. Para quem está começando, isso cria uma base profissional. Para quem já atua, amplia repertório, recorrência e possibilidades de faturamento dentro da própria carteira.</p>
+  </div>
+</section>
+
+<!-- ===== VOCÊ APRENDE DENTRO DA JAY ACADEMY ===== -->
+<section class="sec faixa">
+  <div class="wrap center">
+    <span class="eyebrow c">O padrão</span>
+    <h2 class="sec-title">Você aprende dentro da <span class="gold">JAY Academy.</span></h2>
+    <p class="sec-sub">Existem muitos lugares onde é possível fazer um curso de beleza. A experiência na JAY Academy parte de outro padrão.</p>
+    <p class="sec-sub">O JAY Beauty acontece sob a curadoria de James Olaya e com uma metodologia construída para colocar a aluna em prática. Antes do presencial, você prepara a base teórica. Na Academy, assiste à demonstração, treina, executa, recebe correção e chega ao atendimento em modelo real.</p>
+    <p class="situ-fecho">Você não termina sabendo apenas como funciona. Você termina sabendo fazer e pronta para atender.</p>
+    <p style="margin-top:36px;"><a class="cta" href="#inscricao">Garantir minha vaga no JAY Beauty</a></p>
+  </div>
+</section>
+
+<!-- ===== DOIS PERFIS ===== -->
+<section class="sec">
+  <div class="wrap center">
+    <span class="eyebrow c">Para quem é</span>
+    <h2 class="sec-title">Dois pontos de partida. <span class="gold">O mesmo destino.</span></h2>
+    <div class="dois">
+      <article class="perfil">
+        <h3>Se você está <span class="gold">começando do zero</span></h3>
+        <p class="q">Será que eu consigo aprender mesmo sem experiência?</p>
+        <p>Você não precisa chegar trabalhando com beleza, ter clínica ou dominar outra técnica. A formação parte dos fundamentos e conduz você até a execução acompanhada.</p>
+        <p>É por isso que a prática ocupa um papel tão grande no Beauty. Você entra para aprender e sai pronta para atender.</p>
+      </article>
+      <article class="perfil">
+        <h3>Se você <span class="gold">já atende</span></h3>
+        <p class="q">Quanto da sua cliente ainda está indo para outras profissionais?</p>
+        <p>Existem serviços que você ainda não oferece — e é por eles que ela procura outra pessoa. Ela já confia em você. Já conhece seu atendimento. Já entrou no seu espaço.</p>
+        <p>Ampliar seu repertório significa criar novas possibilidades dentro de uma relação que já existe, aumentando os motivos para ela voltar e permanecer na sua carteira.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAIXA DE CTA ===== -->
+<section class="band">
+  <div class="wrap">
+    <h3>Quero entrar no <span class="gold">JAY Beauty</span>.</h3>
+    <a class="cta" href="#inscricao">Quero entrar no JAY Beauty</a>
+  </div>
+</section>
+
+<!-- ===== COMO FUNCIONA ===== -->
+<section class="sec faixa">
+  <div class="wrap center">
+    <span class="eyebrow c">A jornada</span>
+    <h2 class="sec-title">A formação foi construída para você <span class="gold">sair capaz de começar.</span></h2>
+    <p class="sec-sub">A jornada combina preparação online e quatro dias presenciais de prática.</p>
+    <div class="passos">
+      <article class="passo">
+        <b>1</b>
+        <h4>Preparação online</h4>
+        <p>Antes do presencial, você constrói a base teórica para chegar pronta para praticar.</p>
+      </article>
+      <article class="passo">
+        <b>2</b>
+        <h4>Demonstração ao vivo</h4>
+        <p>Na Academy, você assiste à execução completa antes de colocar a mão.</p>
+      </article>
+      <article class="passo">
+        <b class="num-poppins">3</b>
+        <h4>Circuitos e treino</h4>
+        <p>Circuitos de treinamento e treino interativo, com correção enquanto você executa.</p>
+      </article>
+      <article class="passo">
+        <b>4</b>
+        <h4>Atendimento em modelo real</h4>
+        <p>Você termina a formação atendendo de verdade, com acompanhamento.</p>
+      </article>
+    </div>
+    <ul class="saidas">
+      <li><i class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></i><span>Sair apta a atender profissionalmente;</span></li>
+      <li><i class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></i><span>construir seu portfólio;</span></li>
+      <li><i class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></i><span>iniciar sua carteira de clientes;</span></li>
+      <li><i class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1206" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></i><span>trabalhar serviços que favorecem a recorrência.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== RESULTADOS =====
+     A seção de DEPOIMENTOS do material original (os 4 nomes de alunas) foi
+     retirada a pedido. O que ficou é só o dado com o disclaimer — se o James
+     quiser tirar também, apague esta <section> inteira. -->
+<section class="sec">
+  <div class="wrap center">
+    <span class="eyebrow c">Resultados</span>
+    <h2 class="sec-title">Alunas já transformaram esse começo em <span class="gold">profissão.</span></h2>
+    <div class="result">
+      <p>A JAY Academy possui casos documentados de alunas que passaram a faturar entre <b class="gold">R$ 5 mil e R$ 8 mil mensais</b> utilizando serviços ensinados na formação.</p>
+      <p class="disc">São resultados individuais e não representam promessa de faturamento. Eles mostram, porém, que existe um caminho real entre aprender, começar a atender e construir uma atuação profissional.</p>
+    </div>
+    <p style="margin-top:36px;"><a class="cta" href="#inscricao">Garantir minha vaga</a></p>
+  </div>
+</section>
+
+<!-- ===== POR QUE VOCÊ ESTÁ VENDO ISTO ===== -->
+<!-- TROCAR: [VALOR], [CONDIÇÃO DE PAGAMENTO], [DATA], [HORÁRIO], [X] vagas -->
+<section class="sec faixa">
+  <div class="wrap center">
+    <span class="eyebrow c">A condição</span>
+    <h2 class="sec-title">Existe uma razão para você estar vendo <span class="gold">esta condição.</span></h2>
+    <p class="sec-sub">Ela não foi criada para uma campanha aberta e não está disponível para o público geral. A JAY Academy definiu esta condição para quem participou do JAY TRANSFORMA e decidiu continuar esse movimento dentro da escola.</p>
+    <div class="oferta" style="margin-top:38px;">
+      <p class="oferta__de">Valor regular do JAY Beauty: <s>R$ 3.500</s></p>
+      <div class="oferta__hr"></div>
+      <div class="oferta__k">Condição especial Jay Transforma</div>
+      <div class="oferta__valor">R$ <span class="ph">[VALOR]</span></div>
+      <p class="oferta__cond"><span class="ph">[CONDIÇÃO DE PAGAMENTO INTEGRAL]</span></p>
+      <a class="cta" href="#inscricao">Garantir minha vaga agora</a>
+      <p class="oferta__nota">Esta condição será encerrada em <span class="ph">[DATA]</span>, às <span class="ph">[HORÁRIO]</span>, ou quando forem preenchidas as <span class="ph">[X]</span> vagas destinadas ao JAY TRANSFORMA, o que acontecer primeiro. Depois do encerramento, a condição especial do evento deixa de estar disponível.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ENXERGAR x EXECUTAR + TURMA ===== -->
+<!-- TROCAR: [DATA DA PRÓXIMA TURMA] e [LOCAL] -->
+<section class="sec">
+  <div class="wrap center">
+    <span class="eyebrow c">O momento</span>
+    <h2 class="sec-title">O JAY TRANSFORMA foi o momento de enxergar. O Beauty é o momento de <span class="gold">executar.</span></h2>
+    <p class="sec-sub">Em quatro dias presenciais, dentro da JAY Academy, você passa por uma formação construída para colocar novos serviços nas suas mãos, ampliar sua capacidade profissional e deixar você pronta para atender.</p>
+    <p class="sec-sub">Neste momento, existe uma condição reservada justamente para quem viveu o JAY TRANSFORMA. A JAY Academy definiu uma janela curta para esse grupo e, quando ela terminar, esta condição será encerrada.</p>
+    <div class="turma">
+      <div class="turma__marca">Jay <i style="font-style:normal;color:var(--gold2);">Beauty</i></div>
+      <p class="turma__linha"><span class="ph">[DATA DA PRÓXIMA TURMA]</span></p>
+      <p class="turma__linha">JAY.O Academy · <span class="ph">[LOCAL]</span></p>
+      <p class="turma__linha">4 dias presenciais</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INSCRIÇÃO ===== -->
+<!-- ⚠️ class="elementor-form" + action pra própria página é o que faz a ponte injetada
+     pelo serveLp interceptar o submit e mandar pro /api/elementor-form (CRM + /leads).
+     Trocar a classe ou o action QUEBRA a captura de lead.
+     O link do checkout NÃO fica aqui: o redirect pós-envio vem do painel
+     (/lps/jaytransforma-beauty → "redirecionar após envio"), pra trocar sem deploy. -->
+<section class="sec insc" id="inscricao">
+  <div class="wrap center">
+    <span class="eyebrow c">Garanta sua vaga</span>
+    <h2 class="sec-title">Sua vaga no <span class="gold">JAY Beauty</span></h2>
+    <p class="sec-sub" style="margin-bottom:6px;">Deixe seu nome e WhatsApp para seguir para o pagamento. É com esse contato que a Academy confirma sua matrícula.</p>
+    <form class="elementor-form insc__card" action="/jaytransforma-beauty" method="post">
+      <label class="campo">
+        <span>Seu nome</span>
+        <input type="text" name="nome" placeholder="Como você quer ser chamada" required autocomplete="name">
+      </label>
+      <label class="campo">
+        <span>WhatsApp</span>
+        <input type="tel" name="telefone" value="+55 " placeholder="+55 (00) 00000-0000" required autocomplete="tel" inputmode="tel" maxlength="24">
+      </label>
+      <button type="submit" class="cta">Garantir minha vaga</button>
+      <p class="jayo-aviso" data-jayo-aviso style="margin:12px 0 0;font-size:15px;line-height:1.5;font-weight:600;"></p>
+      <p class="insc__nota">Pagamento integral. Matrícula confirmada. Condição reservada aos participantes do JAY TRANSFORMA.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ===== RESERVA COM ENTRADA ===== -->
+<!-- TROCAR: [ENTRADA], [X] vezes, [VALOR] da parcela -->
+<section class="sec faixa">
+  <div class="wrap center">
+    <div class="reserva">
+      <span class="eyebrow c">Outra forma de entrar</span>
+      <h3>Prefere <span class="gold">reservar</span> sua vaga?</h3>
+      <p>Você também pode reservar sua participação com uma entrada de <b class="gold">R$ <span class="ph">[ENTRADA]</span></b> e parcelar o saldo restante em <span class="ph">[X]</span> vezes de R$ <span class="ph">[VALOR]</span>.</p>
+      <p>A reserva assegura sua vaga e mantém a condição exclusiva do JAY TRANSFORMA conforme as condições de matrícula.</p>
+      <a class="cta" href="#inscricao">Reservar minha vaga com a entrada</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA FINAL ===== -->
+<!-- TROCAR: [DATA] e [HORÁRIO] do encerramento -->
+<section class="sec final">
+  <div class="wrap">
+    <span class="eyebrow c">Condição limitadíssima</span>
+    <h2 class="sec-title">Disponível até <span class="gold"><span class="ph">[DATA]</span>, às <span class="ph">[HORÁRIO]</span></span></h2>
+    <p class="sec-sub center" style="margin:0 auto 34px;">Ou até o preenchimento das vagas destinadas ao evento.</p>
+    <div class="final__mark">Jay <i>Beauty</i></div>
+    <div class="final__sub">4 dias presenciais · JAY.O Academy</div>
+    <a class="cta" href="#inscricao">Garantir minha vaga</a>
+    <div class="trust" style="display:flex;justify-content:center;">Condição exclusiva <b>JAY TRANSFORMA</b> · Vagas limitadas</div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="b">JAY BEAUTY · JAY TRANSFORMA</p>
+    <p>&copy; James Olaya · Todos os direitos reservados</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // bloqueia pinça-zoom (o duplo-toque já morre no touch-action do body)
+  ['gesturestart','gesturechange','gestureend'].forEach(function(e){
+    document.addEventListener(e,function(ev){ev.preventDefault();},{passive:false});
+  });
+  document.addEventListener('touchmove',function(ev){
+    if(ev.touches&&ev.touches.length>1)ev.preventDefault();
+  },{passive:false});
+
+  var form=document.querySelector('.insc__card');
+  if(!form)return;
+  var whats=form.querySelector('[name="telefone"]');
+  if(!whats)return;
+
+  // Espelho da regra de lib/telefone.ts (HTML puro não importa módulo; o
+  // servidor continua sendo a autoridade). Brasil confere de verdade; outro
+  // país só precisa caber na faixa da E.164 — recusar formato de país que a
+  // gente não conhece é perder aluna de fora.
+  function conferirTelefone(valor){
+    var texto=String(valor||'').trim();
+    var d=texto.replace(/\D/g,'');
+    if(d.length<=3)return 'Digite seu WhatsApp com DDD.';
+    var temMais=texto.charAt(0)==='+';
+    // ⚠️ DDD 55 (Santa Maria/RS) x DDI 55: só é DDI a partir de 12 dígitos.
+    var br=null;
+    if(d.slice(0,2)==='55'&&d.length>=12)br=d.slice(2);
+    else if(!temMais&&d.length>=10&&d.length<=11)br=d;
+    else if(!temMais&&d.length<10)return 'Faltam números. Confira o DDD (ou use + e o código do país).';
+    if(br){
+      var ddd=br.slice(0,2),local=br.slice(2);
+      if(ddd.charAt(0)==='0'||ddd==='10')return 'Confira o DDD — ele vai de 11 a 99, sem o zero na frente.';
+      if(local.length<8)return 'Faltam números no WhatsApp.';
+      if(local.length>9)return 'Esse número tem dígitos demais.';
+      if(local.length===9&&local.charAt(0)!=='9')return 'Confira o número: celular brasileiro começa com 9 depois do DDD.';
+      return '';
+    }
+    if(d.length<8)return 'Faltam números no WhatsApp.';
+    if(d.length>15)return 'Esse número tem dígitos demais.';
+    return '';
+  }
+  // Dois modos: enquanto for número brasileiro, a máscara ajuda; assim que a
+  // pessoa troca o DDI, ela sai do caminho e o campo vira texto livre.
+  function ehModoBrasil(texto){
+    var t=String(texto||'').trim();
+    if(!t)return true;
+    if(t.charAt(0)!=='+')return /^[\d\s().-]*$/.test(t);
+    return t.replace(/\D/g,'').slice(0,2)==='55';
+  }
+  function formatarWhats(valor){
+    var texto=String(valor||'').trim();
+    if(!ehModoBrasil(texto)){
+      // Modo livre: só limpa o que não é telefone e respeita o limite do campo.
+      return texto.replace(/[^\d+\s().-]/g,'').slice(0,24);
+    }
+    // O "+55" escrito é prefixo, não DDD: o que conta como DDD vem depois dele.
+    var temPrefixo=/^\+\s*55/.test(texto);
+    var digitos=(temPrefixo?texto.replace(/^\+\s*55/,''):texto).replace(/\D/g,'');
+    // 12 dígitos ou mais só acontece em número colado com DDI junto.
+    if(digitos.length>=12&&digitos.slice(0,2)==='55')digitos=digitos.slice(2);
+    digitos=digitos.slice(0,11);
+    // Sem dígito nenhum o campo esvazia de vez — era isto que prendia todo
+    // mundo no +55: a versão anterior devolvia '+55 ' e a tecla apagar não saía do lugar.
+    if(!digitos)return temPrefixo?'+55':'';
+    if(digitos.length<=2)return '+55 ('+digitos;
+    var local=digitos.slice(2);
+    if(local.length<=4)return '+55 ('+digitos.slice(0,2)+') '+local;
+    var corte=local.length===9?5:4;
+    return '+55 ('+digitos.slice(0,2)+') '+local.slice(0,corte)+'-'+local.slice(corte);
+  }
+  // Onde termina o "+55" literal — os dígitos dele não são do número.
+  function inicioLocal(texto){
+    var m=/^\+\s*55/.exec(String(texto||''));
+    return m?m[0].length:0;
+  }
+  // Reposiciona o cursor contando os dígitos do número (ignorando o prefixo),
+  // senão ele pula pro fim a cada tecla e a pessoa não consegue corrigir o meio.
+  function aplicarMascara(){
+    var antes=whats.value,pos=whats.selectionStart;
+    var depois=formatarWhats(antes);
+    if(depois===antes)return;
+    var ini=inicioLocal(antes);
+    var corte=pos===null?antes.length:Math.max(pos,ini);
+    var digitosAntes=antes.slice(ini,corte).replace(/\D/g,'').length;
+    whats.value=depois;
+    if(pos===null)return;
+    var novaPos=depois.length;
+    if(digitosAntes>0){
+      var vistos=0;
+      for(var i=inicioLocal(depois);i<depois.length;i++){
+        if(/\d/.test(depois.charAt(i)))vistos++;
+        if(vistos>=digitosAntes){novaPos=i+1;break;}
+      }
+    }
+    try{whats.setSelectionRange(novaPos,novaPos);}catch(e){}
+  }
+  function atualizarValidadeWhats(){
+    whats.setCustomValidity(conferirTelefone(whats.value));
+  }
+  whats.addEventListener('input',function(){
+    aplicarMascara();
+    atualizarValidadeWhats();
+  });
+  whats.addEventListener('change',atualizarValidadeWhats);
+  whats.addEventListener('blur',atualizarValidadeWhats);
+  atualizarValidadeWhats();
+})();
+</script>
+</body>
+</html>
