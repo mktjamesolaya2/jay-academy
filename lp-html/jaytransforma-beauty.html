@@ -35,7 +35,6 @@ body>*{max-width:100%;}
 @supports(overflow:clip){html,body{overflow-x:clip;}}
 img{max-width:100%;display:block;}
 .wrap{max-width:1180px;margin:0 auto;padding:0 22px;}
-.serif{font-family:'Beau',Georgia,serif;}
 h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter-spacing:.024em;overflow-wrap:break-word;}
 .gold{color:var(--gold2);}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;margin-bottom:16px;}
@@ -53,8 +52,6 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 .cta{display:inline-block;font-family:'Poppins',sans-serif;font-weight:700;font-size:clamp(14px,1.5vw,16px);letter-spacing:.03em;text-transform:uppercase;color:#1a1206;text-decoration:none;padding:17px 40px;border-radius:12px;
   background:linear-gradient(180deg,var(--gold2),var(--gold3));box-shadow:0 14px 34px rgba(184,147,63,.4),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .18s ease,box-shadow .18s ease;text-align:center;border:none;cursor:pointer;}
 .cta:hover{transform:translateY(-2px);box-shadow:0 20px 44px rgba(184,147,63,.55),inset 0 1px 0 rgba(255,255,255,.5);}
-.cta--ghost{background:transparent;color:var(--gold2);border:1px solid var(--gold);box-shadow:none;}
-.cta--ghost:hover{background:rgba(217,180,88,.1);box-shadow:none;}
 .trust{display:inline-flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:12.5px;font-weight:500;margin-top:18px;}
 .trust b{color:var(--gold2);font-weight:600;}
 .chk{flex:0 0 auto;width:23px;height:23px;border-radius:50%;background:linear-gradient(150deg,var(--gold2),var(--gold3));display:flex;align-items:center;justify-content:center;margin-top:1px;}
@@ -80,7 +77,8 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 .hero::before{content:"";position:absolute;inset:0;z-index:1;background:
   linear-gradient(90deg,#0a090c 6%,rgba(10,9,12,.9) 30%,rgba(10,9,12,.45) 54%,transparent 76%),
   linear-gradient(180deg,transparent 72%,rgba(10,9,12,.55));}
-.hero__in{position:relative;z-index:2;max-width:600px;}
+.hero__grid{position:relative;z-index:2;}
+.hero__in{max-width:600px;}
 @media(min-width:901px){.hero .wrap{max-width:min(52vw,680px);margin:0;padding-left:clamp(30px,5vw,86px);padding-right:24px;}}
 .hero__logo{margin-bottom:24px;}
 .hero__logo b{display:block;font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(25px,6.7vw,48px);letter-spacing:.075em;text-transform:uppercase;color:#fff;line-height:.9;}
@@ -90,17 +88,16 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 .hero h1 b{color:var(--gold2);font-weight:700;}
 .hero__lead{color:var(--muted);font-size:clamp(15px,1.6vw,17px);line-height:1.6;margin-bottom:18px;max-width:54ch;}
 .hero__lead b{color:#e6dfd2;font-weight:600;}
-.hero__note{color:var(--muted);font-size:13px;line-height:1.55;margin-top:16px;max-width:46ch;}
 /* ===== BLOCO DE OFERTA ===== */
 .oferta{max-width:560px;margin:34px auto 0;background:linear-gradient(160deg,var(--card2),var(--card) 62%);border:1px solid rgba(217,180,88,.34);border-radius:22px;padding:clamp(26px,3.6vw,38px) clamp(22px,3vw,34px);text-align:center;box-shadow:0 30px 70px rgba(0,0,0,.5);}
 .oferta__curso{font-family:'Beau',Georgia,serif;font-size:clamp(23px,2.8vw,31px);line-height:1.05;letter-spacing:.02em;color:var(--gold2);}
+.oferta__meta{display:block;margin-top:10px;font-family:'Poppins',sans-serif;font-size:clamp(10px,2.6vw,11.5px);font-weight:700;letter-spacing:.14em;line-height:1.7;text-transform:uppercase;color:var(--gold);}
 .oferta__de{color:var(--muted);font-size:14px;margin-top:12px;}
 .oferta__de s{text-decoration-color:rgba(217,180,88,.6);}
 .oferta__hr{width:min(260px,72%);height:1px;margin:20px auto;background:linear-gradient(90deg,transparent,rgba(217,180,88,.5),transparent);}
 .oferta__k{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
 .oferta__valor{font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(42px,6.4vw,66px);line-height:.92;letter-spacing:.02em;color:#fff;}
 .oferta__valor i{font-style:normal;font-size:.56em;color:var(--gold2);}
-.oferta__cond{color:#d0c8bc;font-size:14.5px;margin-top:10px;}
 .oferta .cta{width:100%;margin-top:24px;}
 .oferta__nota{color:var(--muted);font-size:12.5px;line-height:1.55;margin-top:14px;}
 /* hero em duas colunas quando há espaço: texto | oferta */
@@ -113,12 +110,6 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   .hero::before{background:linear-gradient(90deg,#0a090c 4%,rgba(10,9,12,.92) 34%,rgba(10,9,12,.78) 62%,rgba(10,9,12,.6) 100%),linear-gradient(180deg,transparent 72%,rgba(10,9,12,.55));}
 }
 /* ===== SITUAÇÕES ===== */
-.situ{max-width:900px;margin:46px auto 0;text-align:left;display:grid;gap:0;}
-.situ__row{display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,3vw,36px);align-items:center;padding:26px 6px;border-top:1px solid var(--line);}
-.situ__row:last-child{border-bottom:1px solid var(--line);}
-.situ__n{font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(44px,5.8vw,70px);line-height:.82;letter-spacing:.04em;color:rgba(217,180,88,.1);-webkit-text-stroke:1.1px rgba(217,180,88,.55);min-width:58px;}
-.situ__t{font-size:clamp(15.5px,1.8vw,19px);color:#e6dfd2;line-height:1.5;}
-.situ__t b{color:#fff;font-weight:600;}
 .situ-fecho{max-width:760px;margin:38px auto 0;font-family:'Beau',Georgia,serif;font-style:normal;font-size:clamp(24px,2.9vw,33px);line-height:1.1;letter-spacing:.018em;color:var(--gold2);}
 /* ===== FAIXA DE CTA ===== */
 .band{text-align:center;padding:clamp(48px,6vw,80px) 0;background:radial-gradient(120% 100% at 50% 0,#1c1710,#0a090c 66%);border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);}
@@ -224,7 +215,7 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   .hero::after{height:76vw;max-height:440px;bottom:auto;background-position:92% top;-webkit-mask-image:linear-gradient(180deg,#000 74%,transparent 99%);mask-image:linear-gradient(180deg,#000 74%,transparent 99%);}
   .hero::before{background:linear-gradient(180deg,transparent 40%,rgba(10,9,12,.7) 66%,#0a090c 82%);}
   .hero__in{padding:calc(min(76vw,440px) - 46px) 0 0;max-width:none;text-align:center;}
-  .hero__lead,.hero__note{margin-left:auto;margin-right:auto;}
+  .hero__lead{margin-left:auto;margin-right:auto;}
   .hero .prazo{justify-content:center;}
   .hero__grid{padding-bottom:54px;}
   .saidas{grid-template-columns:1fr;}
@@ -244,16 +235,10 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   .hero__lead{font-size:14px;line-height:1.58;margin-bottom:16px;}
   .hero .selo{padding:8px 13px;gap:5px 10px;letter-spacing:.13em;}
   .hero .prazo{margin:15px 0 22px;font-size:10px;letter-spacing:.12em;}
-  .hero__note{font-size:12px;max-width:35ch;}
   .oferta{margin-top:26px;padding:25px 19px;border-radius:18px;}
   .oferta__valor{font-size:clamp(40px,12vw,52px);}
   .oferta .cta{padding:16px 16px;font-size:12.5px;line-height:1.35;}
-  .situ__row{gap:14px;padding:22px 4px;}
-  .situ__n{font-size:48px;min-width:48px;}
-  .situ__t{font-size:15px;line-height:1.55;}
   .situ-fecho{font-size:24px;line-height:1.14;margin-top:30px;}
-  .servicos{gap:8px;margin-top:30px;}
-  .servicos span{font-size:12.5px;padding:9px 15px;}
   .dois{margin-top:32px;gap:14px;}
   .perfil{padding:25px 20px;border-radius:17px;}
   .perfil h3{font-size:27px;margin-bottom:12px;}
@@ -265,7 +250,6 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   .saidas li{padding:15px 16px;font-size:14px;}
   .band h3{font-size:25px;line-height:1.1;}
   .band .cta{width:min(100%,390px);padding:16px 18px;font-size:12.5px;line-height:1.35;}
-  .turma__marca{font-size:33px;}
   .insc__card{margin-top:28px;padding:25px 18px;border-radius:18px;}
   .insc__card input{padding:14px;font-size:16px;}
   .final__mark{font-size:36px;}
@@ -312,7 +296,7 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 
       <!-- TROCAR: [VALOR EXCLUSIVO] e [CONDIÇÃO DE PAGAMENTO INTEGRAL] -->
       <aside class="oferta">
-        <div class="oferta__curso">JAY Beauty <b style="font-weight:400;">12 em 1</b><br><span style="font-size:.62em;letter-spacing:.14em;text-transform:uppercase;font-family:'Poppins',sans-serif;font-weight:700;color:var(--gold);">4 dias presenciais · Campinas/SP · Out ou Dez/2026</span></div>
+        <div class="oferta__curso">JAY Beauty <b style="font-weight:400;">12 em 1</b><span class="oferta__meta">4 dias presenciais · Campinas/SP<br>Out ou Dez/2026</span></div>
         <p class="oferta__de">Valor regular: <s>R$ 3.500</s> · <b class="gold" style="font-weight:600;">kit incluso</b></p>
         <div class="oferta__hr"></div>
         <div class="oferta__k">Condição exclusiva Jay Transforma</div>
