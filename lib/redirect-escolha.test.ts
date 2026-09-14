@@ -1,6 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { destinoDaEscolha, REDIRECT_POR_ESCOLHA } from "./redirect-escolha.ts";
+import {
+  destinoDaEscolha,
+  resolverDestino,
+  REDIRECT_POR_ESCOLHA,
+} from "./redirect-escolha.ts";
 
 // ── Um campo de decisão: o JAY Remove (Pix ou cartão) ────────────────────────
 
@@ -22,61 +26,90 @@ test("Remove: espaço e maiúscula na escolha não perdem o destino", () => {
   );
 });
 
-// ── Dois campos de decisão: o JAY Start (turma × pagamento) ───────────────────
+// ── O JAY Start: duas formações, mas um par de links ────────────────────────
 
-test("Start: a chave é a combinação dos dois campos, na ordem declarada", () => {
-  // Os links ainda não foram configurados, então o destino é vazio — mas a
-  // combinação TEM que ser reconhecida, senão o dia em que os links chegarem
-  // nada vai funcionar e ninguém vai saber por quê.
-  const regra = REDIRECT_POR_ESCOLHA["jaytransforma-start"];
-  assert.deepEqual(regra.campos, ["turma", "pagamento"]);
-  for (const turma of ["brows-out", "brows-dez", "lips-nov"]) {
-    for (const pagamento of ["pix", "cartao"]) {
-      assert.equal(
-        Object.hasOwn(regra.destinos, `${turma}|${pagamento}`),
-        true,
-        `falta a combinação ${turma}|${pagamento}`
-      );
-    }
-  }
+test("Start: cada forma de pagamento vai pro checkout dela", () => {
+  const pix = destinoDaEscolha("jaytransforma-start", { pagamento: "pix" });
+  const cartao = destinoDaEscolha("jaytransforma-start", { pagamento: "cartao" });
+  assert.equal(pix, "https://cielolink.com.br/4ipEfbT");
+  assert.equal(cartao, "https://cielolink.com.br/4AixO0M");
+  assert.notEqual(pix, cartao);
 });
 
-test("Start: as duas turmas do Brows compartilham o par de links", () => {
-  // É a mesma formação e o mesmo preço; turmas diferentes não são produtos
-  // diferentes. Se um dia divergirem, este teste avisa.
-  const d = REDIRECT_POR_ESCOLHA["jaytransforma-start"].destinos;
-  assert.equal(d["brows-out|pix"], d["brows-dez|pix"]);
-  assert.equal(d["brows-out|cartao"], d["brows-dez|cartao"]);
+test("Start: a turma escolhida não muda o checkout", () => {
+  // As duas formações custam o mesmo, então há um par de links só. A turma vai
+  // pro CRM (é ela que diz qual formação a pessoa quis), mas não decide preço.
+  const comBrows = destinoDaEscolha("jaytransforma-start", {
+    turma: "brows-out",
+    pagamento: "pix",
+  });
+  const comLips = destinoDaEscolha("jaytransforma-start", {
+    turma: "lips-nov",
+    pagamento: "pix",
+  });
+  assert.equal(comBrows, comLips);
+  assert.equal(comBrows, "https://cielolink.com.br/4ipEfbT");
 });
 
-test("Start: destino ainda não configurado não vira redirect", () => {
-  // Enquanto os links não chegam, é melhor não redirecionar do que mandar a
-  // pessoa pro checkout de outra formação. O lead continua sendo capturado.
+test("Start e Remove não compartilham checkout", () => {
+  // Preços diferentes (R$ 2.997 x R$ 3.497). Um link repetido entre as duas
+  // páginas cobraria o valor errado sem nenhum sintoma visível.
+  const start = REDIRECT_POR_ESCOLHA["jaytransforma-start"].destinos;
+  const remove = REDIRECT_POR_ESCOLHA["jaytransforma-remove"].destinos;
+  assert.notEqual(start.pix, remove.pix);
+  assert.notEqual(start.cartao, remove.cartao);
+});
+
+// ── A chave composta (mais de um campo de decisão) ───────────────────────────
+
+test("chave composta: junta os campos na ordem declarada", () => {
+  // Hoje as duas páginas do mapa decidem por um campo só. Este caminho existe
+  // pro dia em que uma delas precisar de dois (por exemplo, se as formações do
+  // Start passarem a ter preços diferentes), e é testado com uma regra própria
+  // pra não precisar inventar uma página falsa no mapa de verdade.
+  const regra = {
+    campos: ["turma", "pagamento"],
+    destinos: {
+      "brows|pix": "https://exemplo.test/brows-pix",
+      "lips|cartao": "https://exemplo.test/lips-cartao",
+    },
+  } as const;
   assert.equal(
-    destinoDaEscolha("jaytransforma-start", { turma: "brows-out", pagamento: "pix" }),
-    null
+    resolverDestino(regra, { turma: "brows", pagamento: "pix" }),
+    "https://exemplo.test/brows-pix"
   );
+  assert.equal(
+    resolverDestino(regra, { turma: "lips", pagamento: "cartao" }),
+    "https://exemplo.test/lips-cartao"
+  );
+  // A ordem é a de `campos`, não a de quem chamou.
+  assert.equal(resolverDestino(regra, { pagamento: "pix", turma: "brows" }),
+    "https://exemplo.test/brows-pix");
+  // Combinação que existe nos campos mas não no mapa.
+  assert.equal(resolverDestino(regra, { turma: "brows", pagamento: "cartao" }), null);
 });
 
-test("Start: um campo em branco invalida a combinação inteira", () => {
-  // Sem a turma não dá pra saber a formação; sem o pagamento não dá pra saber
-  // o preço. Meia resposta não é uma escolha.
-  assert.equal(destinoDaEscolha("jaytransforma-start", { pagamento: "pix" }), null);
-  assert.equal(destinoDaEscolha("jaytransforma-start", { turma: "lips-nov" }), null);
-  assert.equal(
-    destinoDaEscolha("jaytransforma-start", { turma: "   ", pagamento: "pix" }),
-    null
-  );
+test("chave composta: um campo em branco invalida a combinação inteira", () => {
+  // Meia resposta não é uma escolha: sem os dois não dá pra saber o destino.
+  const regra = {
+    campos: ["turma", "pagamento"],
+    destinos: { "brows|pix": "https://exemplo.test/brows-pix" },
+  } as const;
+  assert.equal(resolverDestino(regra, { turma: "brows" }), null);
+  assert.equal(resolverDestino(regra, { pagamento: "pix" }), null);
+  assert.equal(resolverDestino(regra, { turma: "  ", pagamento: "pix" }), null);
+});
+
+test("destino vazio é 'ainda não configurado', não um redirect quebrado", () => {
+  const regra = { campos: ["pagamento"], destinos: { pix: "" } } as const;
+  assert.equal(resolverDestino(regra, { pagamento: "pix" }), null);
 });
 
 // ── Bordas ───────────────────────────────────────────────────────────────────
 
 test("combinação que não existe no mapa não vira redirect", () => {
   assert.equal(destinoDaEscolha("jaytransforma-remove", { pagamento: "boleto" }), null);
-  assert.equal(
-    destinoDaEscolha("jaytransforma-start", { turma: "brows-out", pagamento: "boleto" }),
-    null
-  );
+  assert.equal(destinoDaEscolha("jaytransforma-start", { pagamento: "boleto" }), null);
 });
 
 test("página sem regra não é afetada", () => {

@@ -35,26 +35,18 @@ export const REDIRECT_POR_ESCOLHA: Readonly<Record<string, RegraDeEscolha>> = {
     },
   },
   "jaytransforma-start": {
-    // Duas formações e duas formas de pagamento = quatro checkouts. A turma já
-    // diz qual é a formação (é uma pergunta só no formulário), então as duas
-    // turmas do Brows apontam para o MESMO par de links.
+    // A página vende DUAS formações, mas o checkout não distingue as duas: o
+    // preço é o mesmo (R$ 2.997 no Pix, 10x R$ 397 no cartão), então há um par
+    // de links só. Por isso a turma NÃO entra na chave — ela vai pro CRM, que
+    // é quem precisa saber qual formação a pessoa quis.
     //
-    // As seis combinações estão escritas por extenso de propósito: derivar a
-    // formação do prefixo "brows-"/"lips-" criaria um acoplamento invisível,
-    // que quebraria em silêncio no dia em que alguém renomear uma turma.
-    //
-    // ⚠️ FALTAM OS LINKS DE PAGAMENTO. Destino vazio é tratado como "ainda não
-    // configurado": o envio continua capturando o lead e cai na cascata normal,
-    // em vez de mandar a pessoa para o checkout errado. Preencher os quatro
-    // (o Brows repete nas duas turmas) libera a página.
-    campos: ["turma", "pagamento"],
+    // ⚠️ Se um dia as duas formações tiverem preços diferentes, aqui vira
+    // `campos: ["turma", "pagamento"]` e a chave passa a ser "turma|pagamento".
+    // A função já sabe lidar com isso; é só o mapa que muda.
+    campos: ["pagamento"],
     destinos: {
-      "brows-out|pix": "",
-      "brows-out|cartao": "",
-      "brows-dez|pix": "",
-      "brows-dez|cartao": "",
-      "lips-nov|pix": "",
-      "lips-nov|cartao": "",
+      pix: "https://cielolink.com.br/4ipEfbT",
+      cartao: "https://cielolink.com.br/4AixO0M",
     },
   },
 };
@@ -72,21 +64,34 @@ export function destinoDaEscolha(
   slug: string,
   campos: Record<string, string>
 ): string | null {
-  // hasOwn nos dois níveis: o slug vem da URL e os valores vêm do formulário —
-  // nenhum dos dois pode alcançar o Object.prototype.
+  // hasOwn: o slug vem da URL, não pode alcançar o Object.prototype.
   if (!Object.hasOwn(REDIRECT_POR_ESCOLHA, slug)) return null;
-  const regra = REDIRECT_POR_ESCOLHA[slug];
+  return resolverDestino(REDIRECT_POR_ESCOLHA[slug], campos);
+}
 
+/**
+ * A resolução em si, separada da tabela: é ela que sabe montar a chave a partir
+ * de um ou mais campos. Fica exportada porque hoje as duas páginas do mapa
+ * decidem por UM campo só — sem isto, o caminho da chave composta ficaria sem
+ * teste até o dia em que alguém precisasse dele, que é justamente o pior dia
+ * pra descobrir que ele não funciona.
+ */
+export function resolverDestino(
+  regra: RegraDeEscolha,
+  campos: Record<string, string>
+): string | null {
   const partes: string[] = [];
   for (const campo of regra.campos) {
     const valor = (campos[campo] || "").trim().toLowerCase();
-    // Uma escolha faltando invalida a combinação inteira: sem ela não dá pra
-    // saber nem a formação nem o preço.
+    // Uma escolha faltando invalida a combinação inteira.
     if (!valor) return null;
     partes.push(valor);
   }
 
   const chave = partes.join("|");
+  // hasOwn de novo: o valor veio do formulário.
   if (!Object.hasOwn(regra.destinos, chave)) return null;
+  // Destino vazio = link ainda não configurado. Melhor não redirecionar do que
+  // redirecionar errado.
   return regra.destinos[chave] || null;
 }
