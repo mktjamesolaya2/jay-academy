@@ -66,6 +66,9 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 /* selo */
 .selo{display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 14px;border:1px solid rgba(217,180,88,.34);background:rgba(217,180,88,.06);border-radius:999px;padding:9px 20px;font-family:'Poppins',sans-serif;font-size:clamp(9.5px,2.6vw,11px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold2);}
 .selo i{font-style:normal;color:var(--gold3);}
+/* O espaçamento mora AQUI, não num margin-top do h1: qualquer shorthand
+   `margin` na regra do h1 apagaria o respiro sem avisar (já apagou). */
+.hero .selo{margin-bottom:clamp(16px,3.4vw,22px);}
 .prazo{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:18px 0 26px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);}
 .prazo b{font-weight:400;color:var(--gold2);}
 .prazo span{flex:1 0 100%;opacity:.8;}
@@ -86,7 +89,6 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 .hero__logo b{display:block;font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(25px,6.7vw,48px);letter-spacing:.075em;text-transform:uppercase;color:#fff;line-height:.9;}
 .hero__logo b i{font-style:normal;color:var(--gold2);}
 .hero__logo span{display:block;font-size:clamp(9px,2.6vw,10.5px);letter-spacing:.36em;color:var(--gold);font-family:'Poppins',sans-serif;font-weight:600;margin-top:8px;text-transform:uppercase;}
-.hero__h1{margin-top:20px;}
 .hero h1{font-size:clamp(33px,4.3vw,55px);color:#fff;margin-bottom:22px;max-width:17ch;text-wrap:balance;}
 .hero h1 b{color:var(--gold2);font-weight:700;}
 .hero__lead{color:var(--muted);font-size:clamp(15px,1.6vw,17px);line-height:1.6;margin-bottom:18px;max-width:54ch;}
@@ -233,7 +235,7 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   .hero__in{padding:calc(min(76vw,440px) - 32px) 0 0;}
   .hero__logo{margin-bottom:20px;}
   .hero__logo b{font-size:clamp(25px,7.2vw,35px);letter-spacing:.055em;}
-  .hero h1{font-size:clamp(30px,8.4vw,38px);line-height:1.04;max-width:none;margin:0 auto 18px;}
+  .hero h1{font-size:clamp(30px,8.4vw,38px);line-height:1.1;max-width:none;margin:0 auto 18px;}
   .hero__lead{font-size:14px;line-height:1.58;margin-bottom:16px;}
   .hero .selo{padding:8px 13px;gap:5px 10px;letter-spacing:.13em;}
   .hero .prazo{margin:15px 0 22px;font-size:10px;letter-spacing:.12em;}
@@ -300,7 +302,7 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
           <span>JAY.O Academy</span>
         </div>
         <div class="selo">Condição exclusiva <i>•</i> Jay Transforma</div>
-        <h1 class="hero__h1">O JAY TRANSFORMA começou. O que ele <b>despertou em você</b> pode começar agora também!</h1>
+        <h1>O JAY TRANSFORMA começou. O que ele <b>despertou em você</b> pode começar agora também!</h1>
         <p class="hero__lead">Você estará conosco três dias, dentro de um ambiente pensado para ampliar sua visão sobre técnica, imagem e carreira. Agora, a JAY Academy abriu para participantes do JAY TRANSFORMA uma <b>condição limitadíssima</b> para o JAY Beauty: a formação presencial para quem quer começar na beleza ou ampliar sua atuação e sair pronta para atender.</p>
         <p class="hero__lead">Entrar no JAY Beauty também significa viver uma formação dentro da academia de James Olaya, um dos grandes nomes mundiais da beleza, em um ambiente reconhecido por técnica, método e excelência profissional.</p>
         <p class="prazo"><b>Disponível até 16/09</b> <span>último dia do JAY TRANSFORMA</span></p>
