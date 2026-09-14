@@ -129,6 +129,11 @@ export function montarCorpoBeauty(d: DadosDoLead): Record<string, string> {
   const pagina = (d.fields.pagina || "").trim();
   corpo.pagina = pagina || d.slug;
 
+  // Qual das duas turmas de 2026 ela quer. É a informação que decide a conversa
+  // do comercial, e o campo é opcional — quem não escolheu não vira chave vazia.
+  const turma = (d.fields.turma || "").trim();
+  if (turma) corpo.turma = turma;
+
   for (const [campo, valor] of Object.entries(d.fields)) {
     if (!campo.startsWith("utm_")) continue;
     const limpo = (valor || "").trim();

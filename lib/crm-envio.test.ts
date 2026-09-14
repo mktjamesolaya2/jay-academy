@@ -188,6 +188,30 @@ test("JAY Beauty: e-mail vazio não vira chave (não apaga o que o CRM já tem)"
   assert.equal(c.pagina, "jaytransforma-beauty");
 });
 
+test("JAY Beauty: a turma escolhida chega ao CRM", () => {
+  const c = montarCorpoBeauty({
+    fields: { turma: "07 a 10/12/2026" },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-beauty",
+  });
+  assert.equal(c.turma, "07 a 10/12/2026");
+});
+
+test("JAY Beauty: turma em branco não vira chave vazia", () => {
+  // O campo é opcional. Chave vazia no corpo faria o CRM gravar uma observação
+  // sem conteúdo — e o comercial acharia que ela respondeu.
+  const c = montarCorpoBeauty({
+    fields: { turma: "   " },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-beauty",
+  });
+  assert.equal("turma" in c, false);
+});
+
 test("JAY Beauty: utm vazio não vira chave vazia", () => {
   const c = montarCorpoBeauty({
     fields: { utm_source: "  ", utm_medium: "cpc" },
