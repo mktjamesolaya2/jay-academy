@@ -5,9 +5,13 @@
 // quebrar build/preview sem a env).
 
 import { clientIp } from "./rate-limit-core";
+// ⚠️ IMPORTADO, não copiado. Este id já morou aqui como uma segunda constante
+// igual à de lib/meta-tracking.ts — e duas constantes iguais por coincidência
+// é uma bomba-relógio: trocar o pixel e esquecer uma manda o navegador pra um
+// pixel e o servidor pra outro. A dedup por event_id morre e os números ficam
+// errados sem nenhum sintoma. O teste de lib/tracking-clean.test.ts trava isso.
+import { META_CAPI_URL } from "./meta-pixel";
 
-const META_PIXEL_ID = "1841776429524244";
-const GRAPH_URL = `https://graph.facebook.com/v21.0/${META_PIXEL_ID}/events`;
 
 type CapiUserData = Record<string, string | undefined>;
 
@@ -49,7 +53,7 @@ export async function sendMetaCapiEvent(evt: {
   };
 
   try {
-    const res = await fetch(`${GRAPH_URL}?access_token=${encodeURIComponent(token)}`, {
+    const res = await fetch(`${META_CAPI_URL}?access_token=${encodeURIComponent(token)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

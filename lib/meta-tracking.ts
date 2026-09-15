@@ -29,34 +29,16 @@ import { withGoogleTag, gtmIdForSlug } from "@/lib/google-tag";
 import { stripGoogleTagManager, stripPixelInits } from "@/lib/tracking-clean";
 import { buildUtmHotmartForwarder } from "@/lib/utm-checkout";
 
-export const META_PIXEL_ID = "1841776429524244";
+// O id e a lista de páginas moram em lib/meta-pixel.ts (módulo folha, sem
+// imports) pra poderem ser testados — este arquivo usa `@/lib/...`, que o
+// runner de teste não resolve. Reexportados pra quem já importava daqui.
+export { META_PIXEL_ID, PIXEL_SLUGS, slugHasPixel } from "./meta-pixel";
+import { META_PIXEL_ID, slugHasPixel } from "./meta-pixel";
+
 /** GA4 do site (fluxo "site" de jayacademy.com.br, código 4463452239). */
 export const GA4_SITE_ID = "G-N93TQZV050";
 export const FB_DOMAIN_VERIFICATION_CONTENT = "61zuhji4fdykwgd7q89ed8j9uxrfkt";
 
-/** LPs de venda e de captação de evento — as únicas páginas que levam o Pixel DSTV. */
-export const PIXEL_SLUGS = [
-  "basic-magic-shadow",
-  "basic-nanofios",
-  "curso-online-profissao-remove",
-  "fio-a-fio-realista-by-james-olaya",
-  "metodo-shadow-pro",
-  "pdv-lips-sense-technique",
-  "pmuclass",
-  // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
-  // Lead do formulário de inscrição é a conversão que a campanha otimiza.
-  "transforma",
-  // A oferta de fechamento do Transforma. Página de venda de verdade: o Lead do
-  // formulário e o InitiateCheckout do clique no checkout são o que interessa.
-  "jaytransforma-beauty",
-  "jaytransforma-remove",
-  "jaytransforma-start",
-];
-
-/** O Pixel DSTV vale nesta página? */
-export function slugHasPixel(slug: string): boolean {
-  return PIXEL_SLUGS.includes(slug);
-}
 
 function injectHead(html: string, tag: string): string {
   return /<head[^>]*>/i.test(html)

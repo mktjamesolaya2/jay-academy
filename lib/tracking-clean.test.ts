@@ -1,8 +1,17 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { stripGoogleTagManager, stripPixelInits } from "./tracking-clean.ts";
+import {
+  META_CAPI_URL,
+  META_PIXEL_ID,
+  PIXEL_SLUGS,
+  slugHasPixel,
+} from "./meta-pixel.ts";
 
-const DSTV = "1841776429524244";
+// O pixel de verdade, vindo da constante — não um literal copiado. Com o
+// literal, trocar o pixel no código deixava este arquivo verde apontando pro
+// id antigo, e o teste "provava" o contrário do que passou a valer.
+const DSTV = META_PIXEL_ID;
 
 // Fixtures copiados do HTML REAL servido em produção (/acao-mshadow), inclusive
 // o `type="rocketlazyloadscript"` do WP-Rocket e os espaços dentro do fbq().
@@ -12,9 +21,9 @@ n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
 n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 document,'script','https://connect.facebook.net/en_US/fbevents.js' );
-fbq( 'init', '935630436819595' );fbq( 'init', '1841776429524244' );fbq( 'init', '872802227099574' );	</script>
+fbq( 'init', '935630436819595' );fbq( 'init', '${DSTV}' );fbq( 'init', '872802227099574' );	</script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=935630436819595&ev=PageView&noscript=1" /></noscript>
-<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1841776429524244&ev=PageView&noscript=1" /></noscript>`;
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${DSTV}&ev=PageView&noscript=1" /></noscript>`;
 
 const GTM_WP = `<script type="rocketlazyloadscript">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -107,4 +116,38 @@ test("stripPixelInits com pixel do bootstrap do portal (eventID) preserva o init
   const nosso = `<script>fbq('init', '${DSTV}');\nfbq('track', 'PageView', {}, { eventID: window.__metaEventId });</script>`;
   const out = stripPixelInits(nosso, [DSTV]);
   assert.equal(out, nosso);
+});
+
+// ── O pixel do navegador e o do servidor são o mesmo ─────────────────────────
+
+test("a API de Conversões aponta pro MESMO pixel do navegador", () => {
+  // Era o buraco: o id vivia em duas constantes independentes, iguais por
+  // coincidência. Trocar uma e esquecer a outra manda o navegador pra um pixel
+  // e o servidor pra outro — a dedup por event_id morre e o mesmo evento é
+  // contado duas vezes, ou nenhuma. Nada em tela denuncia isso.
+  assert.ok(
+    META_CAPI_URL.includes(META_PIXEL_ID),
+    `a CAPI usa outro pixel: ${META_CAPI_URL}`
+  );
+  assert.match(META_CAPI_URL, /^https:\/\/graph\.facebook\.com\/v\d+\.\d+\/\d+\/events$/);
+});
+
+test("o pixel é um id numérico plausível", () => {
+  // Um id com espaço, aspas ou vazio quebraria a URL da CAPI e o fbq('init')
+  // ao mesmo tempo, e o sintoma seria "o pixel parou" sem mais nada.
+  assert.match(META_PIXEL_ID, /^\d{15,16}$/);
+});
+
+test("as quatro páginas do JAY TRANSFORMA levam pixel", () => {
+  // O funil inteiro é campanha paga: página do funil sem pixel é verba
+  // gasta sem medição, e ninguém percebe olhando a página.
+  for (const slug of ["transforma", "jaytransforma-beauty", "jaytransforma-remove", "jaytransforma-start"]) {
+    assert.equal(slugHasPixel(slug), true, slug);
+  }
+});
+
+test("a lista de páginas com pixel não tem slug repetido", () => {
+  // Repetido não quebra nada hoje (é só um includes), mas é o sintoma de que
+  // alguém adicionou sem olhar — e no dia de virar mapa por página, quebra.
+  assert.equal(new Set(PIXEL_SLUGS).size, PIXEL_SLUGS.length);
 });

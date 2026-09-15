@@ -8,6 +8,8 @@ import { loadLps } from "@/lib/lp-store";
 import { listSaved } from "@/lib/wp-content-storage";
 import { canEdit, getCurrentUser } from "@/lib/auth";
 import { readActivityLog } from "@/lib/activity-log";
+import { META_PIXEL_ID } from "@/lib/meta-pixel";
+import { GA4_SITE_ID } from "@/lib/meta-tracking";
 import { ActivityFeed, DeploysFeed } from "@/components/admin-feeds";
 import { getNotifications, unreadCount } from "@/lib/notifications";
 
@@ -111,8 +113,10 @@ export default async function SettingsPage() {
               title="Integrações"
               description="APIs externas que alimentam o dashboard"
             >
-              <Row label="GA4 (legado, G-N93TQZV050)" value="Instalado nas LPs públicas" />
-              <Row label="Meta Pixel (1841776429524244)" value="Instalado nas LPs públicas" />
+              {/* Os ids vêm das constantes: escritos à mão, esta tela passaria a
+                  mentir no dia em que o pixel ou o GA4 mudassem. */}
+              <Row label={`GA4 (legado, ${GA4_SITE_ID})`} value="Instalado nas LPs públicas" />
+              <Row label={`Meta Pixel (${META_PIXEL_ID})`} value="Instalado nas LPs públicas" />
               <Row
                 label="Meta CAPI (servidor)"
                 value={process.env.META_ACCESS_TOKEN ? "Configurado" : "Não configurado"}
