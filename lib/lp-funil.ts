@@ -1,6 +1,16 @@
 /**
- * Para onde a pessoa vai depois de enviar o formulário, quando isso depende do
- * que ela ESCOLHEU e não só de qual página ela estava.
+ * As LPs que têm funil próprio: onde o lead é a conversão que a campanha paga,
+ * o envio termina num checkout e um lead que não chega ao CRM é prejuízo.
+ *
+ * Os DOIS mapas deste arquivo descrevem o mesmo conjunto de páginas e precisam
+ * andar juntos — por isso moram lado a lado, e por isso existe um teste que
+ * falha se um slug entrar num e não no outro. Eles já divergiram uma vez: a
+ * /jaytransforma-start nasceu com checkout mas sem regras, e a consequência
+ * foi silenciosa — telefone indo pro CRM com máscara em vez de E.164, e recusa
+ * do CRM virando "sucesso" na tela da pessoa.
+ *
+ * Parte 1 — para onde a pessoa vai depois de enviar o formulário, quando isso
+ * depende do que ela ESCOLHEU e não só de qual página ela estava.
  *
  * ⚠️ Isto é um módulo puro, separado e testado, pelo mesmo motivo de
  * lib/crm-envio.ts: o destino errado aqui manda a aluna pagar o preço de outra
@@ -94,4 +104,36 @@ export function resolverDestino(
   // Destino vazio = link ainda não configurado. Melhor não redirecionar do que
   // redirecionar errado.
   return regra.destinos[chave] || null;
+}
+
+/**
+ * Parte 2 — o que vale de diferente nessas páginas: validação estrita antes de
+ * mandar (telefone normalizado em E.164, com o "+"), recusa explícita quando o
+ * CRM diz não, e a mensagem de sucesso própria.
+ *
+ * ⚠️ Página com checkout que NÃO estiver aqui falha em silêncio: o telefone vai
+ * pro CRM com a máscara do formulário (que o CRM recusa), e a recusa vira
+ * "sucesso" na tela — a pessoa segue pro pagamento e o negócio não existe.
+ */
+export type RegrasDaLp = { exigeEmail: boolean; mensagemOk: string };
+
+const OK_FECHAMENTO = "Tudo certo! Você será direcionada para garantir sua vaga.";
+
+export const REGRAS_POR_LP: Readonly<Record<string, RegrasDaLp>> = {
+  transforma: {
+    exigeEmail: true,
+    mensagemOk: "Inscrição confirmada! Você será direcionada ao grupo do evento.",
+  },
+  // As três ofertas de fechamento do JAY TRANSFORMA pedem só nome e telefone:
+  // quem chega nelas já deu o e-mail na inscrição do evento, e cada campo a
+  // mais é gente que desiste na hora da oferta.
+  "jaytransforma-beauty": { exigeEmail: false, mensagemOk: OK_FECHAMENTO },
+  "jaytransforma-remove": { exigeEmail: false, mensagemOk: OK_FECHAMENTO },
+  "jaytransforma-start": { exigeEmail: false, mensagemOk: OK_FECHAMENTO },
+};
+
+/** As regras desta página, ou `null` se ela não tem funil próprio. */
+export function regrasDaLp(slug: string): RegrasDaLp | null {
+  // hasOwn: o slug vem da URL, não pode alcançar o Object.prototype.
+  return Object.hasOwn(REGRAS_POR_LP, slug) ? REGRAS_POR_LP[slug] : null;
 }

@@ -4,7 +4,7 @@ import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
 import { corpoParaOCrm } from "@/lib/crm-envio";
-import { destinoDaEscolha } from "@/lib/redirect-escolha";
+import { destinoDaEscolha, regrasDaLp } from "@/lib/lp-funil";
 import { normalizarTelefone, mensagemDeErro } from "@/lib/telefone";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
@@ -30,34 +30,6 @@ const REDIRECT_PADRAO_POR_LP: Record<string, string> = {
   // painel (/lps/<slug>) continua vencendo, então trocar de link a cada turma
   // não exige deploy.
   "jaytransforma-beauty": "https://cielolink.com.br/4xAzXCw",
-};
-
-/**
- * As LPs com funil próprio, onde o lead é a conversão que a campanha paga e um
- * envio que não chega ao CRM é prejuízo. Nelas valem três coisas que NÃO valem
- * nas outras páginas: validação estrita antes de mandar, telefone normalizado em
- * E.164 (com o "+") e recusa explícita quando o CRM diz não.
- *
- * Era um `slug === "transforma"` espalhado em dois pontos do arquivo. Virou mapa
- * quando chegou a segunda LP — que, diferente da primeira, não pede e-mail.
- */
-const REGRAS_POR_LP: Record<string, { exigeEmail: boolean; mensagemOk: string }> = {
-  transforma: {
-    exigeEmail: true,
-    mensagemOk: "Inscrição confirmada! Você será direcionada ao grupo do evento.",
-  },
-  "jaytransforma-beauty": {
-    // O formulário pede só nome e telefone — quem chega aqui já deu o e-mail na
-    // inscrição do evento, e cada campo a mais é gente que desiste na oferta.
-    exigeEmail: false,
-    mensagemOk: "Tudo certo! Você será direcionada para garantir sua vaga.",
-  },
-  "jaytransforma-remove": {
-    // Mesma razão do Beauty: quem chega aqui já deu o e-mail na inscrição do
-    // evento, e cada campo a mais é gente que desiste na hora da oferta.
-    exigeEmail: false,
-    mensagemOk: "Tudo certo! Você será direcionada para garantir sua vaga.",
-  },
 };
 
 function pick(fields: Record<string, string>, keys: string[]): string {
@@ -151,8 +123,7 @@ export async function POST(req: Request) {
     // frente é o normalizado (só dígitos, com DDI): sem máscara e sem dúvida
     // sobre o DDD, que é o formato que o CRM não recusa.
     let whatsappEnvio = whatsapp;
-    // hasOwn: o slug vem da URL, não pode alcançar o Object.prototype.
-    const regras = Object.hasOwn(REGRAS_POR_LP, slug) ? REGRAS_POR_LP[slug] : null;
+    const regras = regrasDaLp(slug);
     if (regras) {
       if (regras.exigeEmail && !emailValido(email)) {
         return NextResponse.json(

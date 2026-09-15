@@ -4,7 +4,9 @@ import {
   destinoDaEscolha,
   resolverDestino,
   REDIRECT_POR_ESCOLHA,
-} from "./redirect-escolha.ts";
+  REGRAS_POR_LP,
+  regrasDaLp,
+} from "./lp-funil.ts";
 
 // ── Um campo de decisão: o JAY Remove (Pix ou cartão) ────────────────────────
 
@@ -150,5 +152,60 @@ test("toda chave de destino tem tantas partes quantos campos de decisão", () =>
         `${slug} → chave "${chave}" não bate com os campos ${regra.campos.join(", ")}`
       );
     }
+  }
+});
+
+// ── A invariante que faltava ─────────────────────────────────────────────────
+
+test("toda página com checkout tem regras de funil", () => {
+  // ESTE é o teste que faltava. A /jaytransforma-start foi ao ar com os dois
+  // checkouts funcionando e SEM entrada em REGRAS_POR_LP, e nada apitou: o
+  // telefone seguia pro CRM com a máscara do formulário em vez de E.164, e uma
+  // recusa do CRM virava "Recebido com sucesso!" na tela. Página que termina em
+  // pagamento é página onde um lead perdido é dinheiro perdido.
+  for (const slug of Object.keys(REDIRECT_POR_ESCOLHA)) {
+    assert.notEqual(
+      regrasDaLp(slug),
+      null,
+      `${slug} tem checkout mas não tem regras — o telefone iria sem normalizar e a recusa do CRM viraria sucesso`
+    );
+  }
+});
+
+test("as ofertas de fechamento não pedem e-mail", () => {
+  // Quem chega nelas já deu o e-mail na inscrição do evento. Exigir de novo é
+  // perder venda na última tela.
+  for (const slug of ["jaytransforma-beauty", "jaytransforma-remove", "jaytransforma-start"]) {
+    const regras = regrasDaLp(slug);
+    assert.notEqual(regras, null, `${slug} sem regras`);
+    assert.equal(regras?.exigeEmail, false, slug);
+  }
+});
+
+test("a mensagem de sucesso da página combina com o que ela faz", () => {
+  // A /transforma manda pro grupo do evento; as ofertas mandam pro checkout.
+  // Trocar as mensagens não quebra nada — só mente pra pessoa.
+  assert.match(regrasDaLp("transforma")!.mensagemOk, /grupo do evento/);
+  for (const slug of ["jaytransforma-beauty", "jaytransforma-remove", "jaytransforma-start"]) {
+    assert.match(regrasDaLp(slug)!.mensagemOk, /garantir sua vaga/, slug);
+  }
+});
+
+test("slug de fora não alcança o Object.prototype nas regras", () => {
+  assert.equal(regrasDaLp("constructor"), null);
+  assert.equal(regrasDaLp("toString"), null);
+  assert.equal(regrasDaLp("pagina-qualquer"), null);
+});
+
+test("REGRAS_POR_LP não tem entrada órfã sem uso", () => {
+  // Toda página aqui ou tem checkout próprio (REDIRECT_POR_ESCOLHA) ou é a
+  // /transforma, que manda pro grupo do WhatsApp.
+  for (const slug of Object.keys(REGRAS_POR_LP)) {
+    const temCheckout = Object.hasOwn(REDIRECT_POR_ESCOLHA, slug);
+    assert.equal(
+      temCheckout || slug === "transforma" || slug === "jaytransforma-beauty",
+      true,
+      `${slug} tem regras mas nenhum funil conhecido`
+    );
   }
 });
