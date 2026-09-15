@@ -1,12 +1,19 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { GTM_ID, gtmIdForSlug, withGoogleTag } from "./google-tag.ts";
+import { GTM_BY_SLUG, GTM_ID, gtmIdForSlug, withGoogleTag } from "./google-tag.ts";
 import { stripGoogleTagManager } from "./tracking-clean.ts";
 
 const MAGIC = "GTM-TVLJSVJZ";
 const BASIC = "GTM-W394J499";
 const FIOAFIO = "GTM-NB2WK5SJ";
 const OLD_WP = "GTM-NN5KDTCB";
+
+// As três ofertas de fechamento do JAY TRANSFORMA (14/09). Cada uma tem o seu.
+const OFERTAS = {
+  "jaytransforma-beauty": "GTM-PX3XWDMW",
+  "jaytransforma-remove": "GTM-N78J7X4K",
+  "jaytransforma-start": "GTM-KH73NTJS",
+} as const;
 
 // Container antigo do WordPress embutido no HTML de LP, com o
 // `type="rocketlazyloadscript"` do WP-Rocket (igual ao que vem em produção).
@@ -124,4 +131,70 @@ test("limpar sem injetar deixa a página sem GTM nenhum", () => {
   );
   assert.ok(!out.includes("gtm.js"));
   assert.ok(!out.includes("ns.html"));
+});
+
+// ── Os containers das ofertas de fechamento ──────────────────────────────────
+
+test("cada oferta de fechamento serve o container dela", () => {
+  // Assert literal de propósito: um dígito trocado num ID não quebra nada em
+  // runtime — a página carrega, o GTM responde, e os dados vão para a conta
+  // errada (ou para nenhuma). Só um teste que conhece o ID pega isso.
+  for (const [slug, container] of Object.entries(OFERTAS)) {
+    assert.equal(gtmIdForSlug(slug), container, slug);
+  }
+});
+
+test("as três ofertas não compartilham container entre si", () => {
+  // ESTE é o teste que pega copiar-e-colar: três linhas quase idênticas no
+  // mapa, e o erro provável é a segunda repetir o ID da primeira. O sintoma
+  // seria duas páginas reportando no mesmo lugar, que ninguém nota olhando.
+  const slugs = Object.keys(OFERTAS);
+  const distintos = new Set(slugs.map((s) => gtmIdForSlug(s)));
+  assert.equal(distintos.size, slugs.length, [...distintos].join(", "));
+});
+
+test("as ofertas saíram do container do marketing", () => {
+  // Elas nasceram no GTM-TVLJSVJZ e saíram de lá em 14/09. Se alguma voltar
+  // pra ele, as conversões das três se misturam de novo com as do site.
+  for (const slug of Object.keys(OFERTAS)) {
+    assert.notEqual(gtmIdForSlug(slug), MAGIC, slug);
+  }
+});
+
+test("a troca das ofertas não vazou para as vizinhas", () => {
+  // A /transforma (o evento) e a /magicshadow continuam no container do
+  // marketing, de propósito. São as linhas coladas às que mudaram.
+  assert.equal(gtmIdForSlug("transforma"), MAGIC);
+  assert.equal(gtmIdForSlug("magicshadow"), MAGIC);
+});
+
+test("nenhuma página divide container com outra sem ser as do marketing", () => {
+  // Varre o mapa inteiro: container repetido é ou intencional (magicshadow e
+  // transforma) ou um engano. Assim, página nova entrando com ID copiado de
+  // outra falha aqui em vez de ir pro ar medindo errado.
+  const porContainer = new Map<string, string[]>();
+  for (const [slug, container] of Object.entries(GTM_BY_SLUG)) {
+    porContainer.set(container, [...(porContainer.get(container) || []), slug]);
+  }
+  for (const [container, slugs] of porContainer) {
+    if (slugs.length === 1) continue;
+    assert.deepEqual(
+      [...slugs].sort(),
+      ["magicshadow", "transforma"],
+      `${container} está em mais de uma página: ${slugs.join(", ")}`
+    );
+  }
+});
+
+test("a página serve o container dela no head E no noscript", () => {
+  // O noscript é o passo 2 do snippet do Google. Ele sai do mesmo ID do script,
+  // então basta conferir que os dois aparecem na página servida.
+  const out = withGoogleTag(
+    "<html><head></head><body>oi</body></html>",
+    gtmIdForSlug("jaytransforma-start")!
+  );
+  assert.ok(out.includes(`gtm.js?id='+i+dl`) || out.includes("gtm.js"));
+  assert.ok(out.includes(`ns.html?id=${OFERTAS["jaytransforma-start"]}`));
+  assert.ok(out.includes(OFERTAS["jaytransforma-start"]));
+  assert.ok(!out.includes(MAGIC));
 });

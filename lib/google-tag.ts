@@ -24,11 +24,16 @@ export const GTM_BY_SLUG: Record<string, string> = {
   // Evento JAY TRANSFORMA (pedido de 10/09): mesmo container do marketing da
   // magicshadow — o GA4 do evento é configurado por dentro dele.
   transforma: "GTM-TVLJSVJZ",
-  // Oferta de fechamento do Transforma: mesmo container do evento, pra a
-  // jornada inteira (inscrição → evento → compra) cair no mesmo lugar.
-  "jaytransforma-beauty": "GTM-TVLJSVJZ",
-  "jaytransforma-remove": "GTM-TVLJSVJZ",
-  "jaytransforma-start": "GTM-TVLJSVJZ",
+  // As três ofertas de fechamento do Transforma. Nasceram no container do
+  // evento (a ideia era a jornada inteira cair no mesmo lugar), e em 14/09
+  // ganharam um container CADA — cada página vende uma formação diferente, com
+  // preço e checkout próprios, e misturar as conversões das três no container
+  // do marketing tornava a medição de cada oferta ilegível.
+  // ⚠️ Vizinhas de container diferente: a `transforma` acima continua no do
+  // marketing, de propósito. Não "uniformizar" isto.
+  "jaytransforma-beauty": "GTM-PX3XWDMW",
+  "jaytransforma-remove": "GTM-N78J7X4K",
+  "jaytransforma-start": "GTM-KH73NTJS",
 };
 
 /** Container padrão do marketing (referenciado nas notas e no CLAUDE.md). */
