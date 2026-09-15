@@ -1,5 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+
+// Os dois endereços do C6: o Pix e o cartão chegam por domínios diferentes.
+// É isso que torna detectável um link colado no campo errado — o erro fácil,
+// já que os seis links vieram em duas listas separadas.
+const C6_PIX = "https://api-gateway.c6bank.info/v1/payment/";
+const C6_CARTAO = "https://checkout2.c6pay.com.br/payment/";
+const OFERTAS = ["jaytransforma-beauty", "jaytransforma-remove", "jaytransforma-start"];
 import {
   destinoDaEscolha,
   resolverDestino,
@@ -13,8 +20,8 @@ import {
 test("Remove: cada forma de pagamento vai pro checkout dela", () => {
   const pix = destinoDaEscolha("jaytransforma-remove", { pagamento: "pix" });
   const cartao = destinoDaEscolha("jaytransforma-remove", { pagamento: "cartao" });
-  assert.equal(pix, "https://cielolink.com.br/4iXIpI8");
-  assert.equal(cartao, "https://cielolink.com.br/4cGaboO");
+  assert.equal(pix, C6_PIX + "64dda652-b9b8-49af-9c99-39a5f1da13b7");
+  assert.equal(cartao, C6_CARTAO + "ca1a7f3a-c975-44f6-abf3-83e3e9c42be0");
   // O erro que este arquivo existe pra pegar: os dois apontando pro mesmo lugar.
   assert.notEqual(pix, cartao);
 });
@@ -24,7 +31,7 @@ test("Remove: espaço e maiúscula na escolha não perdem o destino", () => {
   // (integração, teste manual) pode chegar de outro jeito.
   assert.equal(
     destinoDaEscolha("jaytransforma-remove", { pagamento: "  Cartao  " }),
-    "https://cielolink.com.br/4cGaboO"
+    C6_CARTAO + "ca1a7f3a-c975-44f6-abf3-83e3e9c42be0"
   );
 });
 
@@ -33,8 +40,8 @@ test("Remove: espaço e maiúscula na escolha não perdem o destino", () => {
 test("Start: cada forma de pagamento vai pro checkout dela", () => {
   const pix = destinoDaEscolha("jaytransforma-start", { pagamento: "pix" });
   const cartao = destinoDaEscolha("jaytransforma-start", { pagamento: "cartao" });
-  assert.equal(pix, "https://cielolink.com.br/4ipEfbT");
-  assert.equal(cartao, "https://cielolink.com.br/4AixO0M");
+  assert.equal(pix, C6_PIX + "92923a19-2df9-4dae-9112-869dfc151156");
+  assert.equal(cartao, C6_CARTAO + "7ccd7058-3b5d-429b-bd2b-cf840d42add9");
   assert.notEqual(pix, cartao);
 });
 
@@ -50,7 +57,7 @@ test("Start: a turma escolhida não muda o checkout", () => {
     pagamento: "pix",
   });
   assert.equal(comBrows, comLips);
-  assert.equal(comBrows, "https://cielolink.com.br/4ipEfbT");
+  assert.equal(comBrows, C6_PIX + "92923a19-2df9-4dae-9112-869dfc151156");
 });
 
 test("Start e Remove não compartilham checkout", () => {
@@ -115,8 +122,12 @@ test("combinação que não existe no mapa não vira redirect", () => {
 });
 
 test("página sem regra não é afetada", () => {
-  assert.equal(destinoDaEscolha("jaytransforma-beauty", { pagamento: "pix" }), null);
+  // A /transforma é a inscrição no evento: manda pro grupo do WhatsApp, não
+  // pra checkout. Página fora do mapa não ganha destino por acidente.
+  // (A /jaytransforma-beauty estava aqui até 15/09, quando ganhou os dois
+  // checkouts dela — por isso saiu deste teste e entrou nos de cima.)
   assert.equal(destinoDaEscolha("transforma", { pagamento: "pix" }), null);
+  assert.equal(destinoDaEscolha("academy", { pagamento: "pix" }), null);
 });
 
 test("slug e escolha não alcançam o Object.prototype", () => {
@@ -203,9 +214,75 @@ test("REGRAS_POR_LP não tem entrada órfã sem uso", () => {
   for (const slug of Object.keys(REGRAS_POR_LP)) {
     const temCheckout = Object.hasOwn(REDIRECT_POR_ESCOLHA, slug);
     assert.equal(
-      temCheckout || slug === "transforma" || slug === "jaytransforma-beauty",
+      temCheckout || slug === "transforma",
       true,
       `${slug} tem regras mas nenhum funil conhecido`
     );
+  }
+});
+
+// ── O Beauty ganhou escolha em 15/09, com o Pix ──────────────────────────────
+
+test("Beauty: cada forma de pagamento vai pro checkout dela", () => {
+  const pix = destinoDaEscolha("jaytransforma-beauty", { pagamento: "pix" });
+  const cartao = destinoDaEscolha("jaytransforma-beauty", { pagamento: "cartao" });
+  assert.equal(pix, C6_PIX + "6c8f923a-9ec2-4c8a-857a-7eddaf9ada54");
+  assert.equal(cartao, C6_CARTAO + "378ed588-2128-4d1b-ba53-74ea8d95f85a");
+  assert.notEqual(pix, cartao);
+});
+
+test("Beauty: a turma escolhida não muda o checkout", () => {
+  // As duas turmas custam o mesmo. A turma vai pro CRM, não pro preço.
+  const out = destinoDaEscolha("jaytransforma-beauty", {
+    turma: "05 a 08/10/2026",
+    pagamento: "pix",
+  });
+  const dez = destinoDaEscolha("jaytransforma-beauty", {
+    turma: "07 a 10/12/2026",
+    pagamento: "pix",
+  });
+  assert.equal(out, dez);
+});
+
+// ── As invariantes dos seis links ────────────────────────────────────────────
+
+test("nenhum checkout se repete entre as três ofertas", () => {
+  // O erro provável ao colar SEIS UUIDs à mão é repetir um. E ele cobraria o
+  // valor de outra formação sem nenhum sintoma: o botão funciona, o checkout
+  // abre, só o valor está errado. Antes disto, só Start x Remove era conferido.
+  const todos = OFERTAS.flatMap((slug) =>
+    Object.values(REDIRECT_POR_ESCOLHA[slug].destinos)
+  );
+  assert.equal(new Set(todos).size, todos.length, `link repetido em: ${todos.join("\n")}`);
+  assert.equal(todos.length, 6);
+});
+
+test("o link do Pix e o do cartão não estão trocados de lugar", () => {
+  // No C6 o Pix e o cartão chegam por domínios diferentes, então um link no
+  // campo errado é detectável — e é o engano mais fácil, já que os seis vieram
+  // em duas listas separadas. Se o C6 um dia unificar os domínios, este teste
+  // falha sem haver bug: aí é só atualizar as duas constantes do topo.
+  for (const slug of OFERTAS) {
+    const d = REDIRECT_POR_ESCOLHA[slug].destinos;
+    assert.ok(d.pix.startsWith(C6_PIX), `${slug}: o destino do Pix é ${d.pix}`);
+    assert.ok(d.cartao.startsWith(C6_CARTAO), `${slug}: o destino do cartão é ${d.cartao}`);
+  }
+});
+
+test("as três ofertas resolvem os dois destinos", () => {
+  for (const slug of OFERTAS) {
+    for (const forma of ["pix", "cartao"]) {
+      assert.notEqual(destinoDaEscolha(slug, { pagamento: forma }), null, `${slug} / ${forma}`);
+    }
+  }
+});
+
+test("nenhum checkout da Cielo sobrou", () => {
+  // A migração foi em 15/09. Um link antigo esquecido continuaria cobrando
+  // pela adquirente que saiu, e o pagamento cairia no lugar errado.
+  for (const regra of Object.values(REDIRECT_POR_ESCOLHA)) {
+    for (const url of Object.values(regra.destinos)) {
+      assert.ok(!url.includes("cielo"), `ainda aponta pra Cielo: ${url}`);
+    }
   }
 });

@@ -37,11 +37,28 @@ export type RegraDeEscolha = {
  * casar, e o sintoma seria "não redirecionou", não "redirecionou errado".
  */
 export const REDIRECT_POR_ESCOLHA: Readonly<Record<string, RegraDeEscolha>> = {
+  // ⚠️ Migrado da Cielo para o C6 em 15/09. O Pix e o cartão do C6 chegam por
+  // DOMÍNIOS diferentes (api-gateway.c6bank.info e checkout2.c6pay.com.br) —
+  // é o que permite o teste pegar um link trocado de lugar, que é o erro fácil
+  // de cometer quando se cola seis UUIDs vindos de duas listas separadas.
+  //
+  // ⚠️ Não dá pra conferir estes links por requisição: o checkout do C6 é um
+  // SPA e devolve a MESMA casca 404 para UUID válido e inventado. Só abrindo
+  // no navegador.
+  "jaytransforma-beauty": {
+    // Ganhou escolha em 15/09, com o Pix. Até então era a única das três com
+    // um destino só, fixo no REDIRECT_PADRAO_POR_LP da rota de captura.
+    campos: ["pagamento"],
+    destinos: {
+      pix: "https://api-gateway.c6bank.info/v1/payment/6c8f923a-9ec2-4c8a-857a-7eddaf9ada54",
+      cartao: "https://checkout2.c6pay.com.br/payment/378ed588-2128-4d1b-ba53-74ea8d95f85a",
+    },
+  },
   "jaytransforma-remove": {
     campos: ["pagamento"],
     destinos: {
-      pix: "https://cielolink.com.br/4iXIpI8",
-      cartao: "https://cielolink.com.br/4cGaboO",
+      pix: "https://api-gateway.c6bank.info/v1/payment/64dda652-b9b8-49af-9c99-39a5f1da13b7",
+      cartao: "https://checkout2.c6pay.com.br/payment/ca1a7f3a-c975-44f6-abf3-83e3e9c42be0",
     },
   },
   "jaytransforma-start": {
@@ -55,8 +72,8 @@ export const REDIRECT_POR_ESCOLHA: Readonly<Record<string, RegraDeEscolha>> = {
     // A função já sabe lidar com isso; é só o mapa que muda.
     campos: ["pagamento"],
     destinos: {
-      pix: "https://cielolink.com.br/4ipEfbT",
-      cartao: "https://cielolink.com.br/4AixO0M",
+      pix: "https://api-gateway.c6bank.info/v1/payment/92923a19-2df9-4dae-9112-869dfc151156",
+      cartao: "https://checkout2.c6pay.com.br/payment/7ccd7058-3b5d-429b-bd2b-cf840d42add9",
     },
   },
 };

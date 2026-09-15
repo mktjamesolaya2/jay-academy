@@ -341,3 +341,30 @@ test("corpoParaOCrm despacha a /jaytransforma-start pelo montador dela", () => {
   const c = corpoParaOCrm({ ...base, slug: "jaytransforma-start" });
   assert.equal(c.tag, TAG_START);
 });
+
+test("JAY Beauty: a forma de pagamento chega ao CRM", () => {
+  // Entrou em 15/09 junto com o Pix. ⚠️ Sem `pagamento` na lista de campos
+  // extras do montador, ela seria coletada pelo formulário e descartada em
+  // silêncio — e o comercial não saberia como a pessoa pagou.
+  const c = montarCorpoBeauty({
+    fields: { turma: "07 a 10/12/2026", pagamento: "pix" },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-beauty",
+  });
+  assert.equal(c.pagamento, "pix");
+  assert.equal(c.turma, "07 a 10/12/2026");
+  assert.equal(c.tag, TAG_BEAUTY);
+});
+
+test("JAY Beauty: pagamento em branco não vira chave vazia", () => {
+  const c = montarCorpoBeauty({
+    fields: { pagamento: "   " },
+    name: "Maria",
+    email: "",
+    whatsapp: "+5511999998888",
+    slug: "jaytransforma-beauty",
+  });
+  assert.equal("pagamento" in c, false);
+});

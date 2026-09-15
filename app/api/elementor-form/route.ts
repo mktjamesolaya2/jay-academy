@@ -25,11 +25,6 @@ export const maxDuration = 30;
 
 const REDIRECT_PADRAO_POR_LP: Record<string, string> = {
   transforma: "https://chat.whatsapp.com/I4fpwbQWJl84p9M2aL6mQz?mode=gi_t",
-  // Checkout da oferta do JAY Beauty (link de pagamento Cielo). Fica aqui como
-  // PADRÃO pra a página funcionar sem depender de configuração; o campo do
-  // painel (/lps/<slug>) continua vencendo, então trocar de link a cada turma
-  // não exige deploy.
-  "jaytransforma-beauty": "https://cielolink.com.br/4xAzXCw",
 };
 
 function pick(fields: Record<string, string>, keys: string[]): string {

@@ -156,8 +156,12 @@ function montarCorpoDeFechamento(tag: string, camposExtras: readonly string[]) {
   };
 }
 
-/** Qual das duas turmas de 2026 ela quer. */
-export const montarCorpoBeauty = montarCorpoDeFechamento(TAG_BEAUTY, ["turma"]);
+/**
+ * Qual das duas turmas de 2026 ela quer, e como prefere pagar. ⚠️ A forma de
+ * pagamento entrou em 15/09, junto com o Pix: é ela que decide para qual dos
+ * dois checkouts a pessoa é mandada (lib/lp-funil.ts).
+ */
+export const montarCorpoBeauty = montarCorpoDeFechamento(TAG_BEAUTY, ["turma", "pagamento"]);
 
 /**
  * Pix ou cartão. ⚠️ Este campo não é só informação: é ele que decide para qual

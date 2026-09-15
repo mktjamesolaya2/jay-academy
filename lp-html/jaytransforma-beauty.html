@@ -96,8 +96,13 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 .oferta__de s{text-decoration-color:rgba(217,180,88,.6);}
 .oferta__hr{width:min(260px,72%);height:1px;margin:20px auto;background:linear-gradient(90deg,transparent,rgba(217,180,88,.5),transparent);}
 .oferta__k{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
-.oferta__valor{font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(42px,6.4vw,66px);line-height:.92;letter-spacing:.02em;color:#fff;}
+/* Dois valores no mesmo card (Pix e cartão) desde 15/09, então cada um é menor
+   do que seria um preço sozinho — senão os dois brigam e nenhum é lido. */
+.oferta__valor{font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(36px,5.2vw,52px);line-height:.92;letter-spacing:.02em;color:#fff;}
 .oferta__valor i{font-style:normal;font-size:.56em;color:var(--gold2);}
+.oferta__forma{display:block;margin-top:7px;font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+.oferta__ou{display:flex;align-items:center;gap:12px;margin:16px 0;font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);}
+.oferta__ou::before,.oferta__ou::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(217,180,88,.42),transparent);}
 .oferta .cta{width:100%;margin-top:24px;}
 .oferta__nota{color:var(--muted);font-size:12.5px;line-height:1.55;margin-top:14px;}
 /* hero em duas colunas quando há espaço: texto | oferta */
@@ -147,13 +152,15 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 .turmas div{background:var(--card);border:1px solid rgba(217,180,88,.3);border-radius:14px;padding:16px 14px;}
 .turmas b{display:block;font-family:'Beau',Georgia,serif;font-weight:400;font-size:clamp(20px,2.5vw,25px);line-height:1.1;letter-spacing:.02em;color:var(--gold2);}
 .turmas span{display:block;font-family:'Poppins',sans-serif;font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:7px;}
-/* ===== ESCOLHA DA TURMA (formulário) ===== */
-.campo--turma{border:0;padding:0;margin:0 0 16px;}
-.campo--turma>span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:9px;}
+/* ===== ESCOLHAS DO FORMULÁRIO (turma e pagamento) =====
+   Duas perguntas, um desenho só. A forma de pagamento entrou em 15/09 e é ela
+   que escolhe o checkout — ver lib/lp-funil.ts. */
+.campo--turma,.campo--pagamento{border:0;padding:0;margin:0 0 16px;}
+.campo--turma>span,.campo--pagamento>span{display:block;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:9px;}
 .campo--turma>span i{font-style:normal;color:var(--muted);letter-spacing:0;text-transform:none;font-weight:500;}
-.campo--turma label{display:flex;align-items:center;gap:10px;padding:12px 13px;margin-bottom:8px;border:1px solid var(--line2);border-radius:11px;background:rgba(255,255,255,.02);color:#d9d1c5;font-size:13.5px;line-height:1.4;cursor:pointer;transition:border-color .2s,background .2s;}
-.campo--turma label:has(input:checked){border-color:rgba(217,180,88,.7);background:rgba(217,180,88,.08);color:#fff;}
-.insc__card .campo--turma input{flex:0 0 auto;width:17px;height:17px;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;accent-color:var(--gold2);}
+.campo--turma label,.campo--pagamento label{display:flex;align-items:center;gap:10px;padding:12px 13px;margin-bottom:8px;border:1px solid var(--line2);border-radius:11px;background:rgba(255,255,255,.02);color:#d9d1c5;font-size:13.5px;line-height:1.4;cursor:pointer;transition:border-color .2s,background .2s;}
+.campo--turma label:has(input:checked),.campo--pagamento label:has(input:checked){border-color:rgba(217,180,88,.7);background:rgba(217,180,88,.08);color:#fff;}
+.insc__card .campo--turma input,.insc__card .campo--pagamento input{flex:0 0 auto;width:17px;height:17px;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;accent-color:var(--gold2);}
 /* ===== FICHA DA TURMA ===== */
 .ficha{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;max-width:820px;margin:0 auto;}
 .ficha div{background:var(--card);padding:18px 12px;text-align:center;}
@@ -234,7 +241,8 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
   .hero .selo{padding:8px 13px;gap:5px 10px;letter-spacing:.13em;}
   .hero .prazo{margin:15px 0 22px;font-size:10px;letter-spacing:.12em;}
   .oferta{margin-top:26px;padding:25px 19px;border-radius:18px;}
-  .oferta__valor{font-size:clamp(40px,12vw,52px);}
+  .oferta__valor{font-size:clamp(34px,9.6vw,44px);}
+  .oferta__ou{margin:14px 0;}
   .oferta .cta{padding:16px 16px;font-size:12.5px;line-height:1.35;}
   .situ-fecho{font-size:24px;line-height:1.14;margin-top:30px;}
   .dois{margin-top:32px;gap:14px;}
@@ -292,13 +300,16 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
         <p class="prazo"><b>Disponível até 17/09 às 23:59</b> <span>último dia do JAY TRANSFORMA</span></p>
       </div>
 
-      <!-- TROCAR: [VALOR EXCLUSIVO] e [CONDIÇÃO DE PAGAMENTO INTEGRAL] -->
       <aside class="oferta">
         <div class="oferta__curso">JAY Beauty <b style="font-weight:400;">12 em 1</b><span class="oferta__meta">4 dias presenciais · Campinas/SP<br>Out ou Dez/2026</span></div>
         <p class="oferta__de">Valor regular: <s>R$ 3.500</s></p>
         <div class="oferta__hr"></div>
         <div class="oferta__k">Condição exclusiva Jay Transforma</div>
+        <div class="oferta__valor">R$ 1.999</div>
+        <span class="oferta__forma">à vista no Pix</span>
+        <div class="oferta__ou">ou</div>
         <div class="oferta__valor"><i>10x</i> R$ 249</div>
+        <span class="oferta__forma">no cartão</span>
         <a class="cta" href="#inscricao">Garantir minha vaga</a>
         <p class="oferta__nota">Condição reservada aos participantes do JAY TRANSFORMA até 17/09 às 23:59 e limitada às vagas destinadas ao evento.</p>
       </aside>
@@ -497,7 +508,8 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 </section>
 
 <!-- ===== A CONDIÇÃO + A TURMA ===== -->
-<!-- Oferta: de R$ 3.500 por 10x R$ 249. Duas turmas em 2026. -->
+<!-- Oferta: de R$ 3.500 por R$ 1.999 no Pix ou 10x R$ 249 no cartão.
+     Duas turmas em 2026. -->
 <section class="sec faixa">
   <div class="wrap center">
     <span class="eyebrow c">A condição</span>
@@ -519,7 +531,11 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
       <p class="oferta__de">Valor regular do JAY Beauty: <s>R$ 3.500</s></p>
       <div class="oferta__hr"></div>
       <div class="oferta__k">Condição especial Jay Transforma</div>
+      <div class="oferta__valor">R$ 1.999</div>
+      <span class="oferta__forma">à vista no Pix</span>
+      <div class="oferta__ou">ou</div>
       <div class="oferta__valor"><i>10x</i> R$ 249</div>
+      <span class="oferta__forma">no cartão</span>
       <a class="cta" href="#inscricao">Garantir minha vaga agora</a>
       <p class="oferta__nota">Esta condição será encerrada em 17/09 às 23:59, ou quando as vagas destinadas ao JAY TRANSFORMA forem preenchidas, o que acontecer primeiro. Depois do encerramento, a condição especial do evento deixa de estar disponível.</p>
     </div>
@@ -532,9 +548,11 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
 <!-- ⚠️ class="elementor-form" + action pra própria página é o que faz a ponte injetada
      pelo serveLp interceptar o submit e mandar pro /api/elementor-form (CRM + /leads).
      Trocar a classe ou o action QUEBRA a captura de lead.
-     O link do checkout não fica no HTML: o redirect pós-envio é decidido no
-     servidor (REDIRECT_PADRAO_POR_LP em /api/elementor-form), e o campo do
-     painel (/lps/jaytransforma-beauty) vence esse padrão sem exigir deploy. -->
+     Os links de checkout não ficam no HTML: o servidor decide, em
+     lib/lp-funil.ts. Quem escolhe o link é o `value` do rádio de PAGAMENTO
+     ("pix" / "cartao"), que são as chaves daquele mapa — mudar um lado só faz
+     o checkout errado (ou nenhum) ser escolhido, e em silêncio. O rádio de
+     TURMA não decide o link: ele existe pro CRM saber qual turma ela quer. -->
 <section class="sec insc" id="inscricao">
   <div class="wrap center">
     <span class="eyebrow c">Garanta sua vaga</span>
@@ -557,6 +575,11 @@ h1,h2,h3{font-family:'Beau',Georgia,serif;font-weight:400;line-height:.98;letter
         <span>Qual turma você quer?</span>
         <label><input type="radio" name="turma" value="05 a 08/10/2026" required>05 a 08 de outubro de 2026</label>
         <label><input type="radio" name="turma" value="07 a 10/12/2026" required>07 a 10 de dezembro de 2026</label>
+      </fieldset>
+      <fieldset class="campo campo--pagamento">
+        <span>Como você prefere pagar?</span>
+        <label><input type="radio" name="pagamento" value="pix" required>Pix — R$ 1.999 à vista</label>
+        <label><input type="radio" name="pagamento" value="cartao" required>Cartão — 10x de R$ 249</label>
       </fieldset>
       <!-- Vão junto pro CRM, preenchidos pelo script: a URL de onde o lead veio
            e os utm_* da campanha. Campo vazio o servidor descarta. -->
