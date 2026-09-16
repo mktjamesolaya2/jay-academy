@@ -161,6 +161,15 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // Placeholder "Em breve": o endereço já responde pra poder ser divulgado
+    // antes do conteúdo existir. Fora do sitemap e com noindex no HTML.
+    slug: "encontro-de-especialistas",
+    title: "Encontro de Especialistas (em breve)",
+    htmlFile: "lp-html/encontro-de-especialistas.html",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     slug: "pmuclass",
     title: "PMU CLASS",
     htmlFile: "lp-html/pmuclass.html",
