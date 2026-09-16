@@ -135,9 +135,8 @@ export function resolverDestino(
  */
 export const GRUPO_WHATSAPP_POR_LP: Readonly<Record<string, string>> = {
   transforma: "https://chat.whatsapp.com/I4fpwbQWJl84p9M2aL6mQz?mode=gi_t",
-  // O grupo do Encontro de Especialistas ainda não foi criado. Quando o link
-  // existir, é só trocar esta string — nada mais depende dela.
-  "encontro-de-especialistas": "",
+  // O grupo do Encontro de Especialistas (link do James, 16/09).
+  "encontro-de-especialistas": "https://chat.whatsapp.com/Db3iyUqMGFE6s1umONXXE1?mode=gi_t",
 };
 
 /**
