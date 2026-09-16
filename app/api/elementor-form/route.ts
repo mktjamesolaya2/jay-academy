@@ -4,7 +4,7 @@ import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
 import { corpoParaOCrm } from "@/lib/crm-envio";
-import { destinoDaEscolha, regrasDaLp } from "@/lib/lp-funil";
+import { destinoDaEscolha, regrasDaLp, GRUPO_WHATSAPP_POR_LP } from "@/lib/lp-funil";
 import { normalizarTelefone, mensagemDeErro } from "@/lib/telefone";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
@@ -22,10 +22,6 @@ export const dynamic = "force-dynamic";
 // O CRM cria contato, negócio e anotação antes de responder — já foi
 // medido levando mais de 8s. A função precisa de folga pra esperar.
 export const maxDuration = 30;
-
-const REDIRECT_PADRAO_POR_LP: Record<string, string> = {
-  transforma: "https://chat.whatsapp.com/I4fpwbQWJl84p9M2aL6mQz?mode=gi_t",
-};
 
 function pick(fields: Record<string, string>, keys: string[]): string {
   for (const k of keys) {
@@ -156,7 +152,7 @@ export async function POST(req: Request) {
       destinoDaEscolha(slug, fields) ||
       lpCfg?.formRedirectUrl ||
       content?.formRedirectUrl ||
-      REDIRECT_PADRAO_POR_LP[slug] ||
+      GRUPO_WHATSAPP_POR_LP[slug] ||
       null;
     if (webhookUrl) {
       try {

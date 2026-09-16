@@ -124,6 +124,23 @@ export function resolverDestino(
 }
 
 /**
+ * Parte 1b — o destino fixo da página: o grupo de WhatsApp onde a lead é
+ * aquecida. Não depende de escolha nenhuma, só do slug. Morava num mapa local
+ * da rota; veio pra cá porque é a mesma família de decisão dos destinos acima —
+ * e porque o teste de sincronia com REGRAS_POR_LP precisa enxergar os dois.
+ *
+ * Destino vazio = grupo ainda não criado. A cascata da rota trata como "sem
+ * redirect": a pessoa vê a confirmação na tela e fica onde está. É melhor do
+ * que mandar pra um link que não existe.
+ */
+export const GRUPO_WHATSAPP_POR_LP: Readonly<Record<string, string>> = {
+  transforma: "https://chat.whatsapp.com/I4fpwbQWJl84p9M2aL6mQz?mode=gi_t",
+  // O grupo do Encontro de Especialistas ainda não foi criado. Quando o link
+  // existir, é só trocar esta string — nada mais depende dela.
+  "encontro-de-especialistas": "",
+};
+
+/**
  * Parte 2 — o que vale de diferente nessas páginas: validação estrita antes de
  * mandar (telefone normalizado em E.164, com o "+"), recusa explícita quando o
  * CRM diz não, e a mensagem de sucesso própria.
@@ -147,6 +164,12 @@ export const REGRAS_POR_LP: Readonly<Record<string, RegrasDaLp>> = {
   "jaytransforma-beauty": { exigeEmail: false, mensagemOk: OK_FECHAMENTO },
   "jaytransforma-remove": { exigeEmail: false, mensagemOk: OK_FECHAMENTO },
   "jaytransforma-start": { exigeEmail: false, mensagemOk: OK_FECHAMENTO },
+  // A página do QR Code: pede os quatro campos e termina no grupo do encontro.
+  // Sem entrada aqui, o telefone iria pro CRM com a máscara do formulário.
+  "encontro-de-especialistas": {
+    exigeEmail: true,
+    mensagemOk: "Inscrição confirmada! Você será direcionada ao grupo do encontro.",
+  },
 };
 
 /** As regras desta página, ou `null` se ela não tem funil próprio. */

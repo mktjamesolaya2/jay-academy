@@ -3,39 +3,632 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<!-- Placeholder: o endereço já responde pra poder ser divulgado, mas não deve
-     ser indexado enquanto o conteúdo do evento não entra. Ao publicar a LP de
-     verdade, trocar o conteúdo deste arquivo e tirar o noindex. -->
+<!-- Destino de QR Code impresso: quem chega aqui escaneou o código, não buscou
+     no Google. Fica fora do sitemap e com noindex de propósito. -->
 <meta name="robots" content="noindex,nofollow">
 <title>Encontro de Especialistas | Jay Academy</title>
-<meta name="description" content="Encontro de Especialistas da Jay Academy. Em breve.">
+<meta name="description" content="Um encontro online com James Olaya, Dra. Rafaela e Diana: técnica, jurídico e negócios para estruturar o seu trabalho com micropigmentação.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#08080a;--gold:#d9b458;--gold2:#f2d38a;--text:#f1edf2;--muted:#aaa3af;--line:rgba(242,211,138,.17)}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{background:radial-gradient(75% 65% at 50% 28%,rgba(94,59,101,.28),transparent 70%),var(--bg);color:var(--text);font-family:Poppins,system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;display:grid;place-items:center;padding:clamp(28px,7vw,72px) 22px}
-main{width:min(640px,100%);text-align:center}
-.eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-size:11px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;margin-bottom:20px}
-.eyebrow:before,.eyebrow:after{content:"";width:30px;height:1.5px;background:linear-gradient(90deg,transparent,var(--gold))}
-.eyebrow:after{background:linear-gradient(90deg,var(--gold),transparent)}
-h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:clamp(38px,7vw,64px);line-height:1.04;color:#fff}
-.soon{display:block;font-style:italic;color:var(--gold2);font-size:clamp(22px,4.2vw,34px);margin-top:14px}
-p{color:var(--muted);font-size:clamp(14.5px,1.8vw,17px);font-weight:300;max-width:46ch;margin:22px auto 0}
-.rule{width:64px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:34px auto}
-.back{display:inline-flex;align-items:center;gap:9px;color:var(--gold2);text-decoration:none;font-size:13px;letter-spacing:.06em;border:1px solid var(--line);border-radius:12px;padding:13px 24px;transition:.22s ease}
-.back:hover{border-color:rgba(242,211,138,.45);background:rgba(242,211,138,.07)}
+/* ============================================================
+   Mesmo sistema visual da /academy (lp-html/academy.html), no osso:
+   Poppins 200/300/400, caixa alta com letter-spacing alto, filete de 54px
+   antes do parágrafo, alternância preto/off-white.
+   ⚠️ Regra da marca: NUNCA dourado no texto. O dourado é filete e botão.
+   ============================================================ */
+:root {
+  --ouro: #AC9751;
+  --ouro-claro: #DCC383;
+  --preto: #101820;
+  --off-white: #F8F7F2;
+  --fundo: #070605;
+  --linha: rgba(172, 151, 81, .22);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--fundo);
+  color: var(--off-white);
+  font-family: 'Poppins', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+
+.faixa { width: 90%; max-width: 1200px; margin: 0 auto; }
+.secao { padding: clamp(58px, 6.8vw, 104px) 0; position: relative; }
+/* filete dourado entre lâminas escuras */
+.secao + .secao::before {
+  content: '';
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 90%; max-width: 1200px; height: 1px;
+  background: linear-gradient(to right, rgba(172,151,81,0), rgba(172,151,81,.28) 18%, rgba(172,151,81,.28) 82%, rgba(172,151,81,0));
+}
+
+.btn {
+  display: inline-block; text-decoration: none;
+  font-size: clamp(10.5px, .78vw, 12px); font-weight: 500;
+  letter-spacing: .24em; text-transform: uppercase;
+  padding: 16px clamp(26px, 2.4vw, 40px);
+  border-radius: 999px; border: 0; cursor: pointer;
+  font-family: inherit;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.btn--ouro {
+  background: linear-gradient(120deg, var(--ouro-claro) 0%, var(--ouro) 58%, #8e7c40 100%);
+  color: var(--preto);
+  box-shadow: 0 14px 34px rgba(172, 151, 81, .26);
+}
+.btn--ouro:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(172, 151, 81, .38); }
+.acoes { display: flex; flex-wrap: wrap; gap: 14px; margin-top: clamp(24px, 2.8vw, 40px); }
+
+.moldura {
+  position: relative; border-radius: 20px; overflow: hidden;
+  background: #000; box-shadow: 0 30px 90px rgba(0, 0, 0, .55);
+}
+.moldura img { width: 100%; height: 100%; object-fit: cover; }
+
+.surge { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+.surge.visivel { opacity: 1; transform: none; }
+
+/* ---- tipografia de lâmina ---- */
+.rotulo-lamina {
+  font-size: clamp(9px, .68vw, 11px); font-weight: 400;
+  letter-spacing: .46em; text-transform: uppercase;
+  color: rgba(248, 247, 242, .55);
+}
+.titulo-lamina {
+  margin-top: clamp(22px, 2.6vw, 40px);
+  font-size: clamp(20px, 2.35vw, 40px); font-weight: 200;
+  line-height: 1.22; letter-spacing: .05em; text-transform: uppercase;
+  color: rgba(248, 247, 242, .82); text-wrap: balance;
+}
+.titulo-lamina strong { display: block; font-weight: 400; color: var(--off-white); }
+.texto-lamina {
+  position: relative;
+  margin-top: clamp(24px, 2.8vw, 40px);
+  padding-top: clamp(20px, 2.2vw, 30px);
+  font-size: clamp(12.5px, .92vw, 15px); font-weight: 300;
+  line-height: 1.78; letter-spacing: .012em;
+  color: rgba(248, 247, 242, .70); max-width: 44ch;
+}
+.texto-lamina::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 54px; height: 1px; background: rgba(248, 247, 242, .32);
+}
+.texto-lamina + .texto-lamina { margin-top: 1.1em; padding-top: 0; }
+.texto-lamina + .texto-lamina::before { display: none; }
+.texto-lamina b { font-weight: 400; color: var(--off-white); }
+.remate {
+  margin-top: clamp(30px, 3.6vw, 56px);
+  padding-top: clamp(18px, 2.1vw, 28px);
+  border-top: 1px solid rgba(172, 151, 81, .26);
+  font-size: clamp(11.5px, .95vw, 15px); font-weight: 200;
+  line-height: 1.85; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(248, 247, 242, .58);
+}
+.remate b { display: block; font-weight: 400; color: var(--off-white); }
+.cabeca-secao { margin-bottom: clamp(30px, 3.6vw, 58px); }
+
+/* lâmina clara: mesma tipografia, cores invertidas */
+.claro { background: var(--off-white); color: var(--preto); }
+.claro .rotulo-lamina { color: rgba(16, 24, 32, .52); }
+.claro .titulo-lamina { color: rgba(16, 24, 32, .60); }
+.claro .titulo-lamina strong { color: var(--preto); }
+.claro .texto-lamina { color: rgba(16, 24, 32, .70); }
+.claro .texto-lamina::before { background: rgba(16, 24, 32, .30); }
+.claro .texto-lamina b { color: var(--preto); }
+.claro::before { display: none !important; }
+.secao.claro + .secao::before { display: none; }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative; width: 100%;
+  min-height: 100vh; min-height: 100svh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  background:
+    linear-gradient(to bottom, rgba(7,6,5,0) 52%, var(--fundo) 92%),
+    radial-gradient(60% 56% at 50% 50%, rgba(172,151,81,.20) 0%, rgba(150,104,46,.10) 46%, rgba(172,151,81,0) 74%),
+    radial-gradient(125% 95% at 50% 45%, rgba(46,34,20,.5) 0%, var(--fundo) 74%);
+}
+.hero__palco { position: relative; width: 90%; max-width: 1400px; }
+.hero__foto {
+  position: relative; aspect-ratio: 2.15 / 1;
+  border-radius: 26px; overflow: hidden; background: #000;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, .6);
+}
+.hero__foto picture, .hero__foto img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.hero__scrim {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(125% 108% at 2% 106%,
+      rgba(5,4,3,.97) 0%, rgba(5,4,3,.93) 26%, rgba(5,4,3,.78) 44%,
+      rgba(5,4,3,.44) 60%, rgba(5,4,3,.14) 74%, rgba(5,4,3,0) 86%),
+    linear-gradient(to top, rgba(6,5,4,.60) 0%, rgba(6,5,4,.20) 18%, rgba(6,5,4,0) 36%);
+}
+.hero__content {
+  position: absolute; z-index: 2;
+  left: clamp(24px, 4.5%, 76px);
+  bottom: clamp(46px, 6.4%, 82px);
+  width: min(48%, 580px);
+}
+.hero__kicker {
+  font-size: clamp(9px, .68vw, 11px); font-weight: 400;
+  letter-spacing: .46em; text-transform: uppercase;
+  color: rgba(248, 247, 242, .74);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, .85);
+  margin-bottom: clamp(18px, 2.2vw, 32px);
+}
+.hero__title {
+  font-size: clamp(22px, 2.7vw, 45px); font-weight: 400;
+  line-height: 1.16; letter-spacing: .05em; text-transform: uppercase;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, .55);
+}
+.hero__title span { display: block; font-weight: 200; color: rgba(248, 247, 242, .88); }
+.hero__text {
+  position: relative;
+  margin-top: clamp(20px, 2.4vw, 34px);
+  padding-top: clamp(18px, 2.1vw, 28px);
+  font-size: clamp(12.5px, .92vw, 15px); font-weight: 300;
+  line-height: 1.75; letter-spacing: .012em;
+  color: rgba(248, 247, 242, .78); max-width: 40ch;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .7);
+}
+.hero__text::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 54px; height: 1px; background: rgba(248, 247, 242, .38);
+}
+
+/* ============================================================
+   AS TRÊS AULAS
+   ============================================================ */
+/* A promessa: retrato do James ao lado do texto, como as duplas da /academy. */
+.dupla {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  gap: clamp(28px, 4vw, 76px); align-items: center;
+}
+.dupla__retrato { aspect-ratio: 4 / 5; }
+
+/* As três aulas são cards só de tipografia — de propósito. Duas molduras
+   vazias esperando a foto da Rafaela e da Diana, ao lado do retrato do James,
+   leem como imagem quebrada; o retrato dele vive na dobra de cima. */
+.aulas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 3vw, 44px); }
+.aula { display: flex; flex-direction: column; }
+.aula__n {
+  font-size: clamp(9px, .68vw, 11px); font-weight: 400;
+  letter-spacing: .4em; text-transform: uppercase;
+  color: rgba(16, 24, 32, .45);
+  padding-bottom: clamp(14px, 1.6vw, 20px);
+  border-bottom: 1px solid rgba(16, 24, 32, .16);
+}
+.aula__nome {
+  margin-top: clamp(18px, 2vw, 26px);
+  font-size: clamp(16px, 1.5vw, 22px); font-weight: 400;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--preto);
+}
+.aula__papel {
+  margin-top: 8px;
+  font-size: clamp(9.5px, .7vw, 11px); font-weight: 400;
+  letter-spacing: .28em; text-transform: uppercase; color: rgba(16, 24, 32, .5);
+}
+.aula__texto {
+  margin-top: 16px;
+  font-size: clamp(12.5px, .92vw, 15px); font-weight: 300;
+  line-height: 1.78; color: rgba(16, 24, 32, .72);
+}
+
+/* ============================================================
+   FORMULÁRIO — a única conversão da página
+   ============================================================ */
+.grupo__grade {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px);
+  gap: clamp(30px, 5vw, 76px); align-items: start;
+}
+.insc__card {
+  padding: clamp(24px, 3vw, 40px);
+  border: 1px solid var(--linha); border-radius: 22px;
+  background: linear-gradient(160deg, rgba(172, 151, 81, .07), rgba(255, 255, 255, .02));
+}
+.campo { display: block; margin-bottom: 16px; }
+.campo > span {
+  display: block; margin-bottom: 8px;
+  font-size: 10.5px; font-weight: 400;
+  letter-spacing: .26em; text-transform: uppercase;
+  color: rgba(248, 247, 242, .6);
+}
+.campo input {
+  width: 100%; padding: 15px 16px;
+  font-family: inherit; font-size: 16px;  /* 16px: abaixo disso o iOS dá zoom no foco */
+  font-weight: 300; color: var(--off-white);
+  background: rgba(7, 6, 5, .55);
+  border: 1px solid rgba(248, 247, 242, .16); border-radius: 12px;
+  transition: border-color .2s ease;
+}
+.campo input::placeholder { color: rgba(248, 247, 242, .3); }
+.campo input:focus { outline: none; border-color: rgba(220, 195, 131, .7); }
+.insc__card .btn { width: 100%; margin-top: 8px; }
+.insc__nota {
+  margin-top: 14px; font-size: 11.5px; font-weight: 300;
+  line-height: 1.6; color: rgba(248, 247, 242, .45);
+}
+.jayo-aviso { margin: 12px 0 0; font-size: 14px; line-height: 1.5; font-weight: 400; }
+
+.rodape {
+  padding: clamp(26px, 3vw, 44px) 0;
+  border-top: 1px solid var(--linha);
+  font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(248, 247, 242, .32);
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+
+/* ============================================================
+   CELULAR — é como a página vai ser vista (QR Code na mão)
+   ============================================================ */
+@media (max-width: 900px) {
+  .aulas { grid-template-columns: 1fr; gap: clamp(30px, 6vw, 44px); }
+  .dupla { grid-template-columns: 1fr; }
+  .dupla__retrato { max-width: 340px; }
+  .grupo__grade { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .faixa { width: calc(100% - 40px); }
+  /* ⚠️ altura REAL, não min-height: é ela que faz o `height:100%` do palco e da
+     foto resolverem. Sem esta linha a foto colapsa em zero e a hero do celular
+     fica só com o degradê preto — a primeira tela do QR Code sem imagem. */
+  .hero { height: 100vh; height: 100svh; min-height: 480px; }
+  .hero__palco { width: 100%; height: 100%; }
+  .hero__foto { height: 100%; aspect-ratio: auto; border-radius: 0; box-shadow: none; }
+  .hero__scrim {
+    background: linear-gradient(to bottom,
+      rgba(6,5,4,.88) 0%, rgba(6,5,4,.66) 24%, rgba(6,5,4,.22) 42%, rgba(6,5,4,0) 58%);
+  }
+  /* o bloco ocupa a hero inteira e vira coluna: texto no ar preto do topo e o
+     botão empurrado pro pé da tela, onde o polegar alcança. */
+  .hero__content {
+    position: absolute; top: clamp(30px, 7%, 64px); bottom: clamp(26px, 6%, 56px);
+    left: 22px; right: 22px; width: auto; text-align: center;
+    display: flex; flex-direction: column;
+  }
+  .hero__content .acoes { margin-top: auto; justify-content: center; }
+  .hero__title { font-size: clamp(23px, 7vw, 34px); }
+  .hero__kicker { letter-spacing: .34em; }
+  .hero__text { max-width: 34ch; margin-left: auto; margin-right: auto; }
+  .hero__text::before { left: 50%; transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .surge { opacity: 1; transform: none; transition: none; }
+  * { animation: none !important; }
+}
 </style>
 </head>
 <body>
-<main>
-  <span class="eyebrow">Jay Academy</span>
-  <h1>Encontro de Especialistas<span class="soon">Em breve</span></h1>
-  <p>Estamos preparando os detalhes deste encontro. Guarde este endereço — as informações e as inscrições aparecem aqui.</p>
-  <div class="rule"></div>
-  <a class="back" href="/jamesolaya">Conhecer a Jay Academy</a>
-</main>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero__palco">
+    <div class="hero__foto">
+      <picture>
+        <source media="(max-width: 768px)" srcset="/lp/academy/composicoes/A5-mobile.jpg">
+        <img src="/lp/academy/composicoes/A1.jpg" alt="A casa da Jay Academy iluminada à noite, com James Olaya de jaleco">
+      </picture>
+      <div class="hero__scrim"></div>
+    </div>
+    <div class="hero__content">
+      <p class="hero__kicker">Jay Academy · Encontro de especialistas</p>
+      <h1 class="hero__title">
+        Tudo o que você precisa
+        <span>saber sobre micropigmentação</span>
+      </h1>
+      <p class="hero__text">
+        Um encontro online com James Olaya, Dra. Rafaela e Diana: técnica,
+        jurídico e negócios, para o seu trabalho virar um negócio de verdade.
+      </p>
+      <div class="acoes">
+        <a class="btn btn--ouro" href="#grupo">Entrar no grupo do encontro</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ A PROMESSA ============ -->
+<section class="secao">
+  <div class="faixa surge">
+   <div class="dupla">
+    <div>
+    <p class="rotulo-lamina">O encontro</p>
+    <h2 class="titulo-lamina">
+      Três especialistas, uma conversa
+      <strong>Sobre o seu negócio</strong>
+    </h2>
+    <p class="texto-lamina">
+      Não é mais uma aula de técnica. É uma conversa aberta, online, sobre as
+      três coisas que sustentam uma profissional de micropigmentação: <b>a mão
+      que executa, o contrato que protege e a conta que fecha no fim do mês</b>.
+    </p>
+    <p class="texto-lamina">
+      Você sai com o seu negócio mais estruturado, mais profissional e pronto
+      para aumentar a receita — que é onde a maioria trava depois de aprender a
+      técnica.
+    </p>
+    <p class="remate">
+      A data é anunciada primeiro no grupo
+      <b>Entre agora para não perder o encontro</b>
+    </p>
+    </div>
+    <div class="moldura dupla__retrato">
+      <img src="/lp/academy/reais/james-dark.jpg" alt="James Olaya, retrato em preto e branco" loading="lazy">
+    </div>
+   </div>
+  </div>
+</section>
+
+<!-- ============ AS TRÊS AULAS ============ -->
+<section class="secao claro">
+  <div class="faixa surge">
+    <div class="cabeca-secao">
+      <p class="rotulo-lamina">No encontro</p>
+      <h2 class="titulo-lamina">
+        Cada uma cuida de
+        <strong>Uma parte do seu negócio</strong>
+      </h2>
+    </div>
+
+    <!-- Quando as fotos da Dra. Rafaela e da Diana chegarem (/lp/encontro/),
+         cada card ganha <div class="moldura aula__retrato"> antes do <h3> — e
+         aí o James também volta a ter a dele aqui, com os três iguais. -->
+    <div class="aulas">
+      <article class="aula">
+        <p class="aula__n">01 · Técnica</p>
+        <h3 class="aula__nome">James Olaya</h3>
+        <p class="aula__papel">Micropigmentação</p>
+        <p class="aula__texto">
+          O que separa um trabalho bonito de um trabalho que dura: leitura de
+          pele, escolha de pigmento e o acabamento que a cliente percebe —
+          e comenta.
+        </p>
+      </article>
+
+      <article class="aula">
+        <p class="aula__n">02 · Jurídico</p>
+        <h3 class="aula__nome">Dra. Rafaela</h3>
+        <p class="aula__papel">Advogada</p>
+        <p class="aula__texto">
+          Advogada que trabalha com micropigmentação: termo de consentimento,
+          responsabilidade sobre o procedimento e o que fazer quando a cliente
+          reclama do resultado.
+        </p>
+      </article>
+
+      <article class="aula">
+        <p class="aula__n">03 · Negócios</p>
+        <h3 class="aula__nome">Diana</h3>
+        <p class="aula__papel">Visão de negócios</p>
+        <p class="aula__texto">
+          Preço, agenda e recorrência: como transformar atendimento avulso em
+          uma operação que cresce sem depender de você trabalhar mais horas.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ O GRUPO — a única conversão da página ============ -->
+<section class="secao" id="grupo">
+  <div class="faixa surge">
+    <div class="grupo__grade">
+      <div>
+        <p class="rotulo-lamina">Sua vaga</p>
+        <h2 class="titulo-lamina">
+          O encontro é online
+          <strong>E começa pelo grupo</strong>
+        </h2>
+        <p class="texto-lamina">
+          É no grupo que a gente avisa a data, manda o link do encontro e vai
+          soltando o conteúdo antes. <b>Preencha e entre</b> — leva menos de um
+          minuto.
+        </p>
+      </div>
+
+      <!-- ⚠️ class="elementor-form" + action pra própria página é o que faz a
+           ponte injetada pelo serveLp interceptar o submit e mandar pro
+           /api/elementor-form (CRM + /leads). Trocar a classe ou o action
+           QUEBRA a captura de lead. -->
+      <form class="elementor-form insc__card" action="/encontro-de-especialistas" method="post">
+        <label class="campo">
+          <span>Seu nome</span>
+          <input type="text" name="nome" placeholder="Como você quer ser chamada" required autocomplete="name">
+        </label>
+        <label class="campo">
+          <span>WhatsApp</span>
+          <input type="tel" name="telefone" placeholder="+55 (00) 00000-0000" required autocomplete="tel" inputmode="tel" maxlength="24">
+        </label>
+        <label class="campo">
+          <span>Seu e-mail</span>
+          <input type="email" name="email" placeholder="voce@email.com" required autocomplete="email" inputmode="email" maxlength="120">
+        </label>
+        <label class="campo">
+          <span>Seu Instagram</span>
+          <input type="text" name="instagram" placeholder="@seuperfil" required autocomplete="off" inputmode="text" maxlength="60">
+        </label>
+        <!-- Vão junto pro CRM, preenchidos pelo script: a URL de onde o lead veio
+             e os utm_* da campanha. Campo vazio o servidor descarta. -->
+        <input type="hidden" name="pagina">
+        <input type="hidden" name="utm_source">
+        <input type="hidden" name="utm_medium">
+        <input type="hidden" name="utm_campaign">
+        <input type="hidden" name="utm_content">
+        <input type="hidden" name="utm_term">
+        <!-- Isca de robô: gente nunca preenche. O servidor ignora este campo. -->
+        <input name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;padding:0;border:0">
+        <button type="submit" class="btn btn--ouro">Quero entrar no grupo</button>
+        <p class="jayo-aviso" data-jayo-aviso></p>
+        <p class="insc__nota">
+          Entrada gratuita. A data e o link do encontro são avisados no grupo.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="faixa rodape">
+  <span>Jay Academy · James Olaya</span>
+  <span>@jayo.academy</span>
+</footer>
+
+<script>
+(function(){
+  var semMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Reveal on scroll — mesmo bloco da /academy.
+  var alvos = document.querySelectorAll('.surge');
+  if (!semMovimento && 'IntersectionObserver' in window) {
+    var observador = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('visivel'); observador.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px' });
+    alvos.forEach(function(a){ observador.observe(a); });
+  } else {
+    alvos.forEach(function(a){ a.classList.add('visivel'); });
+  }
+
+  var form = document.querySelector('.insc__card');
+  if (!form) return;
+  var whats = form.querySelector('[name="telefone"]');
+  var insta = form.querySelector('[name="instagram"]');
+
+  // Espelho da regra de lib/telefone.ts (HTML puro não importa módulo; o
+  // servidor continua sendo a autoridade). Brasil confere de verdade; outro
+  // país só precisa caber na faixa da E.164 — recusar formato de país que a
+  // gente não conhece é perder aluna de fora.
+  function conferirTelefone(valor){
+    var texto=String(valor||'').trim();
+    var d=texto.replace(/\D/g,'');
+    if(d.length<=3)return 'Digite seu WhatsApp com DDD.';
+    var temMais=texto.charAt(0)==='+';
+    // ⚠️ DDD 55 (Santa Maria/RS) x DDI 55: só é DDI a partir de 12 dígitos.
+    var br=null;
+    if(d.slice(0,2)==='55'&&d.length>=12)br=d.slice(2);
+    else if(!temMais&&d.length>=10&&d.length<=11)br=d;
+    else if(!temMais&&d.length<10)return 'Faltam números. Confira o DDD (ou use + e o código do país).';
+    if(br){
+      var ddd=br.slice(0,2),local=br.slice(2);
+      if(ddd.charAt(0)==='0'||ddd==='10')return 'Confira o DDD — ele vai de 11 a 99, sem o zero na frente.';
+      if(local.length<8)return 'Faltam números no WhatsApp.';
+      if(local.length>9)return 'Esse número tem dígitos demais.';
+      if(local.length===9&&local.charAt(0)!=='9')return 'Confira o número: celular brasileiro começa com 9 depois do DDD.';
+      return '';
+    }
+    if(d.length<8)return 'Faltam números no WhatsApp.';
+    if(d.length>15)return 'Esse número tem dígitos demais.';
+    return '';
+  }
+  // Dois modos: enquanto for número brasileiro, a máscara ajuda; assim que a
+  // pessoa troca o DDI, ela sai do caminho e o campo vira texto livre.
+  function ehModoBrasil(texto){
+    var t=String(texto||'').trim();
+    if(!t)return true;
+    if(t.charAt(0)!=='+')return /^[\d\s().-]*$/.test(t);
+    return t.replace(/\D/g,'').slice(0,2)==='55';
+  }
+  function formatarWhats(valor){
+    var texto=String(valor||'').trim();
+    if(!ehModoBrasil(texto)){
+      return texto.replace(/[^\d+\s().-]/g,'').slice(0,24);
+    }
+    // O "+55" escrito é prefixo, não DDD: o que conta como DDD vem depois dele.
+    var temPrefixo=/^\+\s*55/.test(texto);
+    var digitos=(temPrefixo?texto.replace(/^\+\s*55/,''):texto).replace(/\D/g,'');
+    if(digitos.length>=12&&digitos.slice(0,2)==='55')digitos=digitos.slice(2);
+    digitos=digitos.slice(0,11);
+    if(!digitos)return temPrefixo?'+55':'';
+    if(digitos.length<=2)return '+55 ('+digitos;
+    var local=digitos.slice(2);
+    if(local.length<=4)return '+55 ('+digitos.slice(0,2)+') '+local;
+    var corte=local.length===9?5:4;
+    return '+55 ('+digitos.slice(0,2)+') '+local.slice(0,corte)+'-'+local.slice(corte);
+  }
+  // Onde termina o "+55" literal — os dígitos dele não são do número.
+  function inicioLocal(texto){
+    var m=/^\+\s*55/.exec(String(texto||''));
+    return m?m[0].length:0;
+  }
+  // Reposiciona o cursor contando os dígitos do número (ignorando o prefixo),
+  // senão ele pula pro fim a cada tecla e a pessoa não consegue corrigir o meio.
+  function aplicarMascara(){
+    var antes=whats.value,pos=whats.selectionStart;
+    var depois=formatarWhats(antes);
+    if(depois===antes)return;
+    var ini=inicioLocal(antes);
+    var corte=pos===null?antes.length:Math.max(pos,ini);
+    var digitosAntes=antes.slice(ini,corte).replace(/\D/g,'').length;
+    whats.value=depois;
+    if(pos===null)return;
+    var novaPos=depois.length;
+    if(digitosAntes>0){
+      var vistos=0;
+      for(var i=inicioLocal(depois);i<depois.length;i++){
+        if(/\d/.test(depois.charAt(i)))vistos++;
+        if(vistos>=digitosAntes){novaPos=i+1;break;}
+      }
+    }
+    try{whats.setSelectionRange(novaPos,novaPos);}catch(e){}
+  }
+  function atualizarValidadeWhats(){
+    whats.setCustomValidity(conferirTelefone(whats.value));
+  }
+
+  // O Instagram chega de tudo quanto é jeito: com @, com espaço, e colado da
+  // barra do navegador. O CRM quer o perfil, não a URL — normaliza aqui, antes
+  // da ponte ler o formulário.
+  function limparInstagram(valor){
+    var t=String(valor||'').trim();
+    if(!t)return '';
+    t=t.replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/^instagram\.com\//i,'');
+    t=t.split(/[?/]/)[0];
+    t=t.replace(/[^A-Za-z0-9._]/g,'');
+    return t?'@'+t:'';
+  }
+
+  // A origem do lead: a URL inteira e os utm_* da querystring. O CRM guarda
+  // isso na anotação do negócio — é assim que o comercial sabe de onde veio.
+  (function preencherOrigem(){
+    var oculto=function(nome){ return form.querySelector('[name="'+nome+'"]'); };
+    var campoPagina=oculto('pagina');
+    if(campoPagina)campoPagina.value=location.href;
+    var busca=new URLSearchParams(location.search);
+    busca.forEach(function(valor,chave){
+      if(chave.indexOf('utm_')!==0)return;
+      var campo=oculto(chave);
+      if(campo)campo.value=valor;
+    });
+  })();
+
+  if(whats){
+    whats.addEventListener('input',function(){
+      aplicarMascara();
+      atualizarValidadeWhats();
+    });
+    whats.addEventListener('change',atualizarValidadeWhats);
+    whats.addEventListener('blur',atualizarValidadeWhats);
+    atualizarValidadeWhats();
+  }
+  if(insta){
+    insta.addEventListener('blur',function(){ insta.value=limparInstagram(insta.value); });
+    // ⚠️ capture: a ponte escuta o submit no document; aqui a gente normaliza
+    // ANTES, na fase de captura, senão o FormData sai com o valor cru.
+    form.addEventListener('submit',function(){ insta.value=limparInstagram(insta.value); },true);
+  }
+})();
+</script>
 </body>
 </html>

@@ -161,10 +161,11 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
-    // Placeholder "Em breve": o endereço já responde pra poder ser divulgado
-    // antes do conteúdo existir. Fora do sitemap e com noindex no HTML.
+    // Destino de QR Code impresso: captação para o grupo de WhatsApp do encontro
+    // online com James, Dra. Rafaela e Diana. Fora do sitemap e com noindex no
+    // HTML — o tráfego é do código escaneado, não de busca.
     slug: "encontro-de-especialistas",
-    title: "Encontro de Especialistas (em breve)",
+    title: "Encontro de Especialistas",
     htmlFile: "lp-html/encontro-de-especialistas.html",
     category: "venda",
     accent: "gold-black",

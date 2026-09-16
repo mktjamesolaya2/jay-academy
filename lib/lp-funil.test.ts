@@ -12,6 +12,7 @@ import {
   resolverDestino,
   REDIRECT_POR_ESCOLHA,
   REGRAS_POR_LP,
+  GRUPO_WHATSAPP_POR_LP,
   regrasDaLp,
 } from "./lp-funil.ts";
 
@@ -209,12 +210,15 @@ test("slug de fora não alcança o Object.prototype nas regras", () => {
 });
 
 test("REGRAS_POR_LP não tem entrada órfã sem uso", () => {
-  // Toda página aqui ou tem checkout próprio (REDIRECT_POR_ESCOLHA) ou é a
-  // /transforma, que manda pro grupo do WhatsApp.
+  // Toda página aqui ou termina num checkout próprio (REDIRECT_POR_ESCOLHA) ou
+  // termina num grupo de WhatsApp (GRUPO_WHATSAPP_POR_LP). Antes isto estava
+  // escrito como `slug === "transforma"`, o que obrigava a editar o teste toda
+  // vez que uma página de captação nova entrava.
   for (const slug of Object.keys(REGRAS_POR_LP)) {
     const temCheckout = Object.hasOwn(REDIRECT_POR_ESCOLHA, slug);
+    const temGrupo = Object.hasOwn(GRUPO_WHATSAPP_POR_LP, slug);
     assert.equal(
-      temCheckout || slug === "transforma",
+      temCheckout || temGrupo,
       true,
       `${slug} tem regras mas nenhum funil conhecido`
     );
@@ -285,4 +289,33 @@ test("nenhum checkout da Cielo sobrou", () => {
       assert.ok(!url.includes("cielo"), `ainda aponta pra Cielo: ${url}`);
     }
   }
+});
+
+// ── Os grupos de WhatsApp ────────────────────────────────────────────────────
+
+test("todo grupo configurado é um convite de grupo do WhatsApp", () => {
+  // O destino é colado à mão do celular do James. Um link de conversa
+  // individual (wa.me) no lugar do convite manda a lead pro privado dele em vez
+  // do grupo, e ninguém percebe até o telefone tocar.
+  for (const [slug, url] of Object.entries(GRUPO_WHATSAPP_POR_LP)) {
+    if (!url) continue; // vazio = grupo ainda não criado, testado abaixo
+    assert.ok(
+      url.startsWith("https://chat.whatsapp.com/"),
+      `${slug} não aponta pra um convite de grupo: ${url}`
+    );
+  }
+});
+
+test("grupo ainda não criado não vira redirect quebrado", () => {
+  // A cascata da rota faz `GRUPO_WHATSAPP_POR_LP[slug] || null`: string vazia
+  // some e a pessoa fica na página com a confirmação. O que não pode é a chave
+  // existir com um espaço em branco dentro, que passaria pelo `||`.
+  for (const [slug, url] of Object.entries(GRUPO_WHATSAPP_POR_LP)) {
+    assert.equal(url, url.trim(), `${slug}: destino com espaço nas pontas`);
+  }
+});
+
+test("cada página cai no seu grupo, sem repetir link", () => {
+  const usados = Object.values(GRUPO_WHATSAPP_POR_LP).filter(Boolean);
+  assert.equal(new Set(usados).size, usados.length, "duas páginas no mesmo grupo");
 });
