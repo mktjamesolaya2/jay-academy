@@ -151,3 +151,9 @@ test("a lista de páginas com pixel não tem slug repetido", () => {
   // alguém adicionou sem olhar — e no dia de virar mapa por página, quebra.
   assert.equal(new Set(PIXEL_SLUGS).size, PIXEL_SLUGS.length);
 });
+
+test("a Fio a Fio oficial e as prévias v2 e v3 levam pixel", () => {
+  for (const slug of ["fio-a-fio-realista-by-james-olaya", "fio-a-fio-realista-v2", "fio-a-fio-realista-v3"]) {
+    assert.equal(slugHasPixel(slug), true, slug);
+  }
+});

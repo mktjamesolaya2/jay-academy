@@ -12,7 +12,8 @@
 //     935630436819595 e 872802227099574).
 //   - GTM        → um container POR PÁGINA (GTM_BY_SLUG em lib/google-tag.ts):
 //     GTM-TVLJSVJZ na /magicshadow, GTM-W394J499 na /basic-magic-shadow,
-//     GTM-NB2WK5SJ na /fio-a-fio-realista-by-james-olaya. Nas demais páginas o
+//     GTM-NB2WK5SJ na /fio-a-fio-realista-by-james-olaya (e nas prévias v2/v3,
+//     desde 23/09). Nas demais páginas o
 //     container é removido, inclusive o antigo do WordPress.
 //   - GA4        → em todas (fluxo "site" do jayacademy.com.br, coleta ativa).
 // A limpeza é feita ao servir (lib/tracking-clean.ts), não no dado salvo: é

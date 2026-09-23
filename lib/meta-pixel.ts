@@ -32,6 +32,10 @@ export const PIXEL_SLUGS = [
   "basic-nanofios",
   "curso-online-profissao-remove",
   "fio-a-fio-realista-by-james-olaya",
+  // As prévias v2 e v3 da oficial (23/09): recebem tráfego pago para comparar
+  // as versões, então medem no mesmo pixel.
+  "fio-a-fio-realista-v2",
+  "fio-a-fio-realista-v3",
   "metodo-shadow-pro",
   "pdv-lips-sense-technique",
   "pmuclass",

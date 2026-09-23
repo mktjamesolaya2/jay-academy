@@ -168,9 +168,9 @@ test("a troca das ofertas não vazou para as vizinhas", () => {
   assert.equal(gtmIdForSlug("magicshadow"), MAGIC);
 });
 
-test("nenhuma página divide container com outra sem ser as do marketing", () => {
+test("nenhuma página divide container com outra sem ser os grupos intencionais", () => {
   // Varre o mapa inteiro: container repetido é ou intencional (magicshadow e
-  // transforma) ou um engano. Assim, página nova entrando com ID copiado de
+  // transforma; a Fio a Fio oficial e as prévias v2/v3) ou um engano. Assim, página nova entrando com ID copiado de
   // outra falha aqui em vez de ir pro ar medindo errado.
   const porContainer = new Map<string, string[]>();
   for (const [slug, container] of Object.entries(GTM_BY_SLUG)) {
@@ -178,9 +178,13 @@ test("nenhuma página divide container com outra sem ser as do marketing", () =>
   }
   for (const [container, slugs] of porContainer) {
     if (slugs.length === 1) continue;
-    assert.deepEqual(
-      [...slugs].sort(),
+    const grupos = [
       ["magicshadow", "transforma"],
+      ["fio-a-fio-realista-by-james-olaya", "fio-a-fio-realista-v2", "fio-a-fio-realista-v3"],
+    ];
+    const ordenado = JSON.stringify([...slugs].sort());
+    assert.ok(
+      grupos.some((g) => JSON.stringify([...g].sort()) === ordenado),
       `${container} está em mais de uma página: ${slugs.join(", ")}`
     );
   }
@@ -197,4 +201,10 @@ test("a página serve o container dela no head E no noscript", () => {
   assert.ok(out.includes(`ns.html?id=${OFERTAS["jaytransforma-start"]}`));
   assert.ok(out.includes(OFERTAS["jaytransforma-start"]));
   assert.ok(!out.includes(MAGIC));
+});
+
+test("as prévias v2 e v3 do Fio a Fio levam o container da oficial", () => {
+  for (const slug of ["fio-a-fio-realista-v2", "fio-a-fio-realista-v3"]) {
+    assert.equal(gtmIdForSlug(slug), FIOAFIO, slug);
+  }
 });

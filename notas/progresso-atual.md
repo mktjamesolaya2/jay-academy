@@ -8,6 +8,12 @@
 
 ## ✍️ Fio a Fio Realista v3 — a auditoria virou página (23/09)
 
+**Medição (23/09, pedido do James):** v2 e v3 entraram em `PIXEL_SLUGS` (Pixel
+1841776429524244 com CAPI) e em `GTM_BY_SLUG` com o **mesmo** container da oficial
+(`GTM-NB2WK5SJ`). O teste de "container repetido" agora aceita dois grupos intencionais:
+magicshadow/transforma e a família Fio a Fio. ⚠️ **Snippet colado no HTML NÃO funciona:**
+`withTracking` apaga GTM e `fbq('init')` de página fora das listas. Medição se liga pela lista.
+
 `/fio-a-fio-realista-v3` é uma **prévia nova**, lado a lado com a v2 (que não mudou).
 Continua `noindex` e fora do sitemap. Aplica a auditoria
 `CursoLançamento/docs/auditoria-lp-fio-a-fio-realista-v2.md` inteira. O visual e os
