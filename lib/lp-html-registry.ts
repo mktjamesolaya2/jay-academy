@@ -67,6 +67,15 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // Prévia da v3 (copy da auditoria): mesmos assets da v2, noindex até aprovação.
+    slug: "fio-a-fio-realista-v3",
+    title: "Fio a Fio Realista V3 (prévia)",
+    htmlFile: "lp-html/fio-a-fio-realista-v3.html",
+    assetsDir: "public/lp/fio-a-fio-realista-v2",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     // LP de apresentação da Jay Academy (formações presenciais).
     slug: "academy",
     title: "Jay Academy (apresentação)",
