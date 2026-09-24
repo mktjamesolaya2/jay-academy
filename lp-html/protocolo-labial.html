@@ -11,7 +11,8 @@
   EVENTO — o que trocar quando for definido:
   · CHECKOUT: todos os botões apontam para https://pay.hotmart.com/TODO-CHECKOUT
     (buscar "TODO-CHECKOUT" e trocar pelo link real da Hotmart).
-  · DATA: três lugares com data-slot="data" (hero, programação, oferta).
+  · DATA: preencher o texto de TODOS os data-slot="data" (hero, programação, ingressos, pop-up).
+    Vazio = o item some da página (regra da skill: nada de "Data em breve" na tela).
   · Regras da copy: NENHUM logo/selo/marca na página; preço grande em 3 lugares.
   Estrutura, carrosséis e animações seguem a referência premium-craft (Lovable);
   o "olympo" é só toque: greca dourada fina, numerais romanos e anel dourado no preço.
@@ -245,6 +246,9 @@ section{position:relative}
 
 /* ================= 8. TIMELINE (programação) ================= */
 .prog{padding:128px 0}
+.prog--cont{padding-top:8px}
+.prog--cont .prog__quando{justify-content:center;margin-top:0}
+.prog--cont .linha{margin-left:auto;margin-right:auto}
 .prog .h2{font-size:clamp(34px,4.2vw,52px);line-height:1.05;max-width:760px}
 .prog__quando{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
 .pil{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);font-size:13px;font-weight:500}
@@ -526,6 +530,8 @@ section{position:relative}
   .modal__form{padding:26px 20px calc(22px + env(safe-area-inset-bottom))}
   .modal__topo h2{font-size:28px}.modal__topo .preco{font-size:46px}
 }
+/* data do evento: enquanto o slot estiver vazio, o item inteiro some (a skill não aceita placeholder na página) */
+li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data:has([data-slot="data"]:empty){display:none!important}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   .rv,.flt__in,.pj{opacity:1!important;transform:none!important}
@@ -568,7 +574,7 @@ section{position:relative}
     <h1 class="display tight fade-up">Você vai fazer micro labial sabendo exatamente o que vai aparecer <em>30 dias depois.</em></h1>
     <p class="hero__sub fade-up">Não é que a pele da sua cliente “não pega pigmento”. Essa frase é o que a gente diz quando não sabe o que aconteceu, e ela te deixa sem saída. O lábio dela tem cor própria, e quando essa cor é fria ela abafa o que você colocou por cima. <strong>Não é talento, é leitura.</strong> Aqui você treina em casos reais até acertar sozinha, e sai com o critério para o lábio escuro que hoje você recusa.</p>
     <ul class="checks fade-up">
-      <li><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data">Data em breve</span></li>
+      <li><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data"></span></li>
       <li><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h · 4 horas, com um intervalo</li>
       <li><svg aria-hidden="true"><use href="#i-cam"/></svg>Ao vivo no Zoom, em sala fechada</li>
     </ul>
@@ -581,34 +587,83 @@ section{position:relative}
   </div>
 </section>
 
-<!-- ============ 2. QUATRO ETAPAS ============ -->
-<section class="etapas" data-px>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="wrap center" style="position:relative">
-    <p class="over rv">Programação</p>
-    <h2 class="display h2 rv" style="margin-top:14px">4 horas, 1 dia, <em>4 etapas</em> que se encaixam uma na outra.</h2>
-    <span class="greca" aria-hidden="true"></span>
-    <div class="palco-james pj" aria-hidden="true"><img src="/lp/protocolo-labial/james-busto.webp" alt="" loading="lazy" width="641" height="976"></div>
-    <div class="chips">
-      <div class="chip rv"><b>1ª hora</b><span>Enxergar a cor de baixo</span></div>
-      <div class="chip rv"><b>2ª hora</b><span>Decidir antes do pote</span></div>
-      <div class="chip rv"><b>3ª hora</b><span>O lábio escuro</span></div>
-      <div class="chip rv"><b>4ª hora</b><span>O seu caso</span></div>
+<!-- ============ 2. POR QUE VOCÊ AINDA NÃO CONSEGUIU (seção 2 da skill) ============ -->
+<section class="edit bt" data-px>
+  <div class="wrap edit__g">
+    <div>
+      <p class="over">O que ninguém te explicou</p>
+      <h2 class="display h2" style="margin-top:14px">Por que você ainda <em>não conseguiu.</em></h2>
+      <span class="greca l" aria-hidden="true"></span>
+      <figure class="edit__fig"><div class="edit__img"><img src="/lp/protocolo-labial/antes-depois/01-antes.webp" alt="Lábio escuro, com a cor própria fria aparecendo" loading="lazy" width="960" height="600"></div><figcaption class="mono">A cor de baixo: o lábio antes de qualquer pigmento</figcaption></figure>
+    </div>
+    <div class="edit__txt">
+      <p>Você já assistiu tutorial de labial no Instagram e no YouTube, já fez em amiga, em você mesma, talvez num curso curto. Cicatrizou apagado, ou acinzentado, a cliente reclamou, e você parou de oferecer. Não foi falta de mão e não foi a pele dela. Você escolheu o pigmento olhando para o tom que a cliente queria ver. Perguntar qual cor ela quer e pegar aquele pote é a parte mais repetida do labial. E a mais fraca.</p>
+      <p>O lábio não é papel em branco. Ele já tem cor própria, e em boa parte das clientes ela é fria: roxo, azul, marrom. O tutorial te mostrou o lábio no dia da aplicação, quando a camada de cima ainda cobre tudo. 30 dias depois ela sai, o que estava embaixo volta a aparecer, e puxa o rosa para o cinza. O que a cliente vê é o seu pigmento somado ao que já estava lá. Isso tem nome: <strong>A Cor de Baixo.</strong> Você não errou a mão. Você errou a leitura.</p>
+      <p class="ult">Ler a cor de baixo é uma decisão que acontece antes de abrir o pote. E decisão se treina rápido: 3 famílias de subtom, 1 ponto certo para olhar, 1 regra de ordem. Por isso 4 horas bastam. Você termina com o critério na mão e descobre se funcionou no primeiro lábio escuro que sentar na sua cadeira.</p>
+      <div class="chaves">
+        <div><b>3</b><span>famílias de subtom</span></div>
+        <div><b>1</b><span>ponto certo para olhar</span></div>
+        <div><b>1</b><span>regra de ordem</span></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ============ 3. NÚMEROS ============ -->
-<section class="numeros">
-  <div class="wrap numeros__g">
-    <div class="rv"><b>4 horas</b><span>ao vivo, em sala fechada</span></div>
-    <div class="rv"><b>3 famílias</b><span>de subtom: frio, neutro e quente</span></div>
-    <div class="rv"><b>5 materiais</b><span>preenchidos ao vivo, com os seus casos</span></div>
-    <div class="rv"><b>+70 mil</b><span>alunos formados pelo James</span></div>
+<!-- ============ apoio: FAIXA ESCURA (ponte pro CTA) ============ -->
+<section class="escura">
+  <div class="escura__bg" aria-hidden="true"><img src="/lp/protocolo-labial/procedimento.webp" alt="" loading="lazy"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap">
+    <h2 class="display h2 rv">Você não errou a mão.<br><em>Você errou a leitura.</em></h2>
+    <p class="rv">A decisão acontece antes de abrir o pote. Em 4 horas ao vivo, você treina essa leitura em casos reais, inclusive no lábio escuro.</p>
+    <a class="btn rv" data-vaga href="#inscricao">Quero minha vaga · R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a>
   </div>
 </section>
 
-<!-- ============ 4. COVERFLOW: O QUE VOCÊ RECEBE ============ -->
+<!-- ============ apoio: RESULTADOS (prova real) ============ -->
+<section class="res" id="resultados">
+  <div class="wrap">
+    <div class="res__top">
+      <div>
+        <p class="over rv">Resultados reais</p>
+        <h2 class="display h2 rv" style="margin-top:14px">Do escuro <em>ao rosado.</em></h2>
+        <p class="lead rv">Antes e depois de labiais: o que acontece quando a leitura vem antes do pote.</p>
+      </div>
+      <div class="setas"><button data-car="-1" aria-label="Resultado anterior"><svg><use href="#i-esq"/></svg></button><button data-car="1" aria-label="Próximo resultado"><svg><use href="#i-dir"/></svg></button></div>
+    </div>
+    <div class="car" id="car" aria-roledescription="carrossel" aria-label="Resultados antes e depois"><div class="car__track" id="carTrack"></div></div>
+    <div class="dots" id="carDots"></div>
+  </div>
+</section>
+
+<!-- ============ 3. PARA QUEM É ============ -->
+<section class="pravoce bt" id="para-quem">
+  <div class="wrap">
+    <div class="center">
+      <p class="over rv">Para quem é</p>
+      <h2 class="display h2 rv" style="margin-top:14px">Esta aula é <em>para você</em> se:</h2>
+    </div>
+    <div class="pv">
+      <div class="pv__card pv__card--sim rv">
+        <p class="mono">É pra você se</p>
+        <ul>
+          <li><i><svg><use href="#i-ok"/></svg></i>Sua cliente pergunta se você faz labial e você indica outra profissional.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Na hora ficou perfeito, e 30 dias depois sumiu quase tudo.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Você tem medo de pegar um lábio escuro e deixar pior do que estava.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Você já domina sobrancelha, já tem agenda cheia, e labial é o serviço que falta no seu cardápio.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Você já fez labial e ficou sem resposta quando a cliente perguntou por que acinzentou.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Você escolhe o pigmento pelo tom que a cliente pediu, porque nunca te ensinaram outro jeito de escolher.</li>
+        </ul>
+      </div>
+      <div class="pv__card pv__card--nao rv">
+        <p class="mono">Não é pra você se</p>
+        <ul><li><i><svg><use href="#i-x"/></svg></i>Não é para quem nunca pegou num dermógrafo. Aqui a gente parte do princípio de que você já atende e já tem mão. O que você vai treinar é a decisão que vem antes da aplicação.</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. MATERIAIS (coverflow) ============ -->
 <section class="recebe bt" id="materiais">
   <div class="recebe__glow" aria-hidden="true"></div>
   <div class="wrap center" style="position:relative">
@@ -644,62 +699,28 @@ section{position:relative}
   </div>
 </section>
 
-<!-- ============ 5. EDITORIAL: POR QUE AINDA NÃO CONSEGUIU ============ -->
-<section class="edit bt" data-px>
-  <div class="wrap edit__g">
-    <div>
-      <p class="over">O que ninguém te explicou</p>
-      <h2 class="display h2" style="margin-top:14px">Por que você ainda <em>não conseguiu.</em></h2>
-      <span class="greca l" aria-hidden="true"></span>
-      <figure class="edit__fig"><div class="edit__img"><img src="/lp/protocolo-labial/antes-depois/01-antes.webp" alt="Lábio escuro, com a cor própria fria aparecendo" loading="lazy" width="960" height="600"></div><figcaption class="mono">A cor de baixo: o lábio antes de qualquer pigmento</figcaption></figure>
-    </div>
-    <div class="edit__txt">
-      <p>Você já assistiu tutorial de labial no Instagram e no YouTube, já fez em amiga, em você mesma, talvez num curso curto. Cicatrizou apagado, ou acinzentado, a cliente reclamou, e você parou de oferecer. Não foi falta de mão e não foi a pele dela. Você escolheu o pigmento olhando para o tom que a cliente queria ver. Perguntar qual cor ela quer e pegar aquele pote é a parte mais repetida do labial. E a mais fraca.</p>
-      <p>O lábio não é papel em branco. Ele já tem cor própria, e em boa parte das clientes ela é fria: roxo, azul, marrom. O tutorial te mostrou o lábio no dia da aplicação, quando a camada de cima ainda cobre tudo. 30 dias depois ela sai, o que estava embaixo volta a aparecer, e puxa o rosa para o cinza. O que a cliente vê é o seu pigmento somado ao que já estava lá. Isso tem nome: <strong>A Cor de Baixo.</strong> Você não errou a mão. Você errou a leitura.</p>
-      <p class="ult">Ler a cor de baixo é uma decisão que acontece antes de abrir o pote. E decisão se treina rápido: 3 famílias de subtom, 1 ponto certo para olhar, 1 regra de ordem. Por isso 4 horas bastam. Você termina com o critério na mão e descobre se funcionou no primeiro lábio escuro que sentar na sua cadeira.</p>
-      <div class="chaves">
-        <div><b>3</b><span>famílias de subtom</span></div>
-        <div><b>1</b><span>ponto certo para olhar</span></div>
-        <div><b>1</b><span>regra de ordem</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 6. FAIXA ESCURA ============ -->
-<section class="escura">
-  <div class="escura__bg" aria-hidden="true"><img src="/lp/protocolo-labial/procedimento.webp" alt="" loading="lazy"></div>
+<!-- ============ 5. PROGRAMAÇÃO: abertura com o James ============ -->
+<section class="etapas" id="etapas" data-px>
   <div class="grain" aria-hidden="true"></div>
-  <div class="wrap">
-    <h2 class="display h2 rv">Você não errou a mão.<br><em>Você errou a leitura.</em></h2>
-    <p class="rv">A decisão acontece antes de abrir o pote. Em 4 horas ao vivo, você treina essa leitura em casos reais, inclusive no lábio escuro.</p>
-    <a class="btn rv" data-vaga href="#inscricao">Quero minha vaga · R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a>
-  </div>
-</section>
-
-<!-- ============ 7. RESULTADOS (carrossel) ============ -->
-<section class="res" id="resultados">
-  <div class="wrap">
-    <div class="res__top">
-      <div>
-        <p class="over rv">Resultados reais</p>
-        <h2 class="display h2 rv" style="margin-top:14px">Do escuro <em>ao rosado.</em></h2>
-        <p class="lead rv">Antes e depois de labiais feitos pelo James e por alunas do método: o que acontece quando a leitura vem antes do pote.</p>
-      </div>
-      <div class="setas"><button data-car="-1" aria-label="Resultado anterior"><svg><use href="#i-esq"/></svg></button><button data-car="1" aria-label="Próximo resultado"><svg><use href="#i-dir"/></svg></button></div>
-    </div>
-    <div class="car" id="car" aria-roledescription="carrossel" aria-label="Resultados antes e depois"><div class="car__track" id="carTrack"></div></div>
-    <div class="dots" id="carDots"></div>
-  </div>
-</section>
-
-<!-- ============ 8. PROGRAMAÇÃO (timeline) ============ -->
-<section class="prog bt" id="programacao">
-  <div class="wrap">
+  <div class="wrap center" style="position:relative">
     <p class="over rv">Programação</p>
-    <h2 class="display h2 rv" style="margin-top:14px">4 horas, 1 dia, 4 etapas que se encaixam <em>uma na outra.</em></h2>
+    <h2 class="display h2 rv" style="margin-top:14px">4 horas, 1 dia, <em>4 etapas</em> que se encaixam uma na outra.</h2>
+    <span class="greca" aria-hidden="true"></span>
+    <div class="palco-james pj" aria-hidden="true"><img src="/lp/protocolo-labial/james-busto.webp" alt="" loading="lazy" width="641" height="976"></div>
+    <div class="chips">
+      <div class="chip rv"><b>1ª hora</b><span>Enxergar a cor de baixo</span></div>
+      <div class="chip rv"><b>2ª hora</b><span>Decidir antes do pote</span></div>
+      <div class="chip rv"><b>3ª hora</b><span>O lábio escuro</span></div>
+      <div class="chip rv"><b>4ª hora</b><span>O seu caso</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. PROGRAMAÇÃO: timeline ============ -->
+<section class="prog prog--cont" id="programacao">
+  <div class="wrap">
     <div class="prog__quando rv">
-      <span class="pil"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data">Data em breve</span></span>
+      <span class="pil"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data"></span></span>
       <span class="pil"><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h</span>
       <span class="pil"><svg aria-hidden="true"><use href="#i-cam"/></svg>Ao vivo no Zoom</span>
     </div>
@@ -753,7 +774,7 @@ section{position:relative}
   </div>
 </section>
 
-<!-- ============ 9. BENTO: AO VIVO ============ -->
+<!-- ============ 6. O QUE VAI ACONTECER AO VIVO ============ -->
 <section class="bento" id="ao-vivo">
   <div class="bento__glow" aria-hidden="true"></div>
   <div class="wrap center" style="position:relative">
@@ -774,50 +795,7 @@ section{position:relative}
   </div>
 </section>
 
-<!-- ============ 10. POR QUE R$ 27 ============ -->
-<section class="valor" id="valor">
-  <div class="wrap">
-    <div class="center">
-      <p class="over rv">Sobre o valor</p>
-      <h2 class="display h2 rv" style="margin-top:14px">Por que o ingresso custa <em>R$ 27?</em></h2>
-    </div>
-    <div class="mock mock--2 rv">
-      <div><h3>Por que é barato?</h3><p>Porque o que segura você não é o preço. É o medo de errar a cor. Se o ingresso fosse caro, a gente estaria filtrando pela carteira de quem quer aprender, e não é disso que se trata. R$ 27 é um valor que sai do bolso sem reunião familiar: você entra, treina a leitura e resolve o que estava travado.</p></div>
-      <div><h3>Por que não é de graça?</h3><p>Porque aula gratuita de labial enche de gente que se inscreve e não aparece. E esta aqui não funciona assistida depois: metade dela é você classificando lábio ao vivo e sendo corrigida. Quem paga aparece. Quem aparece traz caso. E quem traz caso sai com a decisão tomada. Os R$ 27 existem para filtrar presença, não bolso.</p></div>
-    </div>
-    <div class="valor__tkt rv"><div class="tkt-w"><div class="tkt" role="img" aria-label="Ingresso Protocolo Labial, R$ 27"><div class="tkt__stub"><span class="tkt__rot">Ingresso · aula ao vivo</span><b class="tkt__nome">Protocolo Labial: do Escuro ao Rosado</b><ul class="tkt__meta"><li><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data">Data em breve</span></li><li><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h</li><li><svg aria-hidden="true"><use href="#i-cam"/></svg>Zoom · sala fechada</li></ul></div><div class="tkt__preco"><span class="tkt__n">Admite 1</span><span class="preco"><small>R$</small>27</span><span class="greca" aria-hidden="true"></span></div></div></div><p class="valor__frase">para filtrar presença, não bolso</p></div>
-    <div class="valor__cta rv"><a class="btn btn--lg" data-vaga href="#inscricao">Quero minha vaga · R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a></div>
-  </div>
-</section>
-
-<!-- ============ 11. É PRA VOCÊ / NÃO É ============ -->
-<section class="pravoce bt" id="para-quem">
-  <div class="wrap">
-    <div class="center">
-      <p class="over rv">Para quem é</p>
-      <h2 class="display h2 rv" style="margin-top:14px">Esta aula é <em>para você</em> se:</h2>
-    </div>
-    <div class="pv">
-      <div class="pv__card pv__card--sim rv">
-        <p class="mono">É pra você se</p>
-        <ul>
-          <li><i><svg><use href="#i-ok"/></svg></i>Sua cliente pergunta se você faz labial e você indica outra profissional.</li>
-          <li><i><svg><use href="#i-ok"/></svg></i>Na hora ficou perfeito, e 30 dias depois sumiu quase tudo.</li>
-          <li><i><svg><use href="#i-ok"/></svg></i>Você tem medo de pegar um lábio escuro e deixar pior do que estava.</li>
-          <li><i><svg><use href="#i-ok"/></svg></i>Você já domina sobrancelha, já tem agenda cheia, e labial é o serviço que falta no seu cardápio.</li>
-          <li><i><svg><use href="#i-ok"/></svg></i>Você já fez labial e ficou sem resposta quando a cliente perguntou por que acinzentou.</li>
-          <li><i><svg><use href="#i-ok"/></svg></i>Você escolhe o pigmento pelo tom que a cliente pediu, porque nunca te ensinaram outro jeito de escolher.</li>
-        </ul>
-      </div>
-      <div class="pv__card pv__card--nao rv">
-        <p class="mono">Não é pra você se</p>
-        <ul><li><i><svg><use href="#i-x"/></svg></i>Não é para quem nunca pegou num dermógrafo. Aqui a gente parte do princípio de que você já atende e já tem mão. O que você vai treinar é a decisão que vem antes da aplicação.</li></ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ 12. ANTES/DEPOIS (sliders) ============ -->
+<!-- ============ apoio: ANTES/DEPOIS (prova antes do preço) ============ -->
 <section class="ad bt" id="antes-depois">
   <div class="wrap">
     <div class="center">
@@ -828,17 +806,23 @@ section{position:relative}
   </div>
 </section>
 
-<!-- ============ 13. DECLARAÇÃO ============ -->
-<section class="decl">
-  <div class="decl__bg" aria-hidden="true"><img src="/lp/protocolo-labial/antes-depois/05-depois.webp" alt="" loading="lazy" style="filter:blur(6px);transform:scale(1.08)"></div>
+<!-- ============ 7. POR QUE CUSTA VINTE E SETE REAIS ============ -->
+<section class="valor" id="valor">
   <div class="wrap">
-    <p class="over rv">4 horas ao vivo</p>
-    <p class="display rv">Inclusive o lábio escuro que hoje <em>você recusa.</em></p>
-    <span class="greca" aria-hidden="true"></span>
+    <div class="center">
+      <p class="over rv">Sobre o valor</p>
+      <h2 class="display h2 rv" style="margin-top:14px">Por que o ingresso custa <em>vinte e sete reais?</em></h2>
+    </div>
+    <div class="mock mock--2 rv">
+      <div><h3>Por que é barato?</h3><p>Porque o que segura você não é o preço. É o medo de errar a cor. Se o ingresso fosse caro, a gente estaria filtrando pela carteira de quem quer aprender, e não é disso que se trata. Vinte e sete reais é um valor que sai do bolso sem reunião familiar: você entra, treina a leitura e resolve o que estava travado.</p></div>
+      <div><h3>Por que não é de graça?</h3><p>Porque aula gratuita de labial enche de gente que se inscreve e não aparece. E esta aqui não funciona assistida depois: metade dela é você classificando lábio ao vivo e sendo corrigida. Quem paga aparece. Quem aparece traz caso. E quem traz caso sai com a decisão tomada. Os vinte e sete reais existem para filtrar presença, não bolso.</p></div>
+    </div>
+    <div class="valor__tkt rv"><div class="tkt-w"><div class="tkt" role="img" aria-label="Ingresso Protocolo Labial, R$ 27"><div class="tkt__stub"><span class="tkt__rot">Ingresso · aula ao vivo</span><b class="tkt__nome">Protocolo Labial: do Escuro ao Rosado</b><ul class="tkt__meta"><li><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data"></span></li><li><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h</li><li><svg aria-hidden="true"><use href="#i-cam"/></svg>Zoom · sala fechada</li></ul></div><div class="tkt__preco"><span class="tkt__n">Admite 1</span><span class="preco"><small>R$</small>27</span><span class="greca" aria-hidden="true"></span></div></div></div><p class="valor__frase">para filtrar presença, não bolso</p></div>
+    <div class="valor__cta rv"><a class="btn btn--lg" data-vaga href="#inscricao">Quero minha vaga · R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a></div>
   </div>
 </section>
 
-<!-- ============ 14. QUEM CONDUZ ============ -->
+<!-- ============ 8. QUEM VAI CONDUZIR ============ -->
 <section class="james bt" id="james">
   <div class="wrap james__g">
     <div class="james__fotos rv"><figure class="james__foto"><img src="/lp/protocolo-labial/james-retrato.webp" alt="Retrato de James Olaya" loading="lazy" width="1000" height="1250"><figcaption><b>James Olaya</b><span>Biomédico · Master Trainer</span></figcaption></figure><figure class="james__palco"><img src="/lp/protocolo-labial/james-palco.webp" alt="James Olaya subindo ao palco diante da plateia" loading="lazy" width="900" height="600"><figcaption>+70 mil alunos formados</figcaption></figure></div>
@@ -852,7 +836,7 @@ section{position:relative}
   </div>
 </section>
 
-<!-- ============ 15. OFERTA / FECHAMENTO ============ -->
+<!-- ============ 9. FECHAMENTO ============ -->
 <section class="oferta bt" id="inscricao">
   <div class="wrap">
     <span class="pilha rv">Seu ingresso</span>
@@ -867,14 +851,14 @@ section{position:relative}
       <li><div><svg aria-hidden="true"><use href="#i-ok"/></svg>O seu caso analisado</div><span>4ª hora</span></li>
       <li><div><svg aria-hidden="true"><use href="#i-ok"/></svg>Correção antes de aplicar</div><span>ao vivo</span></li>
     </ul>
-    <div class="oferta__hoje rv"><div class="tkt-w"><div class="tkt" role="img" aria-label="Ingresso Protocolo Labial, R$ 27"><div class="tkt__stub"><span class="tkt__rot">Ingresso · aula ao vivo</span><b class="tkt__nome">Protocolo Labial: do Escuro ao Rosado</b><ul class="tkt__meta"><li><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data">Data em breve</span></li><li><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h</li><li><svg aria-hidden="true"><use href="#i-cam"/></svg>Zoom · sala fechada</li></ul></div><div class="tkt__preco"><span class="tkt__n">Admite 1</span><span class="preco"><small>R$</small>27</span><span class="greca" aria-hidden="true"></span></div></div></div>
+    <div class="oferta__hoje rv"><div class="tkt-w"><div class="tkt" role="img" aria-label="Ingresso Protocolo Labial, R$ 27"><div class="tkt__stub"><span class="tkt__rot">Ingresso · aula ao vivo</span><b class="tkt__nome">Protocolo Labial: do Escuro ao Rosado</b><ul class="tkt__meta"><li><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data"></span></li><li><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h</li><li><svg aria-hidden="true"><use href="#i-cam"/></svg>Zoom · sala fechada</li></ul></div><div class="tkt__preco"><span class="tkt__n">Admite 1</span><span class="preco"><small>R$</small>27</span><span class="greca" aria-hidden="true"></span></div></div></div>
       <div><a class="btn btn--lg" data-vaga href="#inscricao">Quero minha vaga · R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a></div>
       <p class="oferta__fino">Ingresso único · aula ao vivo no Zoom</p>
     </div>
   </div>
 </section>
 
-<!-- ============ 16. DÚVIDA (WhatsApp) ============ -->
+<!-- ============ apoio: DÚVIDA (WhatsApp) ============ -->
 <section class="duvida" id="duvidas">
   <div class="wrap"><div class="duvida__box">
     <span class="mono" style="color:var(--rosa)">Fale com a gente</span>
@@ -902,7 +886,7 @@ section{position:relative}
   <form class="elementor-form modal__form" id="formVaga" action="/protocolo-labial" method="post" data-portal-bound="1">
     <button type="button" class="modal__x" data-fechar aria-label="Fechar">✕</button>
     <div class="modal__topo">
-      <div><span class="tkt__rot">Ingresso · aula ao vivo</span><h2 class="display" id="modalTit">Garanta sua vaga</h2><p>Protocolo Labial · <span data-slot="data">Data em breve</span> · 9h às 13h</p></div>
+      <div><span class="tkt__rot">Ingresso · aula ao vivo</span><h2 class="display" id="modalTit">Garanta sua vaga</h2><p>Protocolo Labial<span class="md-data"> · <span data-slot="data"></span></span> · 9h às 13h, no Zoom</p></div>
       <span class="preco"><small>R$</small>27</span>
     </div>
     <label class="campo"><span>Seu nome</span><input type="text" name="nome" required autocomplete="name" placeholder="Como você se chama?"></label>
@@ -960,11 +944,11 @@ section{position:relative}
   addEventListener("resize",cfRender);cfRender();
 
   /* ---------- Carrossel de resultados (mecânica "Método": arrasta, encaixa, bolinhas) ---------- */
-  var legendas=[["Do escuro ao uniforme","Por James Olaya"],["Contorno escuro neutralizado","Por James Olaya"],["Subtom frio neutralizado","Por James Olaya"],["Lábio masculino","Por James Olaya"],["Do pálido ao rosado","Por aluna do método"],["Cor definida","Por James Olaya"],["Lábio masculino","Por aluna do método"],["Do apagado ao coral","Por aluna do método"],["Do apagado ao vermelho","Por aluna do método"],["Lábio masculino","Por aluna do método"]];
+  var legendas=["Lábio escuro","Contorno escuro","Subtom frio","Lábio masculino","Lábio pálido","Lábio pálido","Lábio masculino","Lábio apagado","Lábio apagado","Lábio masculino"];
   var track=document.getElementById("carTrack"),car=document.getElementById("car"),dotsEl=document.getElementById("carDots");
   legendas.forEach(function(l,i){var nn=String(i+1).padStart(2,"0");var s=document.createElement("div");s.className="car__slide";
     // eager de propósito: lazy dentro de trilha movida por transform nunca carrega o que está fora da tela
-    s.innerHTML='<figure class="foto"><div class="foto__img"><img src="'+E+'resultados/'+nn+'.webp" alt="Antes e depois de micropigmentação labial: '+l[0]+'" loading="eager" decoding="async" width="800" height="1000"></div><figcaption class="foto__cap"><span class="foto__tag">Resultado '+nn+'</span><b>'+l[0]+'</b><span>'+l[1]+'</span></figcaption></figure>';
+    s.innerHTML='<figure class="foto"><div class="foto__img"><img src="'+E+'resultados/'+nn+'.webp" alt="Antes e depois de micropigmentação labial: '+l+'" loading="eager" decoding="async" width="800" height="1000"></div><figcaption class="foto__cap"><span class="foto__tag">Resultado '+nn+'</span><b>'+l+'</b><span>Em cima o antes, embaixo o depois</span></figcaption></figure>';
     track.appendChild(s)});
   var slides=[].slice.call(track.children),snaps=[],idx=0,x=0;
   function medir(){var max=Math.max(0,track.scrollWidth-car.clientWidth);var vistos={};snaps=[];
@@ -987,10 +971,10 @@ section{position:relative}
   addEventListener("resize",medir);medir();
 
   /* ---------- Antes/depois com slider (clip-path) ---------- */
-  var ads=[["Lábio escuro","Uniformizado, sem acinzentar","Por James Olaya"],["Contorno escuro","A borda fria deixou de aparecer","Por James Olaya"],["Subtom frio","Neutralizado antes da cor","Por James Olaya"],["Lábio masculino","Cor natural, sem marcar","Por James Olaya"],["Lábio pálido","Do lilás ao rosado","Por aluna do método"],["Lábio apagado","Cor de volta ao lábio","Por aluna do método"]];
+  var ads=["Lábio escuro","Contorno escuro","Subtom frio","Lábio masculino","Lábio pálido","Lábio apagado"];
   var grid=document.getElementById("adGrid");
   ads.forEach(function(a,i){var nn=String(i+1).padStart(2,"0");var d=document.createElement("div");d.className="rv";
-    d.innerHTML='<div class="cmp" style="--x:50%"><img src="'+E+'antes-depois/'+nn+'-depois.webp" alt="Depois: '+a[0]+'" loading="lazy"><img class="cmp__antes" src="'+E+'antes-depois/'+nn+'-antes.webp" alt="Antes: '+a[0]+'" loading="lazy"><span class="cmp__linha"></span><span class="cmp__alca" role="slider" tabindex="0" aria-label="Comparar antes e depois" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg><use href="#i-lr"/></svg></span></div><div class="ad__leg"><span>← Antes</span><span>Depois →</span></div><div class="ad__cap"><b>'+a[0]+'</b><span>'+a[1]+'</span><small>'+a[2]+'</small></div>';
+    d.innerHTML='<div class="cmp" style="--x:50%"><img src="'+E+'antes-depois/'+nn+'-depois.webp" alt="Depois: '+a+'" loading="lazy"><img class="cmp__antes" src="'+E+'antes-depois/'+nn+'-antes.webp" alt="Antes: '+a+'" loading="lazy"><span class="cmp__linha"></span><span class="cmp__alca" role="slider" tabindex="0" aria-label="Comparar antes e depois" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg><use href="#i-lr"/></svg></span></div><div class="ad__leg"><span>← Antes</span><span>Depois →</span></div><div class="ad__cap"><b>'+a+'</b></div>';
     grid.appendChild(d);io.observe(d);
     var box=d.querySelector(".cmp"),alca=d.querySelector(".cmp__alca"),ativo=false;
     function pos(cx){var r=box.getBoundingClientRect();var v=Math.max(0,Math.min(100,(cx-r.left)/r.width*100));box.style.setProperty("--x",v+"%");alca.setAttribute("aria-valuenow",Math.round(v))}

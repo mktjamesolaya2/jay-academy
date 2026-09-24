@@ -56,6 +56,13 @@ Página em `lp-html/protocolo-labial.html`, rota `app/protocolo-labial/route.ts`
   mask recorta a sombra no limite da caixa e ela vira um retângulo. Em recorte transparente, ou tira a sombra
   ou põe a sombra num wrapper sem mask. O brilho rosa da faixa "4 etapas" agora é fundo da SEÇÃO (vai até as
   bordas), não um `::before` do tamanho da foto.
+- **Auditoria pela skill `copy-pagina-evento-pago` (24/09, aplicada a pedido do James):** seções na ORDEM da skill
+  (hero → por que não conseguiu → para quem → materiais → programação → ao vivo → preço → quem conduz → fechamento);
+  extras só como apoio (faixa escura, resultados, antes/depois, WhatsApp). Saíram a faixa de números e a frase
+  "Inclusive o lábio escuro" (repetiam). A faixa do James virou a abertura da programação (sem título duplicado).
+  Seção 7 volta a "vinte e sete reais" por extenso (regra da skill). Legendas dos resultados NEUTRAS (a autoria
+  "Por James/aluna" não foi informada). **Data:** slots `data-slot="data"` vazios = o item some (CSS `:has`);
+  quando a data vier, preencher o texto de todos eles.
 
 ---
 
