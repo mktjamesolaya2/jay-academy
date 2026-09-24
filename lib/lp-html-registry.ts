@@ -76,6 +76,16 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // Evento pago ao vivo (R$ 27, Zoom): identidade "olympo + rosa" da Lips Sense.
+    // Prévia com noindex até ter data e checkout.
+    slug: "protocolo-labial",
+    title: "Protocolo Labial — evento (prévia)",
+    htmlFile: "lp-html/protocolo-labial.html",
+    assetsDir: "public/lp/protocolo-labial",
+    category: "venda",
+    accent: "rose",
+  },
+  {
     // LP de apresentação da Jay Academy (formações presenciais).
     slug: "academy",
     title: "Jay Academy (apresentação)",

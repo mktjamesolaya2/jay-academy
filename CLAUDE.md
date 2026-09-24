@@ -76,7 +76,7 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
   com de-lazy + tracking). Registry: `lib/lp-html-registry.ts` (`lpHtmlPages`/`lpHtmlRedirects`).
   Slugs: basic-magic-shadow, basic-nanofios, curso-online-profissao-remove,
   fio-a-fio-realista-by-james-olaya, inmersion-pelo-a-pelo, metodo-shadow-pro,
-  pdv-lips-sense-technique, pmuclass.
+  pdv-lips-sense-technique, pmuclass, protocolo-labial (evento R$ 27, prévia noindex).
 - `pmuclass` = SPA (skeleton estático + conteúdo runtime via `/api/lp-content/pmuclass`).
 - `next.config.ts`: só `headers()` de segurança (nosniff/Referrer-Policy/HSTS; X-Frame só no
   admin) + `serverActions.bodySizeLimit`. SEM rewrites de `public/`.

@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Protocolo Labial: do Escuro ao Rosado — aula ao vivo</title>
+<meta name="description" content="Aula ao vivo de 4 horas, em sala fechada no Zoom: aprenda a ler A Cor de Baixo e decida o pigmento antes de abrir o pote — inclusive em lábio escuro. Ingresso R$ 27.">
+<meta name="theme-color" content="#fdfcf8">
+<!--
+  EVENTO — o que trocar quando for definido:
+  · CHECKOUT: todos os botões apontam para https://pay.hotmart.com/TODO-CHECKOUT
+    (buscar "TODO-CHECKOUT" e trocar pelo link real da Hotmart).
+  · DATA: três lugares com data-slot="data" (hero, programação, oferta).
+  · Regras da copy: NENHUM logo/selo/marca na página; preço grande em 3 lugares.
+  Estrutura, carrosséis e animações seguem a referência premium-craft (Lovable);
+  o "olympo" é só toque: greca dourada fina, numerais romanos e anel dourado no preço.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdfcf8;--surface:#f6f3ee;--card:#fff;--muted:#efebe4;--ink:#0d0806;--ink2:#050302;--txt2:#5a544f;
+  --line:rgba(13,8,6,.10);--rosa:#c4586f;--rosa-soft:#f3d3dc;--rosa-glow:rgba(228,110,140,.42);--ouro:#caa45a;
+  --serif:"Instrument Serif","Times New Roman",Georgia,serif;--sans:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  --float:0 1px 2px rgba(5,3,2,.06),0 24px 60px -24px rgba(5,3,2,.22);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --greca:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='10' fill='none' stroke='%23caa45a' stroke-width='1.1'%3E%3Cpath d='M0 9.5H16M13 9.5V.8H2.5V7H10V3.5H6V5.5'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden;background:#e4dfd7}
+body{font-family:var(--sans);letter-spacing:-.005em;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.wrap{width:100%;max-width:1240px;margin-inline:auto;padding-inline:24px}
+@media(min-width:768px){.wrap{padding-inline:40px}}
+section{position:relative}
+.bt{border-top:1px solid var(--line)}
+.grain{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(#00000005 1px,transparent 1px),radial-gradient(#00000003 1px,transparent 1px);background-position:0 0,1px 2px;background-size:3px 3px,7px 7px;opacity:.5}
+
+/* tipografia */
+.display{font-family:var(--serif);font-weight:400;line-height:1;letter-spacing:-.02em;text-wrap:balance}
+.tight{line-height:.92;letter-spacing:-.025em}
+.display em{font-style:italic;color:var(--rosa)}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+.over{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--rosa)}
+.h2{font-size:clamp(34px,4.4vw,54px)}
+.lead{font-size:clamp(15.5px,1.3vw,17px);color:var(--txt2);line-height:1.7}
+.center{text-align:center}
+.greca{display:block;width:112px;height:10px;margin:22px auto 0;background:var(--greca) repeat-x left center/16px 10px;opacity:.75;-webkit-mask:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent);mask:linear-gradient(90deg,transparent,#000 25%,#000 75%,transparent)}
+.greca.l{margin-left:0}
+
+/* botão (pílula da referência) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:16px 28px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:15px;font-weight:500;text-decoration:none;transition:transform .3s,box-shadow .3s;white-space:nowrap}
+.btn svg{width:16px;height:16px;transition:transform .3s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 20px 60px -20px rgba(0,0,0,.6)}
+.btn:hover svg{transform:translateX(2px)}
+.btn--lg{padding:18px 32px;font-size:15.5px}
+
+/* preço (anel dourado = toque olympo) */
+.preco{display:inline-flex;align-items:baseline;gap:6px;font-family:var(--serif);line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.preco small{font-family:var(--sans);font-size:.24em;font-weight:600;letter-spacing:0;color:var(--txt2);transform:translateY(-1.4em)}
+
+/* reveal genérico */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .8s var(--ease) both}
+
+/* ================= 1. HERO ================= */
+.hero{overflow:hidden;padding:88px 0 112px;isolation:isolate}
+.hero__glow{position:absolute;left:50%;top:-128px;width:1100px;height:640px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,var(--rosa-glow),transparent);opacity:.35;filter:blur(64px);z-index:-1}
+.hero__in{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+.hero__over{display:inline-flex;align-items:center;gap:10px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px var(--line);color:var(--txt2)}
+.hero__over i{width:7px;height:7px;border-radius:50%;background:var(--rosa);box-shadow:0 0 0 0 var(--rosa-glow);animation:pulso 2s infinite}
+@keyframes pulso{70%{box-shadow:0 0 0 9px rgba(228,110,140,0)}100%{box-shadow:0 0 0 0 rgba(228,110,140,0)}}
+.hero__evento{margin-top:22px;font-family:var(--serif);font-style:italic;font-size:clamp(20px,2vw,24px);color:var(--rosa);letter-spacing:-.01em}
+.hero h1{margin-top:10px;max-width:860px;font-size:clamp(34px,4.6vw,60px)}
+.hero__sub{margin-top:28px;max-width:640px;font-size:17.5px;color:var(--txt2);line-height:1.7}
+.hero__sub strong{color:var(--ink);font-weight:600}
+.checks{display:grid;gap:10px 24px;margin-top:30px;list-style:none;font-size:13.5px;color:var(--txt2)}
+@media(min-width:640px){.checks{grid-template-columns:repeat(3,auto);justify-content:center}}
+.checks li{display:flex;align-items:center;gap:8px;justify-content:center}
+.checks svg{width:15px;height:15px;color:var(--rosa);flex:0 0 auto}
+.hero__compra{margin-top:36px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;justify-content:center;padding:14px 14px 14px 28px;border-radius:999px;background:#fff;box-shadow:var(--float),inset 0 0 0 1px rgba(202,164,90,.55)}
+.hero__compra .preco{font-size:58px}
+.hero__compra .rot{display:block;text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--rosa);margin-bottom:2px}
+.confia{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;font-size:12.5px;color:var(--txt2)}
+.confia span{display:inline-flex;align-items:center;gap:7px}
+.confia svg{width:14px;height:14px;color:var(--rosa)}
+.confia b{width:1px;height:14px;background:var(--line)}
+.video{position:relative;width:100%;max-width:820px;aspect-ratio:16/9;margin-top:48px;border-radius:24px;overflow:hidden;background:#000;box-shadow:var(--float)}
+.video img{width:100%;height:100%;object-fit:cover;opacity:.9}
+.video__pill{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border-radius:999px;background:#fff;font-size:13px;font-weight:600;box-shadow:var(--float)}
+.video__pill i{width:8px;height:8px;border-radius:50%;background:#e0344f;animation:pulso 2s infinite}
+/* flutuantes */
+.flt{position:absolute;z-index:0;pointer-events:none;will-change:transform}
+.flt__in{opacity:0;transform:scale(.85);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.flt.in .flt__in{opacity:1;transform:none}
+.polaroid{width:150px;padding:7px 7px 22px;background:#fff;border-radius:14px;box-shadow:0 30px 40px -18px rgba(0,0,0,.28),0 0 0 1px var(--line)}
+.polaroid img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:9px}
+.medalhao{width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#f7f1e6);box-shadow:0 20px 30px -14px rgba(0,0,0,.22),inset 0 0 0 1px rgba(202,164,90,.6);display:grid;place-items:center}
+.medalhao svg{width:58px;height:58px}
+
+/* ================= 2. QUATRO ETAPAS ================= */
+.etapas{overflow:hidden;padding:140px 0 150px;background:linear-gradient(180deg,rgba(243,211,220,.55),rgba(253,252,248,.7) 55%,var(--bg)),var(--surface)}
+.etapas .h2{max-width:760px;margin:0 auto;font-size:clamp(36px,4.6vw,56px)}
+.etapas__lead{max-width:600px;margin:18px auto 0}
+.palco-james{position:relative;width:min(72%,340px);margin:40px auto 0}
+.palco-james::before{content:"";position:absolute;left:50%;top:52%;width:120%;height:70%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(228,110,140,.55),transparent);filter:blur(40px)}
+.palco-james img{position:relative;width:100%;filter:drop-shadow(0 30px 40px rgba(0,0,0,.22));-webkit-mask:linear-gradient(180deg,#000 78%,transparent);mask:linear-gradient(180deg,#000 78%,transparent)}
+.pj{opacity:0;transform:translateY(30px) scale(.92);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+.pj.in{opacity:1;transform:none}
+.chips{position:relative;z-index:2;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:820px;margin:-70px auto 0}
+@media(min-width:768px){.chips{grid-template-columns:repeat(4,1fr)}}
+.chip{padding:16px 20px;border-radius:16px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:var(--float);text-align:center}
+.chip b{display:block;font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.05}
+.chip span{display:block;margin-top:6px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);line-height:1.35}
+
+/* ================= 3. NÚMEROS ================= */
+.numeros{padding:64px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg)}
+.numeros__g{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;text-align:center}
+@media(min-width:768px){.numeros__g{grid-template-columns:repeat(4,1fr)}}
+.numeros b{display:block;font-family:var(--serif);font-weight:400;font-size:34px;line-height:1;letter-spacing:-.02em}
+.numeros span{display:block;margin-top:8px;font-size:12.5px;opacity:.7;line-height:1.4}
+
+/* ================= 4. COVERFLOW ================= */
+.recebe{overflow:hidden;padding:128px 0}
+.recebe__glow{position:absolute;left:50%;top:40%;width:1000px;height:520px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,var(--rosa-glow),transparent);opacity:.3;filter:blur(60px);pointer-events:none}
+.recebe .h2{max-width:780px;margin:0 auto}
+.cf{--s:360px;position:relative;height:calc(var(--s) + 120px);margin-top:40px;overflow:hidden}
+.cf__card{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);border-radius:24px;overflow:hidden;background:#fff;transition:all .5s ease-in-out;cursor:pointer;box-shadow:0 10px 30px -10px rgba(0,0,0,.15),inset 0 0 0 1px var(--line);display:flex;flex-direction:column;text-align:left}
+.cf__card:hover{box-shadow:0 10px 30px -10px rgba(0,0,0,.15),inset 0 0 0 1px rgba(196,88,111,.4)}
+.cf__card.on{z-index:10;cursor:default;box-shadow:0 30px 80px -20px rgba(196,88,111,.45),0 0 0 2px var(--ouro)}
+.cf__vis{position:relative;height:60%;background:linear-gradient(160deg,#fbf3f0,#f3e6e2);overflow:hidden;display:grid;place-items:center}
+.cf__num{position:absolute;left:16px;top:14px;font-family:var(--serif);font-style:italic;font-size:22px;color:var(--ouro)}
+.cf__body{padding:18px 20px 16px;display:flex;flex-direction:column;flex:1}
+.cf__body h3{font-family:var(--serif);font-weight:400;font-size:21px;line-height:1.1;letter-spacing:-.01em}
+.cf__body p{margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--txt2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cf__meta{margin-top:auto;display:flex;gap:14px;font-size:11.5px;color:var(--txt2)}
+.cf__meta span{display:inline-flex;align-items:center;gap:5px}
+.cf__meta svg{width:12px;height:12px;color:var(--rosa)}
+.cf__nav{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);display:flex;gap:12px;z-index:20}
+.rbtn{width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:var(--float),inset 0 0 0 1px var(--line);display:grid;place-items:center;transition:background .3s,color .3s}
+.rbtn svg{width:20px;height:20px}
+.rbtn:hover{background:var(--rosa);color:#fff}
+.cf__desc{max-width:620px;margin:26px auto 0;text-align:center;min-height:84px}
+.cf__desc b{display:block;font-family:var(--serif);font-weight:400;font-size:26px;letter-spacing:-.01em}
+.cf__desc p{margin-top:6px;font-size:15.5px;color:var(--txt2);line-height:1.65}
+.cf__desc.troca{animation:fadeUp .5s var(--ease)}
+.recebe__fecho{margin-top:30px;text-align:center;font-family:var(--serif);font-style:italic;font-size:clamp(20px,2vw,24px);color:var(--rosa)}
+/* mini-ilustrações dos materiais */
+.il{position:relative;width:78%;height:74%}
+.il-fam{display:flex;gap:10px;align-items:flex-end;justify-content:center;height:100%}
+.il-fam div{flex:1;border-radius:14px 14px 10px 10px;box-shadow:0 10px 20px -10px rgba(0,0,0,.25);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#fff;text-transform:uppercase}
+.il-fam div:nth-child(1){height:72%;background:linear-gradient(160deg,#8a6e9e,#5f4a7e)}
+.il-fam div:nth-child(2){height:86%;background:linear-gradient(160deg,#c99a9a,#a97a7c)}
+.il-fam div:nth-child(3){height:64%;background:linear-gradient(160deg,#e79b86,#c9705f)}
+.il-ficha{background:#fff;border-radius:12px;box-shadow:0 14px 26px -14px rgba(0,0,0,.3);padding:14px 16px;height:100%;display:flex;flex-direction:column;gap:8px}
+.il-ficha i{display:block;height:8px;border-radius:4px;background:var(--muted)}
+.il-ficha i:nth-child(1){width:44%;background:var(--rosa-soft)}
+.il-ficha i:nth-child(3){width:78%}.il-ficha i:nth-child(5){width:62%}
+.il-ficha span{display:flex;gap:6px;margin-top:auto}
+.il-ficha span em{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line)}
+.il-ficha span em:nth-child(2){background:var(--rosa);border-color:var(--rosa)}
+.il-mapa{display:grid;grid-template-columns:auto 1fr;gap:8px 10px;align-content:center;height:100%;font-size:12px;font-weight:600}
+.il-mapa b{width:22px;height:22px;border-radius:50%}
+.il-mapa span{display:flex;align-items:center;gap:8px;color:var(--txt2);font-weight:500}
+.il-mapa span::before{content:"→";color:var(--rosa)}
+.il-duas{display:flex;align-items:center;justify-content:center;gap:14px;height:100%}
+.il-duas div{width:34%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-size:38px;color:#fff;box-shadow:0 14px 24px -12px rgba(0,0,0,.35)}
+.il-duas div:first-child{background:linear-gradient(160deg,#e7b27a,#c98a4f)}
+.il-duas div:last-child{background:linear-gradient(160deg,#ef8fa6,#c4586f)}
+.il-duas i{font-style:normal;font-size:22px;color:var(--ouro)}
+.il-roteiro{display:flex;flex-direction:column;gap:8px;justify-content:center;height:100%}
+.il-roteiro span{max-width:78%;padding:8px 12px;border-radius:14px;font-size:11.5px;line-height:1.3;box-shadow:0 8px 16px -10px rgba(0,0,0,.25)}
+.il-roteiro span:nth-child(odd){background:#fff;border-bottom-left-radius:4px}
+.il-roteiro span:nth-child(even){align-self:flex-end;background:var(--rosa);color:#fff;border-bottom-right-radius:4px}
+
+/* ================= 5. EDITORIAL ================= */
+.edit{padding:144px 0}
+.edit__g{display:grid;gap:64px}
+@media(min-width:1024px){.edit__g{grid-template-columns:5fr 7fr}}
+.edit .h2{font-size:clamp(34px,4.2vw,52px);line-height:1.02}
+.edit__img{margin-top:40px;max-width:460px;border-radius:24px;overflow:hidden;box-shadow:0 30px 80px -30px rgba(0,0,0,.45);position:relative}
+.edit__img img{width:100%;aspect-ratio:16/10;object-fit:cover;will-change:transform}
+.edit__img figcaption{position:absolute;left:14px;bottom:14px;padding:6px 12px;border-radius:999px;background:rgba(13,8,6,.7);color:#fff}
+.edit__txt p{font-size:17px;line-height:1.75;color:rgba(13,8,6,.8)}
+.edit__txt p+p{margin-top:24px}
+.edit__txt strong{color:var(--ink);font-weight:600}
+.edit__txt .ult{color:var(--ink)}
+.chaves{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
+.chaves div{padding:14px 12px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);text-align:center}
+.chaves b{display:block;font-family:var(--serif);font-weight:400;font-size:34px;line-height:1;color:var(--rosa)}
+.chaves span{display:block;margin-top:6px;font-size:12.5px;line-height:1.35;color:var(--txt2)}
+
+/* ================= 6. FAIXA ESCURA ================= */
+.escura{overflow:hidden;padding:176px 0;color:#fff;text-align:center;isolation:isolate}
+.escura__bg{position:absolute;inset:0;z-index:-2}
+.escura__bg img{width:100%;height:100%;object-fit:cover}
+.escura::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.75);z-index:-1}
+.escura .grain{opacity:.4;z-index:-1}
+.escura .h2{font-size:clamp(34px,4.3vw,52px);max-width:780px;margin:0 auto}
+.escura .h2 em{color:#f6b9c8}
+.escura p{max-width:560px;margin:22px auto 0;font-size:16.5px;color:rgba(255,255,255,.85)}
+.escura .btn{margin-top:34px;background:var(--bg);color:var(--ink)}
+
+/* ================= 7. CARROSSEL DE RESULTADOS (mecânica "Método") ================= */
+.res{padding:128px 0 120px}
+.res__top{display:flex;align-items:flex-end;justify-content:space-between;gap:32px}
+.res__top .h2{font-size:clamp(34px,4.2vw,52px);max-width:680px}
+.res__top .lead{margin-top:16px;max-width:620px}
+.setas{display:flex;gap:10px;flex:0 0 auto}
+.setas button{width:44px;height:44px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--line);display:grid;place-items:center;transition:background .3s,opacity .3s}
+.setas button:hover{background:rgba(13,8,6,.04)}
+.setas button:disabled{opacity:.3;cursor:default}
+.setas svg{width:18px;height:18px}
+.car{margin-top:48px;overflow:hidden;touch-action:pan-y;cursor:grab}
+.car.drag{cursor:grabbing}
+.car__track{display:flex;margin-left:-16px;will-change:transform}
+.car__slide{flex:0 0 88%;padding-left:16px;min-width:0}
+@media(min-width:640px){.car__slide{flex-basis:60%}}
+@media(min-width:768px){.car__track{margin-left:-24px}.car__slide{flex-basis:44%;padding-left:24px}}
+@media(min-width:1024px){.car__slide{flex-basis:36%}}
+.foto{position:relative;aspect-ratio:4/5;border-radius:24px;overflow:hidden;background:#1a1414;user-select:none}
+.foto img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease);-webkit-user-drag:none;pointer-events:none}
+.foto:hover img{transform:scale(1.04)}
+.foto::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.95),rgba(0,0,0,.6) 32%,rgba(0,0,0,.1) 62%,transparent);pointer-events:none}
+.foto__tag{position:absolute;left:20px;top:20px;z-index:1;font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:#f6b9c8;text-transform:uppercase;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.foto__cap{position:absolute;left:22px;right:22px;bottom:22px;z-index:1;color:#fff}
+.foto__cap b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(26px,2.2vw,30px);line-height:1.05;letter-spacing:-.01em}
+.foto__cap span{display:block;margin-top:6px;font-size:14px;color:rgba(255,255,255,.85)}
+.dots{display:flex;justify-content:center;gap:8px;margin-top:32px}
+.dots button{width:16px;height:6px;border-radius:999px;background:rgba(13,8,6,.2);transition:all .35s var(--ease)}
+.dots button.on{width:32px;background:var(--rosa)}
+
+/* ================= 8. TIMELINE (programação) ================= */
+.prog{padding:128px 0}
+.prog .h2{font-size:clamp(34px,4.2vw,52px);line-height:1.05;max-width:760px}
+.prog__quando{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.pil{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);font-size:13px;font-weight:500}
+.pil svg{width:15px;height:15px;color:var(--rosa)}
+.linha{max-width:1080px;margin-top:40px;list-style:none}
+.row{display:grid;gap:32px;padding:48px 0;border-top:1px solid var(--line);align-items:center}
+.row:last-child{border-bottom:1px solid var(--line)}
+@media(min-width:1024px){.row{grid-template-columns:1.05fr 1fr;gap:56px}}
+.badge{width:48px;height:48px;border-radius:50%;background:var(--rosa);color:#fff;display:grid;place-items:center;font-family:var(--serif);font-size:22px;font-style:italic;box-shadow:0 8px 20px -8px rgba(196,88,111,.6),0 0 0 4px var(--bg),0 0 0 5px rgba(202,164,90,.55)}
+.row__tag{margin-top:18px;color:var(--rosa)}
+.row h3{margin-top:8px;font-family:var(--serif);font-weight:400;font-size:clamp(26px,2.4vw,32px);line-height:1.08;letter-spacing:-.01em}
+.row__desc{margin-top:12px;max-width:460px;font-size:14.5px;line-height:1.7;color:var(--txt2)}
+.row__pratica{margin-top:16px;max-width:460px;display:grid;grid-template-columns:18px 1fr;gap:10px;font-size:14.5px;line-height:1.65}
+.row__pratica svg{width:16px;height:16px;color:var(--rosa);margin-top:3px}
+.row__pratica b{font-weight:600}
+.row__fim{margin-top:20px;display:inline-flex;align-items:flex-start;gap:10px;max-width:480px;padding:10px 16px;border-radius:16px;background:rgba(196,88,111,.1);font-size:13.5px;line-height:1.5;color:var(--ink)}
+.row__fim span{flex:0 0 auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--rosa);padding-top:2px}
+.row__foto{border-radius:28px;overflow:hidden;box-shadow:0 24px 60px -30px rgba(0,0,0,.25);max-height:340px;aspect-ratio:4/3}
+.row__foto img{width:100%;height:100%;object-fit:cover}
+.row__foto--james{background:radial-gradient(70% 70% at 50% 60%,#f3c3cf,#f7e4e8 60%,var(--surface))}
+.row__foto--james img{object-fit:contain;object-position:50% 100%}
+.intervalo{display:flex;align-items:center;gap:16px;padding:22px 0;border-top:1px solid var(--line);color:var(--txt2)}
+.intervalo i{flex:1;height:1px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 12px)}
+.intervalo span{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--ouro)}
+.row.rv{transition-duration:.5s}
+
+/* ================= 9. BENTO (ao vivo) ================= */
+.bento{padding:160px 0;background:var(--surface);overflow:hidden}
+.bento__glow{position:absolute;left:50%;top:55%;width:1100px;height:720px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(246,200,212,.6),transparent);opacity:.5;filter:blur(40px);pointer-events:none}
+.bento .h2{max-width:720px;margin:0 auto}
+.bento__g{position:relative;display:grid;gap:20px;max-width:1180px;margin:56px auto 0;grid-auto-rows:minmax(240px,auto)}
+@media(min-width:768px){.bento__g{grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(180px,auto)}.tile--big{grid-column:span 2;grid-row:span 2;min-height:420px}.tile{min-height:240px}}
+.tile{position:relative;border-radius:24px;overflow:hidden;background:#fff;box-shadow:var(--float);display:flex;flex-direction:column;justify-content:flex-end;padding:22px;transition:transform .5s var(--ease)}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.tile::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 8%,rgba(253,252,248,.82) 42%,rgba(253,252,248,.25) 70%,transparent);z-index:1}
+.tile--big::before{background:linear-gradient(0deg,var(--bg) 4%,rgba(253,252,248,.78) 30%,rgba(253,252,248,.1) 55%,transparent)}
+.tile:hover{transform:translateY(-2px)}
+.tile:hover img{transform:scale(1.03)}
+.tile>*:not(img){position:relative;z-index:2}
+.tile__n{position:absolute!important;left:22px;top:20px;color:var(--rosa);font-family:var(--mono);font-size:12px;letter-spacing:.14em;background:rgba(255,255,255,.85);padding:4px 9px;border-radius:999px}
+.tile h3{font-size:17px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
+.tile p{margin-top:6px;font-size:13.5px;line-height:1.55;color:var(--txt2)}
+.tile--big h3{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3vw,36px);line-height:1.05}
+.tile--big p{font-size:15px;max-width:520px}
+.bento__cta{margin-top:48px;text-align:center}
+
+/* ================= 10. POR QUE R$ 27 (card mockup) ================= */
+.valor{padding:128px 0}
+.valor .h2{max-width:760px;margin:0 auto}
+.mock{position:relative;margin-top:52px;padding:48px;border-radius:24px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);display:grid;gap:32px;align-items:center}
+@media(min-width:1024px){.mock{grid-template-columns:1fr .9fr 1fr}}
+.mock h3{font-family:var(--serif);font-weight:400;font-size:clamp(26px,2.6vw,34px);line-height:1.05;letter-spacing:-.01em}
+.mock p{margin-top:14px;font-size:15px;line-height:1.75;color:var(--txt2)}
+.disco{position:relative;justify-self:center;width:min(300px,78vw);aspect-ratio:1;display:grid;place-items:center;text-align:center}
+.disco::before{content:"";position:absolute;inset:-12%;border-radius:50%;background:radial-gradient(closest-side,rgba(228,110,140,.35),transparent);filter:blur(30px)}
+.disco__in{position:relative;width:100%;height:100%;border-radius:50%;background:#fff;box-shadow:var(--float),0 0 0 1px rgba(202,164,90,.7),0 0 0 9px #fff,0 0 0 10px rgba(202,164,90,.35);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.disco .preco{font-size:clamp(96px,9vw,120px)}
+.disco em{margin-top:8px;font-family:var(--serif);font-size:18px;color:var(--rosa);padding:0 30px;line-height:1.2}
+.valor__cta{margin-top:40px;text-align:center}
+
+/* ================= 11. É PRA VOCÊ / NÃO É ================= */
+.pravoce{padding:128px 0}
+.pravoce .h2{max-width:720px;margin:0 auto}
+.pv{display:grid;gap:24px;margin-top:52px}
+@media(min-width:1024px){.pv{grid-template-columns:1.25fr .75fr}}
+.pv__card{border-radius:24px;padding:40px}
+.pv__card--sim{background:linear-gradient(135deg,rgba(196,88,111,.10),rgba(246,243,238,.6) 55%,rgba(246,243,238,.3))}
+.pv__card--nao{background:linear-gradient(135deg,rgba(90,84,79,.08),rgba(246,243,238,.6) 55%,rgba(246,243,238,.3));align-self:start}
+.pv__card .mono{font-size:12px;letter-spacing:.2em;color:var(--rosa)}
+.pv__card--nao .mono{color:var(--txt2)}
+.pv ul{list-style:none;margin-top:22px;display:grid;gap:16px}
+.pv li{display:grid;grid-template-columns:28px 1fr;gap:14px;align-items:start;font-size:15.5px;line-height:1.55}
+.pv li i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(196,88,111,.15);box-shadow:inset 0 0 0 1px rgba(196,88,111,.3);color:var(--rosa)}
+.pv li i svg{width:14px;height:14px}
+.pv__card--nao li{color:var(--txt2)}
+.pv__card--nao li i{background:rgba(90,84,79,.1);box-shadow:inset 0 0 0 1px rgba(90,84,79,.25);color:var(--txt2)}
+
+/* ================= 12. ANTES/DEPOIS (sliders) ================= */
+.ad{padding:128px 0;background:var(--bg)}
+.pilha{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(13,8,6,.15);font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+.ad .h2{margin:18px auto 0;max-width:760px;font-size:clamp(34px,4.6vw,56px)}
+.ad__g{display:grid;gap:24px;margin-top:52px}
+@media(min-width:640px){.ad__g{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.ad__g{grid-template-columns:repeat(3,1fr)}}
+.cmp{position:relative;aspect-ratio:8/5;border-radius:24px;overflow:hidden;user-select:none;touch-action:pan-y;background:#ddd;cursor:ew-resize}
+.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.cmp__antes{clip-path:inset(0 calc(100% - var(--x,50%)) 0 0)}
+.cmp__linha{position:absolute;top:0;bottom:0;left:var(--x,50%);width:2px;margin-left:-1px;background:#fff}
+.cmp__alca{position:absolute;top:50%;left:var(--x,50%);width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25);display:grid;place-items:center;transition:transform .2s}
+.cmp.drag .cmp__alca{transform:scale(1.1)}
+.cmp__alca svg{width:22px;height:22px;color:var(--ink)}
+.cmp__r{position:absolute;top:14px;padding:5px 10px;border-radius:999px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.cmp__r--a{left:14px;background:rgba(0,0,0,.7);color:#fff}
+.cmp__r--d{right:14px;background:rgba(255,255,255,.9);color:var(--ink)}
+.ad__cap{margin-top:14px}
+.ad__cap b{display:block;font-size:15px;font-weight:600}
+.ad__cap span{display:block;margin-top:3px;font-size:13.5px;color:var(--txt2)}
+.ad__cap small{display:block;margin-top:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--rosa)}
+
+/* ================= 13. DECLARAÇÃO ================= */
+.decl{min-height:70vh;display:flex;align-items:center;padding:128px 0;overflow:hidden;text-align:center;isolation:isolate}
+@media(min-width:768px){.decl{min-height:80vh;padding:176px 0}}
+.decl__bg{position:absolute;inset:0;z-index:-2}
+.decl__bg img{width:100%;height:100%;object-fit:cover;opacity:.6}
+.decl::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(253,252,248,.7),rgba(253,252,248,.4) 50%,rgba(253,252,248,.8))}
+.decl .over{letter-spacing:.32em}
+.decl .display{margin:22px auto 0;max-width:18ch;font-size:clamp(36px,6vw,72px)}
+
+/* ================= 14. QUEM CONDUZ ================= */
+.james{padding:128px 0}
+.james__g{display:grid;gap:64px;align-items:center}
+@media(min-width:1024px){.james__g{grid-template-columns:5fr 7fr}}
+.james__foto{position:relative;aspect-ratio:4/5;border-radius:24px;overflow:hidden;box-shadow:0 30px 80px -30px rgba(0,0,0,.45);max-width:520px}
+.james__foto img{width:100%;height:100%;object-fit:cover;object-position:62% 30%;transition:transform .7s var(--ease)}
+.james__foto:hover img{transform:scale(1.02)}
+.james__foto figcaption{position:absolute;left:0;right:0;bottom:0;padding:60px 24px 22px;background:linear-gradient(0deg,rgba(13,8,6,.9),transparent);color:#fff}
+.james__foto figcaption b{display:block;font-size:18px;font-weight:600}
+.james__foto figcaption span{display:block;font-size:12.5px;opacity:.8}
+.james h2{font-size:clamp(40px,5vw,64px);margin-top:14px}
+.james__txt p{margin-top:22px;font-size:16.5px;line-height:1.75;color:rgba(13,8,6,.8)}
+.james__txt strong{color:var(--ink);font-weight:600}
+.cred{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px;list-style:none}
+.cred li{padding:8px 14px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);font-size:13px;font-weight:500}
+.cred li:last-child{box-shadow:inset 0 0 0 1px rgba(202,164,90,.7);color:#8a6a2f}
+
+/* ================= 15. OFERTA ================= */
+.oferta{padding:128px 0 140px;text-align:center}
+.oferta__recap{max-width:680px;margin:26px auto 0}
+.oferta__recap p{font-size:16.5px;line-height:1.75;color:var(--txt2)}
+.oferta__recap p+p{margin-top:16px}
+.oferta__recap p:first-child{font-family:var(--serif);font-size:clamp(24px,2.6vw,30px);line-height:1.2;color:var(--ink);letter-spacing:-.01em}
+.oferta__recap .inc{font-family:var(--serif);font-style:italic;font-size:clamp(24px,2.6vw,30px);color:var(--rosa)}
+.lista{max-width:760px;margin:44px auto 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);list-style:none;text-align:left}
+.lista li{display:flex;justify-content:space-between;gap:16px;padding:20px 4px;font-size:16px}
+.lista li+li{border-top:1px solid var(--line)}
+.lista li span{font-size:13px;color:var(--txt2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lista li svg{width:16px;height:16px;color:var(--rosa);vertical-align:-3px;margin-right:10px}
+.oferta__ev{margin-top:40px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.oferta__hoje{margin-top:34px}
+.oferta__preco{display:inline-block;margin-top:10px;padding:10px 36px 16px;border-radius:24px;box-shadow:0 0 0 1px rgba(202,164,90,.6)}
+.oferta__preco .preco{font-size:clamp(64px,8vw,96px)}
+.oferta .btn{margin-top:26px}
+.oferta__fino{margin-top:14px;font-size:12.5px;color:var(--txt2)}
+
+/* ================= 16. DÚVIDA ================= */
+.duvida{padding:56px 0 96px}
+.duvida__box{max-width:720px;margin:0 auto;padding:clamp(28px,4vw,44px) clamp(20px,4vw,48px);border-radius:24px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);text-align:center}
+.duvida__box h2{font-size:clamp(32px,4vw,44px);margin-top:10px}
+.duvida__box h2 span{font-style:italic;color:var(--rosa)}
+.duvida__box p{color:var(--txt2);font-size:15.5px;line-height:1.6;max-width:46ch;margin:14px auto 24px}
+.duvida__btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:56px;padding:15px 30px;border-radius:999px;background:#25D366;color:#06270f;font-weight:700;font-size:15.5px;text-decoration:none;box-shadow:0 14px 34px rgba(37,211,102,.25);transition:transform .3s,box-shadow .3s}
+.duvida__btn:hover{transform:translateY(-1px);box-shadow:0 20px 42px rgba(37,211,102,.35)}
+.duvida__btn svg{width:22px;height:22px;fill:currentColor}
+.duvida__tel{display:block;margin-top:12px;color:var(--txt2);font-size:13px}
+
+.rodape{border-top:1px solid var(--line);padding:48px 0;font-size:12.5px;color:var(--txt2)}
+.rodape .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+.rodape .mono{font-size:11px}
+
+/* barra fixa (celular) */
+.fixa{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;display:none;align-items:center;gap:12px;padding:8px 8px 8px 20px;border-radius:999px;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--float),inset 0 0 0 1px rgba(202,164,90,.5);transform:translateY(140%);transition:transform .4s var(--ease)}
+.fixa.show{transform:none}
+.fixa .preco{font-size:32px}
+.fixa .btn{flex:1;padding:14px 16px;font-size:14px}
+
+/* ================= CELULAR ================= */
+@media(max-width:767px){
+  .hero{padding:44px 0 80px}
+  .hero__sub{font-size:16px}
+  /* o preço sobe para a 1ª dobra; texto de apoio e foto vêm depois */
+  .hero__compra{order:3;margin-top:24px;padding:10px 10px 10px 20px;gap:12px;flex-wrap:nowrap;width:100%;max-width:400px;justify-content:space-between}
+  .hero__compra .preco{font-size:46px}
+  .hero__compra .btn{padding:14px 16px;font-size:13.5px}
+  .confia{order:4}
+  .hero__sub{order:5}
+  .checks{order:6}
+  .video{order:7;margin-top:36px}
+  .polaroid{width:104px;padding:5px 5px 16px}
+  .medalhao{width:60px;height:60px}.medalhao svg{width:42px;height:42px}
+  .hero .flt{display:none}
+  .etapas{padding:104px 0 112px}
+  .chips{margin-top:-50px}
+  .chip b{font-size:22px}
+  .numeros{padding:48px 0}.numeros b{font-size:28px}
+  .recebe{padding:96px 0}
+  .cf{--s:260px}
+  .cf__body{padding:14px 16px 12px}.cf__body h3{font-size:18px}.cf__meta{display:none}
+  .edit{padding:112px 0}.edit__g{gap:40px}
+  .escura{padding:128px 0}
+  .res{padding:96px 0}.res__top{flex-direction:column;align-items:flex-start}.setas{display:none}
+  .prog{padding:96px 0}.row{padding:40px 0}
+  .bento{padding:112px 0}
+  .valor{padding:96px 0}.mock{padding:32px 22px}
+  .pravoce{padding:96px 0}.pv__card{padding:32px 22px}
+  .ad{padding:96px 0}
+  .james{padding:96px 0}.james__g{gap:40px}
+  .oferta{padding:96px 0 110px}.lista li{font-size:15px}.lista li span{display:none}
+  .fixa{display:flex}
+  .rodape{padding-bottom:110px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rv,.flt__in,.pj{opacity:1!important;transform:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 7l10 10M17 7 7 17"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-esq" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></symbol>
+  <symbol id="i-dir" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></symbol>
+  <symbol id="i-rel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="13" height="12" rx="2.5"/><path d="M15.5 10.5 21.5 7v10l-6-3.5"/></symbol>
+  <symbol id="i-cad" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-pag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l3 3v15H6z"/><path d="M9 11h6M9 15h4"/></symbol>
+  <symbol id="i-lapis" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16z"/></symbol>
+  <symbol id="i-greca" viewBox="0 0 60 60" fill="none" stroke="#caa45a" stroke-width="1.6"><circle cx="30" cy="30" r="27"/><circle cx="30" cy="30" r="21" stroke-width=".8"/><path d="M19 38V22h22v12H25v-8h10v4"/></symbol>
+  <symbol id="i-lr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7-5 5 5 5M15 7l5 5-5 5"/></symbol>
+</svg>
+
+<main>
+<!-- ============ 1. HERO ============ -->
+<section class="hero" data-px>
+  <div class="hero__glow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <!-- flutuantes: aparecem ao entrar e seguem o scroll (parallax) -->
+  <div class="flt" style="left:4%;top:16%" data-d=".6" data-r="-8" aria-hidden="true"><div class="flt__in polaroid"><img src="/lp/protocolo-labial/resultados/08.webp" alt="" loading="lazy"></div></div>
+  <div class="flt" style="right:5%;top:12%" data-d=".45" data-r="10" aria-hidden="true"><div class="flt__in medalhao" style="transition-delay:.1s"><svg><use href="#i-greca"/></svg></div></div>
+  <div class="flt flt--sm-off" style="right:4%;top:46%" data-d=".7" data-r="12" aria-hidden="true"><div class="flt__in polaroid" style="transition-delay:.2s"><img src="/lp/protocolo-labial/resultados/06.webp" alt="" loading="lazy"></div></div>
+  <div class="flt flt--sm-off" style="left:6%;top:60%" data-d=".55" data-r="-10" aria-hidden="true"><div class="flt__in medalhao" style="transition-delay:.25s"><svg><use href="#i-greca"/></svg></div></div>
+  <div class="flt flt--sm-off" style="left:9%;top:84%" data-d=".35" data-r="6" aria-hidden="true"><div class="flt__in polaroid" style="transition-delay:.3s"><img src="/lp/protocolo-labial/resultados/03.webp" alt="" loading="lazy"></div></div>
+
+  <div class="wrap hero__in">
+    <span class="hero__over mono fade-up"><i></i>Aula ao vivo · 4 horas · sala fechada</span>
+    <p class="hero__evento fade-up">Protocolo Labial: do Escuro ao Rosado</p>
+    <h1 class="display tight fade-up">Você vai fazer labial sabendo exatamente o que vai aparecer trinta dias depois — <em>inclusive em lábio escuro.</em></h1>
+    <p class="hero__sub fade-up">Não é que a pele da sua cliente “não pega pigmento”. Essa frase é o que a gente diz quando não sabe o que aconteceu — e ela te deixa sem saída. O lábio dela tem cor própria, e quando essa cor é fria ela abafa o que você colocou por cima. <strong>Não é talento, é leitura.</strong> Aqui você treina em casos reais até acertar sozinha, e sai com o critério para o lábio escuro que hoje você recusa.</p>
+    <ul class="checks fade-up">
+      <li><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data">Data em breve</span></li>
+      <li><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h · 4 horas, com um intervalo</li>
+      <li><svg aria-hidden="true"><use href="#i-cam"/></svg>Ao vivo no Zoom, em sala fechada</li>
+    </ul>
+    <div class="hero__compra fade-up">
+      <div><span class="rot">Ingresso</span><span class="preco" aria-label="R$ 27"><small>R$</small>27</span></div>
+      <a class="btn" href="https://pay.hotmart.com/TODO-CHECKOUT">Quero minha vaga — R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+    <div class="confia fade-up"><span><svg aria-hidden="true"><use href="#i-cad"/></svg>Sala fechada</span><b></b><span>+70 mil alunos formados pelo James</span></div>
+    <figure class="video fade-up"><img src="/lp/protocolo-labial/james-avaliando.webp" alt="James Olaya avaliando o lábio de uma cliente" width="1400" height="933" fetchpriority="high"><figcaption class="video__pill"><i></i>Aula ao vivo com James Olaya</figcaption></figure>
+  </div>
+</section>
+
+<!-- ============ 2. QUATRO ETAPAS ============ -->
+<section class="etapas" data-px>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap center" style="position:relative">
+    <p class="over rv">Programação</p>
+    <h2 class="display h2 rv" style="margin-top:14px">Quatro horas, um dia, <em>quatro etapas</em> que se encaixam uma na outra.</h2>
+    <span class="greca" aria-hidden="true"></span>
+    <div class="palco-james pj" aria-hidden="true"><img src="/lp/protocolo-labial/james.webp" alt="" loading="lazy" width="900" height="1125"></div>
+    <div class="chips">
+      <div class="chip rv"><b>1ª hora</b><span>Enxergar a cor de baixo</span></div>
+      <div class="chip rv"><b>2ª hora</b><span>Decidir antes do pote</span></div>
+      <div class="chip rv"><b>3ª hora</b><span>O lábio escuro</span></div>
+      <div class="chip rv"><b>4ª hora</b><span>O seu caso</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. NÚMEROS ============ -->
+<section class="numeros">
+  <div class="wrap numeros__g">
+    <div class="rv"><b>4 horas</b><span>ao vivo, em sala fechada</span></div>
+    <div class="rv"><b>3 famílias</b><span>de subtom: frio, neutro e quente</span></div>
+    <div class="rv"><b>5 materiais</b><span>preenchidos ao vivo, com os seus casos</span></div>
+    <div class="rv"><b>+70 mil</b><span>alunos formados pelo James</span></div>
+  </div>
+</section>
+
+<!-- ============ 4. COVERFLOW: O QUE VOCÊ RECEBE ============ -->
+<section class="recebe bt" id="materiais">
+  <div class="recebe__glow" aria-hidden="true"></div>
+  <div class="wrap center" style="position:relative">
+    <p class="over rv">O que você recebe</p>
+    <h2 class="display h2 rv" style="margin-top:14px">Cinco materiais para usar durante a aula e <em>aplicar na sua próxima cliente.</em></h2>
+  </div>
+  <div class="cf" id="cf" aria-roledescription="carrossel" aria-label="Os cinco materiais">
+    <article class="cf__card" data-i="0" data-titulo="Cartão das Três Famílias" data-texto="Uma página. Frio, neutro e quente, com o que cada família faz com o pigmento que você coloca por cima. É o que você deixa aberto do lado do dermógrafo.">
+      <div class="cf__vis"><span class="cf__num">I</span><div class="il il-fam"><div>frio</div><div>neutro</div><div>quente</div></div></div>
+      <div class="cf__body"><h3>Cartão das Três Famílias</h3><p>Uma página. Frio, neutro e quente, com o que cada família faz com o pigmento que você coloca por cima.</p><div class="cf__meta"><span><svg><use href="#i-pag"/></svg>Uma página</span><span><svg><use href="#i-rel"/></svg>1ª hora</span></div></div>
+    </article>
+    <article class="cf__card" data-i="1" data-titulo="Ficha de Leitura da Comissura" data-texto="Você preenche ao vivo, caso por caso, até a classificação sair sem pensar. Sai da aula com a sua mão calibrada, não com um PDF para ler depois.">
+      <div class="cf__vis"><span class="cf__num">II</span><div class="il il-ficha"><i></i><i></i><i></i><i></i><i></i><span><em></em><em></em><em></em></span></div></div>
+      <div class="cf__body"><h3>Ficha de Leitura da Comissura</h3><p>Você preenche ao vivo, caso por caso, até a classificação sair sem pensar.</p><div class="cf__meta"><span><svg><use href="#i-lapis"/></svg>Preenche ao vivo</span><span><svg><use href="#i-rel"/></svg>1ª hora</span></div></div>
+    </article>
+    <article class="cf__card" data-i="2" data-titulo="Mapa de Neutralização" data-texto="Deu frio, o que entra antes da cor. Deu neutro, o que muda. Deu quente, o que você pode fazer direto. A decisão pronta, antes de abrir o pote.">
+      <div class="cf__vis"><span class="cf__num">III</span><div class="il il-mapa"><b style="background:linear-gradient(160deg,#8a6e9e,#5f4a7e)"></b><span>o que entra antes</span><b style="background:linear-gradient(160deg,#c99a9a,#a97a7c)"></b><span>o que muda</span><b style="background:linear-gradient(160deg,#e79b86,#c9705f)"></b><span>direto</span></div></div>
+      <div class="cf__body"><h3>Mapa de Neutralização</h3><p>Deu frio, o que entra antes da cor. Deu neutro, o que muda. Deu quente, o que você pode fazer direto.</p><div class="cf__meta"><span><svg><use href="#i-pag"/></svg>A decisão pronta</span><span><svg><use href="#i-rel"/></svg>2ª hora</span></div></div>
+    </article>
+    <article class="cf__card" data-i="3" data-titulo="Protocolo das Duas Passadas" data-texto="A ordem exata: o que entra primeiro, o que entra depois, e por que nunca a cor final direto num lábio frio. Uma página, para levar para o atendimento de segunda-feira.">
+      <div class="cf__vis"><span class="cf__num">IV</span><div class="il il-duas"><div>1</div><i>→</i><div>2</div></div></div>
+      <div class="cf__body"><h3>Protocolo das Duas Passadas</h3><p>A ordem exata: o que entra primeiro, o que entra depois, e por que nunca a cor final direto num lábio frio.</p><div class="cf__meta"><span><svg><use href="#i-pag"/></svg>Uma página</span><span><svg><use href="#i-rel"/></svg>2ª hora</span></div></div>
+    </article>
+    <article class="cf__card" data-i="4" data-titulo="Roteiro da Consulta de Labial" data-texto="O que perguntar e o que mostrar antes de aceitar o caso — inclusive o lábio escuro que hoje você recusa. Você usa na mesma noite, no primeiro direct que responder.">
+      <div class="cf__vis"><span class="cf__num">V</span><div class="il il-roteiro"><span>Você faz labial em lábio escuro?</span><span>Faço. Antes, deixa eu ver a cor de baixo.</span><span>Como assim?</span></div></div>
+      <div class="cf__body"><h3>Roteiro da Consulta de Labial</h3><p>O que perguntar e o que mostrar antes de aceitar o caso — inclusive o lábio escuro que hoje você recusa.</p><div class="cf__meta"><span><svg><use href="#i-lapis"/></svg>Com as suas palavras</span><span><svg><use href="#i-rel"/></svg>3ª hora</span></div></div>
+    </article>
+    <div class="cf__nav"><button class="rbtn" data-cf="-1" aria-label="Material anterior"><svg><use href="#i-esq"/></svg></button><button class="rbtn" data-cf="1" aria-label="Próximo material"><svg><use href="#i-dir"/></svg></button></div>
+  </div>
+  <div class="wrap">
+    <div class="cf__desc" id="cfDesc" aria-live="polite"><b></b><p></p></div>
+    <p class="recebe__fecho rv">Nenhum deles é plano de trinta dias. Todos se preenchem em minutos e servem na cliente da semana.</p>
+  </div>
+</section>
+
+<!-- ============ 5. EDITORIAL: POR QUE AINDA NÃO CONSEGUIU ============ -->
+<section class="edit bt" data-px>
+  <div class="wrap edit__g">
+    <div>
+      <p class="over">O que ninguém te explicou</p>
+      <h2 class="display h2" style="margin-top:14px">Por que você ainda <em>não conseguiu.</em></h2>
+      <span class="greca l" aria-hidden="true"></span>
+      <figure class="edit__img"><img src="/lp/protocolo-labial/antes-depois/01-antes.webp" alt="Lábio escuro, com a cor própria fria aparecendo" loading="lazy" data-pxi width="960" height="600"><figcaption class="mono">A cor de baixo</figcaption></figure>
+    </div>
+    <div class="edit__txt" data-pxt>
+      <p>Você já assistiu tutorial de labial no Instagram e no YouTube, já fez em amiga, em você mesma, talvez num curso curto. Cicatrizou apagado, ou acinzentado, a cliente reclamou, e você parou de oferecer. Não foi falta de mão e não foi a pele dela. Você escolheu o pigmento olhando para o tom que a cliente queria ver. Perguntar qual cor ela quer e pegar aquele pote é a parte mais repetida do labial. E a mais fraca.</p>
+      <p>O lábio não é papel em branco. Ele já tem cor própria, e em boa parte das clientes ela é fria: roxo, azul, marrom. O tutorial te mostrou o lábio no dia da aplicação, quando a camada de cima ainda cobre tudo. Trinta dias depois ela sai, o que estava embaixo volta a aparecer, e puxa o rosa para o cinza. O que a cliente vê é o seu pigmento somado ao que já estava lá. Isso tem nome: <strong>A Cor de Baixo.</strong> Você não errou a mão. Você errou a leitura.</p>
+      <p class="ult">Ler a cor de baixo é uma decisão que acontece antes de abrir o pote — e decisão se treina rápido: três famílias de subtom, um ponto certo para olhar, uma regra de ordem. Por isso quatro horas bastam. Você termina com o critério na mão e descobre se funcionou no primeiro lábio escuro que sentar na sua cadeira.</p>
+      <div class="chaves">
+        <div><b>3</b><span>famílias de subtom</span></div>
+        <div><b>1</b><span>ponto certo para olhar</span></div>
+        <div><b>1</b><span>regra de ordem</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. FAIXA ESCURA ============ -->
+<section class="escura">
+  <div class="escura__bg" aria-hidden="true"><img src="/lp/protocolo-labial/procedimento.webp" alt="" loading="lazy"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap">
+    <h2 class="display h2 rv">Você não errou a mão.<br><em>Você errou a leitura.</em></h2>
+    <p class="rv">A decisão acontece antes de abrir o pote. Em quatro horas ao vivo, você treina essa leitura em casos reais — inclusive no lábio escuro.</p>
+    <a class="btn rv" href="https://pay.hotmart.com/TODO-CHECKOUT">Quero minha vaga — R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a>
+  </div>
+</section>
+
+<!-- ============ 7. RESULTADOS (carrossel) ============ -->
+<section class="res" id="resultados">
+  <div class="wrap">
+    <div class="res__top">
+      <div>
+        <p class="over rv">Resultados reais</p>
+        <h2 class="display h2 rv" style="margin-top:14px">Do escuro <em>ao rosado.</em></h2>
+        <p class="lead rv">Antes e depois de labiais feitos pelo James e por alunas do método — o que acontece quando a leitura vem antes do pote.</p>
+      </div>
+      <div class="setas"><button data-car="-1" aria-label="Resultado anterior"><svg><use href="#i-esq"/></svg></button><button data-car="1" aria-label="Próximo resultado"><svg><use href="#i-dir"/></svg></button></div>
+    </div>
+    <div class="car" id="car" aria-roledescription="carrossel" aria-label="Resultados antes e depois"><div class="car__track" id="carTrack"></div></div>
+    <div class="dots" id="carDots"></div>
+  </div>
+</section>
+
+<!-- ============ 8. PROGRAMAÇÃO (timeline) ============ -->
+<section class="prog bt" id="programacao">
+  <div class="wrap">
+    <p class="over rv">Programação</p>
+    <h2 class="display h2 rv" style="margin-top:14px">Quatro horas, um dia, quatro etapas que se encaixam <em>uma na outra.</em></h2>
+    <div class="prog__quando rv">
+      <span class="pil"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data">Data em breve</span></span>
+      <span class="pil"><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h</span>
+      <span class="pil"><svg aria-hidden="true"><use href="#i-cam"/></svg>Ao vivo no Zoom</span>
+    </div>
+    <ol class="linha">
+      <li class="row rv">
+        <div>
+          <div class="badge">I</div>
+          <p class="row__tag mono">Primeira hora</p>
+          <h3>Aprenda a enxergar a cor de baixo</h3>
+          <p class="row__desc">Por que o lábio bonito do dia da aplicação vira outro lábio em trinta dias, e onde exatamente olhar para saber disso antes.</p>
+          <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> você classifica lábios reais comigo, um atrás do outro, pela comissura — que é onde a cor de baixo é mais honesta.</span></p>
+          <p class="row__fim"><span>Você termina com</span>as três famílias de subtom reconhecidas a olho, e o Cartão das Três Famílias preenchido.</p>
+        </div>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/02.webp" alt="Lábio com contorno escuro, antes e depois" loading="lazy"></figure>
+      </li>
+      <li class="row rv">
+        <div>
+          <div class="badge">II</div>
+          <p class="row__tag mono">Segunda hora</p>
+          <h3>Decida antes de abrir o pote</h3>
+          <p class="row__desc">A parte que ninguém te ensinou: o que entra no lábio antes da cor que a cliente pediu, e por quê.</p>
+          <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> a gente monta a decisão de neutralização caso a caso, incluindo os casos em que você não neutraliza nada.</span></p>
+          <p class="row__fim"><span>Você termina com</span>o Mapa de Neutralização preenchido e o Protocolo das Duas Passadas na mão.</p>
+        </div>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/procedimento.webp" alt="Aplicação de pigmento no lábio" loading="lazy"></figure>
+      </li>
+      <li class="intervalo rv" aria-label="Intervalo"><i></i><span>intervalo</span><i></i></li>
+      <li class="row rv">
+        <div>
+          <div class="badge">III</div>
+          <p class="row__tag mono">Terceira hora</p>
+          <h3>O lábio escuro</h3>
+          <p class="row__desc">O caso que você hoje recusa. O que dá para prometer para essa cliente, o que não dá, e como conduzir a conversa sem perder o atendimento.</p>
+          <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> eu abro casos de lábio escuro do começo ao fim — leitura, decisão, resultado cicatrizado — e você refaz a leitura comigo antes de eu mostrar o que aconteceu.</span></p>
+          <p class="row__fim"><span>Você termina com</span>o Roteiro da Consulta de Labial preenchido com as suas palavras.</p>
+        </div>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/01.webp" alt="Lábio escuro, antes e depois" loading="lazy"></figure>
+      </li>
+      <li class="row rv">
+        <div>
+          <div class="badge">IV</div>
+          <p class="row__tag mono">Quarta hora</p>
+          <h3>O seu caso</h3>
+          <p class="row__desc">Aqui a sala é sua.</p>
+          <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> você traz o lábio da sua cliente — ou o trabalho seu que cicatrizou errado — e a gente lê junto, ao vivo.</span></p>
+          <p class="row__fim"><span>Você termina com</span>a decisão pronta para o próximo labial da sua agenda, corrigida por mim antes de você aplicar.</p>
+        </div>
+        <figure class="row__foto row__foto--james"><img src="/lp/protocolo-labial/james.webp" alt="James Olaya" loading="lazy"></figure>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ 9. BENTO: AO VIVO ============ -->
+<section class="bento" id="ao-vivo">
+  <div class="bento__glow" aria-hidden="true"></div>
+  <div class="wrap center" style="position:relative">
+    <p class="over rv">Na sala</p>
+    <h2 class="display h2 rv" style="margin-top:14px">O que vai acontecer <em>ao vivo.</em></h2>
+    <span class="greca" aria-hidden="true"></span>
+  </div>
+  <div class="wrap">
+    <div class="bento__g">
+      <article class="tile tile--big rv"><img src="/lp/protocolo-labial/resultados/03.webp" alt="" loading="lazy"><span class="tile__n">01</span><h3>Leitura ao vivo, caso por caso.</h3><p>Você não assiste à classificação sendo feita. Você classifica, erra na sala, e é corrigida na hora — que é bem mais barato do que errar na cliente.</p></article>
+      <article class="tile rv"><img src="/lp/protocolo-labial/resultados/05.webp" alt="" loading="lazy"><span class="tile__n">02</span><h3>Casos reais, com o antes e o depois de trinta dias.</h3><p>Tutorial mostra o dia da aplicação. Aqui você vê o mesmo lábio cicatrizado, que é a única parte que interessa.</p></article>
+      <article class="tile rv"><img src="/lp/protocolo-labial/james-avaliando.webp" alt="" loading="lazy"><span class="tile__n">03</span><h3>O seu caso analisado.</h3><p>Você traz o seu, a gente lê junto e você sai com a decisão daquele atendimento tomada.</p></article>
+      <article class="tile rv"><img src="/lp/protocolo-labial/procedimento.webp" alt="" loading="lazy"><span class="tile__n">04</span><h3>Correção antes de aplicar.</h3><p>O que estiver errado na sua leitura a gente acha enquanto ainda estamos juntos, não depois que sua cliente reclamar.</p></article>
+      <article class="tile rv"><img src="/lp/lips-sense/professor.webp" alt="" loading="lazy" style="object-position:65% 25%"><span class="tile__n">05</span><h3>Sala fechada.</h3><p>Não é aula aberta com mil pessoas no chat. É turma pequena o suficiente para eu olhar o que você trouxe.</p></article>
+      <article class="tile rv"><img src="/lp/protocolo-labial/resultados/07.webp" alt="" loading="lazy"><span class="tile__n">06</span><h3>Fichas preenchidas ao vivo.</h3><p>Você não sai com material para estudar depois. Sai com material já preenchido com os seus casos.</p></article>
+    </div>
+    <div class="bento__cta rv"><a class="btn" href="https://pay.hotmart.com/TODO-CHECKOUT">Quero minha vaga — R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a></div>
+  </div>
+</section>
+
+<!-- ============ 10. POR QUE R$ 27 ============ -->
+<section class="valor" id="valor">
+  <div class="wrap">
+    <div class="center">
+      <p class="over rv">Sobre o valor</p>
+      <h2 class="display h2 rv" style="margin-top:14px">Por que o ingresso custa <em>vinte e sete reais.</em></h2>
+    </div>
+    <div class="mock rv">
+      <div><h3>Por que é barato</h3><p>Porque o que segura você não é o preço. É o medo de errar a cor. Se o ingresso fosse caro, a gente estaria filtrando pela carteira de quem quer aprender, e não é disso que se trata. Vinte e sete reais é um valor que sai do bolso sem reunião familiar — você entra, treina a leitura e resolve o que estava travado.</p></div>
+      <div class="disco"><div class="disco__in"><span class="mono" style="color:var(--rosa)">Ingresso</span><span class="preco" aria-label="R$ 27"><small>R$</small>27</span><em>para filtrar presença, não bolso</em></div></div>
+      <div><h3>Por que não é de graça</h3><p>Porque aula gratuita de labial enche de gente que se inscreve e não aparece. E esta aqui não funciona assistida depois: metade dela é você classificando lábio ao vivo e sendo corrigida. Quem paga aparece. Quem aparece traz caso. E quem traz caso sai com a decisão tomada. Os vinte e sete reais existem para filtrar presença, não bolso.</p></div>
+    </div>
+    <div class="valor__cta rv"><a class="btn btn--lg" href="https://pay.hotmart.com/TODO-CHECKOUT">Quero minha vaga — R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a></div>
+  </div>
+</section>
+
+<!-- ============ 11. É PRA VOCÊ / NÃO É ============ -->
+<section class="pravoce bt" id="para-quem">
+  <div class="wrap">
+    <div class="center">
+      <p class="over rv">Para quem é</p>
+      <h2 class="display h2 rv" style="margin-top:14px">Esta aula é <em>para você</em> se:</h2>
+    </div>
+    <div class="pv">
+      <div class="pv__card pv__card--sim rv">
+        <p class="mono">É pra você se</p>
+        <ul>
+          <li><i><svg><use href="#i-ok"/></svg></i>Sua cliente pergunta se você faz labial e você indica outra profissional.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Na hora ficou perfeito, e trinta dias depois sumiu quase tudo.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Você tem medo de pegar um lábio escuro e deixar pior do que estava.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Você já domina sobrancelha, já tem agenda cheia, e labial é o serviço que falta no seu cardápio.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Você já fez labial e ficou sem resposta quando a cliente perguntou por que acinzentou.</li>
+          <li><i><svg><use href="#i-ok"/></svg></i>Você escolhe o pigmento pelo tom que a cliente pediu, porque nunca te ensinaram outro jeito de escolher.</li>
+        </ul>
+      </div>
+      <div class="pv__card pv__card--nao rv">
+        <p class="mono">Não é pra você se</p>
+        <ul><li><i><svg><use href="#i-x"/></svg></i>Não é para quem nunca pegou num dermógrafo. Aqui a gente parte do princípio de que você já atende e já tem mão — o que você vai treinar é a decisão que vem antes da aplicação.</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12. ANTES/DEPOIS (sliders) ============ -->
+<section class="ad bt" id="antes-depois">
+  <div class="wrap">
+    <div class="center">
+      <span class="pilha rv">✦ Antes e depois</span>
+      <h2 class="display tight h2 rv">Arraste e veja <em>a cor de baixo</em> sair de cena.</h2>
+    </div>
+    <div class="ad__g" id="adGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 13. DECLARAÇÃO ============ -->
+<section class="decl">
+  <div class="decl__bg" aria-hidden="true"><img src="/lp/protocolo-labial/antes-depois/05-depois.webp" alt="" loading="lazy" style="filter:blur(6px);transform:scale(1.08)"></div>
+  <div class="wrap">
+    <p class="over rv">Quatro horas ao vivo</p>
+    <p class="display rv">Inclusive o lábio escuro que hoje <em>você recusa.</em></p>
+    <span class="greca" aria-hidden="true"></span>
+  </div>
+</section>
+
+<!-- ============ 14. QUEM CONDUZ ============ -->
+<section class="james bt" id="james">
+  <div class="wrap james__g">
+    <figure class="james__foto rv"><img src="/lp/lips-sense/professor.webp" alt="James Olaya" loading="lazy"><figcaption><b>James Olaya</b><span>Biomédico · Master Trainer</span></figcaption></figure>
+    <div class="james__txt rv">
+      <p class="over" style="margin-top:0">Quem vai conduzir</p>
+      <h2 class="display">James Olaya</h2>
+      <p>Eu cheguei nisso corrigindo o meu próprio trabalho. Entreguei lábio que saiu lindo do atendimento e, trinta dias depois, não era mais aquele lábio. Depois passei anos corrigindo o trabalho das minhas alunas e atendendo lábio escuro em série — e era sempre a mesma coisa: <strong>a cor que já estava lá embaixo decidindo o resultado no lugar da cor que a gente escolheu.</strong></p>
+      <p>Hoje eu atendo, eu ensino, e eu desenvolvi a minha própria linha de pigmentos labiais, a JAY.O, justamente para dar conta dessa decisão. Este evento existe porque a parte que resolve o problema é a mais curta de ensinar e a que menos gente ensina: <strong>ler A Cor de Baixo antes de abrir o pote.</strong></p>
+      <ul class="cred"><li>Biomédico</li><li>Master Trainer</li><li>Coordenador Científico</li><li>CEO da JAY.O</li><li>+ de 70 mil alunos formados</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15. OFERTA / FECHAMENTO ============ -->
+<section class="oferta bt" id="inscricao">
+  <div class="wrap">
+    <span class="pilha rv">Seu ingresso</span>
+    <div class="oferta__recap rv">
+      <p>Você quer parar de mandar a sua cliente de labial para outra profissional. E quando fizer, quer que cicatrize bonito.</p>
+      <p>São quatro horas ao vivo, em sala fechada, classificando lábio real comigo até a leitura sair sem pensar. Você termina com as três famílias de subtom reconhecidas a olho, o protocolo de neutralização na mão e a decisão do próximo labial da sua agenda já corrigida por mim.</p>
+      <p class="inc">Inclusive o lábio escuro que hoje você recusa.</p>
+    </div>
+    <ul class="lista rv">
+      <li><div><svg aria-hidden="true"><use href="#i-ok"/></svg>Quatro horas ao vivo, em sala fechada</div><span>9h às 13h</span></li>
+      <li><div><svg aria-hidden="true"><use href="#i-ok"/></svg>Os cinco materiais, preenchidos ao vivo</div><span>I — V</span></li>
+      <li><div><svg aria-hidden="true"><use href="#i-ok"/></svg>O seu caso analisado</div><span>4ª hora</span></li>
+      <li><div><svg aria-hidden="true"><use href="#i-ok"/></svg>Correção antes de aplicar</div><span>ao vivo</span></li>
+    </ul>
+    <div class="oferta__ev rv">
+      <span class="pil"><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data">Data em breve</span></span>
+      <span class="pil"><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h</span>
+      <span class="pil"><svg aria-hidden="true"><use href="#i-cam"/></svg>Ao vivo no Zoom, em sala fechada</span>
+    </div>
+    <div class="oferta__hoje rv">
+      <p class="mono" style="color:var(--rosa)">Protocolo Labial: do Escuro ao Rosado</p>
+      <div class="oferta__preco"><span class="preco" aria-label="Ingresso R$ 27"><small>R$</small>27</span></div>
+      <div><a class="btn btn--lg" href="https://pay.hotmart.com/TODO-CHECKOUT">Quero minha vaga — R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a></div>
+      <p class="oferta__fino">Ingresso único · aula ao vivo no Zoom</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 16. DÚVIDA (WhatsApp) ============ -->
+<section class="duvida" id="duvidas">
+  <div class="wrap"><div class="duvida__box">
+    <span class="mono" style="color:var(--rosa)">Fale com a gente</span>
+    <h2 class="display">Ainda está com <span>dúvida?</span></h2>
+    <p>Chame a nossa equipe no WhatsApp e tire a sua dúvida sobre o Protocolo Labial antes de garantir a sua vaga.</p>
+    <a class="duvida__btn" href="https://wa.me/5519971634567?text=Oi%2C%20gostaria%20de%20saber%20mais%20sobre%20a%20aula%20ao%20vivo%20Protocolo%20Labial" target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp sobre a aula Protocolo Labial"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16.03 3.2A12.74 12.74 0 0 0 5.16 22.6L3.2 28.8l6.36-1.9a12.75 12.75 0 1 0 6.47-23.7Zm0 22.96c-2.07 0-4.09-.62-5.8-1.78l-.42-.28-3.77 1.13 1.16-3.67-.3-.43a10.2 10.2 0 1 1 9.13 5.03Zm5.6-7.64c-.31-.15-1.82-.9-2.1-1-.28-.1-.49-.15-.69.16-.2.3-.79 1-.97 1.2-.18.2-.36.23-.67.08-.3-.16-1.3-.48-2.47-1.53a9.26 9.26 0 0 1-1.71-2.13c-.18-.31-.02-.48.13-.63.14-.14.31-.36.46-.54.15-.18.2-.3.31-.51.1-.2.05-.39-.03-.54-.08-.15-.69-1.66-.95-2.28-.25-.6-.5-.52-.69-.53h-.59c-.2 0-.54.08-.82.39-.28.3-1.07 1.04-1.07 2.55 0 1.5 1.1 2.96 1.25 3.16.15.2 2.16 3.3 5.23 4.63.73.31 1.3.5 1.75.64.74.23 1.4.2 1.93.12.59-.09 1.82-.75 2.08-1.46.25-.72.25-1.33.18-1.46-.08-.13-.28-.2-.59-.36Z"/></svg><span>Falar no WhatsApp</span></a>
+    <span class="duvida__tel">(19) 97163-4567</span>
+  </div></div>
+</section>
+</main>
+
+<footer class="rodape">
+  <div class="wrap"><span class="mono">Protocolo Labial</span><span>© 2026 · Aula ao vivo no Zoom · Todos os direitos reservados</span></div>
+</footer>
+
+<div class="fixa" id="fixa" aria-hidden="true">
+  <span class="preco"><small>R$</small>27</span>
+  <a class="btn" href="https://pay.hotmart.com/TODO-CHECKOUT" tabindex="-1">Quero minha vaga<svg aria-hidden="true"><use href="#i-seta"/></svg></a>
+</div>
+
+<script>
+(function(){
+  var reduz=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var E="/lp/protocolo-labial/";
+
+  /* ---------- Reveal (IntersectionObserver, uma vez) ---------- */
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{rootMargin:"0px 0px -10% 0px"});
+  document.querySelectorAll(".rv,.flt,.pj").forEach(function(el,i){
+    // atraso em cascata dentro do mesmo grupo (timeline, chips, bento, números)
+    var irmaos=el.parentElement?[].filter.call(el.parentElement.children,function(c){return c.classList.contains("rv")}):[];
+    var k=irmaos.indexOf(el);if(k>0&&el.classList.contains("rv"))el.style.transitionDelay=(Math.min(k,6)*0.06)+"s";
+    io.observe(el)});
+
+  /* ---------- Parallax (um loop de rAF, como a referência) ---------- */
+  var secs=[].slice.call(document.querySelectorAll("[data-px]"));
+  function lerp(a,b,t){return a+(b-a)*t}
+  var tick=false;
+  function parallax(){tick=false;var vh=innerHeight;
+    secs.forEach(function(s){var r=s.getBoundingClientRect();if(r.bottom<-200||r.top>vh+200)return;
+      var p=Math.min(1,Math.max(0,(vh-r.top)/(vh+r.height)));
+      s.querySelectorAll(".flt").forEach(function(f){var d=+f.dataset.d||.5,r0=+f.dataset.r||0;
+        f.style.transform="translate3d(0,"+lerp(-140*d,140*d,p).toFixed(1)+"px,0) rotate("+lerp(r0-12*d,r0+12*d,p).toFixed(2)+"deg)"});
+      var im=s.querySelector("[data-pxi]");if(im){var sc=1+Math.abs(p-.5)*.1;im.style.transform="translate3d(0,"+lerp(-80,80,p).toFixed(1)+"px,0) scale("+sc.toFixed(3)+")"}
+      var tx=s.querySelector("[data-pxt]");if(tx&&innerWidth>=1024){tx.style.transform="translate3d(0,"+lerp(40,-40,p).toFixed(1)+"px,0)"}})}
+  if(!reduz){addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(parallax)}},{passive:true});addEventListener("resize",parallax);parallax()}
+
+  /* ---------- Coverflow dos materiais ---------- */
+  var cf=document.getElementById("cf"),cards=[].slice.call(cf.querySelectorAll(".cf__card")),n=cards.length,atual=0;
+  var desc=document.getElementById("cfDesc");
+  function cfRender(){var s=parseFloat(getComputedStyle(cf).getPropertyValue("--s"))||360;
+    cards.forEach(function(c,i){var pos=((i-atual)%n+n)%n;if(pos>n/2)pos-=n;var centro=pos===0,impar=Math.abs(pos)%2===1;
+      c.style.transform="translate(-50%,-50%) translateX("+(s/1.55*pos)+"px) translateY("+(centro?-40:(impar?18:-18))+"px) rotate("+(centro?0:(impar?3:-3))+"deg) scale("+(centro?1:.92)+")";
+      c.style.zIndex=centro?10:5-Math.abs(pos);c.classList.toggle("on",centro);c.setAttribute("aria-hidden",centro?"false":"true")});
+    var c=cards[atual];desc.querySelector("b").textContent=c.dataset.titulo;desc.querySelector("p").textContent=c.dataset.texto;
+    desc.classList.remove("troca");void desc.offsetWidth;desc.classList.add("troca")}
+  function cfIr(d){atual=((atual+d)%n+n)%n;cfRender()}
+  cards.forEach(function(c,i){c.addEventListener("click",function(){if(i!==atual){atual=i;cfRender()}})});
+  cf.querySelectorAll("[data-cf]").forEach(function(b){b.addEventListener("click",function(e){e.stopPropagation();cfIr(+b.dataset.cf)})});
+  var sx=null;cf.addEventListener("touchstart",function(e){sx=e.touches[0].clientX},{passive:true});
+  cf.addEventListener("touchend",function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)cfIr(dx<0?1:-1);sx=null});
+  addEventListener("resize",cfRender);cfRender();
+
+  /* ---------- Carrossel de resultados (mecânica "Método": arrasta, encaixa, bolinhas) ---------- */
+  var legendas=[["Do escuro ao uniforme","Por James Olaya"],["Contorno escuro neutralizado","Por James Olaya"],["Subtom frio neutralizado","Por James Olaya"],["Lábio masculino","Por James Olaya"],["Do pálido ao rosado","Por aluna do método"],["Cor definida","Por James Olaya"],["Lábio masculino","Por aluna do método"],["Do apagado ao coral","Por aluna do método"],["Do apagado ao vermelho","Por aluna do método"],["Lábio masculino","Por aluna do método"]];
+  var track=document.getElementById("carTrack"),car=document.getElementById("car"),dotsEl=document.getElementById("carDots");
+  legendas.forEach(function(l,i){var nn=String(i+1).padStart(2,"0");var s=document.createElement("div");s.className="car__slide";
+    s.innerHTML='<figure class="foto"><img src="'+E+'resultados/'+nn+'.webp" alt="Antes e depois de micropigmentação labial: '+l[0]+'" loading="'+(i<3?"eager":"lazy")+'" width="800" height="1000"><span class="foto__tag">Resultado '+nn+'</span><figcaption class="foto__cap"><b>'+l[0]+'</b><span>'+l[1]+' · em cima o antes, embaixo o depois</span></figcaption></figure>';
+    track.appendChild(s)});
+  var slides=[].slice.call(track.children),snaps=[],idx=0,x=0;
+  function medir(){var max=Math.max(0,track.scrollWidth-car.clientWidth);var vistos={};snaps=[];
+    slides.forEach(function(s){var v=Math.min(s.offsetLeft-slides[0].offsetLeft,max);v=Math.round(v);if(!vistos[v]){vistos[v]=1;snaps.push(v)}});
+    dotsEl.innerHTML="";snaps.forEach(function(_,i){var b=document.createElement("button");b.setAttribute("aria-label","Ir para o grupo "+(i+1));b.onclick=function(){ir(i)};dotsEl.appendChild(b)});
+    idx=Math.min(idx,snaps.length-1);ir(idx,true)}
+  function aplicar(v,anim){track.style.transition=anim?"transform .5s cubic-bezier(.25,1,.5,1)":"none";track.style.transform="translate3d("+(-v)+"px,0,0)";x=v}
+  function ir(i,sem){idx=Math.max(0,Math.min(snaps.length-1,i));aplicar(snaps[idx],!sem);
+    [].forEach.call(dotsEl.children,function(d,k){d.classList.toggle("on",k===idx)});
+    var bs=document.querySelectorAll("[data-car]");if(bs.length){bs[0].disabled=idx===0;bs[1].disabled=idx===snaps.length-1}}
+  document.querySelectorAll("[data-car]").forEach(function(b){b.addEventListener("click",function(){ir(idx+ +b.dataset.car)})});
+  var arr=false,ox=0,x0=0,moveu=0;
+  car.addEventListener("pointerdown",function(e){arr=true;moveu=0;ox=e.clientX;x0=x;car.classList.add("drag");car.setPointerCapture(e.pointerId)});
+  car.addEventListener("pointermove",function(e){if(!arr)return;var dx=e.clientX-ox;moveu=Math.abs(dx);var max=snaps[snaps.length-1]||0;var v=x0-dx;if(v<0)v=v/3;if(v>max)v=max+(v-max)/3;aplicar(v,false)});
+  function soltar(e){if(!arr)return;arr=false;car.classList.remove("drag");var dx=e.clientX-ox;
+    // encaixa no mais próximo, com um empurrão para o lado do arrasto
+    var alvo=x,best=0,bd=1e9;snaps.forEach(function(s,i){var d=Math.abs(s-alvo);if(d<bd){bd=d;best=i}});
+    if(best===idx&&Math.abs(dx)>50)best=idx+(dx<0?1:-1);ir(best)}
+  car.addEventListener("pointerup",soltar);car.addEventListener("pointercancel",soltar);
+  addEventListener("resize",medir);medir();
+
+  /* ---------- Antes/depois com slider (clip-path) ---------- */
+  var ads=[["Lábio escuro","Uniformizado, sem acinzentar","Por James Olaya"],["Contorno escuro","A borda fria deixou de aparecer","Por James Olaya"],["Subtom frio","Neutralizado antes da cor","Por James Olaya"],["Lábio masculino","Cor natural, sem marcar","Por James Olaya"],["Lábio pálido","Do lilás ao rosado","Por aluna do método"],["Lábio apagado","Cor de volta ao lábio","Por aluna do método"]];
+  var grid=document.getElementById("adGrid");
+  ads.forEach(function(a,i){var nn=String(i+1).padStart(2,"0");var d=document.createElement("div");d.className="rv";
+    d.innerHTML='<div class="cmp" style="--x:50%"><img src="'+E+'antes-depois/'+nn+'-depois.webp" alt="Depois: '+a[0]+'" loading="lazy"><img class="cmp__antes" src="'+E+'antes-depois/'+nn+'-antes.webp" alt="Antes: '+a[0]+'" loading="lazy"><span class="cmp__linha"></span><span class="cmp__alca" role="slider" tabindex="0" aria-label="Comparar antes e depois" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg><use href="#i-lr"/></svg></span><span class="cmp__r cmp__r--a">Antes</span><span class="cmp__r cmp__r--d">Depois</span></div><div class="ad__cap"><b>'+a[0]+'</b><span>'+a[1]+'</span><small>'+a[2]+'</small></div>';
+    grid.appendChild(d);io.observe(d);
+    var box=d.querySelector(".cmp"),alca=d.querySelector(".cmp__alca"),ativo=false;
+    function pos(cx){var r=box.getBoundingClientRect();var v=Math.max(0,Math.min(100,(cx-r.left)/r.width*100));box.style.setProperty("--x",v+"%");alca.setAttribute("aria-valuenow",Math.round(v))}
+    box.addEventListener("pointerdown",function(e){ativo=true;box.classList.add("drag");box.setPointerCapture(e.pointerId);pos(e.clientX)});
+    box.addEventListener("pointermove",function(e){if(ativo)pos(e.clientX)});
+    function fim(){ativo=false;box.classList.remove("drag")}box.addEventListener("pointerup",fim);box.addEventListener("pointercancel",fim);
+    alca.addEventListener("keydown",function(e){var v=parseFloat(box.style.getPropertyValue("--x"))||50;if(e.key==="ArrowLeft"){v-=5}else if(e.key==="ArrowRight"){v+=5}else return;e.preventDefault();v=Math.max(0,Math.min(100,v));box.style.setProperty("--x",v+"%");alca.setAttribute("aria-valuenow",v)})});
+
+  /* ---------- Barra fixa no celular ---------- */
+  var fixa=document.getElementById("fixa"),hero=document.querySelector(".hero"),fimSec=document.getElementById("inscricao");
+  function barra(){var on=scrollY>hero.offsetHeight-300&&fimSec.getBoundingClientRect().top>innerHeight*.6;fixa.classList.toggle("show",on);fixa.setAttribute("aria-hidden",on?"false":"true")}
+  addEventListener("scroll",barra,{passive:true});barra();
+})();
+</script>
+</body>
+</html>

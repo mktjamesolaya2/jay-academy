@@ -39,6 +39,9 @@ export const PIXEL_SLUGS = [
   "metodo-shadow-pro",
   "pdv-lips-sense-technique",
   "pmuclass",
+  // Evento pago Protocolo Labial (24/09): ingresso de R$ 27 na Hotmart; o
+  // InitiateCheckout do clique é a conversão que a campanha vai otimizar.
+  "protocolo-labial",
   // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
   // Lead do formulário de inscrição é a conversão que a campanha otimiza.
   "transforma",

@@ -157,3 +157,7 @@ test("a Fio a Fio oficial e as prévias v2 e v3 levam pixel", () => {
     assert.equal(slugHasPixel(slug), true, slug);
   }
 });
+
+test("o evento Protocolo Labial leva pixel", () => {
+  assert.equal(slugHasPixel("protocolo-labial"), true);
+});
