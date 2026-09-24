@@ -52,6 +52,10 @@ Página em `lp-html/protocolo-labial.html`, rota `app/protocolo-labial/route.ts`
   em "Sala fechada"; atendimento em "Fichas" (o resultado com marca "Joy Vieira" fica só no carrossel); retrato P&B
   + polaroid do palco em "Quem vai conduzir". `fotorecorte.png` (terno branco) ficou de fora: 408px, borraria.
 - Headline nova (pedido do James): "Você vai fazer micro labial sabendo exatamente o que vai aparecer 30 dias depois."
+- ⚠️ **Pegadinha (halo "recortado" atrás do busto):** `filter:drop-shadow` + `mask-image` no MESMO `<img>` → a
+  mask recorta a sombra no limite da caixa e ela vira um retângulo. Em recorte transparente, ou tira a sombra
+  ou põe a sombra num wrapper sem mask. O brilho rosa da faixa "4 etapas" agora é fundo da SEÇÃO (vai até as
+  bordas), não um `::before` do tamanho da foto.
 
 ---
 
