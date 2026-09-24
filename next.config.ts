@@ -50,6 +50,24 @@ const nextConfig: NextConfig = {
         headers: [...base, { key: "X-Frame-Options", value: "SAMEORIGIN" }],
       },
       { source: "/:path*", headers: base },
+      // Assets da /protocolo-labial (evento com tráfego pago, velocidade conta pra
+      // entrega do Facebook). Sem isto o public/ sai com max-age=0 e o celular
+      // revalida toda imagem em toda visita. ⚠️ Trocou uma imagem? Troque o NOME
+      // do arquivo — o navegador segura a antiga por até 7 dias. A borda da
+      // Vercel é por deploy, então lá o deploy novo já renova.
+      {
+        source: "/lp/protocolo-labial/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=604800, s-maxage=31536000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/lp/protocolo-labial/fonts/:file",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
 };

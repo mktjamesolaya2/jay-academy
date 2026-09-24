@@ -17,14 +17,21 @@
   Estrutura, carrosséis e animações seguem a referência premium-craft (Lovable);
   o "olympo" é só toque: greca dourada fina, numerais romanos e anel dourado no preço.
 -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/lp/protocolo-labial/fonts/is-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/lp/protocolo-labial/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://connect.facebook.net">
 <style>
+/* Fontes no próprio domínio (subconjunto latino). As "Fallback" têm as medidas calibradas
+   (size-adjust/ascent) pra troca de fonte NÃO empurrar o layout (era o CLS de 0,116). */
+@font-face{font-family:"Instrument Serif";src:url(/lp/protocolo-labial/fonts/is-regular.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Instrument Serif";src:url(/lp/protocolo-labial/fonts/is-italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:Inter;src:url(/lp/protocolo-labial/fonts/inter-var.woff2) format("woff2");font-weight:400 700;font-style:normal;font-display:swap}
+@font-face{font-family:"IS Fallback";src:local("Times New Roman"),local("TimesNewRomanPSMT"),local("Times");size-adjust:82.83%;ascent-override:119.5%;descent-override:37.4%;line-gap-override:0%}
+@font-face{font-family:"Inter Fallback";src:local("Arial"),local("ArialMT"),local("Helvetica");size-adjust:105.79%;ascent-override:91.57%;descent-override:22.8%;line-gap-override:0%}
 :root{
   --bg:#fdfcf8;--surface:#f6f3ee;--card:#fff;--muted:#efebe4;--ink:#0d0806;--ink2:#050302;--txt2:#5a544f;
   --line:rgba(13,8,6,.10);--rosa:#c4586f;--rosa-soft:#f3d3dc;--rosa-glow:rgba(228,110,140,.42);--ouro:#caa45a;
-  --serif:"Instrument Serif","Times New Roman",Georgia,serif;--sans:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --serif:"Instrument Serif","IS Fallback","Times New Roman",Georgia,serif;--sans:Inter,"Inter Fallback",ui-sans-serif,system-ui,-apple-system,sans-serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
   --float:0 1px 2px rgba(5,3,2,.06),0 24px 60px -24px rgba(5,3,2,.22);
   --ease:cubic-bezier(.22,1,.36,1);
@@ -562,11 +569,11 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
   <div class="hero__glow" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <!-- flutuantes: aparecem ao entrar e seguem o scroll (parallax) -->
-  <div class="flt" style="left:4%;top:16%" data-d=".6" data-r="-8" aria-hidden="true"><div class="flt__in polaroid"><img src="/lp/protocolo-labial/resultados/08.webp" alt="" loading="lazy"></div></div>
+  <div class="flt" style="left:4%;top:16%" data-d=".6" data-r="-8" aria-hidden="true"><div class="flt__in polaroid"><img width="240" height="300" src="/lp/protocolo-labial/resultados/240/08.webp" alt="" loading="lazy"></div></div>
   <div class="flt" style="right:5%;top:12%" data-d=".45" data-r="10" aria-hidden="true"><div class="flt__in medalhao" style="transition-delay:.1s"><svg><use href="#i-greca"/></svg></div></div>
-  <div class="flt flt--sm-off" style="right:4%;top:46%" data-d=".7" data-r="12" aria-hidden="true"><div class="flt__in polaroid" style="transition-delay:.2s"><img src="/lp/protocolo-labial/resultados/06.webp" alt="" loading="lazy"></div></div>
+  <div class="flt flt--sm-off" style="right:4%;top:46%" data-d=".7" data-r="12" aria-hidden="true"><div class="flt__in polaroid" style="transition-delay:.2s"><img width="240" height="300" src="/lp/protocolo-labial/resultados/240/06.webp" alt="" loading="lazy"></div></div>
   <div class="flt flt--sm-off" style="left:6%;top:60%" data-d=".55" data-r="-10" aria-hidden="true"><div class="flt__in medalhao" style="transition-delay:.25s"><svg><use href="#i-greca"/></svg></div></div>
-  <div class="flt flt--sm-off" style="left:9%;top:84%" data-d=".35" data-r="6" aria-hidden="true"><div class="flt__in polaroid" style="transition-delay:.3s"><img src="/lp/protocolo-labial/resultados/03.webp" alt="" loading="lazy"></div></div>
+  <div class="flt flt--sm-off" style="left:9%;top:84%" data-d=".35" data-r="6" aria-hidden="true"><div class="flt__in polaroid" style="transition-delay:.3s"><img width="240" height="300" src="/lp/protocolo-labial/resultados/240/03.webp" alt="" loading="lazy"></div></div>
 
   <div class="wrap hero__in">
     <span class="hero__over mono fade-up"><i></i>Aula ao vivo · 4 horas · sala fechada</span>
@@ -583,7 +590,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
       <a class="btn" data-vaga href="#inscricao">Quero minha vaga · R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a>
     </div>
     <div class="confia fade-up"><span><svg aria-hidden="true"><use href="#i-cad"/></svg>Sala fechada</span><b></b><span>+70 mil alunos formados pelo James</span></div>
-    <div class="video-wrap fade-up"><figure class="video"><img src="/lp/protocolo-labial/james-avaliando.webp" alt="James Olaya avaliando o lábio de uma cliente" width="1400" height="933" fetchpriority="high"><figcaption class="video__pill"><i></i>Aula ao vivo com James Olaya</figcaption></figure><div class="mini mini--e" aria-hidden="true"><img src="/lp/protocolo-labial/resultados/08.webp" alt="" width="800" height="1000"></div><div class="mini mini--d" aria-hidden="true"><img src="/lp/protocolo-labial/resultados/06.webp" alt="" width="800" height="1000"></div></div>
+    <div class="video-wrap fade-up"><figure class="video"><img src="/lp/protocolo-labial/james-avaliando.webp" srcset="/lp/protocolo-labial/sm/james-avaliando.webp 700w, /lp/protocolo-labial/james-avaliando.webp 1400w" sizes="(min-width:860px) 820px, 92vw" alt="James Olaya avaliando o lábio de uma cliente" width="1400" height="933" fetchpriority="high" decoding="async"><figcaption class="video__pill"><i></i>Aula ao vivo com James Olaya</figcaption></figure><div class="mini mini--e" aria-hidden="true"><img width="240" height="300" loading="lazy" src="/lp/protocolo-labial/resultados/240/08.webp" alt=""></div><div class="mini mini--d" aria-hidden="true"><img width="240" height="300" loading="lazy" src="/lp/protocolo-labial/resultados/240/06.webp" alt=""></div></div>
   </div>
 </section>
 
@@ -594,7 +601,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
       <p class="over">O que ninguém te explicou</p>
       <h2 class="display h2" style="margin-top:14px">Por que você ainda <em>não conseguiu.</em></h2>
       <span class="greca l" aria-hidden="true"></span>
-      <figure class="edit__fig"><div class="edit__img"><img src="/lp/protocolo-labial/antes-depois/01-antes.webp" alt="Lábio escuro, com a cor própria fria aparecendo" loading="lazy" width="960" height="600"></div><figcaption class="mono">A cor de baixo: o lábio antes de qualquer pigmento</figcaption></figure>
+      <figure class="edit__fig"><div class="edit__img"><img src="/lp/protocolo-labial/antes-depois/01-antes.webp" srcset="/lp/protocolo-labial/antes-depois/480/01-antes.webp 480w, /lp/protocolo-labial/antes-depois/01-antes.webp 960w" sizes="(min-width:1024px) 460px, 92vw" alt="Lábio escuro, com a cor própria fria aparecendo" loading="lazy" width="960" height="600"></div><figcaption class="mono">A cor de baixo: o lábio antes de qualquer pigmento</figcaption></figure>
     </div>
     <div class="edit__txt">
       <p>Você já assistiu tutorial de labial no Instagram e no YouTube, já fez em amiga, em você mesma, talvez num curso curto. Cicatrizou apagado, ou acinzentado, a cliente reclamou, e você parou de oferecer. Não foi falta de mão e não foi a pele dela. Você escolheu o pigmento olhando para o tom que a cliente queria ver. Perguntar qual cor ela quer e pegar aquele pote é a parte mais repetida do labial. E a mais fraca.</p>
@@ -611,7 +618,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
 
 <!-- ============ apoio: FAIXA ESCURA (ponte pro CTA) ============ -->
 <section class="escura">
-  <div class="escura__bg" aria-hidden="true"><img src="/lp/protocolo-labial/procedimento.webp" alt="" loading="lazy"></div>
+  <div class="escura__bg" aria-hidden="true"><img src="/lp/protocolo-labial/procedimento.webp" srcset="/lp/protocolo-labial/sm/procedimento.webp 700w, /lp/protocolo-labial/procedimento.webp 1400w" sizes="100vw" alt="" loading="lazy"></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap">
     <h2 class="display h2 rv">Você não errou a mão.<br><em>Você errou a leitura.</em></h2>
@@ -734,7 +741,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
           <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> você classifica lábios reais comigo, um atrás do outro, pela comissura, que é onde a cor de baixo é mais honesta.</span></p>
           <p class="row__fim"><span>Você termina com</span>as 3 famílias de subtom reconhecidas a olho e o Cartão das Três Famílias preenchido.</p>
         </div>
-        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/02.webp" alt="Lábio com contorno escuro, antes e depois" loading="lazy" width="800" height="1000"></figure>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/02.webp" srcset="/lp/protocolo-labial/resultados/480/02.webp 480w, /lp/protocolo-labial/resultados/02.webp 800w" sizes="(min-width:1024px) 380px, 92vw" alt="Lábio com contorno escuro, antes e depois" loading="lazy" width="800" height="1000"></figure>
       </li>
       <li class="row rv">
         <div>
@@ -745,7 +752,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
           <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> a gente monta a decisão de neutralização caso a caso, incluindo os casos em que você não neutraliza nada.</span></p>
           <p class="row__fim"><span>Você termina com</span>o Mapa de Neutralização preenchido e o Protocolo das Duas Passadas na mão.</p>
         </div>
-        <figure class="row__foto"><img src="/lp/protocolo-labial/procedimento.webp" alt="Aplicação de pigmento no lábio" loading="lazy" width="1400" height="933"></figure>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/procedimento.webp" srcset="/lp/protocolo-labial/sm/procedimento.webp 700w, /lp/protocolo-labial/procedimento.webp 1400w" sizes="(min-width:1024px) 380px, 92vw" alt="Aplicação de pigmento no lábio" loading="lazy" width="1400" height="933"></figure>
       </li>
       <li class="intervalo rv" aria-label="Intervalo"><i></i><span>intervalo</span><i></i></li>
       <li class="row rv">
@@ -757,7 +764,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
           <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> eu abro casos de lábio escuro do começo ao fim (leitura, decisão e resultado cicatrizado) e você refaz a leitura comigo antes de eu mostrar o que aconteceu.</span></p>
           <p class="row__fim"><span>Você termina com</span>o Roteiro da Consulta de Labial preenchido com as suas palavras.</p>
         </div>
-        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/01.webp" alt="Lábio escuro, antes e depois" loading="lazy" width="800" height="1000"></figure>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/01.webp" srcset="/lp/protocolo-labial/resultados/480/01.webp 480w, /lp/protocolo-labial/resultados/01.webp 800w" sizes="(min-width:1024px) 380px, 92vw" alt="Lábio escuro, antes e depois" loading="lazy" width="800" height="1000"></figure>
       </li>
       <li class="row rv">
         <div>
@@ -768,7 +775,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
           <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> você traz o lábio da sua cliente, ou o trabalho seu que cicatrizou errado, e a gente lê junto, ao vivo.</span></p>
           <p class="row__fim"><span>Você termina com</span>a decisão pronta para o próximo labial da sua agenda, corrigida por mim antes de você aplicar.</p>
         </div>
-        <figure class="row__foto"><img src="/lp/protocolo-labial/james-quadro.webp" alt="James Olaya desenhando um lábio no quadro branco durante a aula" loading="lazy" width="1000" height="1250"></figure>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/james-quadro.webp" srcset="/lp/protocolo-labial/sm/james-quadro.webp 500w, /lp/protocolo-labial/james-quadro.webp 1000w" sizes="(min-width:1024px) 380px, 92vw" alt="James Olaya desenhando um lábio no quadro branco durante a aula" loading="lazy" width="1000" height="1250"></figure>
       </li>
     </ol>
   </div>
@@ -784,12 +791,12 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
   </div>
   <div class="wrap">
     <div class="bento__g">
-      <article class="tile tile--destaque rv"><div class="tile__foto"><img src="/lp/protocolo-labial/resultados/03.webp" alt="Antes e depois de lábio com subtom frio neutralizado" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">01</span><h3>Leitura ao vivo, caso por caso.</h3><p>Você não assiste à classificação sendo feita. Você classifica, erra na sala, e é corrigida na hora. Isso é bem mais barato do que errar na cliente.</p></div></article>
-      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/resultados/05.webp" alt="Antes e depois de lábio pálido que ficou rosado" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">02</span><h3>Casos reais, com o antes e o depois de 30 dias.</h3><p>Tutorial mostra o dia da aplicação. Aqui você vê o mesmo lábio cicatrizado, que é a única parte que interessa.</p></div></article>
-      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/james-avaliando.webp" alt="James Olaya avaliando o lábio de uma cliente" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">03</span><h3>O seu caso analisado.</h3><p>Você traz o seu, a gente lê junto e você sai com a decisão daquele atendimento tomada.</p></div></article>
-      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/procedimento.webp" alt="Aplicação de pigmento no lábio" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">04</span><h3>Correção antes de aplicar.</h3><p>O que estiver errado na sua leitura a gente acha enquanto ainda estamos juntos, não depois que sua cliente reclamar.</p></div></article>
-      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/james-turma.webp" alt="James Olaya falando no meio da turma" loading="lazy" width="680" height="850"></div><div class="tile__txt"><span class="tile__n">05</span><h3>Sala fechada.</h3><p>Não é aula aberta com mil pessoas no chat. É turma pequena o suficiente para eu olhar o que você trouxe.</p></div></article>
-      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/james-atendimento.webp" alt="James Olaya em atendimento de micropigmentação" loading="lazy" width="1000" height="1250"></div><div class="tile__txt"><span class="tile__n">06</span><h3>Fichas preenchidas ao vivo.</h3><p>Você não sai com material para estudar depois. Sai com material já preenchido com os seus casos.</p></div></article>
+      <article class="tile tile--destaque rv"><div class="tile__foto"><img src="/lp/protocolo-labial/resultados/03.webp" srcset="/lp/protocolo-labial/resultados/480/03.webp 480w, /lp/protocolo-labial/resultados/03.webp 800w" sizes="(min-width:1024px) 380px, (min-width:768px) 46vw, 38vw" alt="Antes e depois de lábio com subtom frio neutralizado" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">01</span><h3>Leitura ao vivo, caso por caso.</h3><p>Você não assiste à classificação sendo feita. Você classifica, erra na sala, e é corrigida na hora. Isso é bem mais barato do que errar na cliente.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/resultados/05.webp" srcset="/lp/protocolo-labial/resultados/480/05.webp 480w, /lp/protocolo-labial/resultados/05.webp 800w" sizes="(min-width:1024px) 380px, (min-width:768px) 46vw, 38vw" alt="Antes e depois de lábio pálido que ficou rosado" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">02</span><h3>Casos reais, com o antes e o depois de 30 dias.</h3><p>Tutorial mostra o dia da aplicação. Aqui você vê o mesmo lábio cicatrizado, que é a única parte que interessa.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/james-avaliando.webp" srcset="/lp/protocolo-labial/sm/james-avaliando.webp 700w, /lp/protocolo-labial/james-avaliando.webp 1400w" sizes="(min-width:1024px) 380px, (min-width:768px) 46vw, 38vw" alt="James Olaya avaliando o lábio de uma cliente" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">03</span><h3>O seu caso analisado.</h3><p>Você traz o seu, a gente lê junto e você sai com a decisão daquele atendimento tomada.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/procedimento.webp" srcset="/lp/protocolo-labial/sm/procedimento.webp 700w, /lp/protocolo-labial/procedimento.webp 1400w" sizes="(min-width:1024px) 380px, (min-width:768px) 46vw, 38vw" alt="Aplicação de pigmento no lábio" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">04</span><h3>Correção antes de aplicar.</h3><p>O que estiver errado na sua leitura a gente acha enquanto ainda estamos juntos, não depois que sua cliente reclamar.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/james-turma.webp" srcset="/lp/protocolo-labial/sm/james-turma.webp 400w, /lp/protocolo-labial/james-turma.webp 680w" sizes="(min-width:1024px) 380px, (min-width:768px) 46vw, 38vw" alt="James Olaya falando no meio da turma" loading="lazy" width="680" height="850"></div><div class="tile__txt"><span class="tile__n">05</span><h3>Sala fechada.</h3><p>Não é aula aberta com mil pessoas no chat. É turma pequena o suficiente para eu olhar o que você trouxe.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/james-atendimento.webp" srcset="/lp/protocolo-labial/sm/james-atendimento.webp 500w, /lp/protocolo-labial/james-atendimento.webp 1000w" sizes="(min-width:1024px) 380px, (min-width:768px) 46vw, 38vw" alt="James Olaya em atendimento de micropigmentação" loading="lazy" width="1000" height="1250"></div><div class="tile__txt"><span class="tile__n">06</span><h3>Fichas preenchidas ao vivo.</h3><p>Você não sai com material para estudar depois. Sai com material já preenchido com os seus casos.</p></div></article>
     </div>
     <div class="bento__cta rv"><a class="btn" data-vaga href="#inscricao">Quero minha vaga · R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a></div>
   </div>
@@ -825,7 +832,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
 <!-- ============ 8. QUEM VAI CONDUZIR ============ -->
 <section class="james bt" id="james">
   <div class="wrap james__g">
-    <div class="james__fotos rv"><figure class="james__foto"><img src="/lp/protocolo-labial/james-retrato.webp" alt="Retrato de James Olaya" loading="lazy" width="1000" height="1250"><figcaption><b>James Olaya</b><span>Biomédico · Master Trainer</span></figcaption></figure><figure class="james__palco"><img src="/lp/protocolo-labial/james-palco.webp" alt="James Olaya subindo ao palco diante da plateia" loading="lazy" width="900" height="600"><figcaption>+70 mil alunos formados</figcaption></figure></div>
+    <div class="james__fotos rv"><figure class="james__foto"><img src="/lp/protocolo-labial/james-retrato.webp" srcset="/lp/protocolo-labial/sm/james-retrato.webp 500w, /lp/protocolo-labial/james-retrato.webp 1000w" sizes="(min-width:1024px) 520px, 92vw" alt="Retrato de James Olaya" loading="lazy" width="1000" height="1250"><figcaption><b>James Olaya</b><span>Biomédico · Master Trainer</span></figcaption></figure><figure class="james__palco"><img src="/lp/protocolo-labial/james-palco.webp" srcset="/lp/protocolo-labial/sm/james-palco.webp 450w, /lp/protocolo-labial/james-palco.webp 900w" sizes="(min-width:1024px) 240px, 50vw" alt="James Olaya subindo ao palco diante da plateia" loading="lazy" width="900" height="600"><figcaption>+70 mil alunos formados</figcaption></figure></div>
     <div class="james__txt rv">
       <p class="over" style="margin-top:0">Quem vai conduzir</p>
       <h2 class="display">James Olaya</h2>
@@ -948,8 +955,13 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
   var track=document.getElementById("carTrack"),car=document.getElementById("car"),dotsEl=document.getElementById("carDots");
   legendas.forEach(function(l,i){var nn=String(i+1).padStart(2,"0");var s=document.createElement("div");s.className="car__slide";
     // eager de propósito: lazy dentro de trilha movida por transform nunca carrega o que está fora da tela
-    s.innerHTML='<figure class="foto"><div class="foto__img"><img src="'+E+'resultados/'+nn+'.webp" alt="Antes e depois de micropigmentação labial: '+l+'" loading="eager" decoding="async" width="800" height="1000"></div><figcaption class="foto__cap"><span class="foto__tag">Resultado '+nn+'</span><b>'+l+'</b><span>Em cima o antes, embaixo o depois</span></figcaption></figure>';
+    s.innerHTML='<figure class="foto"><div class="foto__img"><img data-src="'+E+'resultados/'+nn+'.webp" data-srcset="'+E+'resultados/480/'+nn+'.webp 480w, '+E+'resultados/'+nn+'.webp 800w" sizes="(min-width:1024px) 32vw, (min-width:768px) 44vw, (min-width:640px) 60vw, 84vw" alt="Antes e depois de micropigmentação labial: '+l+'" decoding="async" width="800" height="1000"></div><figcaption class="foto__cap"><span class="foto__tag">Resultado '+nn+'</span><b>'+l+'</b><span>Em cima o antes, embaixo o depois</span></figcaption></figure>';
     track.appendChild(s)});
+  // eager de propósito quando carrega (lazy dentro de trilha com transform não dispara),
+  // mas só a 1200px de distância: sem isso eram ~1 MB baixando junto com o topo da página
+  var ioCar=new IntersectionObserver(function(es){if(!es[0].isIntersecting)return;ioCar.disconnect();
+    track.querySelectorAll("img[data-src]").forEach(function(im){im.srcset=im.dataset.srcset;im.src=im.dataset.src;im.removeAttribute("data-src")})},{rootMargin:"1200px 0px"});
+  ioCar.observe(car);
   var slides=[].slice.call(track.children),snaps=[],idx=0,x=0;
   function medir(){var max=Math.max(0,track.scrollWidth-car.clientWidth);var vistos={};snaps=[];
     slides.forEach(function(s){var v=Math.min(s.offsetLeft-slides[0].offsetLeft,max);v=Math.round(v);if(!vistos[v]){vistos[v]=1;snaps.push(v)}});
@@ -974,7 +986,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
   var ads=["Lábio escuro","Contorno escuro","Subtom frio","Lábio masculino","Lábio pálido","Lábio apagado"];
   var grid=document.getElementById("adGrid");
   ads.forEach(function(a,i){var nn=String(i+1).padStart(2,"0");var d=document.createElement("div");d.className="rv";
-    d.innerHTML='<div class="cmp" style="--x:50%"><img src="'+E+'antes-depois/'+nn+'-depois.webp" alt="Depois: '+a+'" loading="lazy"><img class="cmp__antes" src="'+E+'antes-depois/'+nn+'-antes.webp" alt="Antes: '+a+'" loading="lazy"><span class="cmp__linha"></span><span class="cmp__alca" role="slider" tabindex="0" aria-label="Comparar antes e depois" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg><use href="#i-lr"/></svg></span></div><div class="ad__leg"><span>← Antes</span><span>Depois →</span></div><div class="ad__cap"><b>'+a+'</b></div>';
+    d.innerHTML='<div class="cmp" style="--x:50%"><img src="'+E+'antes-depois/'+nn+'-depois.webp" srcset="'+E+'antes-depois/480/'+nn+'-depois.webp 480w, '+E+'antes-depois/'+nn+'-depois.webp 960w" sizes="(min-width:1024px) 380px, (min-width:640px) 46vw, 92vw" alt="Depois: '+a+'" loading="lazy"><img class="cmp__antes" src="'+E+'antes-depois/'+nn+'-antes.webp" srcset="'+E+'antes-depois/480/'+nn+'-antes.webp 480w, '+E+'antes-depois/'+nn+'-antes.webp 960w" sizes="(min-width:1024px) 380px, (min-width:640px) 46vw, 92vw" alt="Antes: '+a+'" loading="lazy"><span class="cmp__linha"></span><span class="cmp__alca" role="slider" tabindex="0" aria-label="Comparar antes e depois" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg><use href="#i-lr"/></svg></span></div><div class="ad__leg"><span>← Antes</span><span>Depois →</span></div><div class="ad__cap"><b>'+a+'</b></div>';
     grid.appendChild(d);io.observe(d);
     var box=d.querySelector(".cmp"),alca=d.querySelector(".cmp__alca"),ativo=false;
     function pos(cx){var r=box.getBoundingClientRect();var v=Math.max(0,Math.min(100,(cx-r.left)/r.width*100));box.style.setProperty("--x",v+"%");alca.setAttribute("aria-valuenow",Math.round(v))}
@@ -1060,6 +1072,14 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
   function barra(){var on=scrollY>hero.offsetHeight-300&&fimSec.getBoundingClientRect().top>innerHeight*.6&&ctasVisiveis<=0;fixa.classList.toggle("show",on);fixa.setAttribute("aria-hidden",on?"false":"true")}
   addEventListener("scroll",barra,{passive:true});barra();
 })();
+</script>
+<script>
+/* GA4 do site (G-N93TQZV050) carregado DEPOIS da página: o withTracking não injeta o dele quando
+   o ID já está no HTML. O gtag fica na fila desde já; o script de ~150 KB só baixa após o load. */
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-N93TQZV050");
+(function(){function carregar(){var s=document.createElement("script");s.async=true;s.src="https://www.googletagmanager.com/gtag/js?id=G-N93TQZV050";document.head.appendChild(s)}
+  function depois(){("requestIdleCallback" in window)?requestIdleCallback(carregar,{timeout:3000}):setTimeout(carregar,1500)}
+  if(document.readyState==="complete")depois();else addEventListener("load",depois)})();
 </script>
 </body>
 </html>
