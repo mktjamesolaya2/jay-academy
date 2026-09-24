@@ -94,7 +94,11 @@ section{position:relative}
 .confia b{width:1px;height:14px;background:var(--line)}
 .video{position:relative;width:100%;max-width:820px;aspect-ratio:16/9;margin-top:48px;border-radius:24px;overflow:hidden;background:#000;box-shadow:var(--float)}
 .video img{width:100%;height:100%;object-fit:cover;opacity:.9}
-.video__pill{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border-radius:999px;background:#fff;font-size:13px;font-weight:600;box-shadow:var(--float)}
+.video__pill{position:absolute;left:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.92);font-size:12px;font-weight:600;box-shadow:var(--float)}
+.video-wrap{position:relative;width:100%;max-width:820px;margin-top:48px}.video-wrap .video{margin-top:0}
+.mini{display:none;position:absolute;width:92px;padding:5px 5px 14px;background:#fff;border-radius:12px;box-shadow:0 18px 30px -14px rgba(0,0,0,.35),0 0 0 1px var(--line);z-index:2}
+.mini img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:8px}
+.mini--e{left:-8px;top:-46px;transform:rotate(-8deg)}.mini--d{right:-8px;top:-40px;transform:rotate(7deg)}
 .video__pill i{width:8px;height:8px;border-radius:50%;background:#e0344f;animation:pulso 2s infinite}
 /* flutuantes */
 .flt{position:absolute;z-index:0;pointer-events:none;will-change:transform}
@@ -134,6 +138,7 @@ section{position:relative}
 .cf{--s:360px;position:relative;height:calc(var(--s) + 120px);margin-top:40px;overflow:hidden}
 .cf__card{position:absolute;left:50%;top:50%;width:var(--s);height:var(--s);border-radius:24px;overflow:hidden;background:#fff;transition:all .5s ease-in-out;cursor:pointer;box-shadow:0 10px 30px -10px rgba(0,0,0,.15),inset 0 0 0 1px var(--line);display:flex;flex-direction:column;text-align:left}
 .cf__card:hover{box-shadow:0 10px 30px -10px rgba(0,0,0,.15),inset 0 0 0 1px rgba(196,88,111,.4)}
+.cf__card:not(.on){opacity:.9}
 .cf__card.on{z-index:10;cursor:default;box-shadow:0 30px 80px -20px rgba(196,88,111,.45),0 0 0 2px var(--ouro)}
 .cf__vis{position:relative;height:60%;background:linear-gradient(160deg,#fbf3f0,#f3e6e2);overflow:hidden;display:grid;place-items:center}
 .cf__num{position:absolute;left:16px;top:14px;font-family:var(--serif);font-style:italic;font-size:22px;color:var(--ouro)}
@@ -147,7 +152,7 @@ section{position:relative}
 .rbtn{width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:var(--float),inset 0 0 0 1px var(--line);display:grid;place-items:center;transition:background .3s,color .3s}
 .rbtn svg{width:20px;height:20px}
 .rbtn:hover{background:var(--rosa);color:#fff}
-.cf__desc{max-width:620px;margin:26px auto 0;text-align:center;min-height:84px}
+.cf__desc{max-width:620px;margin:26px auto 0;padding-top:22px;border-top:1px solid var(--line);text-align:center;min-height:84px}
 .cf__desc b{display:block;font-family:var(--serif);font-weight:400;font-size:26px;letter-spacing:-.01em}
 .cf__desc p{margin-top:6px;font-size:15.5px;color:var(--txt2);line-height:1.65}
 .cf__desc.troca{animation:fadeUp .5s var(--ease)}
@@ -187,7 +192,8 @@ section{position:relative}
 .edit .h2{font-size:clamp(34px,4.2vw,52px);line-height:1.02}
 .edit__img{margin-top:40px;max-width:460px;border-radius:24px;overflow:hidden;box-shadow:0 30px 80px -30px rgba(0,0,0,.45);position:relative}
 .edit__img img{width:100%;aspect-ratio:16/10;object-fit:cover;will-change:transform}
-.edit__img figcaption{position:absolute;left:14px;bottom:14px;padding:6px 12px;border-radius:999px;background:rgba(13,8,6,.7);color:#fff}
+.edit__fig{margin-top:40px;max-width:460px}.edit__fig .edit__img{margin-top:0}
+.edit__fig figcaption{margin-top:12px;color:var(--rosa);font-size:10.5px;letter-spacing:.16em}
 .edit__txt p{font-size:17px;line-height:1.75;color:rgba(13,8,6,.8)}
 .edit__txt p+p{margin-top:24px}
 .edit__txt strong{color:var(--ink);font-weight:600}
@@ -209,6 +215,7 @@ section{position:relative}
 .escura .btn{margin-top:34px;background:var(--bg);color:var(--ink)}
 
 /* ================= 7. CARROSSEL DE RESULTADOS (mecânica "Método") ================= */
+/* Regra da página: foto de resultado NUNCA leva texto/gradiente por cima — legenda sempre embaixo. */
 .res{padding:128px 0 120px}
 .res__top{display:flex;align-items:flex-end;justify-content:space-between;gap:32px}
 .res__top .h2{font-size:clamp(34px,4.2vw,52px);max-width:680px}
@@ -221,18 +228,18 @@ section{position:relative}
 .car{margin-top:48px;overflow:hidden;touch-action:pan-y;cursor:grab}
 .car.drag{cursor:grabbing}
 .car__track{display:flex;margin-left:-16px;will-change:transform}
-.car__slide{flex:0 0 88%;padding-left:16px;min-width:0}
+.car__slide{flex:0 0 84%;padding-left:16px;min-width:0}
 @media(min-width:640px){.car__slide{flex-basis:60%}}
 @media(min-width:768px){.car__track{margin-left:-24px}.car__slide{flex-basis:44%;padding-left:24px}}
-@media(min-width:1024px){.car__slide{flex-basis:36%}}
-.foto{position:relative;aspect-ratio:4/5;border-radius:24px;overflow:hidden;background:#1a1414;user-select:none}
-.foto img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease);-webkit-user-drag:none;pointer-events:none}
-.foto:hover img{transform:scale(1.04)}
-.foto::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.95),rgba(0,0,0,.6) 32%,rgba(0,0,0,.1) 62%,transparent);pointer-events:none}
-.foto__tag{position:absolute;left:20px;top:20px;z-index:1;font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:#f6b9c8;text-transform:uppercase;text-shadow:0 1px 8px rgba(0,0,0,.5)}
-.foto__cap{position:absolute;left:22px;right:22px;bottom:22px;z-index:1;color:#fff}
-.foto__cap b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(26px,2.2vw,30px);line-height:1.05;letter-spacing:-.01em}
-.foto__cap span{display:block;margin-top:6px;font-size:14px;color:rgba(255,255,255,.85)}
+@media(min-width:1024px){.car__slide{flex-basis:32%}}
+.foto{user-select:none}
+.foto__img{position:relative;aspect-ratio:4/5;border-radius:24px;overflow:hidden;background:var(--muted);box-shadow:0 24px 50px -30px rgba(0,0,0,.4),0 0 0 1px var(--line)}
+.foto__img img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease);-webkit-user-drag:none;pointer-events:none}
+.foto:hover .foto__img img{transform:scale(1.03)}
+.foto__cap{margin-top:16px;padding:0 4px}
+.foto__tag{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--rosa);text-transform:uppercase}
+.foto__cap b{display:block;margin-top:6px;font-family:var(--serif);font-weight:400;font-size:clamp(23px,2vw,27px);line-height:1.08;letter-spacing:-.01em}
+.foto__cap span{display:block;margin-top:5px;font-size:13.5px;color:var(--txt2)}
 .dots{display:flex;justify-content:center;gap:8px;margin-top:32px}
 .dots button{width:16px;height:6px;border-radius:999px;background:rgba(13,8,6,.2);transition:all .35s var(--ease)}
 .dots button.on{width:32px;background:var(--rosa)}
@@ -256,7 +263,7 @@ section{position:relative}
 .row__pratica b{font-weight:600}
 .row__fim{margin-top:20px;display:inline-flex;align-items:flex-start;gap:10px;max-width:480px;padding:10px 16px;border-radius:16px;background:rgba(196,88,111,.1);font-size:13.5px;line-height:1.5;color:var(--ink)}
 .row__fim span{flex:0 0 auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--rosa);padding-top:2px}
-.row__foto{border-radius:28px;overflow:hidden;box-shadow:0 24px 60px -30px rgba(0,0,0,.25);max-height:340px;aspect-ratio:4/3}
+.row__foto{border-radius:28px;overflow:hidden;box-shadow:0 24px 60px -30px rgba(0,0,0,.25);aspect-ratio:4/5;width:100%;max-width:380px;justify-self:center;background:var(--muted)}
 .row__foto img{width:100%;height:100%;object-fit:cover}
 .row__foto--james{background:radial-gradient(70% 70% at 50% 60%,#f3c3cf,#f7e4e8 60%,var(--surface))}
 .row__foto--james img{object-fit:contain;object-position:50% 100%}
@@ -265,24 +272,23 @@ section{position:relative}
 .intervalo span{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--ouro)}
 .row.rv{transition-duration:.5s}
 
-/* ================= 9. BENTO (ao vivo) ================= */
+/* ================= 9. BENTO (ao vivo) — foto limpa em cima, texto embaixo ================= */
 .bento{padding:160px 0;background:var(--surface);overflow:hidden}
 .bento__glow{position:absolute;left:50%;top:55%;width:1100px;height:720px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(246,200,212,.6),transparent);opacity:.5;filter:blur(40px);pointer-events:none}
 .bento .h2{max-width:720px;margin:0 auto}
-.bento__g{position:relative;display:grid;gap:20px;max-width:1180px;margin:56px auto 0;grid-auto-rows:minmax(240px,auto)}
-@media(min-width:768px){.bento__g{grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(180px,auto)}.tile--big{grid-column:span 2;grid-row:span 2;min-height:420px}.tile{min-height:240px}}
-.tile{position:relative;border-radius:24px;overflow:hidden;background:#fff;box-shadow:var(--float);display:flex;flex-direction:column;justify-content:flex-end;padding:22px;transition:transform .5s var(--ease)}
-.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
-.tile::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 8%,rgba(253,252,248,.82) 42%,rgba(253,252,248,.25) 70%,transparent);z-index:1}
-.tile--big::before{background:linear-gradient(0deg,var(--bg) 4%,rgba(253,252,248,.78) 30%,rgba(253,252,248,.1) 55%,transparent)}
+.bento__g{position:relative;display:grid;gap:20px;max-width:1180px;margin:56px auto 0}
+@media(min-width:768px){.bento__g{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.bento__g{grid-template-columns:repeat(3,1fr)}}
+.tile{border-radius:24px;overflow:hidden;background:#fff;box-shadow:var(--float);display:flex;flex-direction:column;transition:transform .5s var(--ease),box-shadow .5s}
 .tile:hover{transform:translateY(-2px)}
-.tile:hover img{transform:scale(1.03)}
-.tile>*:not(img){position:relative;z-index:2}
-.tile__n{position:absolute!important;left:22px;top:20px;color:var(--rosa);font-family:var(--mono);font-size:12px;letter-spacing:.14em;background:rgba(255,255,255,.85);padding:4px 9px;border-radius:999px}
-.tile h3{font-size:17px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
-.tile p{margin-top:6px;font-size:13.5px;line-height:1.55;color:var(--txt2)}
-.tile--big h3{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3vw,36px);line-height:1.05}
-.tile--big p{font-size:15px;max-width:520px}
+.tile__foto{aspect-ratio:4/5;overflow:hidden;background:var(--muted)}
+.tile__foto img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease)}
+.tile:hover .tile__foto img{transform:scale(1.03)}
+.tile__txt{padding:20px 22px 24px}
+.tile__n{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--rosa)}
+.tile h3{margin-top:6px;font-family:var(--serif);font-weight:400;font-size:24px;line-height:1.1;letter-spacing:-.01em}
+.tile p{margin-top:8px;font-size:14px;line-height:1.6;color:var(--txt2)}
+.tile--destaque{box-shadow:var(--float),0 0 0 1px rgba(202,164,90,.6)}
 .bento__cta{margin-top:48px;text-align:center}
 
 /* ================= 10. POR QUE R$ 27 (card mockup) ================= */
@@ -330,10 +336,8 @@ section{position:relative}
 .cmp__alca{position:absolute;top:50%;left:var(--x,50%);width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25);display:grid;place-items:center;transition:transform .2s}
 .cmp.drag .cmp__alca{transform:scale(1.1)}
 .cmp__alca svg{width:22px;height:22px;color:var(--ink)}
-.cmp__r{position:absolute;top:14px;padding:5px 10px;border-radius:999px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
-.cmp__r--a{left:14px;background:rgba(0,0,0,.7);color:#fff}
-.cmp__r--d{right:14px;background:rgba(255,255,255,.9);color:var(--ink)}
-.ad__cap{margin-top:14px}
+.ad__leg{display:flex;justify-content:space-between;margin-top:10px;padding:0 4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--txt2)}
+.ad__cap{margin-top:8px;padding:0 4px}
 .ad__cap b{display:block;font-size:15px;font-weight:600}
 .ad__cap span{display:block;margin-top:3px;font-size:13.5px;color:var(--txt2)}
 .ad__cap small{display:block;margin-top:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--rosa)}
@@ -352,7 +356,7 @@ section{position:relative}
 .james__g{display:grid;gap:64px;align-items:center}
 @media(min-width:1024px){.james__g{grid-template-columns:5fr 7fr}}
 .james__foto{position:relative;aspect-ratio:4/5;border-radius:24px;overflow:hidden;box-shadow:0 30px 80px -30px rgba(0,0,0,.45);max-width:520px}
-.james__foto img{width:100%;height:100%;object-fit:cover;object-position:62% 30%;transition:transform .7s var(--ease)}
+.james__foto img{width:100%;height:100%;object-fit:cover;object-position:80% 30%;transition:transform .7s var(--ease)}
 .james__foto:hover img{transform:scale(1.02)}
 .james__foto figcaption{position:absolute;left:0;right:0;bottom:0;padding:60px 24px 22px;background:linear-gradient(0deg,rgba(13,8,6,.9),transparent);color:#fff}
 .james__foto figcaption b{display:block;font-size:18px;font-weight:600}
@@ -415,7 +419,9 @@ section{position:relative}
   .confia{order:4}
   .hero__sub{order:5}
   .checks{order:6}
-  .video{order:7;margin-top:36px}
+  .video-wrap{order:7;margin-top:70px}
+  .mini{display:block}
+  .hero__over{font-size:9.5px;letter-spacing:.14em;white-space:nowrap}
   .polaroid{width:104px;padding:5px 5px 16px}
   .medalhao{width:60px;height:60px}.medalhao svg{width:42px;height:42px}
   .hero .flt{display:none}
@@ -438,6 +444,24 @@ section{position:relative}
   .oferta{padding:96px 0 110px}.lista li{font-size:15px}.lista li span{display:none}
   .fixa{display:flex}
   .rodape{padding-bottom:110px}
+}
+/* passada de UI no celular (24/09): menos rolagem, imagens inteiras, CTA sem duplicar */
+@media(max-width:767px){
+  .recebe,.res,.prog,.valor,.pravoce,.ad,.james{padding:76px 0}
+  .edit{padding:84px 0}.bento{padding:84px 0}.oferta{padding:80px 0 96px}.etapas{padding:88px 0 96px}
+  .cf__card:not(.on){opacity:.5}
+  .row{gap:24px}
+  .row__fim{flex-direction:column;gap:4px}
+  .row__foto{max-width:100%}
+  .bento__g{gap:14px}
+  .tile{flex-direction:row;align-items:stretch}
+  .tile__foto{flex:0 0 38%;aspect-ratio:4/5}
+  .tile__txt{padding:16px 16px 18px;align-self:center}
+  .tile h3{font-size:20px}.tile p{font-size:13.5px}
+  .oferta__preco{display:block;width:100%;padding:14px 0 18px;border-radius:24px;background:#fff;box-shadow:var(--float),0 0 0 1px rgba(202,164,90,.6)}
+  .oferta__preco .preco{font-size:84px}
+  .oferta .btn,.valor__cta .btn{width:100%}
+  .james__foto{max-width:100%;aspect-ratio:1/1}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -490,7 +514,7 @@ section{position:relative}
       <a class="btn" href="https://pay.hotmart.com/TODO-CHECKOUT">Quero minha vaga — R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a>
     </div>
     <div class="confia fade-up"><span><svg aria-hidden="true"><use href="#i-cad"/></svg>Sala fechada</span><b></b><span>+70 mil alunos formados pelo James</span></div>
-    <figure class="video fade-up"><img src="/lp/protocolo-labial/james-avaliando.webp" alt="James Olaya avaliando o lábio de uma cliente" width="1400" height="933" fetchpriority="high"><figcaption class="video__pill"><i></i>Aula ao vivo com James Olaya</figcaption></figure>
+    <div class="video-wrap fade-up"><figure class="video"><img src="/lp/protocolo-labial/james-avaliando.webp" alt="James Olaya avaliando o lábio de uma cliente" width="1400" height="933" fetchpriority="high"><figcaption class="video__pill"><i></i>Aula ao vivo com James Olaya</figcaption></figure><div class="mini mini--e" aria-hidden="true"><img src="/lp/protocolo-labial/resultados/08.webp" alt="" width="800" height="1000"></div><div class="mini mini--d" aria-hidden="true"><img src="/lp/protocolo-labial/resultados/06.webp" alt="" width="800" height="1000"></div></div>
   </div>
 </section>
 
@@ -564,7 +588,7 @@ section{position:relative}
       <p class="over">O que ninguém te explicou</p>
       <h2 class="display h2" style="margin-top:14px">Por que você ainda <em>não conseguiu.</em></h2>
       <span class="greca l" aria-hidden="true"></span>
-      <figure class="edit__img"><img src="/lp/protocolo-labial/antes-depois/01-antes.webp" alt="Lábio escuro, com a cor própria fria aparecendo" loading="lazy" data-pxi width="960" height="600"><figcaption class="mono">A cor de baixo</figcaption></figure>
+      <figure class="edit__fig"><div class="edit__img"><img src="/lp/protocolo-labial/antes-depois/01-antes.webp" alt="Lábio escuro, com a cor própria fria aparecendo" loading="lazy" data-pxi width="960" height="600"></div><figcaption class="mono">A cor de baixo — o lábio antes de qualquer pigmento</figcaption></figure>
     </div>
     <div class="edit__txt" data-pxt>
       <p>Você já assistiu tutorial de labial no Instagram e no YouTube, já fez em amiga, em você mesma, talvez num curso curto. Cicatrizou apagado, ou acinzentado, a cliente reclamou, e você parou de oferecer. Não foi falta de mão e não foi a pele dela. Você escolheu o pigmento olhando para o tom que a cliente queria ver. Perguntar qual cor ela quer e pegar aquele pote é a parte mais repetida do labial. E a mais fraca.</p>
@@ -626,7 +650,7 @@ section{position:relative}
           <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> você classifica lábios reais comigo, um atrás do outro, pela comissura — que é onde a cor de baixo é mais honesta.</span></p>
           <p class="row__fim"><span>Você termina com</span>as três famílias de subtom reconhecidas a olho, e o Cartão das Três Famílias preenchido.</p>
         </div>
-        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/02.webp" alt="Lábio com contorno escuro, antes e depois" loading="lazy"></figure>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/02.webp" alt="Lábio com contorno escuro, antes e depois" loading="lazy" width="800" height="1000"></figure>
       </li>
       <li class="row rv">
         <div>
@@ -637,7 +661,7 @@ section{position:relative}
           <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> a gente monta a decisão de neutralização caso a caso, incluindo os casos em que você não neutraliza nada.</span></p>
           <p class="row__fim"><span>Você termina com</span>o Mapa de Neutralização preenchido e o Protocolo das Duas Passadas na mão.</p>
         </div>
-        <figure class="row__foto"><img src="/lp/protocolo-labial/procedimento.webp" alt="Aplicação de pigmento no lábio" loading="lazy"></figure>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/procedimento.webp" alt="Aplicação de pigmento no lábio" loading="lazy" width="1400" height="933"></figure>
       </li>
       <li class="intervalo rv" aria-label="Intervalo"><i></i><span>intervalo</span><i></i></li>
       <li class="row rv">
@@ -649,7 +673,7 @@ section{position:relative}
           <p class="row__pratica"><svg aria-hidden="true"><use href="#i-ok"/></svg><span><b>Na prática:</b> eu abro casos de lábio escuro do começo ao fim — leitura, decisão, resultado cicatrizado — e você refaz a leitura comigo antes de eu mostrar o que aconteceu.</span></p>
           <p class="row__fim"><span>Você termina com</span>o Roteiro da Consulta de Labial preenchido com as suas palavras.</p>
         </div>
-        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/01.webp" alt="Lábio escuro, antes e depois" loading="lazy"></figure>
+        <figure class="row__foto"><img src="/lp/protocolo-labial/resultados/01.webp" alt="Lábio escuro, antes e depois" loading="lazy" width="800" height="1000"></figure>
       </li>
       <li class="row rv">
         <div>
@@ -676,12 +700,12 @@ section{position:relative}
   </div>
   <div class="wrap">
     <div class="bento__g">
-      <article class="tile tile--big rv"><img src="/lp/protocolo-labial/resultados/03.webp" alt="" loading="lazy"><span class="tile__n">01</span><h3>Leitura ao vivo, caso por caso.</h3><p>Você não assiste à classificação sendo feita. Você classifica, erra na sala, e é corrigida na hora — que é bem mais barato do que errar na cliente.</p></article>
-      <article class="tile rv"><img src="/lp/protocolo-labial/resultados/05.webp" alt="" loading="lazy"><span class="tile__n">02</span><h3>Casos reais, com o antes e o depois de trinta dias.</h3><p>Tutorial mostra o dia da aplicação. Aqui você vê o mesmo lábio cicatrizado, que é a única parte que interessa.</p></article>
-      <article class="tile rv"><img src="/lp/protocolo-labial/james-avaliando.webp" alt="" loading="lazy"><span class="tile__n">03</span><h3>O seu caso analisado.</h3><p>Você traz o seu, a gente lê junto e você sai com a decisão daquele atendimento tomada.</p></article>
-      <article class="tile rv"><img src="/lp/protocolo-labial/procedimento.webp" alt="" loading="lazy"><span class="tile__n">04</span><h3>Correção antes de aplicar.</h3><p>O que estiver errado na sua leitura a gente acha enquanto ainda estamos juntos, não depois que sua cliente reclamar.</p></article>
-      <article class="tile rv"><img src="/lp/lips-sense/professor.webp" alt="" loading="lazy" style="object-position:65% 25%"><span class="tile__n">05</span><h3>Sala fechada.</h3><p>Não é aula aberta com mil pessoas no chat. É turma pequena o suficiente para eu olhar o que você trouxe.</p></article>
-      <article class="tile rv"><img src="/lp/protocolo-labial/resultados/07.webp" alt="" loading="lazy"><span class="tile__n">06</span><h3>Fichas preenchidas ao vivo.</h3><p>Você não sai com material para estudar depois. Sai com material já preenchido com os seus casos.</p></article>
+      <article class="tile tile--destaque rv"><div class="tile__foto"><img src="/lp/protocolo-labial/resultados/03.webp" alt="Antes e depois de lábio com subtom frio neutralizado" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">01</span><h3>Leitura ao vivo, caso por caso.</h3><p>Você não assiste à classificação sendo feita. Você classifica, erra na sala, e é corrigida na hora — que é bem mais barato do que errar na cliente.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/resultados/05.webp" alt="Antes e depois de lábio pálido que ficou rosado" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">02</span><h3>Casos reais, com o antes e o depois de trinta dias.</h3><p>Tutorial mostra o dia da aplicação. Aqui você vê o mesmo lábio cicatrizado, que é a única parte que interessa.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/james-avaliando.webp" alt="James Olaya avaliando o lábio de uma cliente" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">03</span><h3>O seu caso analisado.</h3><p>Você traz o seu, a gente lê junto e você sai com a decisão daquele atendimento tomada.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/procedimento.webp" alt="Aplicação de pigmento no lábio" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">04</span><h3>Correção antes de aplicar.</h3><p>O que estiver errado na sua leitura a gente acha enquanto ainda estamos juntos, não depois que sua cliente reclamar.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/lips-sense/professor.webp" alt="James Olaya" loading="lazy" width="800" height="1000" style="object-position:78% 30%"></div><div class="tile__txt"><span class="tile__n">05</span><h3>Sala fechada.</h3><p>Não é aula aberta com mil pessoas no chat. É turma pequena o suficiente para eu olhar o que você trouxe.</p></div></article>
+      <article class="tile rv"><div class="tile__foto"><img src="/lp/protocolo-labial/resultados/07.webp" alt="Antes e depois de lábio masculino" loading="lazy" width="800" height="1000"></div><div class="tile__txt"><span class="tile__n">06</span><h3>Fichas preenchidas ao vivo.</h3><p>Você não sai com material para estudar depois. Sai com material já preenchido com os seus casos.</p></div></article>
     </div>
     <div class="bento__cta rv"><a class="btn" href="https://pay.hotmart.com/TODO-CHECKOUT">Quero minha vaga — R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a></div>
   </div>
@@ -861,7 +885,8 @@ section{position:relative}
   var legendas=[["Do escuro ao uniforme","Por James Olaya"],["Contorno escuro neutralizado","Por James Olaya"],["Subtom frio neutralizado","Por James Olaya"],["Lábio masculino","Por James Olaya"],["Do pálido ao rosado","Por aluna do método"],["Cor definida","Por James Olaya"],["Lábio masculino","Por aluna do método"],["Do apagado ao coral","Por aluna do método"],["Do apagado ao vermelho","Por aluna do método"],["Lábio masculino","Por aluna do método"]];
   var track=document.getElementById("carTrack"),car=document.getElementById("car"),dotsEl=document.getElementById("carDots");
   legendas.forEach(function(l,i){var nn=String(i+1).padStart(2,"0");var s=document.createElement("div");s.className="car__slide";
-    s.innerHTML='<figure class="foto"><img src="'+E+'resultados/'+nn+'.webp" alt="Antes e depois de micropigmentação labial: '+l[0]+'" loading="'+(i<3?"eager":"lazy")+'" width="800" height="1000"><span class="foto__tag">Resultado '+nn+'</span><figcaption class="foto__cap"><b>'+l[0]+'</b><span>'+l[1]+' · em cima o antes, embaixo o depois</span></figcaption></figure>';
+    // eager de propósito: lazy dentro de trilha movida por transform nunca carrega o que está fora da tela
+    s.innerHTML='<figure class="foto"><div class="foto__img"><img src="'+E+'resultados/'+nn+'.webp" alt="Antes e depois de micropigmentação labial: '+l[0]+'" loading="eager" decoding="async" width="800" height="1000"></div><figcaption class="foto__cap"><span class="foto__tag">Resultado '+nn+' · ↑ antes ↓ depois</span><b>'+l[0]+'</b><span>'+l[1]+'</span></figcaption></figure>';
     track.appendChild(s)});
   var slides=[].slice.call(track.children),snaps=[],idx=0,x=0;
   function medir(){var max=Math.max(0,track.scrollWidth-car.clientWidth);var vistos={};snaps=[];
@@ -887,7 +912,7 @@ section{position:relative}
   var ads=[["Lábio escuro","Uniformizado, sem acinzentar","Por James Olaya"],["Contorno escuro","A borda fria deixou de aparecer","Por James Olaya"],["Subtom frio","Neutralizado antes da cor","Por James Olaya"],["Lábio masculino","Cor natural, sem marcar","Por James Olaya"],["Lábio pálido","Do lilás ao rosado","Por aluna do método"],["Lábio apagado","Cor de volta ao lábio","Por aluna do método"]];
   var grid=document.getElementById("adGrid");
   ads.forEach(function(a,i){var nn=String(i+1).padStart(2,"0");var d=document.createElement("div");d.className="rv";
-    d.innerHTML='<div class="cmp" style="--x:50%"><img src="'+E+'antes-depois/'+nn+'-depois.webp" alt="Depois: '+a[0]+'" loading="lazy"><img class="cmp__antes" src="'+E+'antes-depois/'+nn+'-antes.webp" alt="Antes: '+a[0]+'" loading="lazy"><span class="cmp__linha"></span><span class="cmp__alca" role="slider" tabindex="0" aria-label="Comparar antes e depois" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg><use href="#i-lr"/></svg></span><span class="cmp__r cmp__r--a">Antes</span><span class="cmp__r cmp__r--d">Depois</span></div><div class="ad__cap"><b>'+a[0]+'</b><span>'+a[1]+'</span><small>'+a[2]+'</small></div>';
+    d.innerHTML='<div class="cmp" style="--x:50%"><img src="'+E+'antes-depois/'+nn+'-depois.webp" alt="Depois: '+a[0]+'" loading="lazy"><img class="cmp__antes" src="'+E+'antes-depois/'+nn+'-antes.webp" alt="Antes: '+a[0]+'" loading="lazy"><span class="cmp__linha"></span><span class="cmp__alca" role="slider" tabindex="0" aria-label="Comparar antes e depois" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><svg><use href="#i-lr"/></svg></span></div><div class="ad__leg"><span>← Antes</span><span>Depois →</span></div><div class="ad__cap"><b>'+a[0]+'</b><span>'+a[1]+'</span><small>'+a[2]+'</small></div>';
     grid.appendChild(d);io.observe(d);
     var box=d.querySelector(".cmp"),alca=d.querySelector(".cmp__alca"),ativo=false;
     function pos(cx){var r=box.getBoundingClientRect();var v=Math.max(0,Math.min(100,(cx-r.left)/r.width*100));box.style.setProperty("--x",v+"%");alca.setAttribute("aria-valuenow",Math.round(v))}
@@ -897,8 +922,11 @@ section{position:relative}
     alca.addEventListener("keydown",function(e){var v=parseFloat(box.style.getPropertyValue("--x"))||50;if(e.key==="ArrowLeft"){v-=5}else if(e.key==="ArrowRight"){v+=5}else return;e.preventDefault();v=Math.max(0,Math.min(100,v));box.style.setProperty("--x",v+"%");alca.setAttribute("aria-valuenow",v)})});
 
   /* ---------- Barra fixa no celular ---------- */
-  var fixa=document.getElementById("fixa"),hero=document.querySelector(".hero"),fimSec=document.getElementById("inscricao");
-  function barra(){var on=scrollY>hero.offsetHeight-300&&fimSec.getBoundingClientRect().top>innerHeight*.6;fixa.classList.toggle("show",on);fixa.setAttribute("aria-hidden",on?"false":"true")}
+  // aparece depois do hero, some no fechamento e sempre que outro botão de compra já estiver na tela
+  var fixa=document.getElementById("fixa"),hero=document.querySelector(".hero"),fimSec=document.getElementById("inscricao"),ctasVisiveis=0;
+  var ioCta=new IntersectionObserver(function(es){es.forEach(function(e){ctasVisiveis+=e.isIntersecting?1:(e.target._v?-1:0);e.target._v=e.isIntersecting});barra()},{threshold:.6});
+  document.querySelectorAll('main a[href*="hotmart"]').forEach(function(a){ioCta.observe(a)});
+  function barra(){var on=scrollY>hero.offsetHeight-300&&fimSec.getBoundingClientRect().top>innerHeight*.6&&ctasVisiveis<=0;fixa.classList.toggle("show",on);fixa.setAttribute("aria-hidden",on?"false":"true")}
   addEventListener("scroll",barra,{passive:true});barra();
 })();
 </script>

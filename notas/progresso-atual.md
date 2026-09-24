@@ -31,6 +31,13 @@ Página em `lp-html/protocolo-labial.html`, rota `app/protocolo-labial/route.ts`
 - ⚠️ **Pendente:** link do checkout (todos os botões em `https://pay.hotmart.com/TODO-CHECKOUT`), data do evento
   (3 `data-slot="data"` com "Data em breve"), GTM se o marketing quiser, tirar o noindex quando lançar.
 - Pegadinha achada: `<img width height>` sem `height:auto` no CSS fica com a altura do atributo e estica.
+- **Passada de UI (24/09, pedido do James): "imagem de resultado nunca leva texto por cima".** Carrossel, bento,
+  timeline, sliders e editorial passaram a ter a foto limpa com a legenda EMBAIXO (antes tinha gradiente +
+  legenda cobrindo justamente a metade do "depois"). Bento virou foto 4:5 + texto (no celular, linha com a foto
+  à esquerda); timeline mostra o antes/depois inteiro em 4:5. Barra fixa some quando outro botão de compra
+  está na tela.
+- ⚠️ **Pegadinha:** `<img loading="lazy">` dentro de trilha de carrossel movida por `transform` NUNCA carrega o
+  que está fora da tela na horizontal — 7 de 10 resultados ficavam vazios no celular. Carrossel = `eager`.
 
 ---
 
