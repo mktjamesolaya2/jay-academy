@@ -47,6 +47,11 @@ Página em `lp-html/protocolo-labial.html`, rota `app/protocolo-labial/route.ts`
   (`lib/lp-funil.ts`) + o `href` do `#go-checkout` no HTML — trocar nos dois.**
 - Texto sem travessão e com algarismos (30 dias, 4 horas, R$ 27); preço virou INGRESSO picotado (hero, valor,
   oferta); editorial sem parallax.
+- **Fotos novas do James (24/09, `tmp/fotosjames/` → `public/lp/protocolo-labial/james-*.webp`):** busto de jaleco
+  recortado entra POR TRÁS dos 4 cards da faixa "4 etapas"; quadro branco na quarta hora; palestra no meio da turma
+  em "Sala fechada"; atendimento em "Fichas" (o resultado com marca "Joy Vieira" fica só no carrossel); retrato P&B
+  + polaroid do palco em "Quem vai conduzir". `fotorecorte.png` (terno branco) ficou de fora: 408px, borraria.
+- Headline nova (pedido do James): "Você vai fazer micro labial sabendo exatamente o que vai aparecer 30 dias depois."
 
 ---
 
