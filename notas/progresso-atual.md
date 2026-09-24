@@ -63,6 +63,14 @@ Página em `lp-html/protocolo-labial.html`, rota `app/protocolo-labial/route.ts`
   Seção 7 volta a "vinte e sete reais" por extenso (regra da skill). Legendas dos resultados NEUTRAS (a autoria
   "Por James/aluna" não foi informada). **Data:** slots `data-slot="data"` vazios = o item some (CSS `:has`);
   quando a data vier, preencher o texto de todos eles.
+- **Velocidade (24/09), medido em celular simulado 4G lento + CPU 4x, mediana de 3:** carregamento 8,9 s → 3,5 s;
+  LCP 2,0 s → 1,0 s; peso 1,7 MB → 674 KB; CLS 0,116 → 0. O que foi feito: fontes no próprio domínio
+  (`public/lp/protocolo-labial/fonts/`, subconjunto latino, preload, fallback com `size-adjust` calibrado — era a
+  troca de fonte que fazia o CLS); `srcset` em tudo (variantes em `resultados/480`, `resultados/240`,
+  `antes-depois/480`, `sm/`); carrossel só baixa as fotos a 1200px de distância; cache de 7 dias pros assets
+  (fontes 1 ano) em `next.config.ts` — ⚠️ trocou imagem, troque o NOME do arquivo; GA4 do site depois do load
+  (a página traz o ID, então o `withGa4Site` não injeta o dele). O que sobrou de CPU é o Pixel (~700 ms com CPU
+  4x) — **não adiar**: o Facebook conta "visualização da página de destino" no PageView.
 
 ---
 
