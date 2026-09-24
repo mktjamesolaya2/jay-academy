@@ -4,7 +4,7 @@ import { getPublishedBySlug, loadContent } from "@/lib/wp-content-storage";
 import { addSubmission, type FormSubmission } from "@/lib/forms-store";
 import { chaveDoSlug } from "@/lib/crm-chave";
 import { corpoParaOCrm } from "@/lib/crm-envio";
-import { destinoDaEscolha, regrasDaLp, GRUPO_WHATSAPP_POR_LP } from "@/lib/lp-funil";
+import { destinoDaEscolha, regrasDaLp, GRUPO_WHATSAPP_POR_LP, CHECKOUT_POR_LP } from "@/lib/lp-funil";
 import { normalizarTelefone, mensagemDeErro } from "@/lib/telefone";
 import { chaveLog, logsDaPagina } from "@/lib/webhook-log";
 import { kvSet } from "@/lib/storage";
@@ -153,6 +153,7 @@ export async function POST(req: Request) {
       lpCfg?.formRedirectUrl ||
       content?.formRedirectUrl ||
       GRUPO_WHATSAPP_POR_LP[slug] ||
+      (Object.hasOwn(CHECKOUT_POR_LP, slug) ? CHECKOUT_POR_LP[slug] : null) ||
       null;
     if (webhookUrl) {
       try {

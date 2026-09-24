@@ -8,6 +8,7 @@ const C6_PIX = "https://api-gateway.c6bank.info/v1/payment/";
 const C6_CARTAO = "https://checkout2.c6pay.com.br/payment/";
 const OFERTAS = ["jaytransforma-beauty", "jaytransforma-remove", "jaytransforma-start"];
 import {
+  CHECKOUT_POR_LP,
   destinoDaEscolha,
   resolverDestino,
   REDIRECT_POR_ESCOLHA,
@@ -217,8 +218,9 @@ test("REGRAS_POR_LP não tem entrada órfã sem uso", () => {
   for (const slug of Object.keys(REGRAS_POR_LP)) {
     const temCheckout = Object.hasOwn(REDIRECT_POR_ESCOLHA, slug);
     const temGrupo = Object.hasOwn(GRUPO_WHATSAPP_POR_LP, slug);
+    const temPagamento = Object.hasOwn(CHECKOUT_POR_LP, slug);
     assert.equal(
-      temCheckout || temGrupo,
+      temCheckout || temGrupo || temPagamento,
       true,
       `${slug} tem regras mas nenhum funil conhecido`
     );
@@ -318,4 +320,9 @@ test("grupo ainda não criado não vira redirect quebrado", () => {
 test("cada página cai no seu grupo, sem repetir link", () => {
   const usados = Object.values(GRUPO_WHATSAPP_POR_LP).filter(Boolean);
   assert.equal(new Set(usados).size, usados.length, "duas páginas no mesmo grupo");
+});
+
+test("Protocolo Labial: exige e-mail e o destino é o checkout da Hotmart", () => {
+  assert.equal(regrasDaLp("protocolo-labial")?.exigeEmail, true);
+  assert.match(CHECKOUT_POR_LP["protocolo-labial"], /^https:\/\/pay\.hotmart\.com\//);
 });

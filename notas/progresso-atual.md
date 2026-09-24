@@ -38,6 +38,15 @@ Página em `lp-html/protocolo-labial.html`, rota `app/protocolo-labial/route.ts`
   está na tela.
 - ⚠️ **Pegadinha:** `<img loading="lazy">` dentro de trilha de carrossel movida por `transform` NUNCA carrega o
   que está fora da tela na horizontal — 7 de 10 resultados ficavam vazios no celular. Carrossel = `eager`.
+- **Lead antes do checkout (24/09):** todo "Quero minha vaga" abre um POP-UP (nome, e-mail, WhatsApp com a
+  máscara do JAY TRANSFORMA) → `/api/elementor-form` (salva em /leads + CRM pela chave padrão, `REGRAS_POR_LP`
+  com e-mail obrigatório) → Pixel `Lead` → clique num `<a id="go-checkout">` com `name/email/phoneac/phonenumber`
+  (pré-preenchimento oficial da Hotmart) — o clique é de propósito, é ele que leva UTM/src/sck e dispara o
+  InitiateCheckout. Servidor lento: segue pro pagamento em 8s. O form tem `data-portal-bound="1"` (o Lead
+  genérico não dispara no submit, só no sucesso). **Link do checkout mora em `CHECKOUT_POR_LP`
+  (`lib/lp-funil.ts`) + o `href` do `#go-checkout` no HTML — trocar nos dois.**
+- Texto sem travessão e com algarismos (30 dias, 4 horas, R$ 27); preço virou INGRESSO picotado (hero, valor,
+  oferta); editorial sem parallax.
 
 ---
 

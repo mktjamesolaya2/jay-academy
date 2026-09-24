@@ -140,6 +140,17 @@ export const GRUPO_WHATSAPP_POR_LP: Readonly<Record<string, string>> = {
 };
 
 /**
+ * Parte 1c — página de venda que captura a lead ANTES do checkout: o formulário
+ * (pop-up) salva a lead, manda pro CRM e o destino é o pagamento. A página
+ * acrescenta name/email/phoneac/phonenumber (pré-preenchimento da Hotmart) e o
+ * clique leva os UTMs. Trocar o link aqui E no href de fallback do HTML.
+ */
+export const CHECKOUT_POR_LP: Readonly<Record<string, string>> = {
+  // Evento R$ 27 (24/09). Link real ainda não veio: placeholder até lá.
+  "protocolo-labial": "https://pay.hotmart.com/TODO-CHECKOUT",
+};
+
+/**
  * Parte 2 — o que vale de diferente nessas páginas: validação estrita antes de
  * mandar (telefone normalizado em E.164, com o "+"), recusa explícita quando o
  * CRM diz não, e a mensagem de sucesso própria.
@@ -168,6 +179,11 @@ export const REGRAS_POR_LP: Readonly<Record<string, RegrasDaLp>> = {
   "encontro-de-especialistas": {
     exigeEmail: true,
     mensagemOk: "Inscrição confirmada! Você será direcionada ao grupo do encontro.",
+  },
+  // Evento pago Protocolo Labial: nome, e-mail e WhatsApp antes do checkout.
+  "protocolo-labial": {
+    exigeEmail: true,
+    mensagemOk: "Tudo certo! Levando você para o pagamento…",
   },
 };
 
