@@ -19,8 +19,11 @@ rota `app/inmersion-pelo-a-pelo-v2/route.ts`, registry logo após a v1, `reserve
 - **Visual:** CSS da `fio-a-fio-realista-v3` copiado como está (sem o bloco do WhatsApp) + um bloco próprio: ingresso
   no hero (data/horas/idioma + U$ 47 ao lado do botão, 1ª dobra do celular), cards dos 4 Controles na faixa clara,
   lista de materiais + mockup, "en vivo" com a foto do James na lousa. Sem logo, sem FAQ, sem depoimento.
-- **Imagens:** as da v1 (`/recriadas/inmersion-pelo-a-pelo/assets/`: `dp-fioafio-1..8`, `mockup-peloapelo`,
-  `jayexplicando`) + `hero.webp` e `james-prof.webp` da Fio a Fio v2. O certificado da v1 é do "Fio Realista" em PT e ficou de fora.
+- **Mídias (trocadas a pedido, 25/09):** as mesmas da Fio a Fio v3, de `/lp/fio-a-fio-realista-v2/`: `hero.webp`,
+  vídeo `resultado-loop.mp4` + trilha `resultados-4x5/01–07`, trilha `antes-depois/01–21`, vídeo `treino.mp4` +
+  `treinos/01–03` no "en vivo", `james-prof.webp`. Da v1 só ficou o `mockup-peloapelo.avif` (o único que mostra a
+  própria Inmersión). `bio-card` (número de seguidores fora da copy) e o certificado do Fio Realista (PT) ficaram de fora.
+- O James achou que já existia uma v2; não há nenhuma no repo e ele mandou manter o slug `-v2`.
 - **Tracking:** Meta Pixel 1841776429524244 (o pixel único do projeto) via `PIXEL_SLUGS`, com PageView +
   InitiateCheckout no clique da Hotmart, + GA4. Sem GTM. A v1 segue sem pixel (teste em `tracking-clean.test.ts`).
 - ⚠️ **Pendente de confirmação do James:** o conteúdo do PDF (os 4 materiais têm nome criado a partir do programa),
