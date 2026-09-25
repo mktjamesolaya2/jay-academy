@@ -1039,7 +1039,7 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
   new URLSearchParams(location.search).forEach(function(v,k){if(k.indexOf("utm_")!==0)return;var c=form.querySelector('[name="'+k+'"]');if(c)c.value=v});
 
   // Leva pro pagamento com name/email/phoneac/phonenumber (parâmetros oficiais de pré-preenchimento
-  // da Hotmart). O clique no <a> é de propósito: o forwarder de UTM e o InitiateCheckout do Pixel
+  // da Hotmart). O clique no <a> é de propósito: o forwarder de UTM e o CliqueCheckout do Pixel
   // escutam cliques em links da Hotmart.
   var saiu=false;
   function irPagamento(dados,destino){if(saiu)return;saiu=true;

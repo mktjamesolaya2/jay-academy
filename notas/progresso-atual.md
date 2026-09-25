@@ -6,6 +6,17 @@
 
 ---
 
+## 🛒 Clique no checkout virou `CliqueCheckout` (25/09)
+
+O listener global de clique (`buildPixelClickListeners`, `lib/meta-tracking.ts`) disparava `InitiateCheckout`
+em todo link `pay.hotmart.com`, e a Hotmart dispara o MESMO evento no mesmo pixel quando o checkout abre: as
+idas ao checkout contavam ~2x e a taxa checkout → compra ficava errada. Agora o clique é
+`fbq('trackCustom','CliqueCheckout')` em TODAS as páginas com pixel (decisão do James); só a Hotmart registra
+`InitiateCheckout`. ⚠️ Campanha otimizando por InitiateCheckout passa a usar o da Hotmart (a anotação antiga
+dizia isso do Protocolo Labial). O `InitiateCheckout` continua na allowlist do `/api/meta-capi` (inofensivo).
+
+---
+
 ## ✂️ Inmersión Pelo a Pelo v2 (25/09)
 
 Evento ao vivo de 8h em espanhol, **sábado 17/10**, U$ 47, mesmo checkout da v1

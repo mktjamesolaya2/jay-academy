@@ -138,8 +138,10 @@ try {
 <!-- End Meta Pixel -->`;
 }
 
-/** Listener global de clique: dispara WhatsApp (custom) e InitiateCheckout
- * (standard) sem tocar no href. Delegado no document pra cobrir links
+/** Listener global de clique: dispara WhatsApp e CliqueCheckout (os dois
+ * custom) sem tocar no href. O clique NÃO é InitiateCheckout: a Hotmart já
+ * dispara esse evento no mesmo pixel quando o checkout abre, e contar os dois
+ * dobrava as idas ao checkout (e a taxa checkout → compra ficava errada). Delegado no document pra cobrir links
  * inseridos dinamicamente depois (ex.: pmuclass, hidratado via fetch). */
 function buildPixelClickListeners(): string {
   return `<script data-portal-pixel-listeners="1">
@@ -153,7 +155,7 @@ function buildPixelClickListeners(): string {
     if (/api\\.whatsapp\\.com|wa\\.me/i.test(href)) {
       fbq('trackCustom', 'WhatsApp', {}, { eventID: uid() });
     } else if (/pay\\.hotmart\\.com/i.test(href)) {
-      fbq('track', 'InitiateCheckout', {}, { eventID: uid() });
+      fbq('trackCustom', 'CliqueCheckout', {}, { eventID: uid() });
     }
   }, true);
 })();

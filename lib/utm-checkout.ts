@@ -67,7 +67,7 @@ export const MONTAR_URL_JS = `function montarUrlCheckout(href, origem) {
  *
  * Reescreve o href no DOM em vez de interceptar o clique — assim clique do meio,
  * "abrir em nova aba" e copiar link também levam a origem. Não chama preventDefault,
- * então não briga com o listener de InitiateCheckout (buildPixelClickListeners), que
+ * então não briga com o listener do CliqueCheckout (buildPixelClickListeners), que
  * só testa `pay.hotmart.com` no href e continua casando.
  */
 export function buildUtmHotmartForwarder(): string {
