@@ -124,6 +124,16 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "pink-orange",
   },
   {
+    // v2: copy da skill de evento pago (sábado 17/10, U$ 47) na identidade da
+    // Fio a Fio v3. Reusa as imagens da v1 + hero/foto do James da Fio a Fio v2.
+    slug: "inmersion-pelo-a-pelo-v2",
+    title: "Inmersión Pelo a Pelo V2",
+    htmlFile: "lp-html/inmersion-pelo-a-pelo-v2.html",
+    assetsDir: "public/recriadas/inmersion-pelo-a-pelo",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     // O "-2" vinha da recriação (a página WP original foi excluída); assumiu o
     // slug limpo em 30/07, com redirect 308 no antigo.
     slug: "metodo-shadow-pro",

@@ -15,6 +15,7 @@ const STATIC_LPS = [
   "pmuclass",
   "metodo-shadow-pro",
   "inmersion-pelo-a-pelo",
+  "inmersion-pelo-a-pelo-v2",
   "transforma",
   "politica-de-privacidade",
 ];

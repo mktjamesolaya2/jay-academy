@@ -161,3 +161,8 @@ test("a Fio a Fio oficial e as prévias v2 e v3 levam pixel", () => {
 test("o evento Protocolo Labial leva pixel", () => {
   assert.equal(slugHasPixel("protocolo-labial"), true);
 });
+
+test("a Inmersión v2 leva pixel e a v1 não", () => {
+  assert.equal(slugHasPixel("inmersion-pelo-a-pelo-v2"), true);
+  assert.equal(slugHasPixel("inmersion-pelo-a-pelo"), false);
+});

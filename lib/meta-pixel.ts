@@ -42,6 +42,9 @@ export const PIXEL_SLUGS = [
   // Evento pago Protocolo Labial (24/09): ingresso de R$ 27 na Hotmart; o
   // InitiateCheckout do clique é a conversão que a campanha vai otimizar.
   "protocolo-labial",
+  // Inmersión Pelo a Pelo v2 (25/09): evento ao vivo de U$ 47 na Hotmart; mede
+  // o InitiateCheckout do clique. A v1 (data vencida) segue sem pixel.
+  "inmersion-pelo-a-pelo-v2",
   // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
   // Lead do formulário de inscrição é a conversão que a campanha otimiza.
   "transforma",

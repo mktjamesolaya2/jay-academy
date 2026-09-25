@@ -14,7 +14,7 @@ const RESERVED = new Set([
   // LPs/sites estáticos servidos por route handler (lib/lp-html-registry.ts)
   "basic-magic-shadow", "basic-magic-shadow-v2", "basic-nanofios",
   "curso-online-profissao-remove", "fio-a-fio-realista-by-james-olaya",
-  "inmersion-pelo-a-pelo", "jamesolaya", "metodo-shadow-pro", "metodo-shadow-pro-2",
+  "inmersion-pelo-a-pelo", "inmersion-pelo-a-pelo-v2", "jamesolaya", "metodo-shadow-pro", "metodo-shadow-pro-2",
   "pdv-lips-sense-technique", "pmuclass", "laser", "magicshadow",
   "transforma", "jaytransforma-beauty", "jaytransforma_beauty",
   "jaytransforma-remove", "jaytransforma-start",
