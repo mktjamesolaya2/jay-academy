@@ -16,6 +16,7 @@ const STATIC_LPS = [
   "metodo-shadow-pro",
   "inmersion-pelo-a-pelo",
   "transforma",
+  "politica-de-privacidade",
 ];
 
 export const revalidate = 3600;
