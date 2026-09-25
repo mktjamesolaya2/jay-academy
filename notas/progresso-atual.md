@@ -20,7 +20,7 @@ dizia isso do Protocolo Labial). O `InitiateCheckout` continua na allowlist do `
 ## ✂️ Inmersión Pelo a Pelo v2 (25/09)
 
 Evento ao vivo de 8h em espanhol, **sábado 10/10**, U$ 47, mesmo checkout da v1
-(`pay.hotmart.com/I100259105O?off=nnilhd6s&checkoutMode=10`). Página `lp-html/inmersion-pelo-a-pelo-v2.html`,
+(`pay.hotmart.com/I100259105O?off=nnilhd6s`, sem o `checkoutMode=10` desde 25/09; UTMs via `utm-checkout.ts`). Página `lp-html/inmersion-pelo-a-pelo-v2.html`,
 rota `app/inmersion-pelo-a-pelo-v2/route.ts`, registry logo após a v1, `reserved-slugs` e sitemap. **Indexável**
 (tem data). A v1 (`/inmersion-pelo-a-pelo`, data vencida de 25/04) continua no ar sem mudança.
 
