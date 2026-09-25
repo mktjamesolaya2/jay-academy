@@ -95,6 +95,10 @@ section{position:relative}
 .checks svg{width:15px;height:15px;color:var(--rosa);flex:0 0 auto}
 .hero__compra{margin-top:36px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;justify-content:center;padding:14px 14px 14px 28px;border-radius:999px;background:#fff;box-shadow:var(--float),inset 0 0 0 1px rgba(202,164,90,.55)}
 .hero__compra .preco{font-size:58px}
+.hero__stub{flex:0 0 auto}
+.hero__compra .btn{flex:1 1 auto;min-width:0;white-space:normal;text-align:center;line-height:1.2}
+@media(min-width:768px){.hero__compra .btn{flex:0 0 auto;white-space:nowrap}}
+.hero__sub{margin-top:32px}
 .hero__compra .rot{display:block;text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--rosa);margin-bottom:2px}
 .confia{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;font-size:12.5px;color:var(--txt2)}
 .confia span{display:inline-flex;align-items:center;gap:7px}
@@ -103,7 +107,7 @@ section{position:relative}
 .video{position:relative;width:100%;max-width:820px;aspect-ratio:16/9;margin-top:48px;border-radius:24px;overflow:hidden;background:#000;box-shadow:var(--float)}
 .video img{width:100%;height:100%;object-fit:cover;opacity:.9}
 .video__pill{position:absolute;left:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.92);font-size:12px;font-weight:600;box-shadow:var(--float)}
-.video-wrap{position:relative;width:100%;max-width:820px;margin-top:48px}.video-wrap .video{margin-top:0}
+.video-wrap{position:relative;width:100%;max-width:820px;margin-top:40px}.video-wrap .video{margin-top:0}
 .mini{display:none;position:absolute;width:92px;padding:5px 5px 14px;background:#fff;border-radius:12px;box-shadow:0 18px 30px -14px rgba(0,0,0,.35),0 0 0 1px var(--line);z-index:2}
 .mini img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:8px}
 .mini--e{left:-8px;top:-46px;transform:rotate(-8deg)}.mini--d{right:-8px;top:-40px;transform:rotate(7deg)}
@@ -427,13 +431,13 @@ section{position:relative}
   .hero{padding:44px 0 80px}
   .hero__sub{font-size:16px}
   /* o preço sobe para a 1ª dobra; texto de apoio e foto vêm depois */
-  .hero__compra{order:3;margin-top:24px;padding:10px 10px 10px 20px;gap:12px;flex-wrap:nowrap;width:100%;max-width:400px;justify-content:space-between}
+  .hero__compra{margin-top:24px;padding:10px 10px 10px 20px;gap:12px;flex-wrap:nowrap;width:100%;max-width:400px;justify-content:space-between}
   .hero__compra .preco{font-size:46px}
   .hero__compra .btn{padding:14px 16px;font-size:13.5px}
-  .confia{order:4}
-  .hero__sub{order:5}
-  .checks{order:6}
-  .video-wrap{order:7;margin-top:70px}
+  .video-wrap{margin-top:62px}
+  .hero__sub{margin-top:28px}
+  .so-largo{display:none}
+  .btn{white-space:normal;max-width:100%;text-align:center;line-height:1.25}
   .mini{display:block}
   .hero__over{font-size:9.5px;letter-spacing:.14em;white-space:nowrap}
   .polaroid{width:104px;padding:5px 5px 16px}
@@ -579,18 +583,18 @@ li:has(> [data-slot="data"]:empty),.pil:has(> [data-slot="data"]:empty),.md-data
     <span class="hero__over mono fade-up"><i></i>Aula ao vivo · 4 horas · sala fechada</span>
     <p class="hero__evento fade-up">Protocolo Labial: do Escuro ao Rosado</p>
     <h1 class="display tight fade-up">Você vai fazer micro labial sabendo exatamente o que vai aparecer <em>30 dias depois.</em></h1>
+    <div class="hero__compra fade-up">
+      <div class="hero__stub"><span class="rot">Ingresso</span><span class="preco" aria-label="R$ 27"><small>R$</small>27</span></div>
+      <a class="btn" data-vaga href="#inscricao"><span>Quero minha vaga<span class="so-largo">&nbsp;· R$ 27</span></span><svg aria-hidden="true"><use href="#i-seta"/></svg></a>
+    </div>
+    <div class="confia fade-up"><span><svg aria-hidden="true"><use href="#i-cad"/></svg>Sala fechada</span><b></b><span>+70 mil alunos formados pelo James</span></div>
+    <div class="video-wrap fade-up"><figure class="video"><img src="/lp/protocolo-labial/james-avaliando.webp" srcset="/lp/protocolo-labial/sm/james-avaliando.webp 700w, /lp/protocolo-labial/james-avaliando.webp 1400w" sizes="(min-width:860px) 820px, 92vw" alt="James Olaya avaliando o lábio de uma cliente" width="1400" height="933" fetchpriority="high" decoding="async"><figcaption class="video__pill"><i></i>Aula ao vivo com James Olaya</figcaption></figure><div class="mini mini--e" aria-hidden="true"><img width="240" height="300" loading="lazy" src="/lp/protocolo-labial/resultados/240/08.webp" alt=""></div><div class="mini mini--d" aria-hidden="true"><img width="240" height="300" loading="lazy" src="/lp/protocolo-labial/resultados/240/06.webp" alt=""></div></div>
     <p class="hero__sub fade-up">Não é que a pele da sua cliente “não pega pigmento”. Essa frase é o que a gente diz quando não sabe o que aconteceu, e ela te deixa sem saída. O lábio dela tem cor própria, e quando essa cor é fria ela abafa o que você colocou por cima. <strong>Não é talento, é leitura.</strong> Aqui você treina em casos reais até acertar sozinha, e sai com o critério para o lábio escuro que hoje você recusa.</p>
     <ul class="checks fade-up">
       <li><svg aria-hidden="true"><use href="#i-cal"/></svg><span data-slot="data"></span></li>
       <li><svg aria-hidden="true"><use href="#i-rel"/></svg>9h às 13h · 4 horas, com um intervalo</li>
       <li><svg aria-hidden="true"><use href="#i-cam"/></svg>Ao vivo no Zoom, em sala fechada</li>
     </ul>
-    <div class="hero__compra fade-up">
-      <div class="hero__stub"><span class="rot">Ingresso</span><span class="preco" aria-label="R$ 27"><small>R$</small>27</span></div>
-      <a class="btn" data-vaga href="#inscricao">Quero minha vaga · R$ 27<svg aria-hidden="true"><use href="#i-seta"/></svg></a>
-    </div>
-    <div class="confia fade-up"><span><svg aria-hidden="true"><use href="#i-cad"/></svg>Sala fechada</span><b></b><span>+70 mil alunos formados pelo James</span></div>
-    <div class="video-wrap fade-up"><figure class="video"><img src="/lp/protocolo-labial/james-avaliando.webp" srcset="/lp/protocolo-labial/sm/james-avaliando.webp 700w, /lp/protocolo-labial/james-avaliando.webp 1400w" sizes="(min-width:860px) 820px, 92vw" alt="James Olaya avaliando o lábio de uma cliente" width="1400" height="933" fetchpriority="high" decoding="async"><figcaption class="video__pill"><i></i>Aula ao vivo com James Olaya</figcaption></figure><div class="mini mini--e" aria-hidden="true"><img width="240" height="300" loading="lazy" src="/lp/protocolo-labial/resultados/240/08.webp" alt=""></div><div class="mini mini--d" aria-hidden="true"><img width="240" height="300" loading="lazy" src="/lp/protocolo-labial/resultados/240/06.webp" alt=""></div></div>
   </div>
 </section>
 
