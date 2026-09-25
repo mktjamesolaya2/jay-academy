@@ -68,6 +68,21 @@ const nextConfig: NextConfig = {
         source: "/lp/protocolo-labial/fonts/:file",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      // Mesma regra pra /inmersion-pelo-a-pelo-v2 (evento com tráfego pago): as versões leves
+      // das fotos, os vídeos de 480px e as fontes. Mesmo aviso: trocou um arquivo, troque o nome.
+      {
+        source: "/lp/inmersion-pelo-a-pelo-v2/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=604800, s-maxage=31536000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/lp/inmersion-pelo-a-pelo-v2/fonts/:file",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
 };

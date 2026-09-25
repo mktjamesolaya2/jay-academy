@@ -44,6 +44,16 @@ rota `app/inmersion-pelo-a-pelo-v2/route.ts`, registry logo após a v1, `reserve
   pigmento orgânico × inorgânico e linha JAY.O; boa parte em PT) + gravação 7 dias + certificado + perguntas ao vivo +
   multicâmera (confirmados pelo James). A página e o DOCX foram reescritos só com isso.
 - ⚠️ Ainda não confirmado: "enseña a profesionales de distintos países" (sai das bandeiras da v1).
+- **Velocidade (25/09), celular simulado 4G lento (400 kbps, 400 ms) + CPU 4x, mediana de 3.** Antes (produção):
+  LCP ≈16,7 s, load ≈40 s, 1,5 MB, CLS 0,089. A foto do topo (LCP) disputava a banda com 8 fotos `eager` dos
+  carrosséis. O que foi feito, tudo em `public/lp/inmersion-pelo-a-pelo-v2/` (cache de 7 dias, fontes 1 ano, em
+  `next.config.ts` — ⚠️ trocou arquivo, troque o NOME):
+  - carrosséis só montam a 1200px da tela; fotos com `srcset` 480/900 (`resultados/480`, `antes-depois/480`);
+  - vídeos em 480px (~1 Mbps: treino 6,6 MB → 368 KB, loop 2,9 MB → 164 KB), pôster e `src` só a 600px da tela
+    (o atributo `autoplay` fazia o navegador baixar logo na abertura);
+  - topo no celular em `hero-1100.webp` (20 KB × 63 KB) com preload `fetchpriority=high` por `media`;
+  - fontes no próprio domínio (Cormorant é variável: 1 arquivo pra 500–700) + reserva com `size-adjust` medido no
+    fonttools — CLS foi a ~0,01; GA4 depois do load; foto do James e treinos em versões leves. Pixel segue imediato.
 
 ---
 
