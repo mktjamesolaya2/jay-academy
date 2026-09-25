@@ -124,7 +124,7 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "pink-orange",
   },
   {
-    // v2: copy da skill de evento pago (sábado 17/10, U$ 47, YouTube) na
+    // v2: copy da skill de evento pago (sábado 10/10, U$ 47, online) na
     // identidade e com as mídias da Fio a Fio v3 (pasta da Fio a Fio v2).
     slug: "inmersion-pelo-a-pelo-v2",
     title: "Inmersión Pelo a Pelo V2",
