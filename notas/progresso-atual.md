@@ -37,9 +37,13 @@ rota `app/inmersion-pelo-a-pelo-v2/route.ts`, registry logo após a v1, `reserve
 - O James achou que já existia uma v2; não há nenhuma no repo e ele mandou manter o slug `-v2`.
 - **Tracking:** Meta Pixel 1841776429524244 (o pixel único do projeto) via `PIXEL_SLUGS`, com PageView +
   InitiateCheckout no clique da Hotmart, + GA4. Sem GTM. A v1 segue sem pixel (teste em `tracking-clean.test.ts`).
-- ⚠️ **Pendente de confirmação do James:** o conteúdo do PDF (os 4 materiais têm nome criado a partir do programa),
-  a frase "enseña a profesionales de distintos países" (tirada das bandeiras da v1). Transmissão pelo YouTube, mas a página diz só "Online" (pedido do James). Data trocada de 17 para 10/10 (25/09).
-  A v1 fica como está (sem redirect), por decisão do James.
+- **Auditoria pela skill (25/09):** estrutura, preço, data, seção 2 (201 palavras), release (58) e "sem logo" OK. O
+  que falhava era a veracidade: os 4 materiais que eu tinha criado (Mapa de los 4 Controles, Secuencia de
+  calentamiento, Checklist, Guía rápida) NÃO existem. O que a aluna recebe de verdade: os **slides da aula em PDF**
+  (71 págs.: tipos de pele, agulhas taper e 06–12, pegadas 90/AFA/CTR, velocidade, mapas e zonas da sobrancelha,
+  pigmento orgânico × inorgânico e linha JAY.O; boa parte em PT) + gravação 7 dias + certificado + perguntas ao vivo +
+  multicâmera (confirmados pelo James). A página e o DOCX foram reescritos só com isso.
+- ⚠️ Ainda não confirmado: "enseña a profesionales de distintos países" (sai das bandeiras da v1).
 
 ---
 
