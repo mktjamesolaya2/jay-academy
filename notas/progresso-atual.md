@@ -44,6 +44,8 @@ rota `app/inmersion-pelo-a-pelo-v2/route.ts`, registry logo após a v1, `reserve
   pigmento orgânico × inorgânico e linha JAY.O; boa parte em PT) + gravação 7 dias + certificado + perguntas ao vivo +
   multicâmera (confirmados pelo James). A página e o DOCX foram reescritos só com isso.
 - ⚠️ Ainda não confirmado: "enseña a profesionales de distintos países" (sai das bandeiras da v1).
+- **Microsoft Clarity (01/10), projeto `yqyue9n2f8`:** snippet no `<head>` do HTML (async), só nesta página. O
+  `withTracking` não mexe nele (só limpa GTM/Pixel).
 - **Horários por país (25/09), âncora 8am Colômbia:** 7am México (UTC-6, sem horário de verão) · 8am Colômbia/Peru ·
   9am Miami/New York (ainda em horário de verão: EUA só voltam em 1º/11) e Bolívia · 10am Argentina/Chile/Uruguai.
   ⚠️ Evento depois de 1º/11 → Miami/NY voltam a bater com a Colômbia.
