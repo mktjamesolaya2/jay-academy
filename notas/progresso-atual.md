@@ -44,6 +44,8 @@ rota `app/inmersion-pelo-a-pelo-v2/route.ts`, registry logo após a v1, `reserve
   pigmento orgânico × inorgânico e linha JAY.O; boa parte em PT) + gravação 7 dias + certificado + perguntas ao vivo +
   multicâmera (confirmados pelo James). A página e o DOCX foram reescritos só com isso.
 - ⚠️ Ainda não confirmado: "enseña a profesionales de distintos países" (sai das bandeiras da v1).
+- **"Quién conduce" (01/10):** foto de jaleco da /protocolo-labial (`james-busto.webp`, fundo transparente) copiada
+  como `james-jaleco.webp` (+ `-480`), com o efeito de lá: halo atrás, base que some e entrada suave; rosa → dourado.
 - **Microsoft Clarity (01/10), projeto `yqyue9n2f8`:** snippet no `<head>`, só nesta página; o script baixa 1,5s depois da foto do topo (máx. 5s) — na abertura atrasava o LCP em ~0,8s. O
   `withTracking` não mexe nele (só limpa GTM/Pixel).
 - **Horários por país (25/09), âncora 8am Colômbia:** 7am México (UTC-6, sem horário de verão) · 8am Colômbia/Peru ·
