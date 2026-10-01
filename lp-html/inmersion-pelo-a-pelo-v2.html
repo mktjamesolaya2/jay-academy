@@ -10,12 +10,18 @@
 <link rel="preload" as="image" href="/lp/fio-a-fio-realista-v2/hero.webp" fetchpriority="high" media="(min-width:681px)">
 <link rel="preload" href="/lp/inmersion-pelo-a-pelo-v2/fonts/cormorant-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/lp/inmersion-pelo-a-pelo-v2/fonts/poppins-400.woff2" as="font" type="font/woff2" crossorigin>
-<!-- Microsoft Clarity (gravação de sessão e mapa de calor), projeto yqyue9n2f8. Script async: não bloqueia a página. -->
+<!-- Microsoft Clarity (gravação de sessão e mapa de calor), projeto yqyue9n2f8. A fila c[a] fica pronta já;
+     o script (~74 KB) só baixa 1,5s depois que a foto do topo carrega (no máximo 5s após a página abrir).
+     Na abertura ele disputava a banda com a foto e atrasava o LCP em ~0,8s no 4G lento. -->
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        var foi=false;function carregar(){if(foi)return;foi=true;
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)}
+        var topo=new Image();topo.onload=topo.onerror=function(){setTimeout(carregar,1500)};
+        topo.src=c.matchMedia&&c.matchMedia("(max-width:680px)").matches?"/lp/inmersion-pelo-a-pelo-v2/hero-1100.webp":"/lp/fio-a-fio-realista-v2/hero.webp";
+        setTimeout(carregar,5000);
     })(window, document, "clarity", "script", "yqyue9n2f8");
 </script>
 <style>
