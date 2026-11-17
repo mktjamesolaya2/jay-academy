@@ -35,6 +35,10 @@ arquivo, troque o NOME), registry, `reserved-slugs`, `PIXEL_SLUGS` + teste. **no
   em 3:2 (sem `object-fit` cortando, inclusive no celular); faixa com as fotos na proporção original. Lábio final
   inteiro e com margem só existe um (`protocolo-labial/antes-depois/05-depois.webp`), por isso a faixa ficou só
   com sobrancelhas.
+- **Diagramação do celular (pedido do James, 17/11):** tudo num eixo só, CENTRALIZADO (topo, títulos, textos,
+  preço, botões). Card de curso = foto inteira em cima + texto centralizado embaixo (a miniatura à esquerda
+  deixava um vazio embaixo da foto e ele achou estranho). Na "conta", a ordem é título → recibo → botão.
+  `text-wrap:balance` nos títulos e textos curtos, pra não sobrar palavra sozinha na última linha.
 - ⚠️ **Foto vetada pelo James:** `public/magicshadow/assets/shadow_leve.jpg` (olho de lado, sobrancelha na
   vertical; a mesma foto é `public/lp/shadow-pro/hero.webp`). Saiu do card do Efeito Magic Shadow e do fundo do
   `.diptico-light` em `public/magicshadow/styles.css`. Não usar em página nenhuma. Os arquivos continuam no repo
