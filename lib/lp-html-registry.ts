@@ -144,6 +144,16 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // Combo Nano + Shadow (17/11): Basic Nano Fios + Shadow PRO com acesso vitalício,
+    // a oferta menor da Black Friday. Usa os assets da /comboblack. noindex.
+    slug: "comboblack2",
+    title: "Combo Nano + Shadow (Black Friday)",
+    htmlFile: "lp-html/comboblack2.html",
+    assetsDir: "public/lp/comboblack",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     // O "-2" vinha da recriação (a página WP original foi excluída); assumiu o
     // slug limpo em 30/07, com redirect 308 no antigo.
     slug: "metodo-shadow-pro",

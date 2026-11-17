@@ -48,6 +48,9 @@ export const PIXEL_SLUGS = [
   // Combo Black (17/11): 5 cursos com 5 anos de acesso, oferta de Black Friday na
   // Hotmart até 27/11; mede o CliqueCheckout do clique.
   "comboblack",
+  // Combo Nano + Shadow (17/11): Basic Nano Fios + Shadow PRO com acesso vitalício,
+  // oferta de Black Friday até 27/11; mesma medição da /comboblack.
+  "comboblack2",
   // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
   // Lead do formulário de inscrição é a conversão que a campanha otimiza.
   "transforma",

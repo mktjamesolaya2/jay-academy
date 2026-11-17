@@ -46,6 +46,22 @@ arquivo, troque o NOME), registry, `reserved-slugs`, `PIXEL_SLUGS` + teste. **no
 
 ---
 
+## 🖤 Combo Nano + Shadow — `/comboblack2` (17/11)
+
+Irmã menor da `/comboblack`: **Basic Nano Fios + Shadow PRO com acesso VITALÍCIO** (cursos e acesso ditos pelo
+James). `lp-html/comboblack2.html` (cópia da primeira, mesmo CSS + um bloco próprio no fim do `<style>`), rota
+`app/comboblack2/route.ts`, registry, `reserved-slugs`, `PIXEL_SLUGS` + teste. Usa os assets de
+`public/lp/comboblack/` (só a `og2.jpg` é nova). noindex, fora do sitemap, contador até 27/11 23h59.
+
+- **Checkout:** `pay.hotmart.com/L108548289W?off=3z9sx3we`, lido do checkout: **12x de R$ 40,75 ou R$ 394**.
+- ⚠️ **Sem desconto no preço:** 297 (Nano Fios) + 97 (Shadow PRO) = 394, igual ao combo. Por isso a página NÃO
+  tem "de/por", economia nem valor riscado; a promessa é o acesso vitalício contra os 12 meses das duas páginas.
+  Avisei o James no plano e ele aprovou assim. Se o preço de algum dos dois mudar, rever.
+- Faixa clara com "Para sempre" no lugar do "5"; no lugar do recibo, um cartão "incluso / incluso / vitalício".
+- Mudou algo de layout na `/comboblack`? Replicar aqui: são dois HTMLs separados.
+
+---
+
 ## 🛒 Clique no checkout virou `CliqueCheckout` (25/09)
 
 O listener global de clique (`buildPixelClickListeners`, `lib/meta-tracking.ts`) disparava `InitiateCheckout`
