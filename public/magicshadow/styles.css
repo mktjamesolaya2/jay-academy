@@ -2561,8 +2561,7 @@ body {
       rgba(250, 247, 241, 0.68) 0%,
       rgba(250, 247, 241, 0.88) 55%,
       rgba(250, 247, 241, 0.97) 100%
-    ),
-    url("assets/shadow_leve.jpg") right center / cover no-repeat;
+    );
   background-color: #FAF7F1;
   color: #1A1A1A;
   display: flex;

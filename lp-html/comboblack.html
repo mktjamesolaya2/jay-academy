@@ -83,7 +83,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
 .courses{background:linear-gradient(180deg,#08080a,#0f0d11 55%,#08080a)}
 .courses__grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:38px;list-style:none}
 .course{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
-.course__img{aspect-ratio:4/3;width:100%;object-fit:cover}
+.course__img{aspect-ratio:3/2;width:100%;height:auto;object-fit:cover}
 .course__body{display:flex;flex-direction:column;gap:6px;flex:1;padding:16px 16px 18px}
 .course__n{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--gold)}
 .course h3{font-size:23px;line-height:1.05}
@@ -125,7 +125,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
 .prof__txt p{color:#cfc7d1;font-size:clamp(15px,1.5vw,17px);margin-top:14px;max-width:60ch}
 .rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-top:34px;padding:0 max(20px,calc((100vw - 1120px)/2)) 6px}
 .rail::-webkit-scrollbar{display:none}
-.rail img{flex:none;width:clamp(170px,19vw,230px);height:auto;aspect-ratio:1;object-fit:cover;border-radius:16px;border:1px solid var(--line);scroll-snap-align:center}
+.rail img{flex:none;height:clamp(170px,19vw,230px);width:auto;border-radius:16px;border:1px solid var(--line);scroll-snap-align:center}
 .rail__cap{color:#8f8793;font-size:12px;text-align:center;margin-top:12px}
 
 /* fechamento */
@@ -141,8 +141,9 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
 
 @media (max-width:980px){
   .courses__grid{grid-template-columns:1fr;gap:10px}
-  .course{flex-direction:row;align-items:stretch}
-  .course__img{width:112px;flex:0 0 112px;aspect-ratio:auto;height:auto;min-height:118px}
+  .course{flex-direction:row;align-items:flex-start}
+  /* A foto fica inteira (3:2), sem cortar sobrancelha nem lábio. */
+  .course__img{width:150px;flex:0 0 150px;margin:13px 0 13px 13px;border-radius:11px}
   .course__body{padding:13px 14px;gap:3px}
   .course h3{font-size:21px}
   .course__val{padding-top:8px}
@@ -211,7 +212,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
     <p class="lead">Você compra uma vez e recebe os cinco. Cada um com as suas aulas, do começo ao fim.</p>
     <ol class="courses__grid">
       <li class="course reveal">
-        <img class="course__img" src="/lp/comboblack/curso-nano-360.webp" srcset="/lp/comboblack/curso-nano-360.webp 360w, /lp/comboblack/curso-nano-640.webp 640w" sizes="(max-width:980px) 112px, 210px" width="640" height="480" alt="Antes e depois de sobrancelha com nanofios" loading="lazy" decoding="async">
+        <img class="course__img" src="/lp/comboblack/c-nano-420.webp" srcset="/lp/comboblack/c-nano-420.webp 420w, /lp/comboblack/c-nano-720.webp 720w" sizes="(max-width:980px) 150px, 210px" width="720" height="480" alt="Sobrancelha com nanofios, resultado final" loading="lazy" decoding="async">
         <div class="course__body">
           <span class="course__n">Curso 1</span>
           <h3>Basic Nano Fios</h3>
@@ -220,7 +221,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
         </div>
       </li>
       <li class="course reveal">
-        <img class="course__img" src="/lp/comboblack/curso-magic-360.webp" srcset="/lp/comboblack/curso-magic-360.webp 360w, /lp/comboblack/curso-magic-640.webp 640w" sizes="(max-width:980px) 112px, 210px" width="640" height="480" alt="Sobrancelha com efeito Magic Shadow" loading="lazy" decoding="async">
+        <img class="course__img" src="/lp/comboblack/c-magic-420.webp" srcset="/lp/comboblack/c-magic-420.webp 420w, /lp/comboblack/c-magic-720.webp 720w" sizes="(max-width:980px) 150px, 210px" width="720" height="480" alt="Sobrancelha com efeito Magic Shadow, resultado final" loading="lazy" decoding="async">
         <div class="course__body">
           <span class="course__n">Curso 2</span>
           <h3>Efeito Magic Shadow</h3>
@@ -229,7 +230,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
         </div>
       </li>
       <li class="course reveal">
-        <img class="course__img" src="/lp/comboblack/curso-fio-360.webp" srcset="/lp/comboblack/curso-fio-360.webp 360w, /lp/comboblack/curso-fio-640.webp 640w" sizes="(max-width:980px) 112px, 210px" width="640" height="480" alt="Sobrancelha com a técnica Fio a Fio Realista" loading="lazy" decoding="async">
+        <img class="course__img" src="/lp/comboblack/c-fio-420.webp" srcset="/lp/comboblack/c-fio-420.webp 420w, /lp/comboblack/c-fio-720.webp 720w" sizes="(max-width:980px) 150px, 210px" width="720" height="480" alt="Sobrancelhas com fio a fio realista, resultado final" loading="lazy" decoding="async">
         <div class="course__body">
           <span class="course__n">Curso 3</span>
           <h3>Fio a Fio Realista</h3>
@@ -238,7 +239,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
         </div>
       </li>
       <li class="course reveal">
-        <img class="course__img" src="/lp/comboblack/curso-lips-360.webp" srcset="/lp/comboblack/curso-lips-360.webp 360w, /lp/comboblack/curso-lips-640.webp 640w" sizes="(max-width:980px) 112px, 210px" width="640" height="480" alt="Lábios com micropigmentação labial" loading="lazy" decoding="async">
+        <img class="course__img" src="/lp/comboblack/c-lips-420.webp" srcset="/lp/comboblack/c-lips-420.webp 420w, /lp/comboblack/c-lips-720.webp 720w" sizes="(max-width:980px) 150px, 210px" width="720" height="480" alt="Lábios com micropigmentação labial, resultado final" loading="lazy" decoding="async">
         <div class="course__body">
           <span class="course__n">Curso 4</span>
           <h3>Lips Sense Technique</h3>
@@ -247,7 +248,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
         </div>
       </li>
       <li class="course reveal">
-        <img class="course__img" src="/lp/comboblack/curso-shadowpro-360.webp" srcset="/lp/comboblack/curso-shadowpro-360.webp 360w, /lp/comboblack/curso-shadowpro-640.webp 640w" sizes="(max-width:980px) 112px, 210px" width="640" height="480" alt="Sobrancelha com shadow natural" loading="lazy" decoding="async">
+        <img class="course__img" src="/lp/comboblack/c-shadowpro-420.webp" srcset="/lp/comboblack/c-shadowpro-420.webp 420w, /lp/comboblack/c-shadowpro-720.webp 720w" sizes="(max-width:980px) 150px, 210px" width="720" height="480" alt="Sobrancelha com shadow natural, resultado final" loading="lazy" decoding="async">
         <div class="course__body">
           <span class="course__n">Curso 5</span>
           <h3>Shadow PRO</h3>
@@ -310,17 +311,15 @@ h1,h2,h3{font-family:var(--serif);font-weight:600;color:#fff}
     <h2 class="title">Todas as aulas são <span class="gold">com o <span class="nw">James Olaya</span></span></h2>
     <p>James é artista, professor e biomédico, fundador da Jay Academy. Há mais de 10 anos na agulha, ele ensina micropigmentação de sobrancelhas e de lábios do jeito que faz na cabine: mostrando o traço, o motivo e o cicatrizado.</p>
   </div>
-  <div class="rail" aria-label="Resultados de sobrancelhas e lábios">
-    <img src="/lp/comboblack/r/01.webp" width="480" height="480" alt="Resultado de sobrancelha" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/r/02.webp" width="480" height="480" alt="Antes e depois de sobrancelha fio a fio" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/r/03.webp" width="480" height="480" alt="Resultado de sobrancelha com shadow" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/r/04.webp" width="480" height="480" alt="Antes e depois de sobrancelha fio a fio" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/r/05.webp" width="480" height="480" alt="Antes e depois de lábios" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/r/06.webp" width="480" height="480" alt="Resultado de sobrancelha" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/r/07.webp" width="480" height="480" alt="Antes e depois de sobrancelha fio a fio" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/r/08.webp" width="480" height="480" alt="Antes e depois de lábios" loading="lazy" decoding="async">
+  <div class="rail" aria-label="Resultados de sobrancelhas">
+    <img src="/lp/comboblack/res-01.webp" width="460" height="460" alt="Resultado final de sobrancelha" loading="lazy" decoding="async">
+    <img src="/lp/comboblack/res-02.webp" width="460" height="460" alt="Resultado final de sobrancelha" loading="lazy" decoding="async">
+    <img src="/lp/comboblack/res-04.webp" width="460" height="460" alt="Resultado final de sobrancelha" loading="lazy" decoding="async">
+    <img src="/lp/comboblack/res-05.webp" width="460" height="460" alt="Resultado final de sobrancelha" loading="lazy" decoding="async">
+    <img src="/lp/comboblack/res-06.webp" width="460" height="460" alt="Resultado final de sobrancelha" loading="lazy" decoding="async">
+    <img src="/lp/comboblack/res-08.webp" width="460" height="460" alt="Resultado final de sobrancelha" loading="lazy" decoding="async">
   </div>
-  <p class="rail__cap">Resultados das técnicas ensinadas nos cursos. Arraste para ver mais.</p>
+  <p class="rail__cap">Resultados finais das técnicas ensinadas nos cursos. Arraste para ver mais.</p>
 </section>
 
 <section class="sec final" id="fechamento">

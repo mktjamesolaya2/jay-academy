@@ -30,6 +30,15 @@ arquivo, troque o NOME), registry, `reserved-slugs`, `PIXEL_SLUGS` + teste. **no
   `james-dx` da Shadow PRO; cards com foto de resultado de cada técnica (não há capa do Efeito Magic Shadow no
   repo, então nenhum card usa capa); faixa clara do "5"; recibo em papel; faixa de 8 resultados.
 - Imagem de compartilhamento `og.jpg` (1200×630) gerada com sharp.
+- **Fotos (pedido do James, 17/11):** na dobra dos cursos e na faixa de resultados só entra **resultado final**,
+  nunca montagem antes/depois (corta), e a sobrancelha ou o lábio tem de aparecer INTEIRO. Cards em 3:2 exibidos
+  em 3:2 (sem `object-fit` cortando, inclusive no celular); faixa com as fotos na proporção original. Lábio final
+  inteiro e com margem só existe um (`protocolo-labial/antes-depois/05-depois.webp`), por isso a faixa ficou só
+  com sobrancelhas.
+- ⚠️ **Foto vetada pelo James:** `public/magicshadow/assets/shadow_leve.jpg` (olho de lado, sobrancelha na
+  vertical; a mesma foto é `public/lp/shadow-pro/hero.webp`). Saiu do card do Efeito Magic Shadow e do fundo do
+  `.diptico-light` em `public/magicshadow/styles.css`. Não usar em página nenhuma. Os arquivos continuam no repo
+  (aparecem na biblioteca de mídia), só não são referenciados.
 
 ---
 
