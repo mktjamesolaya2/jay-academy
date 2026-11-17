@@ -83,6 +83,20 @@ const nextConfig: NextConfig = {
         source: "/lp/inmersion-pelo-a-pelo-v2/fonts/:file",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      // E pra /comboblack (Black Friday, tráfego pago). Mesmo aviso: trocou um arquivo, troque o nome.
+      {
+        source: "/lp/comboblack/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=604800, s-maxage=31536000, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/lp/comboblack/fonts/:file",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
     ];
   },
 };

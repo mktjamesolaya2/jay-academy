@@ -45,6 +45,9 @@ export const PIXEL_SLUGS = [
   // Inmersión Pelo a Pelo v2 (25/09): evento ao vivo de U$ 47 na Hotmart; mede
   // o CliqueCheckout do clique. A v1 (data vencida) segue sem pixel.
   "inmersion-pelo-a-pelo-v2",
+  // Combo Black (17/11): 5 cursos com 5 anos de acesso, oferta de Black Friday na
+  // Hotmart até 27/11; mede o CliqueCheckout do clique.
+  "comboblack",
   // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
   // Lead do formulário de inscrição é a conversão que a campanha otimiza.
   "transforma",
