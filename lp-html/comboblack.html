@@ -163,6 +163,9 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
   .eyebrow:before,.eyebrow:after{content:"";width:24px;height:1px;background:currentColor}
   .lead,.hero__sub,.years p,.prof__txt p{margin-inline:auto}
   .price{justify-items:center}
+  /* Topo: "12x de" em cima e o valor sozinho na linha, pra ficar no eixo da página. */
+  .hero .price{gap:4px;margin:20px 0 22px}
+  .hero .price__por small{display:block;margin:0 0 6px;font-size:13px;vertical-align:baseline}
   .sec{padding:60px 0}
   /* Cursos: um card por linha, foto inteira em cima (3:2, sem corte) e o texto centralizado embaixo. */
   .courses__grid{grid-template-columns:1fr;gap:14px;margin-top:28px}
@@ -212,7 +215,6 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
       <h1>5 cursos do <span class="nw">James Olaya.</span> <em>5 anos de acesso.</em></h1>
       <p class="hero__sub">Nanofios, fio a fio, shadow e lábios num combo só, por um preço que vale só até a Black Friday, sexta 27/11.</p>
       <div class="price">
-        <p class="price__de">Os 5 separados hoje: <s>R$ 1.785</s></p>
         <p class="price__por"><small>12x de</small>R$ 72,09</p>
         <p class="price__av">ou <b>R$ 697</b> à vista</p>
       </div>
