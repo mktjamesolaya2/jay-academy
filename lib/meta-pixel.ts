@@ -51,6 +51,8 @@ export const PIXEL_SLUGS = [
   // Combo Nano + Shadow (17/11): Basic Nano Fios + Shadow PRO com acesso vitalício,
   // oferta de Black Friday até 27/11; mesma medição da /comboblack.
   "comboblack2",
+  // Combo 5 Cursos (17/11): a mesma oferta da /comboblack fora da Black (R$ 997).
+  "combo5cursos",
   // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
   // Lead do formulário de inscrição é a conversão que a campanha otimiza.
   "transforma",

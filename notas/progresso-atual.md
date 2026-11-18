@@ -46,6 +46,23 @@ arquivo, troque o NOME), registry, `reserved-slugs`, `PIXEL_SLUGS` + teste. **no
 
 ---
 
+## 🖤 Combo 5 Cursos — `/combo5cursos` (17/11)
+
+A mesma oferta da `/comboblack` (5 cursos, 5 anos) **fora da Black**: `lp-html/combo5cursos.html`, cópia da
+primeira sem a faixa dourada, sem contador e sem nenhuma menção a Black Friday ou data. Rota, registry,
+`reserved-slugs`, `PIXEL_SLUGS` + teste; assets de `public/lp/comboblack/` (só a `og3.jpg` é nova). noindex e
+fora do sitemap até o James decidir se vira página permanente.
+
+- **Checkout:** `pay.hotmart.com/I105572507G?off=iogocds7` (mesmo produto, outra oferta), lido do checkout:
+  **12x de R$ 103,11 ou R$ 997**.
+- Soma avulsa segue R$ 1.785 → **economia de R$ 788**. O título da conta virou "Mais barato do que comprar um
+  por um" ("menos da metade" só é verdade no preço de Black).
+- ⚠️ O produto na Hotmart se chama "Black James Olaya - 5 Cursos...": o checkout mostra "Black" mesmo vindo
+  desta página. Só muda na Hotmart.
+- ⚠️ Até 27/11 esta página e a `/comboblack` vendem o mesmo combo por R$ 997 e R$ 697.
+
+---
+
 ## 🖤 Combo Nano + Shadow — `/comboblack2` (17/11)
 
 Irmã menor da `/comboblack`: **Basic Nano Fios + Shadow PRO com acesso VITALÍCIO** (cursos e acesso ditos pelo

@@ -78,7 +78,8 @@ venda (NanoFios, Shadow PRO, Fio a Fio, Lips Sense), não feature do admin/CMS.
   fio-a-fio-realista-by-james-olaya, inmersion-pelo-a-pelo (+`-v2`, evento 10/10), metodo-shadow-pro,
   pdv-lips-sense-technique, pmuclass, protocolo-labial (evento R$ 27, prévia noindex),
   comboblack (Black Friday: 5 cursos, 5 anos; noindex, até 27/11),
-  comboblack2 (Black Friday: Nano Fios + Shadow PRO, vitalício; noindex, até 27/11).
+  comboblack2 (Black Friday: Nano Fios + Shadow PRO, vitalício; noindex, até 27/11),
+  combo5cursos (os 5 cursos fora da Black, R$ 997; noindex, sem prazo).
 - `pmuclass` = SPA (skeleton estático + conteúdo runtime via `/api/lp-content/pmuclass`).
 - `next.config.ts`: só `headers()` de segurança (nosniff/Referrer-Policy/HSTS; X-Frame só no
   admin) + `serverActions.bodySizeLimit`. SEM rewrites de `public/`.

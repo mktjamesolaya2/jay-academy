@@ -154,6 +154,16 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // Combo 5 Cursos (17/11): a mesma oferta da /comboblack fora da Black Friday
+    // (preço normal, sem data nem contador). Usa os assets da /comboblack. noindex.
+    slug: "combo5cursos",
+    title: "Combo 5 Cursos (fora da Black)",
+    htmlFile: "lp-html/combo5cursos.html",
+    assetsDir: "public/lp/comboblack",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     // O "-2" vinha da recriação (a página WP original foi excluída); assumiu o
     // slug limpo em 30/07, com redirect 308 no antigo.
     slug: "metodo-shadow-pro",

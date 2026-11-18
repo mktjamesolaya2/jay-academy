@@ -170,4 +170,5 @@ test("a Inmersión v2 leva pixel e a v1 não", () => {
 test("o Combo Black leva pixel", () => {
   assert.equal(slugHasPixel("comboblack"), true);
   assert.equal(slugHasPixel("comboblack2"), true);
+  assert.equal(slugHasPixel("combo5cursos"), true);
 });
