@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>James Olaya en España · Curso presencial de Pelo a Pelo · Febrero 2027</title>
-<meta name="description" content="Curso presencial de Pelo a Pelo (Hair Stroke) con James Olaya en España: 31 de enero, 1 y 2 de febrero de 2027. 3 días, práctica en 2 modelos, grupo reducido. Inversión: 1.800 €.">
+<meta name="description" content="Curso presencial de Pelo a Pelo (Hair Stroke) con James Olaya en España: 31 de enero, 1 y 2 de febrero de 2027. 3 días, práctica en 2 modelos y grupo reducido, para profesionales con experiencia en dermógrafo.">
 <!-- Prévia: sem indexação até ter cidade/local e os dados da organizadora. -->
 <meta name="robots" content="noindex,nofollow,noarchive">
 <link rel="canonical" href="https://www.jayacademy.com.br/jamesespanhafev2027">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.jayacademy.com.br/jamesespanhafev2027">
 <meta property="og:title" content="James Olaya en España · Curso presencial de Pelo a Pelo">
-<meta property="og:description" content="31 de enero, 1 y 2 de febrero de 2027. 3 días, práctica en 2 modelos, grupo reducido. Inversión: 1.800 €.">
-<meta property="og:image" content="https://www.jayacademy.com.br/lp/jamesespanhafev2027/og.jpg">
+<meta property="og:description" content="31 de enero, 1 y 2 de febrero de 2027. 3 días con James, práctica en 2 modelos y grupo reducido.">
+<meta property="og:image" content="https://www.jayacademy.com.br/lp/jamesespanhafev2027/og2.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -197,7 +197,7 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
 
 /* --- só desta página: curso presencial na Espanha --- */
 .hero h1{font-size:clamp(38px,4.6vw,60px)}
-.hero__date{color:var(--gold2);font-weight:600;font-size:clamp(14.5px,1.5vw,17px);margin-bottom:18px}
+.hero__date{display:inline-block;color:var(--gold2);font-weight:600;font-size:clamp(14.5px,1.5vw,17px);margin-bottom:22px;padding:9px 16px;border:1px solid rgba(242,211,138,.4);border-radius:999px;background:rgba(8,8,10,.55)}
 .facts{background:linear-gradient(90deg,#0a090c,#17131a,#0a090c);border-block:1px solid var(--line)}
 .facts dl{display:grid;grid-template-columns:repeat(4,1fr)}
 .facts dl div{padding:22px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -230,16 +230,40 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
 .organiza__grid{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:clamp(28px,6vw,72px);align-items:center}
 .organiza__img{width:100%;height:auto;border-radius:22px;border:1px solid var(--line);box-shadow:0 26px 70px rgba(0,0,0,.5)}
 .organiza p:not(.eyebrow){color:#cfc7d1;font-size:clamp(15px,1.5vw,17px);max-width:52ch;margin-top:14px}
-@media (max-width:980px){.ctrl{grid-template-columns:repeat(2,1fr)}}
+/* o que a aluna leva: resultados técnicos */
+.wins{background:linear-gradient(180deg,#08080a,#0f0d11 55%,#08080a)}
+.wins__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px;list-style:none}
+.wins__grid li{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 22px}
+.wins__grid span{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:17px}
+.wins__grid h3{font-size:25px;line-height:1.08;margin:6px 0 8px}
+.wins__grid p{color:var(--muted);font-size:13.5px;line-height:1.55}
+.wins__grid p b{color:#e6dfe7;font-weight:600}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:38px}
+.shots figure{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.shots img{width:100%;height:auto}
+.shots__cap{color:#8f8793;font-size:12px;text-align:center;margin-top:12px}
+.topics{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;list-style:none}
+.topics li{border:1px solid var(--line);border-radius:999px;padding:8px 15px;font-size:13px;color:#ddd5de;background:rgba(242,211,138,.05)}
+.days{background:#0b0a0d;border-top:1px solid var(--line)}
+.days ul{list-style:none;display:grid;gap:11px;margin-top:22px;max-width:60ch}
+.days li{display:flex;gap:11px;font-size:15px;color:#ddd5de}
+.days li:before{content:"✓";flex:0 0 22px;height:22px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,var(--gold2),var(--gold3));color:#161006;font-size:12px;font-weight:800}
+.days li b{color:#fff;font-weight:600}
+@media (max-width:980px){.ctrl{grid-template-columns:repeat(2,1fr)}.wins__grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:760px){
   .hero h1{font-size:clamp(33px,9.6vw,42px)}
-  .hero__date{margin:0 auto 4px}
+  .hero__date{margin:4px auto 20px}
   .facts dl{grid-template-columns:repeat(2,1fr);text-align:center}
   .facts dl div{padding:18px 10px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
   .facts dl div:nth-child(2n){border-right:0}.facts dl div:nth-last-child(-n+4){border-bottom:1px solid var(--line)}.facts dl div:nth-last-child(-n+2){border-bottom:0}
   .method .wrap,.fit .wrap{text-align:center}.method p.txt{margin-inline:auto}
   .ctrl{grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}.ctrl li{padding:18px 12px}.ctrl h3{font-size:22px}
   .fit__grid{grid-template-columns:1fr}
+  .wins .wrap,.days .wrap{text-align:center}
+  .wins__grid{grid-template-columns:1fr;gap:10px;margin-top:26px}
+  .shots{grid-template-columns:1fr;gap:10px;max-width:340px;margin-inline:auto}
+  .topics{justify-content:center}
+  .days ul{display:inline-grid;text-align:left}
   .organiza__grid{grid-template-columns:1fr;text-align:center;justify-items:center;gap:26px}
   .organiza__img{width:min(72vw,300px)}
   .organiza p:not(.eyebrow){margin-inline:auto}
@@ -254,14 +278,11 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
   <div class="wrap hero__in">
     <div class="hero__box">
       <p class="eyebrow">España · Febrero 2027</p>
-      <h1>Curso presencial de Pelo a Pelo <em>con James Olaya</em></h1>
-      <p class="hero__sub">3 días de formación presencial, con práctica en 2 modelos y grupo reducido. Para profesionales que ya trabajan con dermógrafo.</p>
+      <h1>Pelo a Pelo que se ve natural <em>y sigue ahí al cicatrizar</em></h1>
+      <p class="hero__sub">Curso presencial de 3 días con James Olaya: trazo fino, mano firme y práctica en 2 modelos. Para profesionales que ya trabajan con dermógrafo.</p>
       <p class="hero__date">31 de enero, 1 y 2 de febrero de 2027</p>
-      <div class="price">
-        <p class="price__por"><small>Inversión</small>1.800 €</p>
-      </div>
-      <a class="cta" href="https://wa.me/5519971634567?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20presencial%20de%20Pelo%20a%20Pelo%20con%20James%20Olaya%20en%20Espa%C3%B1a%20%2831%20de%20enero%2C%201%20y%202%20de%20febrero%20de%202027%29." target="_blank" rel="noopener">Quiero mi plaza</a>
-      <p class="trust"><span>Reserva por WhatsApp</span><span>Grupo reducido</span></p>
+      <div><a class="cta" href="https://wa.me/5519971634567?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20presencial%20de%20Pelo%20a%20Pelo%20con%20James%20Olaya%20en%20Espa%C3%B1a%20%2831%20de%20enero%2C%201%20y%202%20de%20febrero%20de%202027%29." target="_blank" rel="noopener">Quiero mi plaza</a></div>
+      <p class="trust"><span>Información y reserva por WhatsApp</span><span>Grupo reducido</span></p>
     </div>
   </div>
 </header>
@@ -273,7 +294,7 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
       <div><dt>Fechas</dt><dd>31 ene, 1 y 2 feb<small>Domingo, lunes y martes · 2027</small></dd></div>
       <div><dt>Duración</dt><dd>3 días<small>Formación presencial</small></dd></div>
       <div><dt>Práctica</dt><dd>2 modelos<small>Por alumna</small></dd></div>
-      <div><dt>Inversión</dt><dd>1.800 €<small>Por el curso completo</small></dd></div>
+      <div><dt>Grupo</dt><dd>Reducido</dd></div>
       <div><dt>Idioma</dt><dd>Español</dd></div>
       <div><dt>Lugar</dt><dd>España<small>Ciudad por confirmar</small></dd></div>
       <div><dt>Requisito</dt><dd>Experiencia con dermógrafo</dd></div>
@@ -282,19 +303,63 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
   </div>
 </section>
 
-<section class="sec method" id="curso">
+<section class="sec wins" id="resultados">
   <div class="wrap">
-    <p class="eyebrow">Qué vas a trabajar</p>
-    <h2 class="title">El Pelo a Pelo de James, <span class="gold">trazo por trazo</span></h2>
+    <p class="eyebrow">Lo que te llevas</p>
+    <h2 class="title">La técnica para que tu trazo <span class="gold">quede fino y dure</span></h2>
+    <p class="lead">Tres días para trabajar, con James a tu lado, lo que hace que un Pelo a Pelo se vea natural en la piel y no solo en el papel.</p>
+    <ol class="wins__grid">
+      <li class="reveal"><span>01</span><h3>Trazos finos que no se engrosan</h3><p>Controlas la <b>inclinación de la aguja</b> y la <b>presión</b>, que son las que deciden si el pelo queda fino o grueso.</p></li>
+      <li class="reveal"><span>02</span><h3>Pelos que siguen ahí en el retoque</h3><p>Trabajas la <b>profundidad</b> y la <b>fijación del pigmento</b> para que el trazo no migre ni se vaya con la cicatrización.</p></li>
+      <li class="reveal"><span>03</span><h3>Dirección que se lee natural</h3><p>Los <b>tipos de trazo</b> (recto, curvo, ramificado y cruzado) y hacia dónde va cada pelo en cada zona de la ceja.</p></li>
+      <li class="reveal"><span>04</span><h3>Diseño según el rostro</h3><p><b>Mapas y zonas de la ceja</b>, diseño según la forma del rostro y <b>corrección de cejas asimétricas</b>.</p></li>
+      <li class="reveal"><span>05</span><h3>Una mano firme</h3><p><b>Punto de apoyo</b>, <b>rotación de muñeca</b>, <b>velocidad del dermógrafo</b> y elección de la aguja para ganar seguridad en la piel.</p></li>
+      <li class="reveal"><span>06</span><h3>Color previsible</h3><p><b>Pigmentología aplicada</b>: cómo se fija el pigmento, cómo cicatriza el color y cómo evitar que el trazo se difumine.</p></li>
+    </ol>
+    <div class="shots">
+      <figure class="reveal"><img src="/lp/jamesespanhafev2027/res-pelo.webp" width="520" height="520" alt="Ceja con técnica Pelo a Pelo, resultado final" loading="lazy" decoding="async"></figure>
+      <figure class="reveal"><img src="/lp/jamesespanhafev2027/res-cejas.webp" width="520" height="520" alt="Cejas con técnica Pelo a Pelo, resultado final" loading="lazy" decoding="async"></figure>
+      <figure class="reveal"><img src="/lp/jamesespanhafev2027/res-trazo.webp" width="520" height="520" alt="Ceja con trazos finos, resultado final" loading="lazy" decoding="async"></figure>
+    </div>
+    <p class="shots__cap">Trabajos de James Olaya.</p>
+  </div>
+</section>
+
+<section class="sec method" id="tecnica">
+  <div class="wrap">
+    <p class="eyebrow">La técnica</p>
+    <h2 class="title">Los 4 Controles <span class="gold">del Trazo</span></h2>
     <p class="txt">Casi todo lo que se enseña de Pelo a Pelo (Hair Stroke) se enfoca en el dibujo. Pero lo que decide el resultado es lo que hace tu mano mientras dibuja: si pones la aguja con el ángulo equivocado, el pelo se ve grueso aunque el diseño sea perfecto. Si aprietas de más, el pigmento migra. Si aprietas de menos, se va con la cicatrización.</p>
-    <p class="txt">James lo llama los 4 Controles del Trazo. En este curso los trabajas con él, en persona, durante 3 días y con práctica en 2 modelos.</p>
+    <p class="txt">James lo llama los 4 Controles del Trazo. Cuando los cuatro están bajo control, el trazo queda fino y dura.</p>
     <ol class="ctrl">
       <li class="reveal"><span>01</span><h3>Dirección</h3><p>Hacia dónde va cada pelo para que la ceja se vea natural.</p></li>
       <li class="reveal"><span>02</span><h3>Inclinación</h3><p>El ángulo de la aguja, que define si el pelo queda fino o grueso.</p></li>
       <li class="reveal"><span>03</span><h3>Profundidad</h3><p>Hasta dónde entra el pigmento para que el trazo siga ahí al cicatrizar.</p></li>
       <li class="reveal"><span>04</span><h3>Presión</h3><p>Ni de más, para que no migre, ni de menos, para que no desaparezca.</p></li>
     </ol>
+    <ul class="topics" aria-label="Temas técnicos">
+      <li>Tipos de piel</li><li>Aguja ideal</li><li>Velocidad del dermógrafo</li><li>Tipos de trazo</li><li>Mapas y zonas de la ceja</li><li>Corrección de asimetrías</li><li>Pigmento orgánico e inorgánico</li><li>Preparación de la piel</li><li>Cicatrización y retoque</li>
+    </ul>
   </div>
+</section>
+
+<section class="sec days" id="presencial">
+  <div class="wrap">
+    <p class="eyebrow">Tres días presenciales</p>
+    <h2 class="title">La técnica en tu mano, <span class="gold">no solo en la teoría</span></h2>
+    <ul>
+      <li><span><b>Práctica en 2 modelos.</b> Aplicas la técnica en piel real, no solo en papel o piel artificial.</span></li>
+      <li><span><b>James a tu lado.</b> Con grupo reducido, ve tu trazo de cerca y corrige tu mano en el momento.</span></li>
+      <li><span><b>Material para la práctica incluido.</b> Llegas a trabajar la técnica, no a resolver la logística.</span></li>
+      <li><span><b>Certificado.</b> Terminas los 3 días con tu certificado del curso.</span></li>
+    </ul>
+  </div>
+  <div class="rail" aria-label="Clases presenciales de James Olaya">
+    <img src="/lp/jamesespanhafev2027/aula-james.webp" width="996" height="560" alt="James Olaya trabajando con el dermógrafo" loading="lazy" decoding="async">
+    <img src="/lp/jamesespanhafev2027/aula-grupo.webp" width="420" height="560" alt="Alumnas alrededor de James Olaya durante una clase" loading="lazy" decoding="async">
+    <img src="/lp/jamesespanhafev2027/aula-demo.webp" width="448" height="560" alt="James Olaya en una clase presencial" loading="lazy" decoding="async">
+  </div>
+  <p class="rail__cap">Clases presenciales de James Olaya.</p>
 </section>
 
 <section class="sec fit courses" id="para-quien">
@@ -321,38 +386,12 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
   </div>
 </section>
 
-<section class="sec years" id="incluye">
-  <div class="wrap years__grid">
-    <p class="years-num reveal" aria-hidden="true">3<span>días con James</span></p>
-    <div class="reveal">
-      <p class="eyebrow">Qué incluye</p>
-      <h2 class="title">Todo lo que entra <span style="color:var(--gold3)">en tu plaza</span></h2>
-      <ul>
-        <li>3 días de curso presencial con James Olaya.</li>
-        <li>Práctica en 2 modelos.</li>
-        <li>Material para la práctica.</li>
-        <li>Certificado.</li>
-        <li>Grupo reducido.</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
 <section class="sec prof" id="james">
   <div class="wrap prof__txt reveal">
     <p class="eyebrow">Quién enseña</p>
     <h2 class="title">Tres días al lado de <span class="gold"><span class="nw">James Olaya</span></span></h2>
     <p>James Olaya es biomédico, micropigmentador, educador y conferencista internacional, fundador de Jay Academy y referencia en la técnica Pelo a Pelo, con más de 10 años de aguja.</p>
   </div>
-  <div class="rail" aria-label="James Olaya enseñando y resultados de Pelo a Pelo">
-    <img src="/lp/jamesespanhafev2027/res-pelo.webp" width="520" height="520" alt="Ceja con técnica Pelo a Pelo, resultado final" loading="lazy" decoding="async">
-    <img src="/lp/jamesespanhafev2027/aula-james.webp" width="996" height="560" alt="James Olaya trabajando con el dermógrafo" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/c-fio-720.webp" width="720" height="480" alt="Cejas con técnica Pelo a Pelo, resultado final" loading="lazy" decoding="async">
-    <img src="/lp/jamesespanhafev2027/aula-grupo.webp" width="420" height="560" alt="Alumnas alrededor de James Olaya durante una demostración" loading="lazy" decoding="async">
-    <img src="/lp/comboblack/c-nano-720.webp" width="720" height="480" alt="Ceja con trazos finos, resultado final" loading="lazy" decoding="async">
-    <img src="/lp/jamesespanhafev2027/aula-demo.webp" width="448" height="560" alt="James Olaya en una demostración en vivo" loading="lazy" decoding="async">
-  </div>
-  <p class="rail__cap">Trabajos y clases presenciales de James Olaya. Desliza para ver más.</p>
 </section>
 
 <section class="sec organiza" id="organiza">
@@ -366,14 +405,14 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
   </div>
 </section>
 
-<section class="sec offer" id="inversion">
+<section class="sec offer" id="plaza">
   <div class="wrap offer__grid">
     <div class="offer__txt reveal">
-      <p class="eyebrow">Inversión</p>
-      <h2 class="title">Tu plaza en el curso <span class="gold">de Pelo a Pelo</span></h2>
-      <p class="lead">La reserva y las formas de pago se confirman por WhatsApp con el equipo de cursos de James Olaya.</p>
+      <p class="eyebrow">Tu plaza</p>
+      <h2 class="title">Reserva tu lugar <span class="gold">en el curso</span></h2>
+      <p class="lead">El grupo es reducido. Escribe al equipo de cursos de James Olaya por WhatsApp y recibe toda la información para reservar tu plaza.</p>
       <a class="cta" href="https://wa.me/5519971634567?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20presencial%20de%20Pelo%20a%20Pelo%20con%20James%20Olaya%20en%20Espa%C3%B1a%20%2831%20de%20enero%2C%201%20y%202%20de%20febrero%20de%202027%29." target="_blank" rel="noopener">Quiero mi plaza</a>
-      <p class="trust"><span>Reserva por WhatsApp</span><span>Grupo reducido</span></p>
+      <p class="trust"><span>Información y reserva por WhatsApp</span><span>Grupo reducido</span></p>
     </div>
     <div class="receipt reveal">
       <p class="receipt__head">Pelo a Pelo · España · Febrero 2027</p>
@@ -383,12 +422,8 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
         <div><dt>Práctica</dt><dd>2 modelos</dd></div>
         <div><dt>Material para la práctica</dt><dd>incluido</dd></div>
         <div><dt>Certificado</dt><dd>incluido</dd></div>
+        <div><dt>Requisito</dt><dd>dermógrafo</dd></div>
       </dl>
-      <div class="receipt__black">
-        <span>Inversión</span>
-        <b>1.800 €</b>
-        <i>curso completo de 3 días</i>
-      </div>
     </div>
   </div>
 </section>
@@ -408,12 +443,9 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
   <div class="wrap">
     <p class="eyebrow">James Olaya en España</p>
     <h2 class="title">3 días. 2 modelos. <span class="gold">Pelo a Pelo con James.</span></h2>
-    <p class="lead">31 de enero, 1 y 2 de febrero de 2027. Para profesionales con experiencia en dermógrafo.</p>
-    <div class="price">
-      <p class="price__por"><small>Inversión</small>1.800 €</p>
-    </div>
+    <p class="lead" style="margin-bottom:26px">31 de enero, 1 y 2 de febrero de 2027. Para profesionales con experiencia en dermógrafo.</p>
     <a class="cta" href="https://wa.me/5519971634567?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20presencial%20de%20Pelo%20a%20Pelo%20con%20James%20Olaya%20en%20Espa%C3%B1a%20%2831%20de%20enero%2C%201%20y%202%20de%20febrero%20de%202027%29." target="_blank" rel="noopener">Quiero mi plaza</a>
-    <p class="trust"><span>Reserva por WhatsApp</span><span>Grupo reducido</span></p>
+    <p class="trust"><span>Información y reserva por WhatsApp</span><span>Grupo reducido</span></p>
   </div>
 </section>
 </main>
@@ -426,7 +458,7 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
 </footer>
 
 <div class="mobile-buy" id="mobileBuy">
-  <p>Pelo a Pelo · 31 ene al 2 feb<b>1.800 €</b></p>
+  <p>Pelo a Pelo con James<b>31 ene al 2 feb</b></p>
   <a class="cta" href="https://wa.me/5519971634567?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20curso%20presencial%20de%20Pelo%20a%20Pelo%20con%20James%20Olaya%20en%20Espa%C3%B1a%20%2831%20de%20enero%2C%201%20y%202%20de%20febrero%20de%202027%29." target="_blank" rel="noopener">Quiero mi plaza</a>
 </div>
 

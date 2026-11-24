@@ -57,6 +57,13 @@ masterclass internacional, mas o James NÃO quer a palavra "masterclass": a pág
   modelos, **1.800 €**. Requisito: experiência com dermógrafo. Incluso (dito pelo James): certificado, material
   para a prática, turma reduzida (ele pediu pra NÃO dizer o número de alunas).
 - **Curso 2:** qua 3, qui 4 e sex 5/02 de 2027, tema a definir (shadow ou labios) → bloco "Próximamente".
+- ⚠️ **O PREÇO NÃO APARECE NA PÁGINA** (pedido do James em 24/11; o valor de 1.800 € é passado só pelo
+  WhatsApp). Não voltar a pôr preço no HTML, na meta description nem na imagem de compartilhamento (`og2.jpg`).
+- **Foco em resultado técnico (mesmo pedido):** título "Pelo a Pelo que se ve natural y sigue ahí al
+  cicatrizar"; dobra "Lo que te llevas" com 6 resultados (trazo fino, pelos que seguem no retoque, direção,
+  desenho segundo o rosto, mão firme, cor previsível) + 3 fotos de resultado final; "Los 4 Controles del
+  Trazo" + lista de temas técnicos; "Tres días presenciales". Os temas vêm do programa e dos slides da
+  `/inmersion-pelo-a-pelo-v2`; o James ainda não confirmou que o presencial cobre exatamente esses.
 - **Sem checkout:** os 5 botões vão pro WhatsApp de cursos `5519971634567` (confirmado pelo James), com
   mensagem pronta em espanhol (uma do Pelo a Pelo, outra da lista do 2º curso).
 - Conteúdo do método: os "4 Controles del Trazo" da `/inmersion-pelo-a-pelo-v2`. Sem programação por dia.
