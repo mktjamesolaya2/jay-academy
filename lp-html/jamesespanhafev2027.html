@@ -226,7 +226,10 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
 .next__card .title{font-size:clamp(28px,3.6vw,42px)}
 .next__card .cta{margin-top:24px;background:none;color:var(--gold2);border:1px solid var(--gold);box-shadow:none}
 .next__card .cta:after{display:none}
-.org{color:#c5bdc8;font-size:14px;margin-top:22px}.org b{color:#fff;font-weight:600}
+.organiza{background:#0b0a0d;border-top:1px solid var(--line)}
+.organiza__grid{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:clamp(28px,6vw,72px);align-items:center}
+.organiza__img{width:100%;height:auto;border-radius:22px;border:1px solid var(--line);box-shadow:0 26px 70px rgba(0,0,0,.5)}
+.organiza p:not(.eyebrow){color:#cfc7d1;font-size:clamp(15px,1.5vw,17px);max-width:52ch;margin-top:14px}
 @media (max-width:980px){.ctrl{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:760px){
   .hero h1{font-size:clamp(33px,9.6vw,42px)}
@@ -237,6 +240,9 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
   .method .wrap,.fit .wrap{text-align:center}.method p.txt{margin-inline:auto}
   .ctrl{grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}.ctrl li{padding:18px 12px}.ctrl h3{font-size:22px}
   .fit__grid{grid-template-columns:1fr}
+  .organiza__grid{grid-template-columns:1fr;text-align:center;justify-items:center;gap:26px}
+  .organiza__img{width:min(72vw,300px)}
+  .organiza p:not(.eyebrow){margin-inline:auto}
   .next__card .cta{width:100%}
 }
 </style>
@@ -271,7 +277,7 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
       <div><dt>Idioma</dt><dd>Español</dd></div>
       <div><dt>Lugar</dt><dd>España<small>Ciudad por confirmar</small></dd></div>
       <div><dt>Requisito</dt><dd>Experiencia con dermógrafo</dd></div>
-      <div><dt>Organiza</dt><dd>Jennifer Skeer</dd></div>
+      <div><dt>Organiza</dt><dd>Jenifer Izquierdo</dd></div>
     </dl>
   </div>
 </section>
@@ -337,7 +343,6 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
     <p class="eyebrow">Quién enseña</p>
     <h2 class="title">Tres días al lado de <span class="gold"><span class="nw">James Olaya</span></span></h2>
     <p>James Olaya es biomédico, micropigmentador, educador y conferencista internacional, fundador de Jay Academy y referencia en la técnica Pelo a Pelo, con más de 10 años de aguja.</p>
-    <p class="org">Organiza en España: <b>Jennifer Skeer</b></p>
   </div>
   <div class="rail" aria-label="James Olaya enseñando y resultados de Pelo a Pelo">
     <img src="/lp/jamesespanhafev2027/res-pelo.webp" width="520" height="520" alt="Ceja con técnica Pelo a Pelo, resultado final" loading="lazy" decoding="async">
@@ -348,6 +353,17 @@ h1,h2,.lead,.hero__sub,.years p,.prof__txt p,.course p,.receipt__save,.rail__cap
     <img src="/lp/jamesespanhafev2027/aula-demo.webp" width="448" height="560" alt="James Olaya en una demostración en vivo" loading="lazy" decoding="async">
   </div>
   <p class="rail__cap">Trabajos y clases presenciales de James Olaya. Desliza para ver más.</p>
+</section>
+
+<section class="sec organiza" id="organiza">
+  <div class="wrap organiza__grid">
+    <img class="organiza__img reveal" src="/lp/jamesespanhafev2027/jenifer-420.webp" srcset="/lp/jamesespanhafev2027/jenifer-420.webp 420w, /lp/jamesespanhafev2027/jenifer-720.webp 720w" sizes="(max-width:760px) 70vw, 340px" width="720" height="900" alt="Jenifer Izquierdo" loading="lazy" decoding="async">
+    <div class="reveal">
+      <p class="eyebrow">Quién organiza</p>
+      <h2 class="title">Jenifer <span class="gold">Izquierdo</span></h2>
+      <p>Jenifer Izquierdo es la organizadora de los cursos de James Olaya en España. Es quien trae esta formación presencial al país y quien hace posible estos días de curso con James.</p>
+    </div>
+  </div>
 </section>
 
 <section class="sec offer" id="inversion">

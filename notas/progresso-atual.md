@@ -48,7 +48,7 @@ arquivo, troque o NOME), registry, `reserved-slugs`, `PIXEL_SLUGS` + teste. **no
 
 ## 🇪🇸 James en España — `/jamesespanhafev2027` (24/11)
 
-Página **em espanhol** dos cursos presenciais do James na Espanha, organizados pela **Jennifer Skeer**. É uma
+Página **em espanhol** dos cursos presenciais do James na Espanha, organizados pela **Jenifer Izquierdo** (o nome "Jennifer Skeer" do primeiro pedido estava errado; corrigido pelo James em 24/11, com a foto dela). É uma
 masterclass internacional, mas o James NÃO quer a palavra "masterclass": a página chama de **curso**.
 `lp-html/jamesespanhafev2027.html` (CSS base da `/comboblack` + bloco próprio), rota, registry,
 `reserved-slugs`, `PIXEL_SLUGS` + teste, cache em `next.config.ts`. **Prévia noindex**, fora do sitemap.
@@ -62,8 +62,8 @@ masterclass internacional, mas o James NÃO quer a palavra "masterclass": a pág
 - Conteúdo do método: os "4 Controles del Trazo" da `/inmersion-pelo-a-pelo-v2`. Sem programação por dia.
 - Fotos: `public/lp/jamesespanhafev2027/` (resultado de fio a fio + 3 fotos de aula presencial da /academy) e
   as fotos aprovadas da `/comboblack`.
-- ⚠️ **Pendente:** cidade e local (a página diz "España · ciudad por confirmar"), dados da Jennifer (só o nome
-  entra; conferir a grafia "Skeer"), tema do 2º curso, horários e forma de pagamento. Quando chegarem,
+- ⚠️ **Pendente:** cidade e local (a página diz "España · ciudad por confirmar"), mais dados da Jenifer se ele quiser (Instagram, estúdio; hoje a seção "Quién organiza" tem só nome, foto
+  `jenifer-*.webp` e uma frase), tema do 2º curso, horários e forma de pagamento. Quando chegarem,
   completar e tirar o noindex.
 
 ---
