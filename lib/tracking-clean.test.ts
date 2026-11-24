@@ -171,4 +171,5 @@ test("o Combo Black leva pixel", () => {
   assert.equal(slugHasPixel("comboblack"), true);
   assert.equal(slugHasPixel("comboblack2"), true);
   assert.equal(slugHasPixel("combo5cursos"), true);
+  assert.equal(slugHasPixel("jamesespanhafev2027"), true);
 });

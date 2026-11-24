@@ -164,6 +164,17 @@ export const lpHtmlPages: LpHtmlEntry[] = [
     accent: "gold-black",
   },
   {
+    // Cursos presenciais do James na Espanha, fev/2027 (em espanhol): Pelo a Pelo de
+    // 31/01 a 2/02 e um segundo curso de 3 a 5/02 "próximamente". Botões no WhatsApp
+    // de cursos. Prévia noindex até ter cidade e os dados da organizadora.
+    slug: "jamesespanhafev2027",
+    title: "James en España — Pelo a Pelo (fev/2027)",
+    htmlFile: "lp-html/jamesespanhafev2027.html",
+    assetsDir: "public/lp/jamesespanhafev2027",
+    category: "venda",
+    accent: "gold-black",
+  },
+  {
     // O "-2" vinha da recriação (a página WP original foi excluída); assumiu o
     // slug limpo em 30/07, com redirect 308 no antigo.
     slug: "metodo-shadow-pro",

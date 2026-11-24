@@ -18,7 +18,7 @@ const RESERVED = new Set([
   "pdv-lips-sense-technique", "pmuclass", "laser", "magicshadow",
   "transforma", "jaytransforma-beauty", "jaytransforma_beauty",
   "jaytransforma-remove", "jaytransforma-start",
-  "academy", "protocolo-labial", "comboblack", "comboblack2", "combo5cursos",
+  "academy", "protocolo-labial", "comboblack", "comboblack2", "combo5cursos", "jamesespanhafev2027",
 ]);
 
 /** true = o slug colide com uma rota do sistema ou uma LP estática → não publicar ali. */

@@ -46,6 +46,28 @@ arquivo, troque o NOME), registry, `reserved-slugs`, `PIXEL_SLUGS` + teste. **no
 
 ---
 
+## 🇪🇸 James en España — `/jamesespanhafev2027` (24/11)
+
+Página **em espanhol** dos cursos presenciais do James na Espanha, organizados pela **Jennifer Skeer**. É uma
+masterclass internacional, mas o James NÃO quer a palavra "masterclass": a página chama de **curso**.
+`lp-html/jamesespanhafev2027.html` (CSS base da `/comboblack` + bloco próprio), rota, registry,
+`reserved-slugs`, `PIXEL_SLUGS` + teste, cache em `next.config.ts`. **Prévia noindex**, fora do sitemap.
+
+- **Curso 1, Pelo a Pelo (Hair Stroke):** dom 31/01, seg 1/02 e ter 2/02 de 2027. 3 dias, prática em 2
+  modelos, **1.800 €**. Requisito: experiência com dermógrafo. Incluso (dito pelo James): certificado, material
+  para a prática, turma reduzida (ele pediu pra NÃO dizer o número de alunas).
+- **Curso 2:** qua 3, qui 4 e sex 5/02 de 2027, tema a definir (shadow ou labios) → bloco "Próximamente".
+- **Sem checkout:** os 5 botões vão pro WhatsApp de cursos `5519971634567` (confirmado pelo James), com
+  mensagem pronta em espanhol (uma do Pelo a Pelo, outra da lista do 2º curso).
+- Conteúdo do método: os "4 Controles del Trazo" da `/inmersion-pelo-a-pelo-v2`. Sem programação por dia.
+- Fotos: `public/lp/jamesespanhafev2027/` (resultado de fio a fio + 3 fotos de aula presencial da /academy) e
+  as fotos aprovadas da `/comboblack`.
+- ⚠️ **Pendente:** cidade e local (a página diz "España · ciudad por confirmar"), dados da Jennifer (só o nome
+  entra; conferir a grafia "Skeer"), tema do 2º curso, horários e forma de pagamento. Quando chegarem,
+  completar e tirar o noindex.
+
+---
+
 ## 🖤 Combo 5 Cursos — `/combo5cursos` (17/11)
 
 A mesma oferta da `/comboblack` (5 cursos, 5 anos) **fora da Black**: `lp-html/combo5cursos.html`, cópia da

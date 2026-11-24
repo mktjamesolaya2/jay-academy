@@ -83,6 +83,16 @@ const nextConfig: NextConfig = {
         source: "/lp/inmersion-pelo-a-pelo-v2/fonts/:file",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      // E pra /jamesespanhafev2027 (curso presencial na Espanha). Mesmo aviso.
+      {
+        source: "/lp/jamesespanhafev2027/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=604800, s-maxage=31536000, stale-while-revalidate=86400",
+          },
+        ],
+      },
       // E pra /comboblack (Black Friday, tráfego pago). Mesmo aviso: trocou um arquivo, troque o nome.
       {
         source: "/lp/comboblack/:path*",

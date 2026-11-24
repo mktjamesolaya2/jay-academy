@@ -53,6 +53,9 @@ export const PIXEL_SLUGS = [
   "comboblack2",
   // Combo 5 Cursos (17/11): a mesma oferta da /comboblack fora da Black (R$ 997).
   "combo5cursos",
+  // Cursos presenciais do James na Espanha (fev/2027): sem checkout, o botão vai
+  // pro WhatsApp de cursos; mede PageView e o clique (evento WhatsApp).
+  "jamesespanhafev2027",
   // JAY TRANSFORMA (10/09): não é curso, é a captação do evento gratuito — o
   // Lead do formulário de inscrição é a conversão que a campanha otimiza.
   "transforma",
